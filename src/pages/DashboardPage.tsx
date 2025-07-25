@@ -12,7 +12,8 @@ import {
   MessageCircle, Heart, ThumbsUp, Bookmark,
   Upload, FileSpreadsheet, TrendingDown, Copy,
   Settings, Lightbulb, Video, FileDown, HelpCircle,
-  Building, Verified, Crown, ChevronDown, MoreHorizontal
+  Building, Verified, Crown, ChevronDown, MoreHorizontal,
+  Package, Check
 } from 'lucide-react';
 import { Navbar } from '../components/Navbar';
 import { useAuthStore } from '../stores/authStore';
@@ -96,7 +97,7 @@ interface MarketplaceItem {
 export function DashboardPage() {
   const navigate = useNavigate();
   const { profile } = useAuthStore();
-  const [activeSection, setActiveSection] = useState<'feed' | 'strategies' | 'tutorials' | 'marketplace' | 'experts'>('feed');
+  const [activeSection, setActiveSection] = useState<'feed' | 'strategies' | 'tutorials' | 'marketplace' | 'specialists' | 'users'>('feed');
   const [searchQuery, setSearchQuery] = useState('');
   const [filterType, setFilterType] = useState<'all' | 'analysis' | 'robot'>('all');
   const [posts, setPosts] = useState<CommunityPost[]>([]);
@@ -474,124 +475,138 @@ export function DashboardPage() {
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-6 gap-4">
           <div>
             <h1 className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-blue-400 to-emerald-400 bg-clip-text text-transparent">
-              Community Hub
+              Dashboard da Comunidade
             </h1>
             <p className="text-gray-400 mt-1">Conecte-se, compartilhe e evolua com a comunidade</p>
           </div>
-          
-          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full sm:w-auto">
-            <button
-              onClick={() => navigate('/backtest-analysis')}
-              className="px-4 py-2 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 rounded-xl flex items-center justify-center space-x-2 transition-all duration-200"
-            >
-              <BarChart2 className="w-4 h-4" />
-              <span>Nova Análise</span>
-            </button>
-            <button
-              onClick={() => navigate('/robots')}
-              className="px-4 py-2 bg-gradient-to-r from-emerald-600 to-emerald-700 hover:from-emerald-700 hover:to-emerald-800 rounded-xl flex items-center justify-center space-x-2 transition-all duration-200"
-            >
-              <Code2 className="w-4 h-4" />
-              <span>Novo Robô</span>
-            </button>
-          </div>
         </div>
 
-        {/* Navigation Cards - Mobile Style */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4 mb-6">
+        {/* Navigation Cards */}
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-4 mb-6">
           <button
             onClick={() => setActiveSection('strategies')}
-            className={`p-4 sm:p-6 rounded-2xl border transition-all duration-300 ${
-              activeSection === 'strategies' 
-                ? 'bg-gradient-to-br from-emerald-600/20 to-emerald-600/20 border-emerald-500/50 shadow-lg shadow-emerald-500/20' 
-                : 'bg-gray-900/50 border-gray-700/50 hover:border-gray-600/50 hover:bg-gray-800/50'
+            className={`p-4 sm:p-6 rounded-xl transition-all duration-300 relative overflow-hidden ${
+              activeSection === 'strategies'
+                ? 'bg-gradient-to-br from-emerald-600/30 to-emerald-800/30 border border-emerald-500/50'
+                : 'bg-gray-800/70 hover:bg-gray-700/70 border border-gray-600/50'
             }`}
           >
-            <div className="flex flex-col items-center text-center">
-              <div className={`p-2 sm:p-3 rounded-xl mb-2 sm:mb-3 ${
-                activeSection === 'strategies' ? 'bg-emerald-500/20' : 'bg-gray-700/50'
-              }`}>
-                <Shield className="w-5 h-5 sm:w-6 sm:h-6 text-emerald-400" />
+            <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/10 to-transparent"></div>
+            <div className="relative z-10">
+              <div className="w-12 h-12 mx-auto mb-3 bg-emerald-600/20 rounded-lg flex items-center justify-center">
+                <Shield className="w-6 h-6 text-emerald-400" />
               </div>
-              <h3 className="font-semibold text-xs sm:text-sm">Estratégias</h3>
-              <p className="text-xs text-gray-400 mt-1">Verificadas</p>
+              <h3 className="font-semibold text-white mb-1">Estratégias</h3>
+              <p className="text-xs text-gray-400">Verificadas</p>
             </div>
           </button>
 
           <button
             onClick={() => setActiveSection('feed')}
-            className={`p-4 sm:p-6 rounded-2xl border transition-all duration-300 ${
-              activeSection === 'feed' 
-                ? 'bg-gradient-to-br from-blue-600/20 to-blue-600/20 border-blue-500/50 shadow-lg shadow-blue-500/20' 
-                : 'bg-gray-900/50 border-gray-700/50 hover:border-gray-600/50 hover:bg-gray-800/50'
+            className={`p-4 sm:p-6 rounded-xl transition-all duration-300 relative overflow-hidden ${
+              activeSection === 'feed'
+                ? 'bg-gradient-to-br from-blue-600/30 to-blue-800/30 border border-blue-500/50'
+                : 'bg-gray-800/70 hover:bg-gray-700/70 border border-gray-600/50'
             }`}
           >
-            <div className="flex flex-col items-center text-center">
-              <div className={`p-2 sm:p-3 rounded-xl mb-2 sm:mb-3 ${
-                activeSection === 'feed' ? 'bg-blue-500/20' : 'bg-gray-700/50'
-              }`}>
-                <Activity className="w-5 h-5 sm:w-6 sm:h-6 text-blue-400" />
+            <div className="absolute inset-0 bg-gradient-to-br from-blue-500/10 to-transparent"></div>
+            <div className="relative z-10">
+              <div className="w-12 h-12 mx-auto mb-3 bg-blue-600/20 rounded-lg flex items-center justify-center">
+                <Activity className="w-6 h-6 text-blue-400" />
               </div>
-              <h3 className="font-semibold text-xs sm:text-sm">Feed</h3>
-              <p className="text-xs text-gray-400 mt-1">Postagens</p>
+              <h3 className="font-semibold text-white mb-1">Feed</h3>
+              <p className="text-xs text-gray-400">Postagens</p>
             </div>
           </button>
 
           <button
             onClick={() => setActiveSection('tutorials')}
-            className={`p-4 sm:p-6 rounded-2xl border transition-all duration-300 ${
-              activeSection === 'tutorials' 
-                ? 'bg-gradient-to-br from-blue-600/20 to-emerald-600/20 border-blue-500/50 shadow-lg shadow-blue-500/20' 
-                : 'bg-gray-900/50 border-gray-700/50 hover:border-gray-600/50 hover:bg-gray-800/50'
+            className={`p-4 sm:p-6 rounded-xl transition-all duration-300 relative overflow-hidden ${
+              activeSection === 'tutorials'
+                ? 'bg-gradient-to-br from-blue-600/30 to-blue-800/30 border border-blue-500/50'
+                : 'bg-gray-800/70 hover:bg-gray-700/70 border border-gray-600/50'
             }`}
           >
-            <div className="flex flex-col items-center text-center">
-              <div className={`p-2 sm:p-3 rounded-xl mb-2 sm:mb-3 ${
-                activeSection === 'tutorials' ? 'bg-blue-500/20' : 'bg-gray-700/50'
-              }`}>
-                <BookOpen className="w-5 h-5 sm:w-6 sm:h-6 text-blue-400" />
+            <div className="absolute inset-0 bg-gradient-to-br from-blue-500/10 to-transparent"></div>
+            <div className="relative z-10">
+              <div className="w-12 h-12 mx-auto mb-3 bg-blue-600/20 rounded-lg flex items-center justify-center">
+                <BookOpen className="w-6 h-6 text-blue-400" />
               </div>
-              <h3 className="font-semibold text-xs sm:text-sm">Tutoriais</h3>
-              <p className="text-xs text-gray-400 mt-1">Aprenda</p>
+              <h3 className="font-semibold text-white mb-1">Tutoriais</h3>
+              <p className="text-xs text-gray-400">Aprenda</p>
             </div>
           </button>
 
           <button
             onClick={() => setActiveSection('marketplace')}
-            className={`p-4 sm:p-6 rounded-2xl border transition-all duration-300 ${
-              activeSection === 'marketplace' 
-                ? 'bg-gradient-to-br from-emerald-600/20 to-blue-600/20 border-emerald-500/50 shadow-lg shadow-emerald-500/20' 
-                : 'bg-gray-900/50 border-gray-700/50 hover:border-gray-600/50 hover:bg-gray-800/50'
+            className={`p-4 sm:p-6 rounded-xl transition-all duration-300 relative overflow-hidden ${
+              activeSection === 'marketplace'
+                ? 'bg-gradient-to-br from-emerald-600/30 to-emerald-800/30 border border-emerald-500/50'
+                : 'bg-gray-800/70 hover:bg-gray-700/70 border border-gray-600/50'
             }`}
           >
-            <div className="flex flex-col items-center text-center">
-              <div className={`p-2 sm:p-3 rounded-xl mb-2 sm:mb-3 ${
-                activeSection === 'marketplace' ? 'bg-emerald-500/20' : 'bg-gray-700/50'
-              }`}>
-                <ShoppingCart className="w-5 h-5 sm:w-6 sm:h-6 text-emerald-400" />
+            <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/10 to-transparent"></div>
+            <div className="relative z-10">
+              <div className="w-12 h-12 mx-auto mb-3 bg-emerald-600/20 rounded-lg flex items-center justify-center">
+                <ShoppingCart className="w-6 h-6 text-emerald-400" />
               </div>
-              <h3 className="font-semibold text-xs sm:text-sm">Marketplace</h3>
-              <p className="text-xs text-gray-400 mt-1">Comprar</p>
+              <h3 className="font-semibold text-white mb-1">Marketplace</h3>
+              <p className="text-xs text-gray-400">Comprar</p>
             </div>
           </button>
 
           <button
-            onClick={() => setActiveSection('experts')}
-            className={`p-4 sm:p-6 rounded-2xl border transition-all duration-300 col-span-2 sm:col-span-1 ${
-              activeSection === 'experts' 
-                ? 'bg-gradient-to-br from-blue-600/20 to-emerald-600/20 border-blue-500/50 shadow-lg shadow-blue-500/20' 
-                : 'bg-gray-900/50 border-gray-700/50 hover:border-gray-600/50 hover:bg-gray-800/50'
+            onClick={() => setActiveSection('specialists')}
+            className={`p-4 sm:p-6 rounded-xl transition-all duration-300 relative overflow-hidden ${
+              activeSection === 'specialists'
+                ? 'bg-gradient-to-br from-blue-600/30 to-blue-800/30 border border-blue-500/50'
+                : 'bg-gray-800/70 hover:bg-gray-700/70 border border-gray-600/50'
             }`}
           >
-            <div className="flex flex-col items-center text-center">
-              <div className={`p-2 sm:p-3 rounded-xl mb-2 sm:mb-3 ${
-                activeSection === 'experts' ? 'bg-blue-500/20' : 'bg-gray-700/50'
-              }`}>
-                <UserCheck className="w-5 h-5 sm:w-6 sm:h-6 text-blue-400" />
+            <div className="absolute inset-0 bg-gradient-to-br from-blue-500/10 to-transparent"></div>
+            <div className="relative z-10">
+              <div className="w-12 h-12 mx-auto mb-3 bg-blue-600/20 rounded-lg flex items-center justify-center">
+                <UserCheck className="w-6 h-6 text-blue-400" />
               </div>
-              <h3 className="font-semibold text-xs sm:text-sm">Especialistas</h3>
-              <p className="text-xs text-gray-400 mt-1">Encontrar</p>
+              <h3 className="font-semibold text-white mb-1">Especialistas</h3>
+              <p className="text-xs text-gray-400">Encontrar</p>
             </div>
+          </button>
+
+          <button
+            onClick={() => setActiveSection('users')}
+            className={`p-4 sm:p-6 rounded-xl transition-all duration-300 relative overflow-hidden ${
+              activeSection === 'users'
+                ? 'bg-gradient-to-br from-emerald-600/30 to-emerald-800/30 border border-emerald-500/50'
+                : 'bg-gray-800/70 hover:bg-gray-700/70 border border-gray-600/50'
+            }`}
+          >
+            <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/10 to-transparent"></div>
+            <div className="relative z-10">
+              <div className="w-12 h-12 mx-auto mb-3 bg-emerald-600/20 rounded-lg flex items-center justify-center">
+                <Users className="w-6 h-6 text-emerald-400" />
+              </div>
+              <h3 className="font-semibold text-white mb-1">Usuários</h3>
+              <p className="text-xs text-gray-400">Conectar</p>
+            </div>
+          </button>
+        </div>
+
+        {/* Action Buttons */}
+        <div className="flex space-x-3 mb-8">
+          <button
+            onClick={() => navigate('/backtest-analysis')}
+            className="flex-1 px-4 py-3 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 rounded-lg flex items-center justify-center space-x-2 transition-all duration-200"
+          >
+            <BarChart2 className="w-5 h-5" />
+            <span className="font-medium">Nova Análise</span>
+          </button>
+          <button
+            onClick={() => navigate('/robots')}
+            className="flex-1 px-4 py-3 bg-gradient-to-r from-emerald-600 to-emerald-700 hover:from-emerald-700 hover:to-emerald-800 rounded-lg flex items-center justify-center space-x-2 transition-all duration-200"
+          >
+            <Code2 className="w-5 h-5" />
+            <span className="font-medium">Novo Robô</span>
           </button>
         </div>
 
@@ -603,7 +618,7 @@ export function DashboardPage() {
               type="text"
               placeholder={
                 activeSection === 'feed' ? 'Buscar análises, robôs ou usuários...' :
-                activeSection === 'experts' ? 'Buscar especialistas...' :
+                activeSection === 'specialists' ? 'Buscar especialistas...' :
                 activeSection === 'tutorials' ? 'Buscar tutoriais...' :
                 'Buscar...'
               }
@@ -614,90 +629,285 @@ export function DashboardPage() {
           </div>
         </div>
 
-        {/* Content based on active section */}
+        {/* Content Sections */}
+        {activeSection === 'users' && (
+          <div className="space-y-6">
+            <div className="bg-gray-800/50 backdrop-blur-sm rounded-xl p-6 border border-gray-700/50">
+              <h2 className="text-xl font-bold mb-4 flex items-center">
+                <Users className="w-5 h-5 text-emerald-400 mr-2" />
+                Encontrar Usuários
+              </h2>
+              
+              <div className="relative mb-6">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                <input
+                  type="text"
+                  placeholder="Buscar usuários por nome ou especialidade..."
+                  className="w-full pl-10 pr-4 py-3 bg-gray-900/50 border border-gray-600/50 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-emerald-500/50"
+                />
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {[
+                  { name: 'Carlos Quant', specialty: 'Quantitative Analysis', score: 94, level: 'Expert', avatar: 'https://images.pexels.com/photos/2379004/pexels-photo-2379004.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&fit=crop' },
+                  { name: 'Ana Dev', specialty: 'HFT Development', score: 87, level: 'Pro', avatar: 'https://images.pexels.com/photos/774909/pexels-photo-774909.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&fit=crop' },
+                  { name: 'Pedro Algo', specialty: 'Machine Learning', score: 91, level: 'Expert', avatar: 'https://images.pexels.com/photos/1222271/pexels-photo-1222271.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&fit=crop' },
+                  { name: 'Marina Sys', specialty: 'Risk Management', score: 89, level: 'Pro', avatar: 'https://images.pexels.com/photos/1239291/pexels-photo-1239291.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&fit=crop' },
+                  { name: 'Lucas Tech', specialty: 'Algorithmic Trading', score: 96, level: 'Expert', avatar: 'https://images.pexels.com/photos/1681010/pexels-photo-1681010.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&fit=crop' },
+                  { name: 'Sofia Quant', specialty: 'Portfolio Optimization', score: 85, level: 'Pro', avatar: 'https://images.pexels.com/photos/1130626/pexels-photo-1130626.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&fit=crop' }
+                ].map((user, index) => (
+                  <div key={index} className="bg-gray-900/50 rounded-lg p-4 border border-gray-700/50 hover:border-emerald-500/30 transition-all duration-200">
+                    <div className="flex items-center space-x-3 mb-4">
+                      <img 
+                        src={user.avatar} 
+                        alt={user.name}
+                        className="w-12 h-12 rounded-full object-cover"
+                      />
+                      <div className="flex-1">
+                        <div className="flex items-center space-x-2">
+                          <h3 className="font-semibold text-white">{user.name}</h3>
+                          <div className="flex items-center space-x-1">
+                            <div className="w-4 h-4 bg-gradient-to-r from-blue-500 to-emerald-500 rounded-full flex items-center justify-center">
+                              <span className="text-xs font-bold text-white">Q</span>
+                            </div>
+                            <span className="text-xs font-medium text-emerald-400">{user.score}</span>
+                          </div>
+                        </div>
+                        <p className="text-sm text-gray-400">{user.specialty}</p>
+                        <div className="flex items-center space-x-2 mt-1">
+                          <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${
+                            user.level === 'Expert' ? 'bg-emerald-500/20 text-emerald-400' : 'bg-blue-500/20 text-blue-400'
+                          }`}>
+                            {user.level}
+                          </span>
+                          <div className="w-2 h-2 bg-emerald-400 rounded-full"></div>
+                          <span className="text-xs text-gray-400">Online</span>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <div className="flex space-x-2">
+                      <button className="flex-1 px-3 py-2 bg-blue-600/80 hover:bg-blue-600 rounded-lg text-sm font-medium transition-colors flex items-center justify-center space-x-1">
+                        <BarChart2 className="w-4 h-4" />
+                        <span>Análise</span>
+                      </button>
+                      <button className="flex-1 px-3 py-2 bg-emerald-600/80 hover:bg-emerald-600 rounded-lg text-sm font-medium transition-colors flex items-center justify-center space-x-1">
+                        <Bot className="w-4 h-4" />
+                        <span>Robô</span>
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        )}
+
+        {activeSection === 'feed' && (
+          <div className="space-y-6">
+            {/* Create Post */}
+            <div className="bg-gray-800/50 backdrop-blur-sm rounded-xl p-6 border border-gray-700/50">
+              <div className="flex items-center space-x-3 mb-4">
+                <img 
+                  src="https://images.pexels.com/photos/2379004/pexels-photo-2379004.jpeg?auto=compress&cs=tinysrgb&w=50&h=50&fit=crop" 
+                  alt="Your avatar"
+                  className="w-10 h-10 rounded-full object-cover"
+                />
+                <input
+                  type="text"
+                  placeholder="Compartilhe uma descoberta, estratégia ou insight..."
+                  className="flex-1 px-4 py-3 bg-gray-900/50 border border-gray-600/50 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50"
+                />
+              </div>
+              
+              <div className="flex space-x-3">
+                <button className="flex-1 px-4 py-2 bg-blue-600/80 hover:bg-blue-600 rounded-lg text-sm font-medium transition-colors flex items-center justify-center space-x-2">
+                  <BarChart2 className="w-4 h-4" />
+                  <span>Compartilhar Análise</span>
+                </button>
+                <button className="flex-1 px-4 py-2 bg-emerald-600/80 hover:bg-emerald-600 rounded-lg text-sm font-medium transition-colors flex items-center justify-center space-x-2">
+                  <Bot className="w-4 h-4" />
+                  <span>Compartilhar Robô</span>
+                </button>
+              </div>
+            </div>
+
+            {/* Feed Posts */}
+            <div className="space-y-4">
+              {[
+                {
+                  user: 'Carlos Quant',
+                  quantScore: 94,
+                  level: 'Expert',
+                  avatar: 'https://images.pexels.com/photos/2379004/pexels-photo-2379004.jpeg?auto=compress&cs=tinysrgb&w=50&h=50&fit=crop',
+                  type: 'ANÁLISE',
+                  time: '15/01/2024',
+                  content: 'Estratégia de arbitragem estatística com correlação PETR4/VALE3. Sharpe 2.1, Max DD 8.5%',
+                  metrics: { profitFactor: '2.3', winRate: '68.5%' },
+                  likes: 42,
+                  views: 287
+                },
+                {
+                  user: 'Ana Dev',
+                  quantScore: 87,
+                  level: 'Pro',
+                  avatar: 'https://images.pexels.com/photos/774909/pexels-photo-774909.jpeg?auto=compress&cs=tinysrgb&w=50&h=50&fit=crop',
+                  type: 'ROBÔ',
+                  time: '14/01/2024',
+                  content: 'Robô HFT para mini índice com latência <2ms. Implementação em NTSL otimizada.',
+                  likes: 35,
+                  views: 156
+                },
+                {
+                  user: 'Pedro Algo',
+                  quantScore: 91,
+                  level: 'Expert',
+                  avatar: 'https://images.pexels.com/photos/1222271/pexels-photo-1222271.jpeg?auto=compress&cs=tinysrgb&w=50&h=50&fit=crop',
+                  type: 'ANÁLISE',
+                  time: '13/01/2024',
+                  content: 'Machine Learning aplicado a mean reversion. Modelo XGBoost com 72% de precisão.',
+                  metrics: { profitFactor: '1.8', winRate: '72.3%' },
+                  likes: 28,
+                  views: 198
+                }
+              ].map((post, index) => (
+                <div key={index} className="bg-gray-800/50 backdrop-blur-sm rounded-xl p-6 border border-gray-700/50 hover:border-blue-500/30 transition-all duration-200">
+                  <div className="flex items-center justify-between mb-4">
+                    <div className="flex items-center space-x-3">
+                      <img 
+                        src={post.avatar} 
+                        alt={post.user}
+                        className="w-10 h-10 rounded-full object-cover"
+                      />
+                      <div>
+                        <div className="flex items-center space-x-2">
+                          <h3 className="font-semibold text-white">{post.user}</h3>
+                          <div className="flex items-center space-x-1">
+                            <div className="w-4 h-4 bg-gradient-to-r from-blue-500 to-emerald-500 rounded-full flex items-center justify-center">
+                              <span className="text-xs font-bold text-white">Q</span>
+                            </div>
+                            <span className="text-xs font-medium text-emerald-400">{post.quantScore}</span>
+                          </div>
+                          <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${
+                            post.level === 'Expert' ? 'bg-emerald-500/20 text-emerald-400' : 'bg-blue-500/20 text-blue-400'
+                          }`}>
+                            {post.level}
+                          </span>
+                        </div>
+                        <p className="text-sm text-gray-400">{post.time}</p>
+                      </div>
+                    </div>
+                    <span className={`px-2 py-1 rounded-lg text-xs font-medium ${
+                      post.type === 'ANÁLISE' ? 'bg-blue-500/20 text-blue-400' : 'bg-emerald-500/20 text-emerald-400'
+                    }`}>
+                      {post.type}
+                    </span>
+                  </div>
+                  
+                  <p className="text-gray-300 mb-4">{post.content}</p>
+                  
+                  {post.metrics && (
+                    <div className="flex space-x-4 mb-4">
+                      <div className="bg-gray-900/50 px-3 py-2 rounded-lg">
+                        <p className="text-xs text-gray-400">Profit Factor</p>
+                        <p className="font-bold text-emerald-400">{post.metrics.profitFactor}</p>
+                      </div>
+                      <div className="bg-gray-900/50 px-3 py-2 rounded-lg">
+                        <p className="text-xs text-gray-400">Win Rate</p>
+                        <p className="font-bold text-blue-400">{post.metrics.winRate}</p>
+                      </div>
+                    </div>
+                  )}
+                  
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center space-x-4 text-gray-400">
+                      <div className="flex items-center space-x-1">
+                        <Heart className="w-4 h-4" />
+                        <span className="text-sm">{post.likes}</span>
+                      </div>
+                      <div className="flex items-center space-x-1">
+                        <Eye className="w-4 h-4" />
+                        <span className="text-sm">{post.views}</span>
+                      </div>
+                    </div>
+                    
+                    <button className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                      post.type === 'ANÁLISE' 
+                        ? 'bg-blue-600/80 hover:bg-blue-600 text-white' 
+                        : 'bg-emerald-600/80 hover:bg-emerald-600 text-white'
+                    }`}>
+                      {post.type === 'ANÁLISE' ? 'Ver Análise' : 'Acessar Robô'}
+                    </button>
+                  </div>
+                </div>
+              ))}
+              
+              {/* Ver Mais Button */}
+              <div className="text-center mt-6">
+                <button 
+                  onClick={() => setShowAllPosts(!showAllPosts)}
+                  className="px-6 py-3 bg-gradient-to-r from-blue-600/20 to-emerald-600/20 hover:from-blue-600/30 hover:to-emerald-600/30 border border-blue-500/30 rounded-lg text-white font-medium transition-all duration-200 flex items-center space-x-2 mx-auto"
+                >
+                  <span>{showAllPosts ? 'Ver Menos' : 'Ver Mais Posts'}</span>
+                  <ChevronDown className={`w-4 h-4 transition-transform ${showAllPosts ? 'rotate-180' : ''}`} />
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
         {activeSection === 'strategies' && (
           <div className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {/* Pack de Robôs Parceiro */}
-              <div className="bg-gradient-to-br from-emerald-900/80 to-emerald-800/80 backdrop-blur-sm rounded-2xl p-6 border border-emerald-500/30 hover:border-emerald-400/50 transition-all duration-200">
-                <div className="flex items-center mb-4">
-                  <div className="bg-emerald-500/20 rounded-xl p-3 mr-4">
-                    <Bot className="w-8 h-8 text-emerald-400" />
+            <div className="bg-gray-800/50 backdrop-blur-sm rounded-xl p-6 border border-gray-700/50 relative overflow-hidden">
+              <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/5 to-blue-500/5"></div>
+              <div className="relative z-10">
+                <div className="flex items-center space-x-3 mb-6">
+                  <div className="w-12 h-12 bg-emerald-600/20 rounded-lg flex items-center justify-center">
+                    <Shield className="w-6 h-6 text-emerald-400" />
                   </div>
                   <div>
-                    <h3 className="text-xl font-bold text-emerald-400">Pack de Robôs</h3>
-                    <p className="text-emerald-300/80">Parceiro DevHub Trader</p>
+                    <h2 className="text-xl font-bold text-white">Estratégias Verificadas</h2>
+                    <p className="text-gray-400">Estratégias testadas e aprovadas pela comunidade</p>
                   </div>
                 </div>
-                <p className="text-gray-300 mb-4">
-                  Robôs verificados e testados pela nossa equipe de especialistas. Estratégias comprovadas no mercado.
-                </p>
-                <div className="flex items-center justify-between mb-4">
-                  <span className="text-emerald-400 font-bold">15+ Robôs</span>
-                  <div className="flex items-center">
-                    <Verified className="w-4 h-4 text-emerald-400 mr-1" />
-                    <span className="text-emerald-400 text-sm">Verificado</span>
+                
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div className="bg-gradient-to-br from-emerald-600/10 to-emerald-800/10 rounded-lg p-4 border border-emerald-500/20 hover:border-emerald-500/40 transition-all duration-200 cursor-pointer">
+                    <div className="flex items-center space-x-2 mb-3">
+                      <Package className="w-5 h-5 text-emerald-400" />
+                      <h3 className="font-semibold text-white">Pack de Robôs</h3>
+                    </div>
+                    <p className="text-sm text-gray-400 mb-3">Parceiro DevHub Trader</p>
+                    <div className="flex items-center justify-between">
+                      <span className="text-emerald-400 font-medium">R$ 299/mês</span>
+                      <ExternalLink className="w-4 h-4 text-gray-400" />
+                    </div>
+                  </div>
+                  
+                  <div className="bg-gradient-to-br from-blue-600/10 to-blue-800/10 rounded-lg p-4 border border-blue-500/20 hover:border-blue-500/40 transition-all duration-200 cursor-pointer">
+                    <div className="flex items-center space-x-2 mb-3">
+                      <Zap className="w-5 h-5 text-blue-400" />
+                      <h3 className="font-semibold text-white">Copy Trade IA</h3>
+                    </div>
+                    <p className="text-sm text-gray-400 mb-3">Premium</p>
+                    <div className="flex items-center justify-between">
+                      <span className="text-blue-400 font-medium">R$ 599/mês</span>
+                      <ExternalLink className="w-4 h-4 text-gray-400" />
+                    </div>
+                  </div>
+                  
+                  <div className="bg-gradient-to-br from-emerald-600/10 to-blue-600/10 rounded-lg p-4 border border-emerald-500/20 hover:border-emerald-500/40 transition-all duration-200 cursor-pointer">
+                    <div className="flex items-center space-x-2 mb-3">
+                      <Settings className="w-5 h-5 text-emerald-400" />
+                      <h3 className="font-semibold text-white">Robô Personalizado</h3>
+                    </div>
+                    <p className="text-sm text-gray-400 mb-3">Sob medida</p>
+                    <div className="flex items-center justify-between">
+                      <span className="text-emerald-400 font-medium">Consultar</span>
+                      <ExternalLink className="w-4 h-4 text-gray-400" />
+                    </div>
                   </div>
                 </div>
-                <button 
-                  onClick={() => window.open('https://profitestrategista.com.br/robots', '_blank')}
-                  className="w-full py-3 bg-emerald-600 hover:bg-emerald-700 rounded-xl text-white font-medium transition-all duration-200 flex items-center justify-center"
-                >
-                  <ExternalLink className="w-4 h-4 mr-2" />
-                  Acessar Pack
-                </button>
-              </div>
-
-              {/* Copy Trade IA Premium */}
-              <div className="bg-gradient-to-br from-blue-900/80 to-purple-900/80 backdrop-blur-sm rounded-2xl p-6 border border-blue-500/30 hover:border-blue-400/50 transition-all duration-200">
-                <div className="flex items-center mb-4">
-                  <div className="bg-blue-500/20 rounded-xl p-3 mr-4">
-                    <Sparkles className="w-8 h-8 text-blue-400" />
-                  </div>
-                  <div>
-                    <h3 className="text-xl font-bold text-blue-400">Copy Trade IA</h3>
-                    <p className="text-blue-300/80">Premium</p>
-                  </div>
-                </div>
-                <p className="text-gray-300 mb-4">
-                  Sistema de copy trading com inteligência artificial. Replique estratégias dos melhores traders automaticamente.
-                </p>
-                <div className="flex items-center justify-between mb-4">
-                  <span className="text-blue-400 font-bold">IA Avançada</span>
-                  <div className="flex items-center">
-                    <Crown className="w-4 h-4 text-blue-400 mr-1" />
-                    <span className="text-blue-400 text-sm">Premium</span>
-                  </div>
-                </div>
-                <button className="w-full py-3 bg-blue-600 hover:bg-blue-700 rounded-xl text-white font-medium transition-all duration-200">
-                  Conhecer Serviço
-                </button>
-              </div>
-
-              {/* Robô Personalizado */}
-              <div className="bg-gradient-to-br from-gray-900/80 to-gray-800/80 backdrop-blur-sm rounded-2xl p-6 border border-gray-500/30 hover:border-gray-400/50 transition-all duration-200">
-                <div className="flex items-center mb-4">
-                  <div className="bg-gray-500/20 rounded-xl p-3 mr-4">
-                    <Wrench className="w-8 h-8 text-gray-400" />
-                  </div>
-                  <div>
-                    <h3 className="text-xl font-bold text-gray-300">Robô Personalizado</h3>
-                    <p className="text-gray-400">Sob Medida</p>
-                  </div>
-                </div>
-                <p className="text-gray-300 mb-4">
-                  Desenvolvimento de robôs personalizados para suas necessidades específicas. Consultoria completa incluída.
-                </p>
-                <div className="flex items-center justify-between mb-4">
-                  <span className="text-gray-400 font-bold">Consultoria</span>
-                  <div className="flex items-center">
-                    <GraduationCap className="w-4 h-4 text-gray-400 mr-1" />
-                    <span className="text-gray-400 text-sm">Personalizado</span>
-                  </div>
-                </div>
-                <button className="w-full py-3 bg-gray-600 hover:bg-gray-700 rounded-xl text-white font-medium transition-all duration-200">
-                  Solicitar Orçamento
-                </button>
               </div>
             </div>
           </div>
@@ -705,470 +915,355 @@ export function DashboardPage() {
 
         {activeSection === 'tutorials' && (
           <div className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {tutorials.map((tutorial) => (
-                <div key={tutorial.id} className="bg-gradient-to-br from-gray-900/80 to-gray-800/80 backdrop-blur-sm rounded-2xl p-6 border border-gray-700/50 hover:border-gray-600/50 transition-all duration-200">
-                  <div className="flex items-center mb-4">
-                    <div className="bg-blue-500/20 rounded-xl p-3 mr-4">
-                      {getTutorialIcon(tutorial.category)}
-                    </div>
-                    <div className="flex-1">
-                      <div className="flex items-center gap-2 mb-1">
-                        <span className={`px-2 py-1 rounded-full text-xs font-medium ${getTutorialColor(tutorial.difficulty)}`}>
-                          {tutorial.difficulty === 'beginner' ? 'Iniciante' : 
-                           tutorial.difficulty === 'intermediate' ? 'Intermediário' : 'Avançado'}
-                        </span>
-                        <span className="text-xs text-gray-400">{tutorial.duration}</span>
-                      </div>
-                    </div>
+            <div className="bg-gray-800/50 backdrop-blur-sm rounded-xl p-6 border border-gray-700/50 relative overflow-hidden">
+              <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-emerald-500/5"></div>
+              <div className="relative z-10">
+                <div className="flex items-center space-x-3 mb-6">
+                  <div className="w-12 h-12 bg-blue-600/20 rounded-lg flex items-center justify-center">
+                    <BookOpen className="w-6 h-6 text-blue-400" />
                   </div>
-                  
-                  <h3 className="text-lg font-semibold mb-2">{tutorial.title}</h3>
-                  <p className="text-gray-400 text-sm mb-4">{tutorial.description}</p>
-                  
-                  <button className="w-full py-2 bg-blue-600 hover:bg-blue-700 rounded-xl text-white font-medium transition-all duration-200 flex items-center justify-center">
-                    <Play className="w-4 h-4 mr-2" />
-                    Assistir Tutorial
-                  </button>
+                  <div>
+                    <h2 className="text-xl font-bold text-white">Tutoriais</h2>
+                    <p className="text-gray-400">Aprenda a usar todas as funcionalidades</p>
+                  </div>
                 </div>
-              ))}
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {[
+                    {
+                      title: 'Como fazer upload de CSV',
+                      description: 'Aprenda a preparar e enviar dados de backtest',
+                      icon: Upload,
+                      duration: '5 min',
+                      difficulty: 'Fácil'
+                    },
+                    {
+                      title: 'Gerar código de robô com IA',
+                      description: 'Tutorial completo para criar robôs automaticamente',
+                      icon: Bot,
+                      duration: '8 min',
+                      difficulty: 'Médio'
+                    },
+                    {
+                      title: 'Como usar no Profit',
+                      description: 'Configuração e implementação na plataforma',
+                      icon: TrendingUp,
+                      duration: '12 min',
+                      difficulty: 'Médio'
+                    },
+                    {
+                      title: 'Análise de métricas',
+                      description: 'Entenda Sharpe, Drawdown e outras métricas',
+                      icon: BarChart2,
+                      duration: '10 min',
+                      difficulty: 'Avançado'
+                    },
+                    {
+                      title: 'Dicas de otimização',
+                      description: 'Como melhorar performance dos seus robôs',
+                      icon: Zap,
+                      duration: '15 min',
+                      difficulty: 'Avançado'
+                    },
+                    {
+                      title: 'Gerenciamento de risco',
+                      description: 'Estratégias para proteger seu capital',
+                      icon: Shield,
+                      duration: '20 min',
+                      difficulty: 'Avançado'
+                    }
+                  ].map((tutorial, index) => (
+                    <div key={index} className="bg-gray-900/50 rounded-lg p-4 border border-gray-700/50 hover:border-blue-500/30 transition-all duration-200 cursor-pointer">
+                      <div className="flex items-center space-x-3 mb-3">
+                        <div className="w-10 h-10 bg-blue-600/20 rounded-lg flex items-center justify-center">
+                          <tutorial.icon className="w-5 h-5 text-blue-400" />
+                        </div>
+                        <div className="flex-1">
+                          <h3 className="font-semibold text-white">{tutorial.title}</h3>
+                          <div className="flex items-center space-x-2 mt-1">
+                            <span className="text-xs text-gray-400">{tutorial.duration}</span>
+                            <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${
+                              tutorial.difficulty === 'Fácil' ? 'bg-emerald-500/20 text-emerald-400' :
+                              tutorial.difficulty === 'Médio' ? 'bg-blue-500/20 text-blue-400' :
+                              'bg-gray-500/20 text-gray-400'
+                            }`}>
+                              {tutorial.difficulty}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                      <p className="text-sm text-gray-400 mb-3">{tutorial.description}</p>
+                      <button className="w-full px-4 py-2 bg-blue-600/80 hover:bg-blue-600 rounded-lg text-sm font-medium transition-colors">
+                        Assistir Tutorial
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              </div>
             </div>
           </div>
         )}
 
         {activeSection === 'marketplace' && (
           <div className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {marketplaceItems.map((item) => (
-                <div key={item.id} className="bg-gradient-to-br from-gray-900/80 to-gray-800/80 backdrop-blur-sm rounded-2xl p-6 border border-gray-700/50 hover:border-gray-600/50 transition-all duration-200">
-                  <div className="flex items-center mb-4">
-                    <div className="w-16 h-16 rounded-xl bg-gray-700 flex items-center justify-center overflow-hidden mr-4">
-                      <img src={item.logo} alt={item.company_name} className="w-full h-full object-cover" />
-                    </div>
-                    <div className="flex-1">
-                      <div className="flex items-center gap-2 mb-1">
-                        <h3 className="font-semibold">{item.company_name}</h3>
-                        {item.verified && (
-                          <Verified className="w-4 h-4 text-blue-400" />
-                        )}
-                      </div>
-                      <div className="flex items-center">
-                        <Star className="w-4 h-4 text-yellow-500 mr-1" />
-                        <span className="text-sm">{item.rating}</span>
-                      </div>
-                    </div>
+            <div className="bg-gray-800/50 backdrop-blur-sm rounded-xl p-6 border border-gray-700/50 relative overflow-hidden">
+              <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/5 to-blue-500/5"></div>
+              <div className="relative z-10">
+                <div className="flex items-center space-x-3 mb-6">
+                  <div className="w-12 h-12 bg-emerald-600/20 rounded-lg flex items-center justify-center">
+                    <ShoppingCart className="w-6 h-6 text-emerald-400" />
                   </div>
-                  
-                  <p className="text-gray-300 text-sm mb-4">{item.description}</p>
-                  
-                  <div className="flex flex-wrap gap-2 mb-4">
-                    {item.services.slice(0, 2).map((service, index) => (
-                      <span key={index} className="px-2 py-1 bg-blue-900/50 text-blue-300 rounded-lg text-xs">
-                        {service}
-                      </span>
-                    ))}
-                    {item.services.length > 2 && (
-                      <span className="px-2 py-1 bg-gray-700/50 text-gray-400 rounded-lg text-xs">
-                        +{item.services.length - 2} mais
-                      </span>
-                    )}
+                  <div>
+                    <h2 className="text-xl font-bold text-white">Marketplace</h2>
+                    <p className="text-gray-400">Empresas e traders verificados</p>
                   </div>
-                  
-                  <button className="w-full py-2 bg-emerald-600 hover:bg-emerald-700 rounded-xl text-white font-medium transition-all duration-200 flex items-center justify-center">
-                    <ExternalLink className="w-4 h-4 mr-2" />
-                    Entrar em Contato
-                  </button>
                 </div>
-              ))}
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {[
+                    {
+                      name: 'TradeTech Solutions',
+                      type: 'Empresa',
+                      verified: true,
+                      rating: 4.9,
+                      service: 'Desenvolvimento de robôs',
+                      logo: 'https://images.pexels.com/photos/3184291/pexels-photo-3184291.jpeg?auto=compress&cs=tinysrgb&w=100&h=100&fit=crop'
+                    },
+                    {
+                      name: 'QuantAlpha Partners',
+                      type: 'Gestora',
+                      verified: true,
+                      rating: 4.8,
+                      service: 'Gestão quantitativa',
+                      logo: 'https://images.pexels.com/photos/3184338/pexels-photo-3184338.jpeg?auto=compress&cs=tinysrgb&w=100&h=100&fit=crop'
+                    },
+                    {
+                      name: 'AlgoTrader Pro',
+                      type: 'Trader',
+                      verified: true,
+                      rating: 4.7,
+                      service: 'Copy trading IA',
+                      logo: 'https://images.pexels.com/photos/3184339/pexels-photo-3184339.jpeg?auto=compress&cs=tinysrgb&w=100&h=100&fit=crop'
+                    },
+                    {
+                      name: 'RiskMaster Analytics',
+                      type: 'Consultoria',
+                      verified: true,
+                      rating: 4.9,
+                      service: 'Análise de risco',
+                      logo: 'https://images.pexels.com/photos/3184340/pexels-photo-3184340.jpeg?auto=compress&cs=tinysrgb&w=100&h=100&fit=crop'
+                    },
+                    {
+                      name: 'HFT Systems',
+                      type: 'Empresa',
+                      verified: true,
+                      rating: 4.6,
+                      service: 'High Frequency Trading',
+                      logo: 'https://images.pexels.com/photos/3184341/pexels-photo-3184341.jpeg?auto=compress&cs=tinysrgb&w=100&h=100&fit=crop'
+                    },
+                    {
+                      name: 'DataDriven Capital',
+                      type: 'Fundo',
+                      verified: true,
+                      rating: 4.8,
+                      service: 'Investimento quantitativo',
+                      logo: 'https://images.pexels.com/photos/3184342/pexels-photo-3184342.jpeg?auto=compress&cs=tinysrgb&w=100&h=100&fit=crop'
+                    }
+                  ].map((company, index) => (
+                    <div key={index} className="bg-gray-900/50 rounded-lg p-4 border border-gray-700/50 hover:border-emerald-500/30 transition-all duration-200 cursor-pointer">
+                      <div className="flex items-center space-x-3 mb-4">
+                        <img 
+                          src={company.logo} 
+                          alt={company.name}
+                          className="w-12 h-12 rounded-lg object-cover"
+                        />
+                        <div className="flex-1">
+                          <div className="flex items-center space-x-2">
+                            <h3 className="font-semibold text-white">{company.name}</h3>
+                            {company.verified && (
+                              <div className="w-5 h-5 bg-emerald-500 rounded-full flex items-center justify-center">
+                                <Check className="w-3 h-3 text-white" />
+                              </div>
+                            )}
+                          </div>
+                          <p className="text-sm text-gray-400">{company.type}</p>
+                        </div>
+                      </div>
+                      
+                      <p className="text-sm text-gray-300 mb-3">{company.service}</p>
+                      
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center space-x-1">
+                          <Star className="w-4 h-4 text-yellow-400 fill-current" />
+                          <span className="text-sm font-medium text-white">{company.rating}</span>
+                        </div>
+                        <button className="px-3 py-1.5 bg-emerald-600/80 hover:bg-emerald-600 rounded-lg text-sm font-medium transition-colors">
+                          Ver Detalhes
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
             </div>
           </div>
         )}
 
-        {activeSection === 'experts' && (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
-            {experts.map((expert) => (
-              <div key={expert.id} className="bg-gradient-to-br from-gray-900/80 to-gray-800/80 backdrop-blur-sm rounded-2xl p-4 sm:p-6 border border-gray-700/50 hover:border-gray-600/50 transition-all duration-200">
-                <div className="flex items-center space-x-3 sm:space-x-4 mb-4">
-                  <div className="relative">
-                    <div className="w-12 h-12 sm:w-16 sm:h-16 rounded-full bg-gray-700 flex items-center justify-center overflow-hidden">
-                      <img src={expert.avatar} alt={expert.name} className="w-full h-full object-cover" />
-                    </div>
-                    {expert.available && (
-                      <div className="absolute -bottom-1 -right-1 w-4 h-4 sm:w-5 sm:h-5 bg-emerald-500 rounded-full border-2 border-gray-900"></div>
-                    )}
+        {activeSection === 'specialists' && (
+          <div className="space-y-6">
+            <div className="bg-gray-800/50 backdrop-blur-sm rounded-xl p-6 border border-gray-700/50 relative overflow-hidden">
+              <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-emerald-500/5"></div>
+              <div className="relative z-10">
+                <div className="flex items-center space-x-3 mb-6">
+                  <div className="w-12 h-12 bg-blue-600/20 rounded-lg flex items-center justify-center">
+                    <UserCheck className="w-6 h-6 text-blue-400" />
                   </div>
-                  <div className="flex-1 min-w-0">
-                    <h3 className="font-semibold text-base sm:text-lg truncate">{expert.name}</h3>
-                    <p className="text-sm text-gray-400 truncate">{expert.specialty}</p>
-                    <div className="flex items-center mt-1">
-                      <Star className="w-3 h-3 sm:w-4 sm:h-4 text-yellow-500 mr-1" />
-                      <span className="text-sm">{expert.rating}</span>
-                      <span className="text-xs text-gray-400 ml-1">({expert.reviews})</span>
-                    </div>
+                  <div>
+                    <h2 className="text-xl font-bold text-white">Encontrar Especialistas</h2>
+                    <p className="text-gray-400">Profissionais especializados em trading</p>
                   </div>
                 </div>
                 
-                {/* QuantScore */}
-                <div className="bg-gray-800/50 rounded-lg p-3 mb-4">
-                  <div className="flex justify-between items-center mb-2">
-                    <span className="text-gray-400 text-sm">QuantScore</span>
-                    <span className={`font-bold text-lg ${getQuantScoreColor(expert.quantscore)}`}>
-                      {expert.quantscore}
-                    </span>
-                  </div>
-                  <div className="flex justify-between items-center">
-                    <span className="text-gray-400 text-sm">Taxa por hora</span>
-                    <span className="font-bold text-base sm:text-lg text-emerald-400">R$ {expert.hourly_rate}</span>
-                  </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {[
+                    {
+                      name: 'João Contador',
+                      specialty: 'Contabilidade Trader',
+                      experience: '8 anos',
+                      rating: 4.9,
+                      price: 'R$ 150/hora',
+                      avatar: 'https://images.pexels.com/photos/2182970/pexels-photo-2182970.jpeg?auto=compress&cs=tinysrgb&w=100&h=100&fit=crop'
+                    },
+                    {
+                      name: 'Maria Dev',
+                      specialty: 'Desenvolvedora Trader',
+                      experience: '6 anos',
+                      rating: 4.8,
+                      price: 'R$ 200/hora',
+                      avatar: 'https://images.pexels.com/photos/1239291/pexels-photo-1239291.jpeg?auto=compress&cs=tinysrgb&w=100&h=100&fit=crop'
+                    },
+                    {
+                      name: 'Carlos Gestor',
+                      specialty: 'Trader Gestor Profissional',
+                      experience: '12 anos',
+                      rating: 4.9,
+                      price: 'R$ 300/hora',
+                      avatar: 'https://images.pexels.com/photos/1681010/pexels-photo-1681010.jpeg?auto=compress&cs=tinysrgb&w=100&h=100&fit=crop'
+                    },
+                    {
+                      name: 'Ana Risk',
+                      specialty: 'Gestão de Risco',
+                      experience: '10 anos',
+                      rating: 4.7,
+                      price: 'R$ 250/hora',
+                      avatar: 'https://images.pexels.com/photos/774909/pexels-photo-774909.jpeg?auto=compress&cs=tinysrgb&w=100&h=100&fit=crop'
+                    },
+                    {
+                      name: 'Pedro Quant',
+                      specialty: 'Análise Quantitativa',
+                      experience: '9 anos',
+                      rating: 4.8,
+                      price: 'R$ 280/hora',
+                      avatar: 'https://images.pexels.com/photos/1222271/pexels-photo-1222271.jpeg?auto=compress&cs=tinysrgb&w=100&h=100&fit=crop'
+                    },
+                    {
+                      name: 'Sofia Legal',
+                      specialty: 'Consultoria Jurídica',
+                      experience: '7 anos',
+                      rating: 4.6,
+                      price: 'R$ 180/hora',
+                      avatar: 'https://images.pexels.com/photos/1130626/pexels-photo-1130626.jpeg?auto=compress&cs=tinysrgb&w=100&h=100&fit=crop'
+                    }
+                  ].map((specialist, index) => (
+                    <div key={index} className="bg-gray-900/50 rounded-lg p-4 border border-gray-700/50 hover:border-blue-500/30 transition-all duration-200">
+                      <div className="flex items-center space-x-3 mb-4">
+                        <img 
+                          src={specialist.avatar} 
+                          alt={specialist.name}
+                          className="w-12 h-12 rounded-full object-cover"
+                        />
+                        <div className="flex-1">
+                          <h3 className="font-semibold text-white">{specialist.name}</h3>
+                          <p className="text-sm text-gray-400">{specialist.specialty}</p>
+                          <div className="flex items-center space-x-2 mt-1">
+                            <Star className="w-3 h-3 text-yellow-400 fill-current" />
+                            <span className="text-xs text-gray-400">{specialist.rating}</span>
+                            <span className="text-xs text-gray-400">•</span>
+                            <span className="text-xs text-gray-400">{specialist.experience}</span>
+                          </div>
+                        </div>
+                      </div>
+                      
+                      <div className="flex items-center justify-between">
+                        <span className="text-emerald-400 font-medium">{specialist.price}</span>
+                        <button className="px-3 py-1.5 bg-blue-600/80 hover:bg-blue-600 rounded-lg text-sm font-medium transition-colors">
+                          Contratar
+                        </button>
+                      </div>
+                    </div>
+                  ))}
                 </div>
-                
-                <button className="w-full py-2 sm:py-3 bg-gradient-to-r from-blue-600 to-emerald-600 hover:from-blue-700 hover:to-emerald-700 rounded-xl text-white font-medium transition-all duration-200 text-sm sm:text-base">
-                  Contratar Especialista
-                </button>
               </div>
-            ))}
+            </div>
           </div>
         )}
 
-        {activeSection === 'feed' && (
-          <div className="space-y-6">
-            {/* Create Post - Mobile Optimized */}
-            <div className="bg-gradient-to-br from-gray-900/80 to-gray-800/80 backdrop-blur-sm rounded-2xl p-4 sm:p-6 border border-gray-700/50">
-              <div className="flex items-center space-x-3 sm:space-x-4 mb-4">
-                <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-gradient-to-br from-blue-500 to-emerald-500 flex items-center justify-center overflow-hidden">
-                  {profile?.avatar_url ? (
-                    <img src={profile.avatar_url} alt="Profile" className="w-full h-full object-cover" />
-                  ) : (
-                    <Users className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
+        {/* Ganhe Tokens Section */}
+        <div className="bg-gray-800/50 backdrop-blur-sm rounded-xl p-6 border border-gray-700/50 relative overflow-hidden">
+          <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/5 to-blue-500/5"></div>
+          <div className="relative z-10">
+            <div className="flex items-center space-x-3 mb-6">
+              <div className="w-12 h-12 bg-emerald-600/20 rounded-lg flex items-center justify-center">
+                <Zap className="w-6 h-6 text-emerald-400" />
+              </div>
+              <div>
+                <h2 className="text-xl font-bold text-white">Ganhe Tokens</h2>
+                <p className="text-gray-400">Complete desafios e ganhe tokens gratuitos</p>
+              </div>
+            </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              {challenges.map((challenge) => (
+                <div key={challenge.id} className="bg-gray-900/50 rounded-lg p-4 border border-gray-700/50">
+                  <div className="flex items-center justify-between mb-3">
+                    <div className="flex items-center space-x-2">
+                      {getCategoryIcon(challenge.category)}
+                      <h3 className="font-semibold">{challenge.title}</h3>
+                    </div>
+                    <div className={`px-2 py-1 rounded-full text-xs font-medium border ${getDifficultyColor(challenge.difficulty)}`}>
+                      {challenge.difficulty === 'easy' ? 'Fácil' : 
+                       challenge.difficulty === 'medium' ? 'Médio' : 'Difícil'}
+                    </div>
+                  </div>
+                  
+                  <p className="text-gray-400 text-sm mb-3">{challenge.description}</p>
+                  
+                  <div className="flex items-center justify-between mb-3">
+                    <div className="flex items-center space-x-1">
+                      <Coins className="w-4 h-4 text-yellow-500" />
+                      <span className="font-bold text-yellow-500">{challenge.reward}</span>
+                    </div>
+                    {challenge.completed && (
+                      <div className="flex items-center space-x-1 text-emerald-400">
+                        <CheckCircle className="w-4 h-4" />
+                        <span className="text-sm font-medium">Concluído</span>
+                      </div>
+                    )}
+                  </div>
+                  
+                  {!challenge.completed && (
+                    <div className="w-full bg-gray-700/50 rounded-full h-2">
+                      <div 
+                        className="bg-gradient-to-r from-blue-500 to-emerald-500 h-2 rounded-full transition-all duration-300" 
+                        style={{ width: `${challenge.progress}%` }}
+                      />
+                    </div>
                   )}
                 </div>
-                <input
-                  type="text"
-                  placeholder="Compartilhe uma descoberta, estratégia ou insight..."
-                  className="flex-1 bg-gray-800/50 border border-gray-600/50 rounded-xl px-3 sm:px-4 py-2 sm:py-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 backdrop-blur-sm text-sm sm:text-base"
-                  readOnly
-                />
-              </div>
-              <div className="grid grid-cols-2 gap-2 sm:gap-3">
-                <button
-                  onClick={() => navigate('/backtest-analysis')}
-                  className="py-2 sm:py-3 bg-gradient-to-r from-blue-600/20 to-blue-700/20 hover:from-blue-600/30 hover:to-blue-700/30 border border-blue-500/30 rounded-xl flex items-center justify-center space-x-2 transition-all duration-200"
-                >
-                  <BarChart2 className="w-4 h-4 sm:w-5 sm:h-5 text-blue-400" />
-                  <span className="text-blue-400 font-medium text-xs sm:text-sm">Compartilhar Análise</span>
-                </button>
-                <button
-                  onClick={() => navigate('/robots')}
-                  className="py-2 sm:py-3 bg-gradient-to-r from-emerald-600/20 to-emerald-700/20 hover:from-emerald-600/30 hover:to-emerald-700/30 border border-emerald-500/30 rounded-xl flex items-center justify-center space-x-2 transition-all duration-200"
-                >
-                  <Bot className="w-4 h-4 sm:w-5 sm:h-5 text-emerald-400" />
-                  <span className="text-emerald-400 font-medium text-xs sm:text-sm">Compartilhar Robô</span>
-                </button>
-              </div>
-            </div>
-
-            {/* Filter Pills - Mobile Optimized */}
-            <div className="flex flex-wrap gap-2 sm:gap-3">
-              <button
-                onClick={() => setFilterType('all')}
-                className={`px-3 sm:px-4 py-2 rounded-full text-xs sm:text-sm font-medium transition-all duration-200 ${
-                  filterType === 'all' 
-                    ? 'bg-blue-600 text-white shadow-lg' 
-                    : 'bg-gray-800/50 text-gray-400 hover:text-white hover:bg-gray-700/50'
-                }`}
-              >
-                Todos
-              </button>
-              <button
-                onClick={() => setFilterType('analysis')}
-                className={`px-3 sm:px-4 py-2 rounded-full text-xs sm:text-sm font-medium transition-all duration-200 ${
-                  filterType === 'analysis' 
-                    ? 'bg-blue-600 text-white shadow-lg' 
-                    : 'bg-gray-800/50 text-gray-400 hover:text-white hover:bg-gray-700/50'
-                }`}
-              >
-                Análises
-              </button>
-              <button
-                onClick={() => setFilterType('robot')}
-                className={`px-3 sm:px-4 py-2 rounded-full text-xs sm:text-sm font-medium transition-all duration-200 ${
-                  filterType === 'robot' 
-                    ? 'bg-emerald-600 text-white shadow-lg' 
-                    : 'bg-gray-800/50 text-gray-400 hover:text-white hover:bg-gray-700/50'
-                }`}
-              >
-                Robôs
-              </button>
-            </div>
-
-            {/* Posts Grid - Mobile First */}
-            <div className="grid grid-cols-1 gap-4 sm:gap-6">
-              {displayedPosts.map((post) => (
-                <div key={post.id} className="bg-gradient-to-br from-gray-900/80 to-gray-800/80 backdrop-blur-sm rounded-2xl p-4 sm:p-6 border border-gray-700/50 hover:border-gray-600/50 transition-all duration-200">
-                  <div className="flex items-start space-x-3 sm:space-x-4">
-                    <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-gray-700 flex items-center justify-center overflow-hidden flex-shrink-0">
-                      {post.user_avatar ? (
-                        <img src={post.user_avatar} alt={post.user_name} className="w-full h-full object-cover" />
-                      ) : (
-                        <Users className="w-5 h-5 sm:w-6 sm:h-6 text-gray-400" />
-                      )}
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3 mb-2">
-                        <h3 className="font-semibold text-base sm:text-lg">{post.user_name}</h3>
-                        <div className="flex items-center gap-2">
-                          <div className={`px-2 py-1 rounded-full text-xs font-medium border ${
-                            post.type === 'analysis' 
-                              ? 'bg-blue-500/20 text-blue-400 border-blue-500/30' 
-                              : 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30'
-                          }`}>
-                            {post.type === 'analysis' ? 'ANÁLISE' : 'ROBÔ'}
-                          </div>
-                          {post.quantscore && (
-                            <div className="flex items-center">
-                              <Trophy className="w-3 h-3 text-yellow-500 mr-1" />
-                              <span className={`text-xs font-bold ${getQuantScoreColor(post.quantscore)}`}>
-                                {post.quantscore}
-                              </span>
-                            </div>
-                          )}
-                          <span className="text-xs text-gray-500">{formatDate(post.created_at)}</span>
-                        </div>
-                      </div>
-                      <p className="text-gray-300 mb-3 sm:mb-4 leading-relaxed text-sm sm:text-base">{post.content}</p>
-                      
-                      {/* Performance Metrics for Analysis */}
-                      {post.type === 'analysis' && (post.profit_factor || post.win_rate) && (
-                        <div className="flex flex-wrap gap-3 sm:gap-4 mb-3 sm:mb-4 p-3 bg-gray-800/50 rounded-lg border border-gray-700/30">
-                          {post.profit_factor && (
-                            <div className="text-center">
-                              <div className="text-base sm:text-lg font-bold text-emerald-400">{post.profit_factor}</div>
-                              <div className="text-xs text-gray-400">Profit Factor</div>
-                            </div>
-                          )}
-                          {post.win_rate && (
-                            <div className="text-center">
-                              <div className="text-base sm:text-lg font-bold text-blue-400">{post.win_rate}%</div>
-                              <div className="text-xs text-gray-400">Win Rate</div>
-                            </div>
-                          )}
-                        </div>
-                      )}
-                      
-                      {/* Actions - Mobile Optimized */}
-                      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-                        <div className="flex items-center space-x-4 sm:space-x-6">
-                          <button
-                            onClick={() => handleLikePost(post.id)}
-                            className="flex items-center space-x-2 text-gray-400 hover:text-red-400 transition-colors duration-200"
-                          >
-                            <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-red-500/10 hover:bg-red-500/20 flex items-center justify-center">
-                              <Heart className="w-3 h-3 sm:w-4 sm:h-4" />
-                            </div>
-                            <span className="font-medium text-sm">{post.likes}</span>
-                          </button>
-                          <div className="flex items-center space-x-2 text-gray-400">
-                            <Eye className="w-3 h-3 sm:w-4 sm:h-4" />
-                            <span className="text-sm">{post.views}</span>
-                          </div>
-                        </div>
-                        
-                        <div className="flex space-x-2 w-full sm:w-auto">
-                          {post.type === 'analysis' ? (
-                            <button
-                              onClick={() => handleViewAnalysis(post.analysis_id || '')}
-                              className="flex-1 sm:flex-none px-3 sm:px-4 py-2 bg-blue-600/20 hover:bg-blue-600/30 border border-blue-500/30 rounded-lg flex items-center justify-center space-x-2 transition-all duration-200"
-                            >
-                              <Play className="w-3 h-3 sm:w-4 sm:h-4 text-blue-400" />
-                              <span className="text-blue-400 font-medium text-xs sm:text-sm">Ver Análise</span>
-                            </button>
-                          ) : (
-                            <button
-                              onClick={() => handleViewRobot(post.robot_name || '')}
-                              className="flex-1 sm:flex-none px-3 sm:px-4 py-2 bg-emerald-600/20 hover:bg-emerald-600/30 border border-emerald-500/30 rounded-lg flex items-center justify-center space-x-2 transition-all duration-200"
-                            >
-                              <ExternalLink className="w-3 h-3 sm:w-4 sm:h-4 text-emerald-400" />
-                              <span className="text-emerald-400 font-medium text-xs sm:text-sm">Acessar Robô</span>
-                            </button>
-                          )}
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
               ))}
             </div>
-
-            {/* Ver Mais Button */}
-            {!showAllPosts && filteredPosts.length > postsToShow && (
-              <div className="flex justify-center">
-                <button
-                  onClick={() => {
-                    setShowAllPosts(true);
-                    setPostsToShow(filteredPosts.length);
-                  }}
-                  className="px-6 py-3 bg-gradient-to-r from-blue-600 to-emerald-600 hover:from-blue-700 hover:to-emerald-700 rounded-xl text-white font-medium transition-all duration-200 flex items-center space-x-2"
-                >
-                  <MoreHorizontal className="w-5 h-5" />
-                  <span>Ver Mais ({filteredPosts.length - postsToShow} posts)</span>
-                </button>
-              </div>
-            )}
-
-            {/* Sidebar Content - Mobile Stacked */}
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-8">
-              {/* Ganhe Tokens */}
-              <div className="bg-gradient-to-br from-yellow-900/20 to-emerald-900/20 backdrop-blur-sm rounded-2xl p-4 sm:p-6 border border-yellow-500/30">
-                <h3 className="text-base sm:text-lg font-semibold mb-4 flex items-center">
-                  <Trophy className="w-4 h-4 sm:w-5 sm:h-5 text-yellow-500 mr-2" />
-                  Ganhe Tokens
-                </h3>
-                <div className="space-y-3">
-                  {challenges.slice(0, 3).map((challenge) => (
-                    <div key={challenge.id} className="bg-gray-800/50 rounded-lg p-3">
-                      <div className="flex items-center justify-between mb-2">
-                        <h4 className="font-medium text-sm">{challenge.title}</h4>
-                        <div className="flex items-center text-yellow-400 font-bold text-sm">
-                          <Coins className="w-3 h-3 sm:w-4 sm:h-4 mr-1" />
-                          {challenge.reward}
-                        </div>
-                      </div>
-                      <p className="text-xs text-gray-400 mb-2">{challenge.description}</p>
-                      {challenge.completed ? (
-                        <div className="text-xs text-emerald-400 font-medium">✓ CONCLUÍDO</div>
-                      ) : (
-                        <div className="w-full bg-gray-700/50 rounded-full h-1.5">
-                          <div 
-                            className="bg-gradient-to-r from-yellow-500 to-emerald-500 h-1.5 rounded-full transition-all duration-300" 
-                            style={{ width: `${challenge.progress}%` }}
-                          />
-                        </div>
-                      )}
-                    </div>
-                  ))}
-                </div>
-                <button className="w-full mt-4 py-2 bg-gradient-to-r from-yellow-600 to-emerald-600 hover:from-yellow-700 hover:to-emerald-700 rounded-lg text-white font-medium transition-all duration-200 text-sm">
-                  Ver Todos os Desafios
-                </button>
-              </div>
-
-              {/* Traders Ativos */}
-              <div className="bg-gradient-to-br from-gray-900/80 to-gray-800/80 backdrop-blur-sm rounded-2xl p-4 sm:p-6 border border-gray-700/50">
-                <h3 className="text-base sm:text-lg font-semibold mb-4 flex items-center">
-                  <Users className="w-4 h-4 sm:w-5 sm:h-5 text-blue-500 mr-2" />
-                  Traders Ativos
-                </h3>
-                <div className="space-y-3">
-                  {filteredUsers.slice(0, 3).map((user) => (
-                    <div key={user.id} className="bg-gray-800/30 rounded-lg p-3">
-                      <div className="flex items-center space-x-3 mb-3">
-                        <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-gray-700 flex items-center justify-center overflow-hidden relative">
-                          <img src={user.avatar} alt={user.name} className="w-full h-full object-cover" />
-                          <div className="absolute -bottom-1 -right-1 w-2 h-2 sm:w-3 sm:h-3 bg-emerald-500 rounded-full border border-gray-900"></div>
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <div className="flex items-center gap-2">
-                            <h4 className="font-medium text-sm truncate">{user.name}</h4>
-                            <div className={`px-1.5 py-0.5 rounded text-xs border ${getReputationBadge(user.reputation_level)}`}>
-                              {user.reputation_level}
-                            </div>
-                          </div>
-                          <p className="text-xs text-gray-400 truncate">{user.specialty}</p>
-                          <div className="flex items-center mt-1">
-                            <Trophy className="w-3 h-3 text-yellow-500 mr-1" />
-                            <span className={`text-xs font-bold ${getQuantScoreColor(user.quantscore)}`}>
-                              QuantScore: {user.quantscore}
-                            </span>
-                          </div>
-                        </div>
-                      </div>
-                      
-                      <div className="grid grid-cols-3 gap-2 mb-3 text-center">
-                        <div>
-                          <div className="text-sm font-bold text-emerald-400">{user.robots}</div>
-                          <div className="text-xs text-gray-400">Robôs</div>
-                        </div>
-                        <div>
-                          <div className="text-sm font-bold text-blue-400">{user.analyses}</div>
-                          <div className="text-xs text-gray-400">Análises</div>
-                        </div>
-                        <div>
-                          <div className="text-sm font-bold text-yellow-400">{user.followers}</div>
-                          <div className="text-xs text-gray-400">Seguidores</div>
-                        </div>
-                      </div>
-                      
-                      <div className="grid grid-cols-2 gap-2 mb-2">
-                        <button
-                          onClick={() => handleShareAnalysisWithUser(user.id)}
-                          className="py-1.5 px-2 bg-blue-600/20 hover:bg-blue-600/30 border border-blue-500/30 rounded-lg flex items-center justify-center space-x-1 transition-all duration-200"
-                        >
-                          <BarChart2 className="w-3 h-3 text-blue-400" />
-                          <span className="text-blue-400 text-xs font-medium">Análise</span>
-                        </button>
-                        <button
-                          onClick={() => handleShareRobotWithUser(user.id)}
-                          className="py-1.5 px-2 bg-emerald-600/20 hover:bg-emerald-600/30 border border-emerald-500/30 rounded-lg flex items-center justify-center space-x-1 transition-all duration-200"
-                        >
-                          <Bot className="w-3 h-3 text-emerald-400" />
-                          <span className="text-emerald-400 text-xs font-medium">Robô</span>
-                        </button>
-                      </div>
-                      
-                      <button
-                        onClick={() => handleFollowUser(user.id)}
-                        className={`w-full py-1.5 rounded-lg font-medium text-sm transition-all duration-200 ${
-                          user.isFollowing 
-                            ? 'bg-gray-600/50 hover:bg-gray-600/70 text-gray-300' 
-                            : 'bg-gradient-to-r from-blue-600 to-emerald-600 hover:from-blue-700 hover:to-emerald-700 text-white'
-                        }`}
-                      >
-                        {user.isFollowing ? 'Seguindo' : 'Seguir'}
-                      </button>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              {/* Performance Stats */}
-              <div className="bg-gradient-to-br from-gray-900/80 to-gray-800/80 backdrop-blur-sm rounded-2xl p-4 sm:p-6 border border-gray-700/50">
-                <h3 className="text-base sm:text-lg font-semibold mb-4 flex items-center">
-                  <Award className="w-4 h-4 sm:w-5 sm:h-5 text-yellow-500 mr-2" />
-                  Suas Estatísticas
-                </h3>
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="text-center">
-                    <div className="text-xl sm:text-2xl font-bold text-blue-400">0</div>
-                    <div className="text-xs text-gray-400">Posts</div>
-                  </div>
-                  <div className="text-center">
-                    <div className="text-xl sm:text-2xl font-bold text-red-400">0</div>
-                    <div className="text-xs text-gray-400">Curtidas</div>
-                  </div>
-                  <div className="text-center">
-                    <div className="text-xl sm:text-2xl font-bold text-emerald-400">0</div>
-                    <div className="text-xs text-gray-400">Seguidores</div>
-                  </div>
-                  <div className="text-center">
-                    <div className="text-xl sm:text-2xl font-bold text-yellow-400">--</div>
-                    <div className="text-xs text-gray-400">QuantScore</div>
-                  </div>
-                </div>
-                
-                {/* QuantScore Progress */}
-                <div className="mt-4 p-3 bg-gray-800/50 rounded-lg">
-                  <div className="flex justify-between items-center mb-2">
-                    <span className="text-sm text-gray-400">Próximo Nível</span>
-                    <span className="text-sm font-medium">50 pontos</span>
-                  </div>
-                  <div className="w-full bg-gray-700/50 rounded-full h-2">
-                    <div className="bg-gradient-to-r from-blue-500 to-emerald-500 h-2 rounded-full w-1/3"></div>
-                  </div>
-                </div>
-              </div>
-            </div>
           </div>
-        )}
+        </div>
       </div>
     </div>
   );
