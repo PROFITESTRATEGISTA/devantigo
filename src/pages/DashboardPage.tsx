@@ -482,18 +482,19 @@ export function DashboardPage() {
         </div>
 
         {/* Navigation Cards */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-4 mb-6">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-8">
           <button
             onClick={() => setActiveSection('strategies')}
-            className={`p-4 sm:p-6 rounded-xl transition-all duration-300 relative overflow-hidden ${
+            className={`p-6 rounded-2xl border transition-all duration-300 ${
               activeSection === 'strategies'
-                ? 'bg-gradient-to-br from-emerald-600/30 to-emerald-800/30 border border-emerald-500/50'
-                : 'bg-gray-800/70 hover:bg-gray-700/70 border border-gray-600/50'
+                ? 'bg-gradient-to-br from-emerald-500/20 to-green-600/20 border-emerald-500/50 shadow-lg shadow-emerald-500/25'
+                : 'bg-gray-800/50 border-gray-700/50 hover:border-emerald-500/30'
             }`}
           >
-            <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/10 to-transparent"></div>
-            <div className="relative z-10">
-              <div className="w-12 h-12 mx-auto mb-3 bg-emerald-600/20 rounded-lg flex items-center justify-center">
+            <div className="flex flex-col items-center text-center">
+              <div className={`w-12 h-12 rounded-xl mb-3 flex items-center justify-center ${
+                activeSection === 'strategies' ? 'bg-emerald-500/20' : 'bg-gray-700/50'
+              }`}>
                 <Shield className="w-6 h-6 text-emerald-400" />
               </div>
               <h3 className="font-semibold text-white mb-1">Estratégias</h3>
@@ -503,15 +504,16 @@ export function DashboardPage() {
 
           <button
             onClick={() => setActiveSection('feed')}
-            className={`p-4 sm:p-6 rounded-xl transition-all duration-300 relative overflow-hidden ${
+            className={`p-6 rounded-2xl border transition-all duration-300 ${
               activeSection === 'feed'
-                ? 'bg-gradient-to-br from-blue-600/30 to-blue-800/30 border border-blue-500/50'
-                : 'bg-gray-800/70 hover:bg-gray-700/70 border border-gray-600/50'
+                ? 'bg-gradient-to-br from-blue-500/20 to-blue-600/20 border-blue-500/50 shadow-lg shadow-blue-500/25'
+                : 'bg-gray-800/50 border-gray-700/50 hover:border-blue-500/30'
             }`}
           >
-            <div className="absolute inset-0 bg-gradient-to-br from-blue-500/10 to-transparent"></div>
-            <div className="relative z-10">
-              <div className="w-12 h-12 mx-auto mb-3 bg-blue-600/20 rounded-lg flex items-center justify-center">
+            <div className="flex flex-col items-center text-center">
+              <div className={`w-12 h-12 rounded-xl mb-3 flex items-center justify-center ${
+                activeSection === 'feed' ? 'bg-blue-500/20' : 'bg-gray-700/50'
+              }`}>
                 <Activity className="w-6 h-6 text-blue-400" />
               </div>
               <h3 className="font-semibold text-white mb-1">Feed</h3>
@@ -521,15 +523,16 @@ export function DashboardPage() {
 
           <button
             onClick={() => setActiveSection('tutorials')}
-            className={`p-4 sm:p-6 rounded-xl transition-all duration-300 relative overflow-hidden ${
+            className={`p-6 rounded-2xl border transition-all duration-300 ${
               activeSection === 'tutorials'
-                ? 'bg-gradient-to-br from-blue-600/30 to-blue-800/30 border border-blue-500/50'
-                : 'bg-gray-800/70 hover:bg-gray-700/70 border border-gray-600/50'
+                ? 'bg-gradient-to-br from-blue-500/20 to-blue-600/20 border-blue-500/50 shadow-lg shadow-blue-500/25'
+                : 'bg-gray-800/50 border-gray-700/50 hover:border-blue-500/30'
             }`}
           >
-            <div className="absolute inset-0 bg-gradient-to-br from-blue-500/10 to-transparent"></div>
-            <div className="relative z-10">
-              <div className="w-12 h-12 mx-auto mb-3 bg-blue-600/20 rounded-lg flex items-center justify-center">
+            <div className="flex flex-col items-center text-center">
+              <div className={`w-12 h-12 rounded-xl mb-3 flex items-center justify-center ${
+                activeSection === 'tutorials' ? 'bg-blue-500/20' : 'bg-gray-700/50'
+              }`}>
                 <BookOpen className="w-6 h-6 text-blue-400" />
               </div>
               <h3 className="font-semibold text-white mb-1">Tutoriais</h3>
@@ -539,15 +542,16 @@ export function DashboardPage() {
 
           <button
             onClick={() => setActiveSection('marketplace')}
-            className={`p-4 sm:p-6 rounded-xl transition-all duration-300 relative overflow-hidden ${
+            className={`p-6 rounded-2xl border transition-all duration-300 ${
               activeSection === 'marketplace'
-                ? 'bg-gradient-to-br from-emerald-600/30 to-emerald-800/30 border border-emerald-500/50'
-                : 'bg-gray-800/70 hover:bg-gray-700/70 border border-gray-600/50'
+                ? 'bg-gradient-to-br from-emerald-500/20 to-green-600/20 border-emerald-500/50 shadow-lg shadow-emerald-500/25'
+                : 'bg-gray-800/50 border-gray-700/50 hover:border-emerald-500/30'
             }`}
           >
-            <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/10 to-transparent"></div>
-            <div className="relative z-10">
-              <div className="w-12 h-12 mx-auto mb-3 bg-emerald-600/20 rounded-lg flex items-center justify-center">
+            <div className="flex flex-col items-center text-center">
+              <div className={`w-12 h-12 rounded-xl mb-3 flex items-center justify-center ${
+                activeSection === 'marketplace' ? 'bg-emerald-500/20' : 'bg-gray-700/50'
+              }`}>
                 <ShoppingCart className="w-6 h-6 text-emerald-400" />
               </div>
               <h3 className="font-semibold text-white mb-1">Marketplace</h3>
@@ -556,38 +560,21 @@ export function DashboardPage() {
           </button>
 
           <button
-            onClick={() => setActiveSection('specialists')}
-            className={`p-4 sm:p-6 rounded-xl transition-all duration-300 relative overflow-hidden ${
-              activeSection === 'specialists'
-                ? 'bg-gradient-to-br from-blue-600/30 to-blue-800/30 border border-blue-500/50'
-                : 'bg-gray-800/70 hover:bg-gray-700/70 border border-gray-600/50'
-            }`}
-          >
-            <div className="absolute inset-0 bg-gradient-to-br from-blue-500/10 to-transparent"></div>
-            <div className="relative z-10">
-              <div className="w-12 h-12 mx-auto mb-3 bg-blue-600/20 rounded-lg flex items-center justify-center">
-                <UserCheck className="w-6 h-6 text-blue-400" />
-              </div>
-              <h3 className="font-semibold text-white mb-1">Especialistas</h3>
-              <p className="text-xs text-gray-400">Encontrar</p>
-            </div>
-          </button>
-
-          <button
             onClick={() => setActiveSection('users')}
-            className={`p-4 sm:p-6 rounded-xl transition-all duration-300 relative overflow-hidden ${
+            className={`p-6 rounded-2xl border transition-all duration-300 ${
               activeSection === 'users'
-                ? 'bg-gradient-to-br from-emerald-600/30 to-emerald-800/30 border border-emerald-500/50'
-                : 'bg-gray-800/70 hover:bg-gray-700/70 border border-gray-600/50'
+                ? 'bg-gradient-to-br from-blue-500/20 to-blue-600/20 border-blue-500/50 shadow-lg shadow-blue-500/25'
+                : 'bg-gray-800/50 border-gray-700/50 hover:border-blue-500/30'
             }`}
           >
-            <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/10 to-transparent"></div>
-            <div className="relative z-10">
-              <div className="w-12 h-12 mx-auto mb-3 bg-emerald-600/20 rounded-lg flex items-center justify-center">
-                <Users className="w-6 h-6 text-emerald-400" />
+            <div className="flex flex-col items-center text-center">
+              <div className={`w-12 h-12 rounded-xl mb-3 flex items-center justify-center ${
+                activeSection === 'users' ? 'bg-blue-500/20' : 'bg-gray-700/50'
+              }`}>
+                <Users className="w-6 h-6 text-blue-400" />
               </div>
               <h3 className="font-semibold text-white mb-1">Usuários</h3>
-              <p className="text-xs text-gray-400">Conectar</p>
+              <p className="text-xs text-gray-400">Encontrar</p>
             </div>
           </button>
         </div>
@@ -1004,106 +991,124 @@ export function DashboardPage() {
           </div>
         )}
 
+        {/* Marketplace Section */}
         {activeSection === 'marketplace' && (
           <div className="space-y-6">
-            <div className="bg-gray-800/50 backdrop-blur-sm rounded-xl p-6 border border-gray-700/50 relative overflow-hidden">
-              <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/5 to-blue-500/5"></div>
-              <div className="relative z-10">
-                <div className="flex items-center space-x-3 mb-6">
-                  <div className="w-12 h-12 bg-emerald-600/20 rounded-lg flex items-center justify-center">
-                    <ShoppingCart className="w-6 h-6 text-emerald-400" />
+            <div className="text-center mb-8">
+              <h2 className="text-2xl font-bold mb-2">Marketplace</h2>
+              <p className="text-gray-400">Serviços profissionais verificados</p>
+            </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {/* QuantBroker */}
+              <div className="bg-gradient-to-br from-gray-800/80 to-gray-900/80 backdrop-blur-sm rounded-2xl p-6 border border-gray-700/50">
+                <div className="flex items-center mb-4">
+                  <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center mr-4">
+                    <TrendingUp className="w-6 h-6 text-white" />
                   </div>
                   <div>
-                    <h2 className="text-xl font-bold text-white">Marketplace</h2>
-                    <p className="text-gray-400">Empresas e traders verificados</p>
+                    <h3 className="font-bold text-lg">QuantBroker</h3>
+                    <div className="flex items-center">
+                      <Shield className="w-4 h-4 text-green-500 mr-1" />
+                      <span className="text-sm text-green-400">Verificado</span>
+                    </div>
                   </div>
                 </div>
-                
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                  {[
-                    {
-                      name: 'TradeTech Solutions',
-                      type: 'Empresa',
-                      verified: true,
-                      rating: 4.9,
-                      service: 'Desenvolvimento de robôs',
-                      logo: 'https://images.pexels.com/photos/3184291/pexels-photo-3184291.jpeg?auto=compress&cs=tinysrgb&w=100&h=100&fit=crop'
-                    },
-                    {
-                      name: 'QuantAlpha Partners',
-                      type: 'Gestora',
-                      verified: true,
-                      rating: 4.8,
-                      service: 'Gestão quantitativa',
-                      logo: 'https://images.pexels.com/photos/3184338/pexels-photo-3184338.jpeg?auto=compress&cs=tinysrgb&w=100&h=100&fit=crop'
-                    },
-                    {
-                      name: 'AlgoTrader Pro',
-                      type: 'Trader',
-                      verified: true,
-                      rating: 4.7,
-                      service: 'Copy trading IA',
-                      logo: 'https://images.pexels.com/photos/3184339/pexels-photo-3184339.jpeg?auto=compress&cs=tinysrgb&w=100&h=100&fit=crop'
-                    },
-                    {
-                      name: 'RiskMaster Analytics',
-                      type: 'Consultoria',
-                      verified: true,
-                      rating: 4.9,
-                      service: 'Análise de risco',
-                      logo: 'https://images.pexels.com/photos/3184340/pexels-photo-3184340.jpeg?auto=compress&cs=tinysrgb&w=100&h=100&fit=crop'
-                    },
-                    {
-                      name: 'HFT Systems',
-                      type: 'Empresa',
-                      verified: true,
-                      rating: 4.6,
-                      service: 'High Frequency Trading',
-                      logo: 'https://images.pexels.com/photos/3184341/pexels-photo-3184341.jpeg?auto=compress&cs=tinysrgb&w=100&h=100&fit=crop'
-                    },
-                    {
-                      name: 'DataDriven Capital',
-                      type: 'Fundo',
-                      verified: true,
-                      rating: 4.8,
-                      service: 'Investimento quantitativo',
-                      logo: 'https://images.pexels.com/photos/3184342/pexels-photo-3184342.jpeg?auto=compress&cs=tinysrgb&w=100&h=100&fit=crop'
-                    }
-                  ].map((company, index) => (
-                    <div key={index} className="bg-gray-900/50 rounded-lg p-4 border border-gray-700/50 hover:border-emerald-500/30 transition-all duration-200 cursor-pointer">
-                      <div className="flex items-center space-x-3 mb-4">
-                        <img 
-                          src={company.logo} 
-                          alt={company.name}
-                          className="w-12 h-12 rounded-lg object-cover"
-                        />
-                        <div className="flex-1">
-                          <div className="flex items-center space-x-2">
-                            <h3 className="font-semibold text-white">{company.name}</h3>
-                            {company.verified && (
-                              <div className="w-5 h-5 bg-emerald-500 rounded-full flex items-center justify-center">
-                                <Check className="w-3 h-3 text-white" />
-                              </div>
-                            )}
-                          </div>
-                          <p className="text-sm text-gray-400">{company.type}</p>
-                        </div>
-                      </div>
-                      
-                      <p className="text-sm text-gray-300 mb-3">{company.service}</p>
-                      
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center space-x-1">
-                          <Star className="w-4 h-4 text-yellow-400 fill-current" />
-                          <span className="text-sm font-medium text-white">{company.rating}</span>
-                        </div>
-                        <button className="px-3 py-1.5 bg-emerald-600/80 hover:bg-emerald-600 rounded-lg text-sm font-medium transition-colors">
-                          Ver Detalhes
-                        </button>
-                      </div>
-                    </div>
-                  ))}
+                <p className="text-gray-300 mb-4">Portfólios de IA para copy trade automatizado com resultados auditados</p>
+                <div className="flex items-center justify-between mb-4">
+                  <div className="flex items-center">
+                    <Star className="w-4 h-4 text-yellow-500 mr-1" />
+                    <span className="text-sm">4.9 (127 avaliações)</span>
+                  </div>
+                  <span className="text-emerald-400 font-semibold">A partir de R$ 299/mês</span>
                 </div>
+                <button className="w-full py-3 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 rounded-xl font-medium transition-all">
+                  Acessar QuantBroker
+                </button>
+              </div>
+
+              {/* NotBroker */}
+              <div className="bg-gradient-to-br from-gray-800/80 to-gray-900/80 backdrop-blur-sm rounded-2xl p-6 border border-gray-700/50">
+                <div className="flex items-center mb-4">
+                  <div className="w-12 h-12 bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-xl flex items-center justify-center mr-4">
+                    <Calculator className="w-6 h-6 text-white" />
+                  </div>
+                  <div>
+                    <h3 className="font-bold text-lg">NotBroker</h3>
+                    <div className="flex items-center">
+                      <Shield className="w-4 h-4 text-green-500 mr-1" />
+                      <span className="text-sm text-green-400">Verificado</span>
+                    </div>
+                  </div>
+                </div>
+                <p className="text-gray-300 mb-4">Contabilidade especializada para traders com resultados auditados</p>
+                <div className="flex items-center justify-between mb-4">
+                  <div className="flex items-center">
+                    <Star className="w-4 h-4 text-yellow-500 mr-1" />
+                    <span className="text-sm">4.8 (89 avaliações)</span>
+                  </div>
+                  <span className="text-emerald-400 font-semibold">A partir de R$ 199/mês</span>
+                </div>
+                <button className="w-full py-3 bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 rounded-xl font-medium transition-all">
+                  Acessar NotBroker
+                </button>
+              </div>
+
+              {/* Estrategista Solutions - Projetos Personalizados */}
+              <div className="bg-gradient-to-br from-gray-800/80 to-gray-900/80 backdrop-blur-sm rounded-2xl p-6 border border-gray-700/50">
+                <div className="flex items-center mb-4">
+                  <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center mr-4">
+                    <Code2 className="w-6 h-6 text-white" />
+                  </div>
+                  <div>
+                    <h3 className="font-bold text-lg">Estrategista Solutions</h3>
+                    <div className="flex items-center">
+                      <Shield className="w-4 h-4 text-green-500 mr-1" />
+                      <span className="text-sm text-green-400">Verificado</span>
+                    </div>
+                  </div>
+                </div>
+                <p className="text-gray-300 mb-4">Projetos personalizados desenvolvidos por especialistas humanos</p>
+                <div className="flex items-center justify-between mb-4">
+                  <div className="flex items-center">
+                    <Star className="w-4 h-4 text-yellow-500 mr-1" />
+                    <span className="text-sm">5.0 (45 avaliações)</span>
+                  </div>
+                  <span className="text-emerald-400 font-semibold">Sob consulta</span>
+                </div>
+                <button className="w-full py-3 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 rounded-xl font-medium transition-all">
+                  Solicitar Orçamento
+                </button>
+              </div>
+
+              {/* Pack de Robôs Estrategista */}
+              <div className="bg-gradient-to-br from-gray-800/80 to-gray-900/80 backdrop-blur-sm rounded-2xl p-6 border border-gray-700/50">
+                <div className="flex items-center mb-4">
+                  <div className="w-12 h-12 bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-xl flex items-center justify-center mr-4">
+                    <Package className="w-6 h-6 text-white" />
+                  </div>
+                  <div>
+                    <h3 className="font-bold text-lg">Pack de Robôs</h3>
+                    <div className="flex items-center">
+                      <Shield className="w-4 h-4 text-green-500 mr-1" />
+                      <span className="text-sm text-green-400">Estrategista Solutions</span>
+                    </div>
+                  </div>
+                </div>
+                <p className="text-gray-300 mb-4">Coleção completa de robôs testados e otimizados</p>
+                <div className="flex items-center justify-between mb-4">
+                  <div className="flex items-center">
+                    <Star className="w-4 h-4 text-yellow-500 mr-1" />
+                    <span className="text-sm">4.7 (203 avaliações)</span>
+                  </div>
+                  <span className="text-emerald-400 font-semibold">R$ 497/semestre</span>
+                </div>
+                <button 
+                  onClick={() => window.open('https://profitestrategista.com.br/robots', '_blank')}
+                  className="w-full py-3 bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 rounded-xl font-medium transition-all"
+                >
+                  Ver Pack de Robôs
+                </button>
               </div>
             </div>
           </div>
