@@ -9,7 +9,10 @@ import {
   Activity, Layers, Grid, Sparkles, ChevronRight,
   Star, Shield, BookOpen, ShoppingCart, UserCheck,
   Briefcase, Calculator, Wrench, GraduationCap,
-  MessageCircle, Heart, ThumbsUp, Bookmark
+  MessageCircle, Heart, ThumbsUp, Bookmark,
+  Upload, FileSpreadsheet, TrendingDown, Copy,
+  Settings, Lightbulb, Video, FileDown, HelpCircle,
+  Building, Verified, Crown, ChevronDown, MoreHorizontal
 } from 'lucide-react';
 import { Navbar } from '../components/Navbar';
 import { useAuthStore } from '../stores/authStore';
@@ -69,6 +72,27 @@ interface Expert {
   quantscore: number;
 }
 
+interface Tutorial {
+  id: string;
+  title: string;
+  description: string;
+  duration: string;
+  difficulty: 'beginner' | 'intermediate' | 'advanced';
+  category: 'upload' | 'coding' | 'analysis' | 'platform';
+  thumbnail?: string;
+}
+
+interface MarketplaceItem {
+  id: string;
+  company_name: string;
+  logo?: string;
+  description: string;
+  verified: boolean;
+  rating: number;
+  services: string[];
+  contact_info: string;
+}
+
 export function DashboardPage() {
   const navigate = useNavigate();
   const { profile } = useAuthStore();
@@ -79,6 +103,10 @@ export function DashboardPage() {
   const [challenges, setChallenges] = useState<Challenge[]>([]);
   const [users, setUsers] = useState<User[]>([]);
   const [experts, setExperts] = useState<Expert[]>([]);
+  const [tutorials, setTutorials] = useState<Tutorial[]>([]);
+  const [marketplaceItems, setMarketplaceItems] = useState<MarketplaceItem[]>([]);
+  const [showAllPosts, setShowAllPosts] = useState(false);
+  const [postsToShow, setPostsToShow] = useState(3);
 
   // Mock data for demonstration
   useEffect(() => {
@@ -109,6 +137,46 @@ export function DashboardPage() {
         created_at: '2024-01-14T15:45:00Z',
         robot_name: 'HFT_MiniIndice_v2',
         quantscore: 87
+      },
+      {
+        id: '3',
+        user_name: 'Pedro Algo',
+        user_avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop',
+        content: 'Machine Learning aplicado a mean reversion. Modelo XGBoost com 72% de precisão.',
+        type: 'analysis',
+        likes: 28,
+        views: 198,
+        created_at: '2024-01-13T09:15:00Z',
+        analysis_id: 'analysis_002',
+        profit_factor: 1.8,
+        win_rate: 72.3,
+        quantscore: 91
+      },
+      {
+        id: '4',
+        user_name: 'Marina Sys',
+        user_avatar: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=100&h=100&fit=crop',
+        content: 'Grid trading adaptativo com gestão dinâmica de risco. Backtested em 2 anos de dados.',
+        type: 'robot',
+        likes: 19,
+        views: 89,
+        created_at: '2024-01-12T16:20:00Z',
+        robot_name: 'GridTrading_Dynamic',
+        quantscore: 83
+      },
+      {
+        id: '5',
+        user_name: 'Lucas Tech',
+        user_avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop',
+        content: 'Análise de correlação multi-timeframe para WINFUT. Identificação de padrões sazonais.',
+        type: 'analysis',
+        likes: 31,
+        views: 145,
+        created_at: '2024-01-11T11:45:00Z',
+        analysis_id: 'analysis_003',
+        profit_factor: 2.1,
+        win_rate: 65.8,
+        quantscore: 96
       }
     ]);
 
@@ -133,6 +201,16 @@ export function DashboardPage() {
         progress: 0,
         completed: false,
         category: 'analysis'
+      },
+      {
+        id: '3',
+        title: 'Mentor da Comunidade',
+        description: 'Receba 50 curtidas em seus posts',
+        reward: 2000,
+        difficulty: 'hard',
+        progress: 60,
+        completed: false,
+        category: 'community'
       }
     ]);
 
@@ -191,6 +269,84 @@ export function DashboardPage() {
         quantscore: 92
       }
     ]);
+
+    // Mock tutorials
+    setTutorials([
+      {
+        id: '1',
+        title: 'Como fazer upload de CSV para análise',
+        description: 'Aprenda a preparar e fazer upload dos seus dados de backtest',
+        duration: '8 min',
+        difficulty: 'beginner',
+        category: 'upload'
+      },
+      {
+        id: '2',
+        title: 'Gerando código de robô com IA',
+        description: 'Tutorial completo para criar robôs usando assistente de IA',
+        duration: '15 min',
+        difficulty: 'beginner',
+        category: 'coding'
+      },
+      {
+        id: '3',
+        title: 'Configurando robô no Profit',
+        description: 'Passo a passo para implementar seu robô na plataforma Profit',
+        duration: '12 min',
+        difficulty: 'intermediate',
+        category: 'platform'
+      },
+      {
+        id: '4',
+        title: 'Análise avançada de métricas',
+        description: 'Como interpretar Sharpe, Drawdown, Profit Factor e outras métricas',
+        duration: '20 min',
+        difficulty: 'advanced',
+        category: 'analysis'
+      },
+      {
+        id: '5',
+        title: 'Dicas de otimização de estratégias',
+        description: 'Técnicas para melhorar performance e reduzir riscos',
+        duration: '18 min',
+        difficulty: 'intermediate',
+        category: 'analysis'
+      }
+    ]);
+
+    // Mock marketplace items
+    setMarketplaceItems([
+      {
+        id: '1',
+        company_name: 'TradeTech Solutions',
+        logo: 'https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=100&h=100&fit=crop',
+        description: 'Especialistas em desenvolvimento de robôs HFT e algoritmos quantitativos',
+        verified: true,
+        rating: 4.9,
+        services: ['Desenvolvimento de Robôs', 'Consultoria Quantitativa', 'Backtesting'],
+        contact_info: 'contato@tradetech.com'
+      },
+      {
+        id: '2',
+        company_name: 'QuantAlpha Partners',
+        logo: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=100&h=100&fit=crop',
+        description: 'Gestora especializada em estratégias algorítmicas e copy trading',
+        verified: true,
+        rating: 4.8,
+        services: ['Copy Trading', 'Gestão de Portfólio', 'Análise de Risco'],
+        contact_info: 'info@quantalpha.com'
+      },
+      {
+        id: '3',
+        company_name: 'AlgoTrader Pro',
+        logo: 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=100&h=100&fit=crop',
+        description: 'Plataforma de trading algorítmico com IA avançada',
+        verified: true,
+        rating: 4.7,
+        services: ['IA Trading', 'Machine Learning', 'Automação'],
+        contact_info: 'support@algotrader.pro'
+      }
+    ]);
   }, []);
 
   const handleViewAnalysis = (analysisId: string) => {
@@ -244,8 +400,8 @@ export function DashboardPage() {
   const getDifficultyColor = (difficulty: string) => {
     switch (difficulty) {
       case 'easy': return 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30';
-      case 'medium': return 'bg-amber-500/20 text-amber-400 border-amber-500/30';
-      case 'hard': return 'bg-red-500/20 text-red-400 border-red-500/30';
+      case 'medium': return 'bg-blue-500/20 text-blue-400 border-blue-500/30';
+      case 'hard': return 'bg-purple-500/20 text-purple-400 border-purple-500/30';
       default: return 'bg-gray-500/20 text-gray-400 border-gray-500/30';
     }
   };
@@ -276,6 +432,25 @@ export function DashboardPage() {
     }
   };
 
+  const getTutorialIcon = (category: string) => {
+    switch (category) {
+      case 'upload': return <Upload className="w-5 h-5" />;
+      case 'coding': return <Code2 className="w-5 h-5" />;
+      case 'analysis': return <BarChart2 className="w-5 h-5" />;
+      case 'platform': return <Settings className="w-5 h-5" />;
+      default: return <BookOpen className="w-5 h-5" />;
+    }
+  };
+
+  const getTutorialColor = (difficulty: string) => {
+    switch (difficulty) {
+      case 'beginner': return 'bg-emerald-500/20 text-emerald-400';
+      case 'intermediate': return 'bg-blue-500/20 text-blue-400';
+      case 'advanced': return 'bg-purple-500/20 text-purple-400';
+      default: return 'bg-gray-500/20 text-gray-400';
+    }
+  };
+
   const filteredPosts = posts.filter(post => {
     const matchesSearch = post.content.toLowerCase().includes(searchQuery.toLowerCase()) ||
                          post.user_name.toLowerCase().includes(searchQuery.toLowerCase());
@@ -287,6 +462,8 @@ export function DashboardPage() {
     user.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
     user.specialty.toLowerCase().includes(searchQuery.toLowerCase())
   );
+
+  const displayedPosts = showAllPosts ? filteredPosts : filteredPosts.slice(0, postsToShow);
 
   return (
     <div className="min-h-screen bg-[#0A0A0B] text-white">
@@ -427,6 +604,7 @@ export function DashboardPage() {
               placeholder={
                 activeSection === 'feed' ? 'Buscar análises, robôs ou usuários...' :
                 activeSection === 'experts' ? 'Buscar especialistas...' :
+                activeSection === 'tutorials' ? 'Buscar tutoriais...' :
                 'Buscar...'
               }
               value={searchQuery}
@@ -439,30 +617,169 @@ export function DashboardPage() {
         {/* Content based on active section */}
         {activeSection === 'strategies' && (
           <div className="space-y-6">
-            <div className="text-center py-12">
-              <Shield className="w-16 h-16 text-emerald-500 mx-auto mb-4 opacity-50" />
-              <h2 className="text-xl font-semibold mb-2">Estratégias Verificadas</h2>
-              <p className="text-gray-400">Estratégias testadas e aprovadas pela comunidade</p>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {/* Pack de Robôs Parceiro */}
+              <div className="bg-gradient-to-br from-emerald-900/80 to-emerald-800/80 backdrop-blur-sm rounded-2xl p-6 border border-emerald-500/30 hover:border-emerald-400/50 transition-all duration-200">
+                <div className="flex items-center mb-4">
+                  <div className="bg-emerald-500/20 rounded-xl p-3 mr-4">
+                    <Bot className="w-8 h-8 text-emerald-400" />
+                  </div>
+                  <div>
+                    <h3 className="text-xl font-bold text-emerald-400">Pack de Robôs</h3>
+                    <p className="text-emerald-300/80">Parceiro DevHub Trader</p>
+                  </div>
+                </div>
+                <p className="text-gray-300 mb-4">
+                  Robôs verificados e testados pela nossa equipe de especialistas. Estratégias comprovadas no mercado.
+                </p>
+                <div className="flex items-center justify-between mb-4">
+                  <span className="text-emerald-400 font-bold">15+ Robôs</span>
+                  <div className="flex items-center">
+                    <Verified className="w-4 h-4 text-emerald-400 mr-1" />
+                    <span className="text-emerald-400 text-sm">Verificado</span>
+                  </div>
+                </div>
+                <button 
+                  onClick={() => window.open('https://profitestrategista.com.br/robots', '_blank')}
+                  className="w-full py-3 bg-emerald-600 hover:bg-emerald-700 rounded-xl text-white font-medium transition-all duration-200 flex items-center justify-center"
+                >
+                  <ExternalLink className="w-4 h-4 mr-2" />
+                  Acessar Pack
+                </button>
+              </div>
+
+              {/* Copy Trade IA Premium */}
+              <div className="bg-gradient-to-br from-blue-900/80 to-purple-900/80 backdrop-blur-sm rounded-2xl p-6 border border-blue-500/30 hover:border-blue-400/50 transition-all duration-200">
+                <div className="flex items-center mb-4">
+                  <div className="bg-blue-500/20 rounded-xl p-3 mr-4">
+                    <Sparkles className="w-8 h-8 text-blue-400" />
+                  </div>
+                  <div>
+                    <h3 className="text-xl font-bold text-blue-400">Copy Trade IA</h3>
+                    <p className="text-blue-300/80">Premium</p>
+                  </div>
+                </div>
+                <p className="text-gray-300 mb-4">
+                  Sistema de copy trading com inteligência artificial. Replique estratégias dos melhores traders automaticamente.
+                </p>
+                <div className="flex items-center justify-between mb-4">
+                  <span className="text-blue-400 font-bold">IA Avançada</span>
+                  <div className="flex items-center">
+                    <Crown className="w-4 h-4 text-blue-400 mr-1" />
+                    <span className="text-blue-400 text-sm">Premium</span>
+                  </div>
+                </div>
+                <button className="w-full py-3 bg-blue-600 hover:bg-blue-700 rounded-xl text-white font-medium transition-all duration-200">
+                  Conhecer Serviço
+                </button>
+              </div>
+
+              {/* Robô Personalizado */}
+              <div className="bg-gradient-to-br from-gray-900/80 to-gray-800/80 backdrop-blur-sm rounded-2xl p-6 border border-gray-500/30 hover:border-gray-400/50 transition-all duration-200">
+                <div className="flex items-center mb-4">
+                  <div className="bg-gray-500/20 rounded-xl p-3 mr-4">
+                    <Wrench className="w-8 h-8 text-gray-400" />
+                  </div>
+                  <div>
+                    <h3 className="text-xl font-bold text-gray-300">Robô Personalizado</h3>
+                    <p className="text-gray-400">Sob Medida</p>
+                  </div>
+                </div>
+                <p className="text-gray-300 mb-4">
+                  Desenvolvimento de robôs personalizados para suas necessidades específicas. Consultoria completa incluída.
+                </p>
+                <div className="flex items-center justify-between mb-4">
+                  <span className="text-gray-400 font-bold">Consultoria</span>
+                  <div className="flex items-center">
+                    <GraduationCap className="w-4 h-4 text-gray-400 mr-1" />
+                    <span className="text-gray-400 text-sm">Personalizado</span>
+                  </div>
+                </div>
+                <button className="w-full py-3 bg-gray-600 hover:bg-gray-700 rounded-xl text-white font-medium transition-all duration-200">
+                  Solicitar Orçamento
+                </button>
+              </div>
             </div>
           </div>
         )}
 
         {activeSection === 'tutorials' && (
           <div className="space-y-6">
-            <div className="text-center py-12">
-              <BookOpen className="w-16 h-16 text-blue-500 mx-auto mb-4 opacity-50" />
-              <h2 className="text-xl font-semibold mb-2">Tutoriais</h2>
-              <p className="text-gray-400">Aprenda com os melhores da comunidade</p>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {tutorials.map((tutorial) => (
+                <div key={tutorial.id} className="bg-gradient-to-br from-gray-900/80 to-gray-800/80 backdrop-blur-sm rounded-2xl p-6 border border-gray-700/50 hover:border-gray-600/50 transition-all duration-200">
+                  <div className="flex items-center mb-4">
+                    <div className="bg-blue-500/20 rounded-xl p-3 mr-4">
+                      {getTutorialIcon(tutorial.category)}
+                    </div>
+                    <div className="flex-1">
+                      <div className="flex items-center gap-2 mb-1">
+                        <span className={`px-2 py-1 rounded-full text-xs font-medium ${getTutorialColor(tutorial.difficulty)}`}>
+                          {tutorial.difficulty === 'beginner' ? 'Iniciante' : 
+                           tutorial.difficulty === 'intermediate' ? 'Intermediário' : 'Avançado'}
+                        </span>
+                        <span className="text-xs text-gray-400">{tutorial.duration}</span>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <h3 className="text-lg font-semibold mb-2">{tutorial.title}</h3>
+                  <p className="text-gray-400 text-sm mb-4">{tutorial.description}</p>
+                  
+                  <button className="w-full py-2 bg-blue-600 hover:bg-blue-700 rounded-xl text-white font-medium transition-all duration-200 flex items-center justify-center">
+                    <Play className="w-4 h-4 mr-2" />
+                    Assistir Tutorial
+                  </button>
+                </div>
+              ))}
             </div>
           </div>
         )}
 
         {activeSection === 'marketplace' && (
           <div className="space-y-6">
-            <div className="text-center py-12">
-              <ShoppingCart className="w-16 h-16 text-emerald-500 mx-auto mb-4 opacity-50" />
-              <h2 className="text-xl font-semibold mb-2">Marketplace</h2>
-              <p className="text-gray-400">Compre e venda robôs e estratégias</p>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {marketplaceItems.map((item) => (
+                <div key={item.id} className="bg-gradient-to-br from-gray-900/80 to-gray-800/80 backdrop-blur-sm rounded-2xl p-6 border border-gray-700/50 hover:border-gray-600/50 transition-all duration-200">
+                  <div className="flex items-center mb-4">
+                    <div className="w-16 h-16 rounded-xl bg-gray-700 flex items-center justify-center overflow-hidden mr-4">
+                      <img src={item.logo} alt={item.company_name} className="w-full h-full object-cover" />
+                    </div>
+                    <div className="flex-1">
+                      <div className="flex items-center gap-2 mb-1">
+                        <h3 className="font-semibold">{item.company_name}</h3>
+                        {item.verified && (
+                          <Verified className="w-4 h-4 text-blue-400" />
+                        )}
+                      </div>
+                      <div className="flex items-center">
+                        <Star className="w-4 h-4 text-yellow-500 mr-1" />
+                        <span className="text-sm">{item.rating}</span>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <p className="text-gray-300 text-sm mb-4">{item.description}</p>
+                  
+                  <div className="flex flex-wrap gap-2 mb-4">
+                    {item.services.slice(0, 2).map((service, index) => (
+                      <span key={index} className="px-2 py-1 bg-blue-900/50 text-blue-300 rounded-lg text-xs">
+                        {service}
+                      </span>
+                    ))}
+                    {item.services.length > 2 && (
+                      <span className="px-2 py-1 bg-gray-700/50 text-gray-400 rounded-lg text-xs">
+                        +{item.services.length - 2} mais
+                      </span>
+                    )}
+                  </div>
+                  
+                  <button className="w-full py-2 bg-emerald-600 hover:bg-emerald-700 rounded-xl text-white font-medium transition-all duration-200 flex items-center justify-center">
+                    <ExternalLink className="w-4 h-4 mr-2" />
+                    Entrar em Contato
+                  </button>
+                </div>
+              ))}
             </div>
           </div>
         )}
@@ -586,7 +903,7 @@ export function DashboardPage() {
 
             {/* Posts Grid - Mobile First */}
             <div className="grid grid-cols-1 gap-4 sm:gap-6">
-              {filteredPosts.map((post) => (
+              {displayedPosts.map((post) => (
                 <div key={post.id} className="bg-gradient-to-br from-gray-900/80 to-gray-800/80 backdrop-blur-sm rounded-2xl p-4 sm:p-6 border border-gray-700/50 hover:border-gray-600/50 transition-all duration-200">
                   <div className="flex items-start space-x-3 sm:space-x-4">
                     <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-gray-700 flex items-center justify-center overflow-hidden flex-shrink-0">
@@ -681,6 +998,22 @@ export function DashboardPage() {
                 </div>
               ))}
             </div>
+
+            {/* Ver Mais Button */}
+            {!showAllPosts && filteredPosts.length > postsToShow && (
+              <div className="flex justify-center">
+                <button
+                  onClick={() => {
+                    setShowAllPosts(true);
+                    setPostsToShow(filteredPosts.length);
+                  }}
+                  className="px-6 py-3 bg-gradient-to-r from-blue-600 to-emerald-600 hover:from-blue-700 hover:to-emerald-700 rounded-xl text-white font-medium transition-all duration-200 flex items-center space-x-2"
+                >
+                  <MoreHorizontal className="w-5 h-5" />
+                  <span>Ver Mais ({filteredPosts.length - postsToShow} posts)</span>
+                </button>
+              </div>
+            )}
 
             {/* Sidebar Content - Mobile Stacked */}
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-8">
