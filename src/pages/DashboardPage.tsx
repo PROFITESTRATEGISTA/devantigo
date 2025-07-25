@@ -146,6 +146,7 @@ const TutorialCard = ({ tutorial }: { tutorial: any }) => {
 export const DashboardPage = () => {
   const navigate = useNavigate();
   const [activeSection, setActiveSection] = useState('feed');
+  const [activeSection, setActiveSection] = useState('overview');
   const [showAllPosts, setShowAllPosts] = useState(false);
 
   // Mock data para análises
