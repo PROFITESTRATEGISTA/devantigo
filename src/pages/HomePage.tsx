@@ -78,6 +78,12 @@ export function HomePage() {
             <div className="flex items-center space-x-4">
               <LanguageSwitcher />
               <button 
+                onClick={() => navigate('/faq')}
+                className="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium"
+              >
+                {language === 'en' ? 'FAQ' : 'FAQ'}
+              </button>
+              <button 
                 onClick={() => navigate('/plans')}
                 className="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium"
               >
