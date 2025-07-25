@@ -54,7 +54,16 @@ export function EditorPage() {
   const { t } = useLanguageStore();
 
   useEffect(() => {
-    loadRobots();
+    const initializeData = async () => {
+      try {
+        await loadRobots();
+      } catch (error) {
+        console.error('Error loading robots:', error);
+        // Don't block the editor if robots fail to load
+      }
+    };
+    
+    initializeData();
   }, [loadRobots]);
 
   useEffect(() => {
@@ -62,17 +71,22 @@ export function EditorPage() {
       const robot = robots.find(r => r.id === robotId);
       if (robot) {
         setRobotTitle(robot.name);
-        loadVersions(robotId).then(loadedVersions => {
-          if (loadedVersions.length > 0) {
-            const firstVersion = loadedVersions[0];
-            setSelectedVersion(firstVersion.version_name);
-            setEditorContent(firstVersion.code);
-            setCurrentVersionDescription(firstVersion.description || '');
-            setCurrentVersionTags(firstVersion.tags || []);
-            setCurrentVersionCreatedAt(firstVersion.created_at);
-            setCurrentVersionCreatedBy(firstVersion.created_by || '');
-          }
-        });
+        loadVersions(robotId)
+          .then(loadedVersions => {
+            if (loadedVersions.length > 0) {
+              const firstVersion = loadedVersions[0];
+              setSelectedVersion(firstVersion.version_name);
+              setEditorContent(firstVersion.code);
+              setCurrentVersionDescription(firstVersion.description || '');
+              setCurrentVersionTags(firstVersion.tags || []);
+              setCurrentVersionCreatedAt(firstVersion.created_at);
+              setCurrentVersionCreatedBy(firstVersion.created_by || '');
+            }
+          })
+          .catch(error => {
+            console.error('Error loading versions:', error);
+            // Don't block the editor if versions fail to load
+          });
       }
     }
   }, [robotId, robots]);

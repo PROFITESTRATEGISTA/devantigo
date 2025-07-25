@@ -29,7 +29,13 @@ export function Navbar() {
 
   const handleExternalLink = (url: string, e: React.MouseEvent) => {
     e.preventDefault();
-    window.open(url, '_blank');
+    try {
+      window.open(url, '_blank');
+    } catch (error) {
+      console.error('Error opening external link:', error);
+      // Fallback: try to navigate directly
+      window.location.href = url;
+    }
   };
 
   const menuItems = [

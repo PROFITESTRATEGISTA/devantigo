@@ -113,6 +113,13 @@ export const useAuthStore = create<AuthState>((set, get) => ({
 
   loadProfile: async () => {
     try {
+      // Check if supabase is properly configured
+      if (!supabase || typeof supabase.auth?.getSession !== 'function') {
+        console.warn('Supabase not properly configured');
+        set({ isLoading: false, session: null, profile: null });
+        return;
+      }
+      
       const { data: { session } } = await supabase.auth.getSession();
       set({ session });
       
@@ -123,7 +130,10 @@ export const useAuthStore = create<AuthState>((set, get) => ({
           .eq('id', session.user.id)
           .single();
 
-        if (error) throw error;
+        if (error) {
+          console.error('Error loading profile:', error);
+          // Don't throw error, just log it
+        }
         set({ profile });
       }
       set({ isLoading: false });

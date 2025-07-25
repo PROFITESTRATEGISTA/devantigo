@@ -4,38 +4,84 @@ import { createClient } from '@supabase/supabase-js';
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
-// Validate environment variables
-if (!supabaseUrl || !supabaseAnonKey) {
-  throw new Error('Missing Supabase environment variables');
+// Create a default client even if env vars are missing
+let supabase: any = null;
+
+try {
+  // Validate environment variables
+  if (!supabaseUrl || !supabaseAnonKey) {
+    console.warn('Missing Supabase environment variables. Some features may not work.');
+    // Create a mock client to prevent crashes
+    supabase = {
+      auth: {
+        getSession: () => Promise.resolve({ data: { session: null }, error: null }),
+        signInWithPassword: () => Promise.resolve({ data: { user: null, session: null }, error: new Error('Supabase not configured') }),
+        signUp: () => Promise.resolve({ data: { user: null, session: null }, error: new Error('Supabase not configured') }),
+        signOut: () => Promise.resolve({ error: null }),
+        onAuthStateChange: () => ({ data: { subscription: { unsubscribe: () => {} } } })
+      },
+      from: () => ({
+        select: () => Promise.resolve({ data: [], error: null }),
+        insert: () => Promise.resolve({ data: null, error: new Error('Supabase not configured') }),
+        update: () => Promise.resolve({ data: null, error: new Error('Supabase not configured') }),
+        delete: () => Promise.resolve({ data: null, error: new Error('Supabase not configured') })
+      })
+    };
+  } else {
+    // Create Supabase client with retries and timeouts
+    supabase = createClient(supabaseUrl, supabaseAnonKey, {
+      auth: {
+        autoRefreshToken: true,
+        persistSession: true,
+        detectSessionInUrl: true,
+        flowType: 'pkce',
+        debug: false // Disable debug to reduce console noise
+      },
+      global: {
+        headers: { 
+          'x-application-name': 'devhub-trader',
+          'X-Client-Info': 'supabase-js/2.39.7'
+        },
+      },
+      db: {
+        schema: 'public'
+      },
+      realtime: {
+        params: {
+          eventsPerSecond: 10
+        }
+      }
+    });
+  }
+} catch (error) {
+  console.error('Error creating Supabase client:', error);
+  // Create a mock client as fallback
+  supabase = {
+    auth: {
+      getSession: () => Promise.resolve({ data: { session: null }, error: null }),
+      signInWithPassword: () => Promise.resolve({ data: { user: null, session: null }, error: new Error('Supabase not configured') }),
+      signUp: () => Promise.resolve({ data: { user: null, session: null }, error: new Error('Supabase not configured') }),
+      signOut: () => Promise.resolve({ error: null }),
+      onAuthStateChange: () => ({ data: { subscription: { unsubscribe: () => {} } } })
+    },
+    from: () => ({
+      select: () => Promise.resolve({ data: [], error: null }),
+      insert: () => Promise.resolve({ data: null, error: new Error('Supabase not configured') }),
+      update: () => Promise.resolve({ data: null, error: new Error('Supabase not configured') }),
+      delete: () => Promise.resolve({ data: null, error: new Error('Supabase not configured') })
+    })
+  };
 }
 
-// Create Supabase client with retries and timeouts
-export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
-  auth: {
-    autoRefreshToken: true,
-    persistSession: true,
-    detectSessionInUrl: true,
-    flowType: 'pkce',
-    debug: true
-  },
-  global: {
-    headers: { 
-      'x-application-name': 'devhub-trader',
-      'X-Client-Info': 'supabase-js/2.39.7'
-    },
-  },
-  db: {
-    schema: 'public'
-  },
-  realtime: {
-    params: {
-      eventsPerSecond: 10
-    }
-  }
-});
+export { supabase };
 
-// Test connection function with improved retry logic and error handling
-export async function testSupabaseConnection(retries = 3, delay = 1000) {
+// Test connection function with improved error handling
+export async function testSupabaseConnection(retries = 2, delay = 1000) {
+  if (!supabaseUrl || !supabaseAnonKey) {
+    console.warn('Supabase not configured, skipping connection test');
+    return false;
+  }
+  
   for (let i = 0; i < retries; i++) {
     try {
       const { error } = await supabase.auth.getSession();
@@ -45,16 +91,12 @@ export async function testSupabaseConnection(retries = 3, delay = 1000) {
       }
       console.warn(`Connection attempt ${i + 1} failed: ${error.message}`);
       if (i < retries - 1) {
-        const backoffDelay = delay * Math.pow(2, i);
-        console.log(`Retrying in ${backoffDelay}ms...`);
-        await new Promise(resolve => setTimeout(resolve, backoffDelay));
+        await new Promise(resolve => setTimeout(resolve, delay));
       }
     } catch (error) {
       console.error('Supabase connection error:', error);
       if (i < retries - 1) {
-        const backoffDelay = delay * Math.pow(2, i);
-        console.log(`Retrying in ${backoffDelay}ms...`);
-        await new Promise(resolve => setTimeout(resolve, backoffDelay));
+        await new Promise(resolve => setTimeout(resolve, delay));
       }
     }
   }
@@ -65,6 +107,11 @@ export async function testSupabaseConnection(retries = 3, delay = 1000) {
 // Initialize connection with improved error handling
 export async function initializeSupabase() {
   try {
+    if (!supabaseUrl || !supabaseAnonKey) {
+      console.warn('Supabase environment variables not found');
+      return false;
+    }
+    
     // Test the connection with retries
     const isConnected = await testSupabaseConnection();
     if (!isConnected) {
@@ -76,7 +123,7 @@ export async function initializeSupabase() {
     const { data: { session }, error: sessionError } = await supabase.auth.getSession();
     if (sessionError) {
       console.error('Session error:', sessionError.message);
-      return false;
+      // Don't return false here, continue with initialization
     }
 
     // Setup auth state change listener with error handling

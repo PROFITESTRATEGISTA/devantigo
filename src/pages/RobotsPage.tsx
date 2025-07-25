@@ -33,8 +33,17 @@ export function RobotsPage() {
   const { t, language } = useLanguageStore();
 
   useEffect(() => {
-    loadRobots();
-    getRobotLimit();
+    const initializeData = async () => {
+      try {
+        await loadRobots();
+        await getRobotLimit();
+      } catch (error) {
+        console.error('Error initializing robots data:', error);
+        setError('Erro ao carregar dados. Tente recarregar a página.');
+      }
+    };
+    
+    initializeData();
   }, [loadRobots, getRobotLimit]);
 
   const handleCreateRobot = async () => {

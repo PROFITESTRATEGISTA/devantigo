@@ -47,24 +47,128 @@ export function Editor({
   useEffect(() => {
     if (fileId) {
       const loadInitialVersion = async () => {
-        const { data: robot } = await supabase
-          .from('robots')
-          .select('*, robot_versions!robot_versions_robot_id_fkey(*)')
-          .eq('id', fileId)
-          .single();
+        try {
+          if (!supabase || typeof supabase.from !== 'function') {
+            console.warn('Supabase not available, using default content');
+            const defaultCode = `// Robô de Trading
+// Versão 1
 
-        if (robot?.robot_versions?.length > 0) {
-          const version1 = robot.robot_versions.find(v => v.version_name === 'Versão 1');
-          if (version1) {
-            onContentChange(version1.code);
-            setLastSavedContent(version1.code);
+var
+  precoEntrada, precoSaida: float;
+begin
+  // Lógica principal do robô
+  // Clique para começar a editar
+end;`;
+            onContentChange(defaultCode);
+            setLastSavedContent(defaultCode);
+            return;
           }
+          
+          const { data: robot } = await supabase
+            .from('robots')
+            .select('*, robot_versions!robot_versions_robot_id_fkey(*)')
+            .eq('id', fileId)
+            .single();
+
+          if (robot?.robot_versions?.length > 0) {
+            const version1 = robot.robot_versions.find(v => v.version_name === 'Versão 1');
+            if (version1) {
+              onContentChange(version1.code);
+              setLastSavedContent(version1.code);
+            }
+          }
+        } catch (error) {
+          console.error('Error loading initial version:', error);
+          // Use default content if loading fails
+          const defaultCode = `// Robô de Trading
+// Versão 1
+
+var
+  precoEntrada, precoSaida: float;
+begin
+  // Lógica principal do robô
+  // Clique para começar a editar
+end;`;
+          onContentChange(defaultCode);
+          setLastSavedContent(defaultCode);
         }
       };
 
       loadInitialVersion();
     }
-  }, [fileId]);
+  }, [fileId, onContentChange]);
+
+  // Add error boundary for Monaco Editor
+  const handleEditorDidMount = (editor: any) => {
+    try {
+      editorRef.current = editor;
+      setIsEditorReady(true);
+
+      editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyF, () => {
+        editor.trigger('', 'actions.find');
+      });
+
+      // Add keyboard shortcut for creating a new version (Ctrl+Alt+S)
+      editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyMod.Alt | monaco.KeyCode.KeyS, () => {
+        setShowCreateVersionModal(true);
+      });
+
+      // Add keyboard shortcut for saving (Ctrl+S)
+      editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyS, () => {
+        setLastSavedContent(editor.getValue());
+        setUnsavedChanges(false);
+        
+        // Show a temporary notification
+        const notification = document.createElement('div');
+        notification.className = 'fixed top-4 right-4 bg-green-500 text-white px-4 py-2 rounded-md z-50 flex items-center';
+        notification.innerHTML = `
+          <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+          </svg>
+          Alterações salvas!
+        `;
+        document.body.appendChild(notification);
+        
+        // Remove notification after 2 seconds
+        setTimeout(() => {
+          if (document.body.contains(notification)) {
+            document.body.removeChild(notification);
+          }
+        }, 2000);
+      });
+
+      if (typeof monaco !== 'undefined' && monaco.languages) {
+        monaco.languages.registerCompletionItemProvider('javascript', {
+          provideCompletionItems: () => ({
+            suggestions: Object.entries(ntslSnippets).map(([name, content]) => ({
+              label: name,
+              kind: monaco.languages.CompletionItemKind.Snippet,
+              insertText: content,
+              documentation: `Snippet: ${name}`,
+              insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet
+            }))
+          })
+        });
+      }
+
+      const resizeObserver = new ResizeObserver(() => {
+        if (editorRef.current) {
+          editorRef.current.layout();
+        }
+      });
+
+      if (containerRef.current) {
+        resizeObserver.observe(containerRef.current);
+      }
+
+      return () => {
+        resizeObserver.disconnect();
+      };
+    } catch (error) {
+      console.error('Error setting up Monaco Editor:', error);
+      setIsEditorReady(true); // Continue even if setup fails
+    }
+  };
 
   // Track unsaved changes
   useEffect(() => {

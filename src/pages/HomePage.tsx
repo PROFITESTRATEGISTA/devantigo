@@ -25,6 +25,11 @@ export function HomePage() {
 
     if (email && password) {
       try {
+        // Check if supabase is properly configured
+        if (!supabase || typeof supabase.auth?.signInWithPassword !== 'function') {
+          throw new Error('Sistema não configurado. Por favor, tente novamente mais tarde.');
+        }
+        
         if (isRegistering) {
           await signUpWithEmail(email, password, phone);
           // No need to show success message since we'll auto-redirect

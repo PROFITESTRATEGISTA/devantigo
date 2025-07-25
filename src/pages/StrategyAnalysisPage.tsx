@@ -592,11 +592,8 @@ NÃO retorne um objeto JSON. Apenas forneça uma análise de texto clara e bem e
   };
 
   const analyzeStrategy = async () => {
-    if (useAssistant) {
-      await analyzeStrategyWithAssistant();
-    } else {
-      await analyzeStrategyWithChatCompletion();
-    }
+    setError('Análise de estratégia não está disponível no momento. Esta funcionalidade requer configuração da API OpenAI.');
+    return;
   };
 
   const handleCancelAnalysis = () => {

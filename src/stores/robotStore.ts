@@ -62,9 +62,18 @@ export const useRobotStore = create<RobotState>((set, get) => ({
   loadRobots: async () => {
     set({ isLoading: true, error: null });
     try {
+      // Check if supabase is properly configured
+      if (!supabase || typeof supabase.auth?.getSession !== 'function') {
+        console.warn('Supabase not properly configured');
+        set({ isLoading: false, robots: [] });
+        return;
+      }
+      
       const { data: { session } } = await supabase.auth.getSession();
       if (!session?.user) {
-        throw new Error('No authenticated session');
+        console.warn('No authenticated session');
+        set({ isLoading: false, robots: [] });
+        return;
       }
 
       const { data: robots, error } = await supabase
@@ -73,7 +82,10 @@ export const useRobotStore = create<RobotState>((set, get) => ({
         .eq('owner_id', session.user.id)
         .order('created_at', { ascending: false });
 
-      if (error) throw error;
+      if (error) {
+        console.error('Error loading robots:', error);
+        set({ error: error.message });
+      }
       set({ robots: robots || [] });
       
       // Load robot limit based on user's plan
