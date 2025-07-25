@@ -9,10 +9,7 @@ import { ProfilePage } from './pages/ProfilePage';
 import { CommunityPage } from './pages/CommunityPage';
 import { SubscriptionPage } from './pages/SubscriptionPage';
 import { AdminPanel } from './pages/AdminPanel';
-import { ExpertsPage } from './pages/ExpertsPage';
-import { DeveloperSignupPage } from './pages/DeveloperSignupPage';
-import { ProprietaryTradingPage } from './pages/ProprietaryTradingPage';
-import { ProfitEstrategistaPage } from './pages/ProfitEstrategistaPage';
+import { DashboardPage } from './pages/DashboardPage';
 import { FloatingWhatsAppButton } from './components/FloatingWhatsAppButton';
 import { BacktestAnalysisPage } from './pages/BacktestAnalysisPage';
 import { StrategyAnalysisPage } from './pages/StrategyAnalysisPage';
@@ -115,15 +112,11 @@ export default function App() {
           <Route path="/" element={<Navigate to="/robots" replace />} />
           <Route path="/editor/:robotId" element={<EditorPage />} />
           <Route path="/robots" element={<RobotsPage />} />
-          <Route path="/community" element={<CommunityPage />} />
+          <Route path="/dashboard" element={<DashboardPage />} />
           <Route path="/profile" element={<ProfilePage />} />
           <Route path="/subscription" element={<SubscriptionPage />} />
           <Route path="/plans" element={<SubscriptionPage />} />
           <Route path="/admin" element={<AdminPanel />} />
-          <Route path="/experts" element={<ExpertsPage />} />
-          <Route path="/developer-signup" element={<DeveloperSignupPage />} />
-          <Route path="/proprietary" element={<ProprietaryTradingPage />} />
-          <Route path="/profit-estrategista" element={<ProfitEstrategistaPage />} />
           <Route path="/backtest-analysis" element={<BacktestAnalysisPage />} />
           <Route path="/strategy-analysis" element={<StrategyAnalysisPage />} />
           <Route path="*" element={<Navigate to="/robots" replace />} />
