@@ -375,7 +375,7 @@ export const DashboardPage = () => {
 
           {/* Meus Robôs */}
           <button
-            onClick={() => setActiveSection('myrobots')}
+            onClick={() => navigate('/robots')}
             className={`group relative overflow-hidden rounded-2xl p-6 transition-all duration-300 ${
               activeSection === 'myrobots'
                 ? 'bg-gradient-to-br from-emerald-600 to-emerald-700 shadow-lg shadow-emerald-500/25'
