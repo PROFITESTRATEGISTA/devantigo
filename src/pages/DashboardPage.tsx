@@ -97,7 +97,7 @@ interface MarketplaceItem {
 export function DashboardPage() {
   const navigate = useNavigate();
   const { profile } = useAuthStore();
-  const [activeSection, setActiveSection] = useState<'feed' | 'strategies' | 'tutorials' | 'marketplace' | 'specialists' | 'users' | 'myrobots'>('feed');
+  const [activeSection, setActiveSection] = useState<'feed' | 'analyses' | 'tutorials' | 'marketplace' | 'specialists' | 'users' | 'myrobots'>('feed');
   const [searchQuery, setSearchQuery] = useState('');
   const [filterType, setFilterType] = useState<'all' | 'analysis' | 'robot'>('all');
   const [posts, setPosts] = useState<CommunityPost[]>([]);
@@ -108,6 +108,16 @@ export function DashboardPage() {
   const [marketplaceItems, setMarketplaceItems] = useState<MarketplaceItem[]>([]);
   const [showAllPosts, setShowAllPosts] = useState(false);
   const [postsToShow, setPostsToShow] = useState(3);
+
+  // Mock data para análises
+  const mockAnalyses = [
+    { name: 'Análise WINFUT', date: '15/01/2024', profitFactor: '2.3', winRate: '68', drawdown: '8.5' },
+    { name: 'Backtest PETR4', date: '14/01/2024', profitFactor: '1.8', winRate: '72', drawdown: '12.3' },
+    { name: 'Grid Strategy', date: '13/01/2024', profitFactor: '2.1', winRate: '65', drawdown: '15.2' },
+    { name: 'Scalping M5', date: '12/01/2024', profitFactor: '1.9', winRate: '70', drawdown: '9.8' },
+    { name: 'Trend Following', date: '11/01/2024', profitFactor: '2.5', winRate: '63', drawdown: '18.7' },
+    { name: 'Mean Reversion', date: '10/01/2024', profitFactor: '2.0', winRate: '69', drawdown: '11.4' }
+  ];
 
   const mockRobots = [
     { id: '1', name: 'Scalper Pro', version: 'v2.1.0', profitFactor: '2.3', winRate: '68' },
@@ -357,6 +367,9 @@ export function DashboardPage() {
         contact_info: 'support@algotrader.pro'
       }
     ]);
+
+    // Set default active section
+    setActiveSection('analyses');
   }, []);
 
   const handleViewAnalysis = (analysisId: string) => {
@@ -491,26 +504,26 @@ export function DashboardPage() {
         </div>
 
         {/* Navigation Cards */}
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-8">
-          {/* Estratégias Verificadas */}
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 mb-8">
+          {/* Minhas Análises */}
           <button
-            onClick={() => setActiveSection('strategies')}
+            onClick={() => setActiveSection('analyses')}
             className={`group relative overflow-hidden rounded-2xl p-6 transition-all duration-300 ${
-              activeSection === 'strategies'
-                ? 'bg-gradient-to-br from-emerald-600 to-emerald-700 shadow-lg shadow-emerald-500/25'
-                : 'bg-gradient-to-br from-gray-800 to-gray-900 hover:from-emerald-600/20 hover:to-emerald-700/20'
+              activeSection === 'analyses'
+                ? 'bg-gradient-to-br from-blue-600 to-blue-700 shadow-lg shadow-blue-500/25'
+                : 'bg-gradient-to-br from-gray-800 to-gray-900 hover:from-blue-600/20 hover:to-blue-700/20'
             }`}
           >
             <div className="relative z-10">
               <div className={`w-12 h-12 rounded-xl flex items-center justify-center mb-3 ${
-                activeSection === 'strategies' ? 'bg-white/20' : 'bg-emerald-500/20'
+                activeSection === 'analyses' ? 'bg-white/20' : 'bg-blue-500/20'
               }`}>
-                <Shield className={`w-6 h-6 ${
-                  activeSection === 'strategies' ? 'text-white' : 'text-emerald-400'
+                <BarChart2 className={`w-6 h-6 ${
+                  activeSection === 'analyses' ? 'text-white' : 'text-blue-400'
                 }`} />
               </div>
-              <h3 className="font-semibold text-white mb-1">Estratégias</h3>
-              <p className="text-xs text-gray-300">Verificadas</p>
+              <h3 className="font-semibold text-white mb-1">Minhas Análises</h3>
+              <p className="text-xs text-gray-300">Backtest</p>
             </div>
           </button>
 
@@ -519,16 +532,16 @@ export function DashboardPage() {
             onClick={() => setActiveSection('myrobots')}
             className={`group relative overflow-hidden rounded-2xl p-6 transition-all duration-300 ${
               activeSection === 'myrobots'
-                ? 'bg-gradient-to-br from-blue-600 to-blue-700 shadow-lg shadow-blue-500/25'
-                : 'bg-gradient-to-br from-gray-800 to-gray-900 hover:from-blue-600/20 hover:to-blue-700/20'
+                ? 'bg-gradient-to-br from-emerald-600 to-emerald-700 shadow-lg shadow-emerald-500/25'
+                : 'bg-gradient-to-br from-gray-800 to-gray-900 hover:from-emerald-600/20 hover:to-emerald-700/20'
             }`}
           >
             <div className="relative z-10">
               <div className={`w-12 h-12 rounded-xl flex items-center justify-center mb-3 ${
-                activeSection === 'myrobots' ? 'bg-white/20' : 'bg-blue-500/20'
+                activeSection === 'myrobots' ? 'bg-white/20' : 'bg-emerald-500/20'
               }`}>
                 <Code2 className={`w-6 h-6 ${
-                  activeSection === 'myrobots' ? 'text-white' : 'text-blue-400'
+                  activeSection === 'myrobots' ? 'text-white' : 'text-emerald-400'
                 }`} />
               </div>
               <h3 className="font-semibold text-white mb-1">Meus Robôs</h3>
@@ -616,24 +629,6 @@ export function DashboardPage() {
           </button>
         </div>
 
-        {/* Action Buttons */}
-        <div className="flex space-x-3 mb-8">
-          <button
-            onClick={() => navigate('/backtest-analysis')}
-            className="flex-1 px-4 py-3 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 rounded-lg flex items-center justify-center space-x-2 transition-all duration-200"
-          >
-            <BarChart2 className="w-5 h-5" />
-            <span className="font-medium">Nova Análise</span>
-          </button>
-          <button
-            onClick={() => navigate('/robots')}
-            className="flex-1 px-4 py-3 bg-gradient-to-r from-emerald-600 to-emerald-700 hover:from-emerald-700 hover:to-emerald-800 rounded-lg flex items-center justify-center space-x-2 transition-all duration-200"
-          >
-            <Code2 className="w-5 h-5" />
-            <span className="font-medium">Novo Robô</span>
-          </button>
-        </div>
-
         {/* Search Bar */}
         <div className="mb-6">
           <div className="relative">
@@ -655,13 +650,78 @@ export function DashboardPage() {
 
         {/* Conteúdo das Seções */}
         <div className="space-y-6">
+          {/* Minhas Análises */}
+          {activeSection === 'analyses' && (
+            <div className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-2xl p-6">
+              <div className="flex items-center justify-between mb-6">
+                <div className="flex items-center space-x-3">
+                  <div className="w-10 h-10 bg-blue-500/20 rounded-xl flex items-center justify-center">
+                    <BarChart2 className="w-5 h-5 text-blue-400" />
+                  </div>
+                  <div>
+                    <h2 className="text-xl font-bold">Minhas Análises</h2>
+                    <p className="text-gray-400 text-sm">Histórico de análises de backtest</p>
+                  </div>
+                </div>
+                <button
+                  onClick={() => navigate('/backtest-analysis')}
+                  className="px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg text-sm font-medium transition-colors"
+                >
+                  Nova Análise
+                </button>
+              </div>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {mockAnalyses.map((analysis, index) => (
+                  <div key={index} className="bg-gray-700/50 rounded-xl p-4 hover:bg-gray-700 transition-colors">
+                    <div className="flex items-center justify-between mb-3">
+                      <h3 className="font-medium">{analysis.name}</h3>
+                      <span className="text-xs text-gray-400">{analysis.date}</span>
+                    </div>
+                    
+                    <div className="grid grid-cols-3 gap-2 mb-4">
+                      <div className="text-center">
+                        <p className="text-sm font-bold text-green-400">{analysis.profitFactor}</p>
+                        <p className="text-xs text-gray-400">P.F.</p>
+                      </div>
+                      <div className="text-center">
+                        <p className="text-sm font-bold text-blue-400">{analysis.winRate}%</p>
+                        <p className="text-xs text-gray-400">Win</p>
+                      </div>
+                      <div className="text-center">
+                        <p className="text-sm font-bold text-red-400">{analysis.drawdown}%</p>
+                        <p className="text-xs text-gray-400">DD</p>
+                      </div>
+                    </div>
+                    
+                    <div className="flex space-x-2">
+                      <button
+                        onClick={() => navigate('/backtest-analysis')}
+                        className="flex-1 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg text-xs font-medium transition-colors"
+                      >
+                        Ver Detalhes
+                      </button>
+                      <button
+                        onClick={() => {}}
+                        className="flex-1 py-2 bg-emerald-600 hover:bg-emerald-700 rounded-lg text-xs font-medium transition-colors flex items-center justify-center"
+                      >
+                        <Share2 className="w-3 h-3 mr-1" />
+                        Compartilhar
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
           {/* Meus Robôs */}
           {activeSection === 'myrobots' && (
             <div className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-2xl p-6">
               <div className="flex items-center justify-between mb-6">
                 <div className="flex items-center space-x-3">
-                  <div className="w-10 h-10 bg-blue-500/20 rounded-xl flex items-center justify-center">
-                    <Code2 className="w-5 h-5 text-blue-400" />
+                  <div className="w-10 h-10 bg-emerald-500/20 rounded-xl flex items-center justify-center">
+                    <Code2 className="w-5 h-5 text-emerald-400" />
                   </div>
                   <div>
                     <h2 className="text-xl font-bold">Meus Robôs</h2>
@@ -670,9 +730,9 @@ export function DashboardPage() {
                 </div>
                 <button
                   onClick={() => navigate('/robots')}
-                  className="px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg text-sm font-medium transition-colors"
+                  className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 rounded-lg text-sm font-medium transition-colors"
                 >
-                  Ver Todos
+                  Novo Robô
                 </button>
               </div>
               
@@ -681,8 +741,8 @@ export function DashboardPage() {
                   <div key={index} className="bg-gray-700/50 rounded-xl p-4 hover:bg-gray-700 transition-colors">
                     <div className="flex items-center justify-between mb-3">
                       <div className="flex items-center space-x-2">
-                        <div className="w-8 h-8 bg-blue-500/20 rounded-lg flex items-center justify-center">
-                          <Code2 className="w-4 h-4 text-blue-400" />
+                        <div className="w-8 h-8 bg-emerald-500/20 rounded-lg flex items-center justify-center">
+                          <Code2 className="w-4 h-4 text-emerald-400" />
                         </div>
                         <h3 className="font-medium">{robot.name}</h3>
                       </div>
@@ -717,59 +777,6 @@ export function DashboardPage() {
                     </div>
                   </div>
                 ))}
-              </div>
-            </div>
-          )}
-
-          {/* Estratégias Verificadas */}
-          {activeSection === 'strategies' && (
-            <div className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-2xl p-6">
-              <div className="flex items-center space-x-3 mb-6">
-                <div className="w-10 h-10 bg-emerald-500/20 rounded-xl flex items-center justify-center">
-                  <Shield className="w-5 h-5 text-emerald-400" />
-                </div>
-                <div>
-                  <h2 className="text-xl font-bold">Estratégias Verificadas</h2>
-                  <p className="text-gray-400 text-sm">Estratégias testadas e aprovadas pela comunidade</p>
-                </div>
-              </div>
-              
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div className="bg-gradient-to-br from-emerald-600/10 to-emerald-800/10 rounded-lg p-4 border border-emerald-500/20 hover:border-emerald-500/40 transition-all duration-200 cursor-pointer">
-                  <div className="flex items-center space-x-2 mb-3">
-                    <Package className="w-5 h-5 text-emerald-400" />
-                    <h3 className="font-semibold text-white">Pack de Robôs</h3>
-                  </div>
-                  <p className="text-sm text-gray-400 mb-3">Parceiro DevHub Trader</p>
-                  <div className="flex items-center justify-between">
-                    <span className="text-emerald-400 font-medium">R$ 299/mês</span>
-                    <ExternalLink className="w-4 h-4 text-gray-400" />
-                  </div>
-                </div>
-                
-                <div className="bg-gradient-to-br from-blue-600/10 to-blue-800/10 rounded-lg p-4 border border-blue-500/20 hover:border-blue-500/40 transition-all duration-200 cursor-pointer">
-                  <div className="flex items-center space-x-2 mb-3">
-                    <Zap className="w-5 h-5 text-blue-400" />
-                    <h3 className="font-semibold text-white">Copy Trade IA</h3>
-                  </div>
-                  <p className="text-sm text-gray-400 mb-3">Premium</p>
-                  <div className="flex items-center justify-between">
-                    <span className="text-blue-400 font-medium">R$ 599/mês</span>
-                    <ExternalLink className="w-4 h-4 text-gray-400" />
-                  </div>
-                </div>
-                
-                <div className="bg-gradient-to-br from-emerald-600/10 to-blue-600/10 rounded-lg p-4 border border-emerald-500/20 hover:border-emerald-500/40 transition-all duration-200 cursor-pointer">
-                  <div className="flex items-center space-x-2 mb-3">
-                    <Settings className="w-5 h-5 text-emerald-400" />
-                    <h3 className="font-semibold text-white">Robô Personalizado</h3>
-                  </div>
-                  <p className="text-sm text-gray-400 mb-3">Sob medida</p>
-                  <div className="flex items-center justify-between">
-                    <span className="text-emerald-400 font-medium">Consultar</span>
-                    <ExternalLink className="w-4 h-4 text-gray-400" />
-                  </div>
-                </div>
               </div>
             </div>
           )}
