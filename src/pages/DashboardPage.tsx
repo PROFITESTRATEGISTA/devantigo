@@ -634,6 +634,25 @@ export function DashboardPage() {
           </button>
         </div>
 
+        {/* Search Bar */}
+        <div className="mb-6">
+          <div className="relative">
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+            <input
+              type="text"
+              placeholder={
+                activeSection === 'feed' ? 'Buscar análises, robôs ou usuários...' :
+                activeSection === 'specialists' ? 'Buscar especialistas...' :
+                activeSection === 'tutorials' ? 'Buscar tutoriais...' :
+                'Buscar...'
+              }
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full pl-12 pr-4 py-3 sm:py-4 bg-gray-900/50 border border-gray-700/50 rounded-2xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 backdrop-blur-sm transition-all duration-200"
+            />
+          </div>
+        </div>
+
         {/* Conteúdo das Seções */}
         <div className="space-y-6">
           {/* Meus Robôs */}
