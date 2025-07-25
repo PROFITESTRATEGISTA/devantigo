@@ -1351,10 +1351,12 @@ export function DashboardPage() {
                             </div>
                             <span className="text-xs font-medium text-emerald-400">{post.quantScore}</span>
                           </div>
-                          <span className={\`px-2 py-0.5 rounded-full text-xs font-medium ${
-                            post.level === 'Expert' ? 'bg-emerald-500/20 text-emerald-400' : 'bg-blue-500/20 text-blue-400'
+                          <span className={`px-2 py-0.5 rounded-full text-xs ${
+                            post.author.quantScore >= 90 ? 'bg-blue-500/20 text-blue-400' :
+                            post.author.quantScore >= 70 ? 'bg-emerald-500/20 text-emerald-400' :
+                            'bg-gray-500/20 text-gray-400'
                           }`}>
-                            {post.level}
+                            {post.author.quantScore >= 90 ? 'Expert' : post.author.quantScore >= 70 ? 'Pro' : 'Advanced'}
                           </span>
                         </div>
                         <p className="text-sm text-gray-400">{post.time}</p>
