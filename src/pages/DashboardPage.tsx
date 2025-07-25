@@ -97,7 +97,7 @@ interface MarketplaceItem {
 export function DashboardPage() {
   const navigate = useNavigate();
   const { profile } = useAuthStore();
-  const [activeSection, setActiveSection] = useState<'feed' | 'strategies' | 'tutorials' | 'marketplace' | 'specialists' | 'users'>('feed');
+  const [activeSection, setActiveSection] = useState<'feed' | 'strategies' | 'tutorials' | 'marketplace' | 'specialists' | 'users' | 'myrobots'>('feed');
   const [searchQuery, setSearchQuery] = useState('');
   const [filterType, setFilterType] = useState<'all' | 'analysis' | 'robot'>('all');
   const [posts, setPosts] = useState<CommunityPost[]>([]);
@@ -108,6 +108,15 @@ export function DashboardPage() {
   const [marketplaceItems, setMarketplaceItems] = useState<MarketplaceItem[]>([]);
   const [showAllPosts, setShowAllPosts] = useState(false);
   const [postsToShow, setPostsToShow] = useState(3);
+
+  const mockRobots = [
+    { id: '1', name: 'Scalper Pro', version: 'v2.1.0', profitFactor: '2.3', winRate: '68' },
+    { id: '2', name: 'Trend Master', version: 'v1.5.2', profitFactor: '1.8', winRate: '72' },
+    { id: '3', name: 'Grid Bot', version: 'v3.0.1', profitFactor: '2.1', winRate: '65' },
+    { id: '4', name: 'Mean Reversion', version: 'v1.2.0', profitFactor: '1.9', winRate: '70' },
+    { id: '5', name: 'Breakout Hunter', version: 'v2.0.3', profitFactor: '2.5', winRate: '63' },
+    { id: '6', name: 'Volatility Rider', version: 'v1.8.1', profitFactor: '2.0', winRate: '69' }
+  ];
 
   // Mock data for demonstration
   useEffect(() => {
@@ -483,41 +492,69 @@ export function DashboardPage() {
 
         {/* Navigation Cards */}
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-8">
+          {/* Estratégias Verificadas */}
           <button
             onClick={() => setActiveSection('strategies')}
-            className={`p-6 rounded-2xl border transition-all duration-300 ${
+            className={`group relative overflow-hidden rounded-2xl p-6 transition-all duration-300 ${
               activeSection === 'strategies'
-                ? 'bg-gradient-to-br from-emerald-500/20 to-green-600/20 border-emerald-500/50 shadow-lg shadow-emerald-500/25'
-                : 'bg-gray-800/50 border-gray-700/50 hover:border-emerald-500/30'
+                ? 'bg-gradient-to-br from-emerald-600 to-emerald-700 shadow-lg shadow-emerald-500/25'
+                : 'bg-gradient-to-br from-gray-800 to-gray-900 hover:from-emerald-600/20 hover:to-emerald-700/20'
             }`}
           >
-            <div className="flex flex-col items-center text-center">
-              <div className={`w-12 h-12 rounded-xl mb-3 flex items-center justify-center ${
-                activeSection === 'strategies' ? 'bg-emerald-500/20' : 'bg-gray-700/50'
+            <div className="relative z-10">
+              <div className={`w-12 h-12 rounded-xl flex items-center justify-center mb-3 ${
+                activeSection === 'strategies' ? 'bg-white/20' : 'bg-emerald-500/20'
               }`}>
-                <Shield className="w-6 h-6 text-emerald-400" />
+                <Shield className={`w-6 h-6 ${
+                  activeSection === 'strategies' ? 'text-white' : 'text-emerald-400'
+                }`} />
               </div>
               <h3 className="font-semibold text-white mb-1">Estratégias</h3>
-              <p className="text-xs text-gray-400">Verificadas</p>
+              <p className="text-xs text-gray-300">Verificadas</p>
             </div>
           </button>
 
+          {/* Meus Robôs */}
           <button
-            onClick={() => setActiveSection('feed')}
-            className={`p-6 rounded-2xl border transition-all duration-300 ${
-              activeSection === 'feed'
-                ? 'bg-gradient-to-br from-blue-500/20 to-blue-600/20 border-blue-500/50 shadow-lg shadow-blue-500/25'
-                : 'bg-gray-800/50 border-gray-700/50 hover:border-blue-500/30'
+            onClick={() => setActiveSection('myrobots')}
+            className={`group relative overflow-hidden rounded-2xl p-6 transition-all duration-300 ${
+              activeSection === 'myrobots'
+                ? 'bg-gradient-to-br from-blue-600 to-blue-700 shadow-lg shadow-blue-500/25'
+                : 'bg-gradient-to-br from-gray-800 to-gray-900 hover:from-blue-600/20 hover:to-blue-700/20'
             }`}
           >
-            <div className="flex flex-col items-center text-center">
-              <div className={`w-12 h-12 rounded-xl mb-3 flex items-center justify-center ${
-                activeSection === 'feed' ? 'bg-blue-500/20' : 'bg-gray-700/50'
+            <div className="relative z-10">
+              <div className={`w-12 h-12 rounded-xl flex items-center justify-center mb-3 ${
+                activeSection === 'myrobots' ? 'bg-white/20' : 'bg-blue-500/20'
               }`}>
-                <Activity className="w-6 h-6 text-blue-400" />
+                <Code2 className={`w-6 h-6 ${
+                  activeSection === 'myrobots' ? 'text-white' : 'text-blue-400'
+                }`} />
+              </div>
+              <h3 className="font-semibold text-white mb-1">Meus Robôs</h3>
+              <p className="text-xs text-gray-300">Gerenciar</p>
+            </div>
+          </button>
+
+          {/* Feed de Postagens */}
+          <button
+            onClick={() => setActiveSection('feed')}
+            className={`group relative overflow-hidden rounded-2xl p-6 transition-all duration-300 ${
+              activeSection === 'feed'
+                ? 'bg-gradient-to-br from-blue-600 to-blue-700 shadow-lg shadow-blue-500/25'
+                : 'bg-gradient-to-br from-gray-800 to-gray-900 hover:from-blue-600/20 hover:to-blue-700/20'
+            }`}
+          >
+            <div className="relative z-10">
+              <div className={`w-12 h-12 rounded-xl flex items-center justify-center mb-3 ${
+                activeSection === 'feed' ? 'bg-white/20' : 'bg-blue-500/20'
+              }`}>
+                <Activity className={`w-6 h-6 ${
+                  activeSection === 'feed' ? 'text-white' : 'text-blue-400'
+                }`} />
               </div>
               <h3 className="font-semibold text-white mb-1">Feed</h3>
-              <p className="text-xs text-gray-400">Postagens</p>
+              <p className="text-xs text-gray-300">Postagens</p>
             </div>
           </button>
 
@@ -614,6 +651,538 @@ export function DashboardPage() {
               className="w-full pl-12 pr-4 py-3 sm:py-4 bg-gray-900/50 border border-gray-700/50 rounded-2xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 backdrop-blur-sm transition-all duration-200"
             />
           </div>
+        </div>
+
+        {/* Conteúdo das Seções */}
+        <div className="space-y-6">
+          {/* Meus Robôs */}
+          {activeSection === 'myrobots' && (
+            <div className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-2xl p-6">
+              <div className="flex items-center justify-between mb-6">
+                <div className="flex items-center space-x-3">
+                  <div className="w-10 h-10 bg-blue-500/20 rounded-xl flex items-center justify-center">
+                    <Code2 className="w-5 h-5 text-blue-400" />
+                  </div>
+                  <div>
+                    <h2 className="text-xl font-bold">Meus Robôs</h2>
+                    <p className="text-gray-400 text-sm">Gerencie seus robôs de trading</p>
+                  </div>
+                </div>
+                <button
+                  onClick={() => navigate('/robots')}
+                  className="px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg text-sm font-medium transition-colors"
+                >
+                  Ver Todos
+                </button>
+              </div>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {mockRobots.slice(0, 6).map((robot, index) => (
+                  <div key={index} className="bg-gray-700/50 rounded-xl p-4 hover:bg-gray-700 transition-colors">
+                    <div className="flex items-center justify-between mb-3">
+                      <div className="flex items-center space-x-2">
+                        <div className="w-8 h-8 bg-blue-500/20 rounded-lg flex items-center justify-center">
+                          <Code2 className="w-4 h-4 text-blue-400" />
+                        </div>
+                        <h3 className="font-medium">{robot.name}</h3>
+                      </div>
+                      <span className="text-xs text-gray-400">{robot.version}</span>
+                    </div>
+                    
+                    <div className="grid grid-cols-2 gap-3 mb-4">
+                      <div className="text-center">
+                        <p className="text-lg font-bold text-green-400">{robot.profitFactor}</p>
+                        <p className="text-xs text-gray-400">Profit Factor</p>
+                      </div>
+                      <div className="text-center">
+                        <p className="text-lg font-bold text-blue-400">{robot.winRate}%</p>
+                        <p className="text-xs text-gray-400">Win Rate</p>
+                      </div>
+                    </div>
+                    
+                    <div className="flex space-x-2">
+                      <button
+                        onClick={() => navigate(`/editor/${robot.id}`)}
+                        className="flex-1 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg text-xs font-medium transition-colors"
+                      >
+                        Editar
+                      </button>
+                      <button
+                        onClick={() => {}}
+                        className="flex-1 py-2 bg-emerald-600 hover:bg-emerald-700 rounded-lg text-xs font-medium transition-colors flex items-center justify-center"
+                      >
+                        <Share2 className="w-3 h-3 mr-1" />
+                        Compartilhar
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Estratégias Verificadas */}
+          {activeSection === 'strategies' && (
+            <div className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-2xl p-6">
+              <div className="flex items-center space-x-3 mb-6">
+                <div className="w-10 h-10 bg-emerald-500/20 rounded-xl flex items-center justify-center">
+                  <Shield className="w-5 h-5 text-emerald-400" />
+                </div>
+                <div>
+                  <h2 className="text-xl font-bold">Estratégias Verificadas</h2>
+                  <p className="text-gray-400 text-sm">Estratégias testadas e aprovadas pela comunidade</p>
+                </div>
+              </div>
+              
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="bg-gradient-to-br from-emerald-600/10 to-emerald-800/10 rounded-lg p-4 border border-emerald-500/20 hover:border-emerald-500/40 transition-all duration-200 cursor-pointer">
+                  <div className="flex items-center space-x-2 mb-3">
+                    <Package className="w-5 h-5 text-emerald-400" />
+                    <h3 className="font-semibold text-white">Pack de Robôs</h3>
+                  </div>
+                  <p className="text-sm text-gray-400 mb-3">Parceiro DevHub Trader</p>
+                  <div className="flex items-center justify-between">
+                    <span className="text-emerald-400 font-medium">R$ 299/mês</span>
+                    <ExternalLink className="w-4 h-4 text-gray-400" />
+                  </div>
+                </div>
+                
+                <div className="bg-gradient-to-br from-blue-600/10 to-blue-800/10 rounded-lg p-4 border border-blue-500/20 hover:border-blue-500/40 transition-all duration-200 cursor-pointer">
+                  <div className="flex items-center space-x-2 mb-3">
+                    <Zap className="w-5 h-5 text-blue-400" />
+                    <h3 className="font-semibold text-white">Copy Trade IA</h3>
+                  </div>
+                  <p className="text-sm text-gray-400 mb-3">Premium</p>
+                  <div className="flex items-center justify-between">
+                    <span className="text-blue-400 font-medium">R$ 599/mês</span>
+                    <ExternalLink className="w-4 h-4 text-gray-400" />
+                  </div>
+                </div>
+                
+                <div className="bg-gradient-to-br from-emerald-600/10 to-blue-600/10 rounded-lg p-4 border border-emerald-500/20 hover:border-emerald-500/40 transition-all duration-200 cursor-pointer">
+                  <div className="flex items-center space-x-2 mb-3">
+                    <Settings className="w-5 h-5 text-emerald-400" />
+                    <h3 className="font-semibold text-white">Robô Personalizado</h3>
+                  </div>
+                  <p className="text-sm text-gray-400 mb-3">Sob medida</p>
+                  <div className="flex items-center justify-between">
+                    <span className="text-emerald-400 font-medium">Consultar</span>
+                    <ExternalLink className="w-4 h-4 text-gray-400" />
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Feed de Postagens */}
+          {activeSection === 'feed' && (
+            <div className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-2xl p-6">
+              <div className="flex items-center space-x-3 mb-6">
+                <div className="w-10 h-10 bg-blue-500/20 rounded-xl flex items-center justify-center">
+                  <Activity className="w-5 h-5 text-blue-400" />
+                </div>
+                <div>
+                  <h2 className="text-xl font-bold">Feed da Comunidade</h2>
+                  <p className="text-gray-400 text-sm">Últimas análises e robôs compartilhados</p>
+                </div>
+              </div>
+              
+              <div className="space-y-4">
+                {[
+                  {
+                    user: 'Carlos Quant',
+                    quantScore: 94,
+                    avatar: 'https://images.pexels.com/photos/2379004/pexels-photo-2379004.jpeg?auto=compress&cs=tinysrgb&w=50&h=50&fit=crop',
+                    type: 'ANÁLISE',
+                    time: '15/01/2024',
+                    content: 'Estratégia de arbitragem estatística com correlação PETR4/VALE3. Sharpe 2.1, Max DD 8.5%',
+                    metrics: { profitFactor: '2.3', winRate: '68.5%' },
+                    likes: 42,
+                    views: 287
+                  },
+                  {
+                    user: 'Ana Dev',
+                    quantScore: 87,
+                    avatar: 'https://images.pexels.com/photos/774909/pexels-photo-774909.jpeg?auto=compress&cs=tinysrgb&w=50&h=50&fit=crop',
+                    type: 'ROBÔ',
+                    time: '14/01/2024',
+                    content: 'Robô HFT para mini índice com latência <2ms. Implementação em NTSL otimizada.',
+                    likes: 35,
+                    views: 156
+                  },
+                  {
+                    user: 'Pedro Algo',
+                    quantScore: 91,
+                    avatar: 'https://images.pexels.com/photos/1222271/pexels-photo-1222271.jpeg?auto=compress&cs=tinysrgb&w=50&h=50&fit=crop',
+                    type: 'ANÁLISE',
+                    time: '13/01/2024',
+                    content: 'Machine Learning aplicado a mean reversion. Modelo XGBoost com 72% de precisão.',
+                    metrics: { profitFactor: '1.8', winRate: '72.3%' },
+                    likes: 28,
+                    views: 198
+                  }
+                ].map((post, index) => (
+                  <div key={index} className="bg-gray-700/50 rounded-xl p-4 hover:bg-gray-700 transition-colors">
+                    <div className="flex items-center space-x-3 mb-2">
+                      <img src={post.avatar} alt={post.user} className="w-10 h-10 rounded-full" />
+                      <div className="flex-1">
+                        <div className="flex items-center space-x-2">
+                          <h3 className="font-medium">{post.user}</h3>
+                          <div className="flex items-center space-x-1">
+                            <div className={`w-5 h-5 rounded-full flex items-center justify-center text-xs font-bold ${
+                              post.quantScore >= 90 ? 'bg-blue-500 text-white' :
+                              post.quantScore >= 70 ? 'bg-emerald-500 text-white' :
+                              'bg-gray-500 text-white'
+                            }`}>
+                              Q
+                            </div>
+                            <span className={`text-sm font-medium ${
+                              post.quantScore >= 90 ? 'text-blue-400' :
+                              post.quantScore >= 70 ? 'text-emerald-400' :
+                              'text-gray-400'
+                            }`}>
+                              {post.quantScore}
+                            </span>
+                          </div>
+                          <span className={`px-2 py-0.5 rounded-full text-xs ${
+                            post.quantScore >= 90 ? 'bg-blue-500/20 text-blue-400' :
+                            post.quantScore >= 70 ? 'bg-emerald-500/20 text-emerald-400' :
+                            'bg-gray-500/20 text-gray-400'
+                          }`}>
+                            {post.quantScore >= 90 ? 'Expert' : post.quantScore >= 70 ? 'Pro' : 'Advanced'}
+                          </span>
+                        </div>
+                        <p className="text-sm text-gray-400">{post.specialty}</p>
+                      </div>
+                    </div>
+                    
+                    <p className="text-gray-300 mb-3">{post.content}</p>
+                    
+                    {post.metrics && (
+                      <div className="flex space-x-4 mb-3">
+                        <div className="bg-gray-800/50 px-3 py-1 rounded-lg">
+                          <p className="text-xs text-gray-400">Profit Factor</p>
+                          <p className="font-bold text-emerald-400">{post.metrics.profitFactor}</p>
+                        </div>
+                        <div className="bg-gray-800/50 px-3 py-1 rounded-lg">
+                          <p className="text-xs text-gray-400">Win Rate</p>
+                          <p className="font-bold text-blue-400">{post.metrics.winRate}</p>
+                        </div>
+                      </div>
+                    )}
+                    
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center space-x-4 text-gray-400">
+                        <div className="flex items-center space-x-1">
+                          <Heart className="w-4 h-4" />
+                          <span className="text-sm">{post.likes}</span>
+                        </div>
+                        <div className="flex items-center space-x-1">
+                          <Eye className="w-4 h-4" />
+                          <span className="text-sm">{post.views}</span>
+                        </div>
+                      </div>
+                      
+                      <button className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                        post.type === 'ANÁLISE' 
+                          ? 'bg-blue-600/80 hover:bg-blue-600 text-white' 
+                          : 'bg-emerald-600/80 hover:bg-emerald-600 text-white'
+                      }`}>
+                        {post.type === 'ANÁLISE' ? 'Ver Análise' : 'Acessar Robô'}
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Tutoriais */}
+          {activeSection === 'tutorials' && (
+            <div className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-2xl p-6">
+              <div className="flex items-center space-x-3 mb-6">
+                <div className="w-10 h-10 bg-blue-500/20 rounded-xl flex items-center justify-center">
+                  <BookOpen className="w-5 h-5 text-blue-400" />
+                </div>
+                <div>
+                  <h2 className="text-xl font-bold">Tutoriais</h2>
+                  <p className="text-gray-400 text-sm">Aprenda a usar todas as funcionalidades</p>
+                </div>
+              </div>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {[
+                  {
+                    title: 'Como fazer upload de CSV',
+                    description: 'Aprenda a preparar e enviar dados de backtest',
+                    icon: Upload,
+                    duration: '5 min',
+                    difficulty: 'Fácil'
+                  },
+                  {
+                    title: 'Gerar código de robô com IA',
+                    description: 'Tutorial completo para criar robôs automaticamente',
+                    icon: Bot,
+                    duration: '8 min',
+                    difficulty: 'Médio'
+                  },
+                  {
+                    title: 'Como usar no Profit',
+                    description: 'Configuração e implementação na plataforma',
+                    icon: TrendingUp,
+                    duration: '12 min',
+                    difficulty: 'Médio'
+                  },
+                  {
+                    title: 'Análise de métricas',
+                    description: 'Entenda Sharpe, Drawdown e outras métricas',
+                    icon: BarChart2,
+                    duration: '10 min',
+                    difficulty: 'Avançado'
+                  },
+                  {
+                    title: 'Dicas de otimização',
+                    description: 'Como melhorar performance dos seus robôs',
+                    icon: Zap,
+                    duration: '15 min',
+                    difficulty: 'Avançado'
+                  },
+                  {
+                    title: 'Gerenciamento de risco',
+                    description: 'Estratégias para proteger seu capital',
+                    icon: Shield,
+                    duration: '20 min',
+                    difficulty: 'Avançado'
+                  }
+                ].map((tutorial, index) => (
+                  <div key={index} className="bg-gray-700/50 rounded-xl p-4 hover:bg-gray-700 transition-colors cursor-pointer">
+                    <div className="flex items-center space-x-3 mb-3">
+                      <div className="w-10 h-10 bg-blue-500/20 rounded-lg flex items-center justify-center">
+                        <tutorial.icon className="w-5 h-5 text-blue-400" />
+                      </div>
+                      <div className="flex-1">
+                        <h3 className="font-medium">{tutorial.title}</h3>
+                        <div className="flex items-center space-x-2 mt-1">
+                          <span className="text-xs text-gray-400">{tutorial.duration}</span>
+                          <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${
+                            tutorial.difficulty === 'Fácil' ? 'bg-emerald-500/20 text-emerald-400' :
+                            tutorial.difficulty === 'Médio' ? 'bg-blue-500/20 text-blue-400' :
+                            'bg-gray-500/20 text-gray-400'
+                          }`}>
+                            {tutorial.difficulty}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                    <p className="text-sm text-gray-400 mb-3">{tutorial.description}</p>
+                    <button className="w-full py-2 bg-blue-600 hover:bg-blue-700 rounded-lg text-sm font-medium transition-colors">
+                      Assistir Tutorial
+                    </button>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Marketplace */}
+          {activeSection === 'marketplace' && (
+            <div className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-2xl p-6">
+              <div className="flex items-center space-x-3 mb-6">
+                <div className="w-10 h-10 bg-emerald-500/20 rounded-xl flex items-center justify-center">
+                  <ShoppingCart className="w-5 h-5 text-emerald-400" />
+                </div>
+                <div>
+                  <h2 className="text-xl font-bold">Marketplace</h2>
+                  <p className="text-gray-400 text-sm">Serviços profissionais verificados</p>
+                </div>
+              </div>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {/* QuantBroker */}
+                <div className="bg-gray-700/50 rounded-xl p-6 hover:bg-gray-700 transition-colors">
+                  <div className="flex items-center mb-4">
+                    <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center mr-4">
+                      <TrendingUp className="w-6 h-6 text-white" />
+                    </div>
+                    <div>
+                      <h3 className="font-bold text-lg">QuantBroker</h3>
+                      <div className="flex items-center">
+                        <Shield className="w-4 h-4 text-green-500 mr-1" />
+                        <span className="text-sm text-green-400">Verificado</span>
+                      </div>
+                    </div>
+                  </div>
+                  <p className="text-gray-300 mb-4">Portfólios de IA para copy trade automatizado com resultados auditados</p>
+                  <div className="flex items-center justify-between mb-4">
+                    <div className="flex items-center">
+                      <Star className="w-4 h-4 text-yellow-500 mr-1" />
+                      <span className="text-sm">4.9 (127 avaliações)</span>
+                    </div>
+                    <span className="text-emerald-400 font-semibold">A partir de R$ 299/mês</span>
+                  </div>
+                  <button className="w-full py-3 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 rounded-xl font-medium transition-all">
+                    Acessar QuantBroker
+                  </button>
+                </div>
+
+                {/* NotBroker */}
+                <div className="bg-gray-700/50 rounded-xl p-6 hover:bg-gray-700 transition-colors">
+                  <div className="flex items-center mb-4">
+                    <div className="w-12 h-12 bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-xl flex items-center justify-center mr-4">
+                      <Calculator className="w-6 h-6 text-white" />
+                    </div>
+                    <div>
+                      <h3 className="font-bold text-lg">NotBroker</h3>
+                      <div className="flex items-center">
+                        <Shield className="w-4 h-4 text-green-500 mr-1" />
+                        <span className="text-sm text-green-400">Verificado</span>
+                      </div>
+                    </div>
+                  </div>
+                  <p className="text-gray-300 mb-4">Contabilidade especializada para traders com resultados auditados</p>
+                  <div className="flex items-center justify-between mb-4">
+                    <div className="flex items-center">
+                      <Star className="w-4 h-4 text-yellow-500 mr-1" />
+                      <span className="text-sm">4.8 (89 avaliações)</span>
+                    </div>
+                    <span className="text-emerald-400 font-semibold">A partir de R$ 199/mês</span>
+                  </div>
+                  <button className="w-full py-3 bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 rounded-xl font-medium transition-all">
+                    Acessar NotBroker
+                  </button>
+                </div>
+
+                {/* Estrategista Solutions - Projetos Personalizados */}
+                <div className="bg-gray-700/50 rounded-xl p-6 hover:bg-gray-700 transition-colors">
+                  <div className="flex items-center mb-4">
+                    <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center mr-4">
+                      <Code2 className="w-6 h-6 text-white" />
+                    </div>
+                    <div>
+                      <h3 className="font-bold text-lg">Estrategista Solutions</h3>
+                      <div className="flex items-center">
+                        <Shield className="w-4 h-4 text-green-500 mr-1" />
+                        <span className="text-sm text-green-400">Verificado</span>
+                      </div>
+                    </div>
+                  </div>
+                  <p className="text-gray-300 mb-4">Projetos personalizados desenvolvidos por especialistas humanos</p>
+                  <div className="flex items-center justify-between mb-4">
+                    <div className="flex items-center">
+                      <Star className="w-4 h-4 text-yellow-500 mr-1" />
+                      <span className="text-sm">5.0 (45 avaliações)</span>
+                    </div>
+                    <span className="text-emerald-400 font-semibold">Sob consulta</span>
+                  </div>
+                  <button className="w-full py-3 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 rounded-xl font-medium transition-all">
+                    Solicitar Orçamento
+                  </button>
+                </div>
+
+                {/* Pack de Robôs Estrategista */}
+                <div className="bg-gray-700/50 rounded-xl p-6 hover:bg-gray-700 transition-colors">
+                  <div className="flex items-center mb-4">
+                    <div className="w-12 h-12 bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-xl flex items-center justify-center mr-4">
+                      <Package className="w-6 h-6 text-white" />
+                    </div>
+                    <div>
+                      <h3 className="font-bold text-lg">Pack de Robôs</h3>
+                      <div className="flex items-center">
+                        <Shield className="w-4 h-4 text-green-500 mr-1" />
+                        <span className="text-sm text-green-400">Estrategista Solutions</span>
+                      </div>
+                    </div>
+                  </div>
+                  <p className="text-gray-300 mb-4">Coleção completa de robôs testados e otimizados</p>
+                  <div className="flex items-center justify-between mb-4">
+                    <div className="flex items-center">
+                      <Star className="w-4 h-4 text-yellow-500 mr-1" />
+                      <span className="text-sm">4.7 (203 avaliações)</span>
+                    </div>
+                    <span className="text-emerald-400 font-semibold">R$ 497/semestre</span>
+                  </div>
+                  <button 
+                    onClick={() => window.open('https://profitestrategista.com.br/robots', '_blank')}
+                    className="w-full py-3 bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 rounded-xl font-medium transition-all"
+                  >
+                    Ver Pack de Robôs
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Encontrar Usuários */}
+          {activeSection === 'users' && (
+            <div className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-2xl p-6">
+              <div className="flex items-center space-x-3 mb-6">
+                <div className="w-10 h-10 bg-blue-500/20 rounded-xl flex items-center justify-center">
+                  <Users className="w-5 h-5 text-blue-400" />
+                </div>
+                <div>
+                  <h2 className="text-xl font-bold">Encontrar Usuários</h2>
+                  <p className="text-gray-400 text-sm">Conecte-se com outros traders</p>
+                </div>
+              </div>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {[
+                  { name: 'Carlos Quant', specialty: 'Quantitative Analysis', quantScore: 94, avatar: 'https://images.pexels.com/photos/2379004/pexels-photo-2379004.jpeg?auto=compress&cs=tinysrgb&w=50&h=50&fit=crop' },
+                  { name: 'Ana Dev', specialty: 'HFT Development', quantScore: 87, avatar: 'https://images.pexels.com/photos/774909/pexels-photo-774909.jpeg?auto=compress&cs=tinysrgb&w=50&h=50&fit=crop' },
+                  { name: 'Pedro Algo', specialty: 'Machine Learning', quantScore: 91, avatar: 'https://images.pexels.com/photos/1222271/pexels-photo-1222271.jpeg?auto=compress&cs=tinysrgb&w=50&h=50&fit=crop' },
+                  { name: 'Marina Sys', specialty: 'Risk Management', quantScore: 89, avatar: 'https://images.pexels.com/photos/1239291/pexels-photo-1239291.jpeg?auto=compress&cs=tinysrgb&w=50&h=50&fit=crop' },
+                  { name: 'Lucas Tech', specialty: 'Algorithmic Trading', quantScore: 96, avatar: 'https://images.pexels.com/photos/1681010/pexels-photo-1681010.jpeg?auto=compress&cs=tinysrgb&w=50&h=50&fit=crop' },
+                  { name: 'Sofia Quant', specialty: 'Portfolio Optimization', quantScore: 85, avatar: 'https://images.pexels.com/photos/1130626/pexels-photo-1130626.jpeg?auto=compress&cs=tinysrgb&w=50&h=50&fit=crop' }
+                ].map((user, index) => (
+                  <div key={index} className="bg-gray-700/50 rounded-xl p-4 hover:bg-gray-700 transition-colors">
+                    <div className="flex items-center space-x-3 mb-2">
+                      <img src={user.avatar} alt={user.name} className="w-10 h-10 rounded-full" />
+                      <div className="flex-1">
+                        <div className="flex items-center space-x-2">
+                          <h3 className="font-medium">{user.name}</h3>
+                          <div className="flex items-center space-x-1">
+                            <div className={`w-5 h-5 rounded-full flex items-center justify-center text-xs font-bold ${
+                              user.quantScore >= 90 ? 'bg-blue-500 text-white' :
+                              user.quantScore >= 70 ? 'bg-emerald-500 text-white' :
+                              'bg-gray-500 text-white'
+                            }`}>
+                              Q
+                            </div>
+                            <span className={`text-sm font-medium ${
+                              user.quantScore >= 90 ? 'text-blue-400' :
+                              user.quantScore >= 70 ? 'text-emerald-400' :
+                              'text-gray-400'
+                            }`}>
+                              {user.quantScore}
+                            </span>
+                          </div>
+                          <span className={`px-2 py-0.5 rounded-full text-xs ${
+                            user.quantScore >= 90 ? 'bg-blue-500/20 text-blue-400' :
+                            user.quantScore >= 70 ? 'bg-emerald-500/20 text-emerald-400' :
+                            'bg-gray-500/20 text-gray-400'
+                          }`}>
+                            {user.quantScore >= 90 ? 'Expert' : user.quantScore >= 70 ? 'Pro' : 'Advanced'}
+                          </span>
+                        </div>
+                        <p className="text-sm text-gray-400">{user.specialty}</p>
+                      </div>
+                    </div>
+                    
+                    <div className="flex space-x-2">
+                      <button className="flex-1 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg text-xs font-medium transition-colors flex items-center justify-center">
+                        <BarChart2 className="w-3 h-3 mr-1" />
+                        Análise
+                      </button>
+                      <button className="flex-1 py-2 bg-emerald-600 hover:bg-emerald-700 rounded-lg text-xs font-medium transition-colors flex items-center justify-center">
+                        <Bot className="w-3 h-3 mr-1" />
+                        Robô
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Content Sections */}
