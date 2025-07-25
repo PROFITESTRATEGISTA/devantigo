@@ -1362,7 +1362,7 @@ export function DashboardPage() {
                         <p className="text-sm text-gray-400">{post.time}</p>
                       </div>
                     </div>
-                    <span className={\`px-2 py-1 rounded-lg text-xs font-medium ${
+                    <span className={`px-2 py-1 rounded-lg text-xs font-medium ${
                       post.type === 'ANÁLISE' ? 'bg-blue-500/20 text-blue-400' : 'bg-emerald-500/20 text-emerald-400'
                     }`}>
                       {post.type}
