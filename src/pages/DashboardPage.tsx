@@ -814,15 +814,15 @@ export function DashboardPage() {
                     onClick={() => handleInviteUser(user.id, 'analysis')}
                     className="py-2 px-3 bg-blue-600/20 hover:bg-blue-600/30 border border-blue-500/30 rounded-lg flex items-center justify-center space-x-1 transition-all duration-200"
                   >
-                    <Send className="w-4 h-4 text-blue-400" />
-                    <span className="text-blue-400 text-sm font-medium">Convidar</span>
+                    <BarChart2 className="w-4 h-4 text-blue-400" />
+                    <span className="text-blue-400 text-sm font-medium">Compartilhar Análise</span>
                   </button>
                   <button
                     onClick={() => handleShareWithUser(user.id, 'robot')}
                     className="py-2 px-3 bg-purple-600/20 hover:bg-purple-600/30 border border-purple-500/30 rounded-lg flex items-center justify-center space-x-1 transition-all duration-200"
                   >
-                    <Share2 className="w-4 h-4 text-purple-400" />
-                    <span className="text-purple-400 text-sm font-medium">Compartilhar</span>
+                    <Bot className="w-4 h-4 text-purple-400" />
+                    <span className="text-purple-400 text-sm font-medium">Compartilhar Robô</span>
                   </button>
                 </div>
                 
