@@ -810,7 +810,7 @@ export function DashboardPage() {
                   {
                     user: 'Ana Dev',
                     quantScore: 87,
-                    avatar: 'https://images.pexels.com/photos/774909/pexels-photo-774909.jpeg?auto=compress&cs=tinysrgb&w=50&h=50&fit=crop',
+                {(showAllPosts ? mockPosts : mockPosts.slice(0, 2)).map((post, index) => (
                     type: 'ROBÔ',
                     time: '14/01/2024',
                     content: 'Robô HFT para mini índice com latência <2ms. Implementação em NTSL otimizada.',
@@ -907,7 +907,7 @@ export function DashboardPage() {
           {/* Tutoriais */}
           {activeSection === 'tutorials' && (
             <div className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-2xl p-6">
-              <div className="flex items-center space-x-3 mb-6">
+            className={`group relative overflow-hidden rounded-2xl p-8 lg:p-10 transition-all duration-300 ${
                 <div className="w-10 h-10 bg-blue-500/20 rounded-xl flex items-center justify-center">
                   <BookOpen className="w-5 h-5 text-blue-400" />
                 </div>
@@ -940,7 +940,7 @@ export function DashboardPage() {
                     duration: '12 min',
                     difficulty: 'Médio'
                   },
-                  {
+                {mockTutorials.slice(0, 4).map((tutorial, index) => (
                     title: 'Análise de métricas',
                     description: 'Entenda Sharpe, Drawdown e outras métricas',
                     icon: BarChart2,
@@ -979,15 +979,15 @@ export function DashboardPage() {
                             {tutorial.difficulty}
                           </span>
                         </div>
-                      </div>
+              <div className={`w-16 h-16 lg:w-20 lg:h-20 rounded-xl flex items-center justify-center mb-4 ${
                     </div>
                     <p className="text-sm text-gray-400 mb-3">{tutorial.description}</p>
-                    <button className="w-full px-4 py-2 bg-blue-600/80 hover:bg-blue-600 rounded-lg text-sm font-medium transition-colors">
+                <BookOpen className={`w-8 h-8 lg:w-10 lg:h-10 ${
                       Assistir Tutorial
                     </button>
                   </div>
-                ))}
-              </div>
+              <h3 className="font-semibold text-white mb-1 text-lg lg:text-xl">Tutoriais</h3>
+              <p className="text-sm lg:text-base text-gray-300">Aprenda</p>
             </div>
           )}
 
@@ -1150,51 +1150,51 @@ export function DashboardPage() {
                           <div className="flex items-center space-x-1">
                             <div className={`w-5 h-5 rounded-full flex items-center justify-center text-xs font-bold ${
                               user.quantScore >= 90 ? 'bg-blue-500 text-white' :
-                              user.quantScore >= 70 ? 'bg-emerald-500 text-white' :
+            className={`group relative overflow-hidden rounded-2xl p-8 lg:p-10 transition-all duration-300 ${
                               'bg-gray-500 text-white'
                             }`}>
                               Q
                             </div>
                             <span className={`text-sm font-medium ${
                               user.quantScore >= 90 ? 'text-blue-400' :
-                              user.quantScore >= 70 ? 'text-emerald-400' :
+              <div className={`w-16 h-16 lg:w-20 lg:h-20 rounded-xl flex items-center justify-center mb-4 ${
                               'text-gray-400'
                             }`}>
-                              {user.quantScore}
+                <ShoppingCart className={`w-8 h-8 lg:w-10 lg:h-10 ${
                             </span>
                           </div>
                           <span className={`px-2 py-0.5 rounded-full text-xs ${
-                            user.quantScore >= 90 ? 'bg-blue-500/20 text-blue-400' :
-                            user.quantScore >= 70 ? 'bg-emerald-500/20 text-emerald-400' :
+              <h3 className="font-semibold text-white mb-1 text-lg lg:text-xl">Marketplace</h3>
+              <p className="text-sm lg:text-base text-gray-300">Comprar</p>
                             'bg-gray-500/20 text-gray-400'
                           }`}>
                             {user.quantScore >= 90 ? 'Expert' : user.quantScore >= 70 ? 'Pro' : 'Advanced'}
                           </span>
                         </div>
                         <p className="text-sm text-gray-400">{user.specialty}</p>
-                      </div>
+            className={`group relative overflow-hidden rounded-2xl p-8 lg:p-10 transition-all duration-300 ${
                     </div>
                     
                     <div className="flex space-x-2">
                       <button className="flex-1 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg text-xs font-medium transition-colors flex items-center justify-center">
                         <BarChart2 className="w-3 h-3 mr-1" />
                         Análise
-                      </button>
+              <div className={`w-16 h-16 lg:w-20 lg:h-20 rounded-xl flex items-center justify-center mb-4 ${
                       <button className="flex-1 py-2 bg-emerald-600 hover:bg-emerald-700 rounded-lg text-xs font-medium transition-colors flex items-center justify-center">
                         <Bot className="w-3 h-3 mr-1" />
-                        Robô
+                <Users className={`w-8 h-8 lg:w-10 lg:h-10 ${
                       </button>
                     </div>
                   </div>
-                ))}
-              </div>
+              <h3 className="font-semibold text-white mb-1 text-lg lg:text-xl">Usuários</h3>
+              <p className="text-sm lg:text-base text-gray-300">Encontrar</p>
             </div>
           )}
         </div>
 
         {/* Content Sections */}
         {activeSection === 'users' && (
-          <div className="space-y-6">
+                {mockMarketplace.slice(0, 4).map((item, index) => (
             <div className="bg-gray-800/50 backdrop-blur-sm rounded-xl p-6 border border-gray-700/50">
               <h2 className="text-xl font-bold mb-4 flex items-center">
                 <Users className="w-5 h-5 text-emerald-400 mr-2" />
@@ -1222,7 +1222,7 @@ export function DashboardPage() {
                   <div key={index} className="bg-gray-900/50 rounded-lg p-4 border border-gray-700/50 hover:border-emerald-500/30 transition-all duration-200">
                     <div className="flex items-center space-x-3 mb-4">
                       <img 
-                        src={user.avatar}
+                {mockUsers.slice(0, 6).map((user, index) => (
                         alt={user.name}
                         className="w-12 h-12 rounded-full object-cover"
                       />
@@ -1351,12 +1351,10 @@ export function DashboardPage() {
                             </div>
                             <span className="text-xs font-medium text-emerald-400">{post.quantScore}</span>
                           </div>
-                          <span className={`px-2 py-0.5 rounded-full text-xs ${
-                            post.author.quantScore >= 90 ? 'bg-blue-500/20 text-blue-400' :
-                            post.author.quantScore >= 70 ? 'bg-emerald-500/20 text-emerald-400' :
-                            'bg-gray-500/20 text-gray-400'
+                          <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${
+                            post.level === 'Expert' ? 'bg-emerald-500/20 text-emerald-400' : 'bg-blue-500/20 text-blue-400'
                           }`}>
-                            {post.author.quantScore >= 90 ? 'Expert' : post.author.quantScore >= 70 ? 'Pro' : 'Advanced'}
+                            {post.level}
                           </span>
                         </div>
                         <p className="text-sm text-gray-400">{post.time}</p>
@@ -1396,7 +1394,7 @@ export function DashboardPage() {
                       </div>
                     </div>
                     
-                    <button className={\`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                    <button className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
                       post.type === 'ANÁLISE' 
                         ? 'bg-blue-600/80 hover:bg-blue-600 text-white' 
                         : 'bg-emerald-600/80 hover:bg-emerald-600 text-white'
@@ -1414,7 +1412,7 @@ export function DashboardPage() {
                   className="px-6 py-3 bg-gradient-to-r from-blue-600/20 to-emerald-600/20 hover:from-blue-600/30 hover:to-emerald-600/30 border border-blue-500/30 rounded-lg text-white font-medium transition-all duration-200 flex items-center space-x-2 mx-auto"
                 >
                   <span>{showAllPosts ? 'Ver Menos' : 'Ver Mais Posts'}</span>
-                  <ChevronDown className={\`w-4 h-4 transition-transform ${showAllPosts ? 'rotate-180' : ''}`} />
+                  <ChevronDown className={`w-4 h-4 transition-transform ${showAllPosts ? 'rotate-180' : ''}`} />
                 </button>
               </div>
             </div>
@@ -1547,7 +1545,7 @@ export function DashboardPage() {
                           <h3 className="font-semibold text-white">{tutorial.title}</h3>
                           <div className="flex items-center space-x-2 mt-1">
                             <span className="text-xs text-gray-400">{tutorial.duration}</span>
-                            <span className={\`px-2 py-0.5 rounded-full text-xs font-medium ${
+                            <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${
                               tutorial.difficulty === 'Fácil' ? 'bg-emerald-500/20 text-emerald-400' :
                               tutorial.difficulty === 'Médio' ? 'bg-blue-500/20 text-blue-400' :
                               'bg-gray-500/20 text-gray-400'
@@ -1813,7 +1811,7 @@ export function DashboardPage() {
                       {getCategoryIcon(challenge.category)}
                       <h3 className="font-semibold">{challenge.title}</h3>
                     </div>
-                    <div className={\`px-2 py-1 rounded-full text-xs font-medium border ${getDifficultyColor(challenge.difficulty)}`}>
+                    <div className={`px-2 py-1 rounded-full text-xs font-medium border ${getDifficultyColor(challenge.difficulty)}`}>
                       {challenge.difficulty === 'easy' ? 'Fácil' : 
                        challenge.difficulty === 'medium' ? 'Médio' : 'Difícil'}
                     </div>
@@ -1838,7 +1836,7 @@ export function DashboardPage() {
                     <div className="w-full bg-gray-700/50 rounded-full h-2">
                       <div 
                         className="bg-gradient-to-r from-blue-500 to-emerald-500 h-2 rounded-full transition-all duration-300" 
-                        style={{ width: \`${challenge.progress}%` }}
+                        style={{ width: `${challenge.progress}%` }}
                       />
                     </div>
                   )}
