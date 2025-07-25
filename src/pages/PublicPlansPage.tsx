@@ -79,25 +79,6 @@ export function PublicPlansPage() {
       ],
       popular: false,
       cta: 'Escolher Plano'
-    },
-    {
-      id: 'pro4',
-      name: 'Pro 4',
-      price: 'R$ 1.999,80/mês',
-      description: 'Para traders institucionais e equipes grandes',
-      features: [
-        'Robôs ilimitados',
-        'IA para gerar robôs de trading',
-        '100.000 tokens mensais',
-        'Análise de backtest avançada',
-        'Montagem de portfólios automática',
-        'Suporte dedicado',
-        'Acesso a todos os recursos',
-        'API para integração',
-        'Opções de white-label'
-      ],
-      popular: false,
-      cta: 'Escolher Plano'
     }
   ];
 
