@@ -14,7 +14,6 @@ import { FloatingWhatsAppButton } from './components/FloatingWhatsAppButton';
 import { BacktestAnalysisPage } from './pages/BacktestAnalysisPage';
 import { StrategyAnalysisPage } from './pages/StrategyAnalysisPage';
 import { PublicPlansPage } from './pages/PublicPlansPage';
-import { VerifiedStrategiesPage } from './pages/VerifiedStrategiesPage';
 
 export default function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -114,7 +113,6 @@ export default function App() {
           <Route path="/editor/:robotId" element={<EditorPage />} />
           <Route path="/robots" element={<RobotsPage />} />
           <Route path="/dashboard" element={<DashboardPage />} />
-          <Route path="/verified-strategies" element={<VerifiedStrategiesPage />} />
           <Route path="/profile" element={<ProfilePage />} />
           <Route path="/subscription" element={<SubscriptionPage />} />
           <Route path="/plans" element={<SubscriptionPage />} />
