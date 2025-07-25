@@ -504,70 +504,70 @@ export function DashboardPage() {
         </div>
 
         {/* Navigation Cards */}
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 mb-8">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6 mb-8 max-w-6xl mx-auto">
           {/* Minhas Análises */}
           <button
             onClick={() => setActiveSection('analyses')}
-            className={`group relative overflow-hidden rounded-2xl p-6 transition-all duration-300 ${
+            className={`group relative overflow-hidden rounded-2xl p-8 lg:p-10 transition-all duration-300 ${
               activeSection === 'analyses'
                 ? 'bg-gradient-to-br from-blue-600 to-blue-700 shadow-lg shadow-blue-500/25'
                 : 'bg-gradient-to-br from-gray-800 to-gray-900 hover:from-blue-600/20 hover:to-blue-700/20'
             }`}
           >
             <div className="relative z-10">
-              <div className={`w-12 h-12 rounded-xl flex items-center justify-center mb-3 ${
+              <div className={`w-16 h-16 lg:w-20 lg:h-20 rounded-xl flex items-center justify-center mb-4 ${
                 activeSection === 'analyses' ? 'bg-white/20' : 'bg-blue-500/20'
               }`}>
-                <BarChart2 className={`w-6 h-6 ${
+                <BarChart2 className={`w-8 h-8 lg:w-10 lg:h-10 ${
                   activeSection === 'analyses' ? 'text-white' : 'text-blue-400'
                 }`} />
               </div>
-              <h3 className="font-semibold text-white mb-1">Minhas Análises</h3>
-              <p className="text-xs text-gray-300">Backtest</p>
+              <h3 className="font-semibold text-white mb-1 text-lg lg:text-xl">Minhas Análises</h3>
+              <p className="text-sm lg:text-base text-gray-300">Backtest</p>
             </div>
           </button>
 
           {/* Meus Robôs */}
           <button
             onClick={() => setActiveSection('myrobots')}
-            className={`group relative overflow-hidden rounded-2xl p-6 transition-all duration-300 ${
+            className={`group relative overflow-hidden rounded-2xl p-8 lg:p-10 transition-all duration-300 ${
               activeSection === 'myrobots'
                 ? 'bg-gradient-to-br from-emerald-600 to-emerald-700 shadow-lg shadow-emerald-500/25'
                 : 'bg-gradient-to-br from-gray-800 to-gray-900 hover:from-emerald-600/20 hover:to-emerald-700/20'
             }`}
           >
             <div className="relative z-10">
-              <div className={`w-12 h-12 rounded-xl flex items-center justify-center mb-3 ${
+              <div className={`w-16 h-16 lg:w-20 lg:h-20 rounded-xl flex items-center justify-center mb-4 ${
                 activeSection === 'myrobots' ? 'bg-white/20' : 'bg-emerald-500/20'
               }`}>
-                <Code2 className={`w-6 h-6 ${
+                <Code2 className={`w-8 h-8 lg:w-10 lg:h-10 ${
                   activeSection === 'myrobots' ? 'text-white' : 'text-emerald-400'
                 }`} />
               </div>
-              <h3 className="font-semibold text-white mb-1">Meus Robôs</h3>
-              <p className="text-xs text-gray-300">Gerenciar</p>
+              <h3 className="font-semibold text-white mb-1 text-lg lg:text-xl">Meus Robôs</h3>
+              <p className="text-sm lg:text-base text-gray-300">Gerenciar</p>
             </div>
           </button>
 
           {/* Feed de Postagens */}
           <button
             onClick={() => setActiveSection('feed')}
-            className={`group relative overflow-hidden rounded-2xl p-6 transition-all duration-300 ${
+            className={`group relative overflow-hidden rounded-2xl p-8 lg:p-10 transition-all duration-300 ${
               activeSection === 'feed'
                 ? 'bg-gradient-to-br from-blue-600 to-blue-700 shadow-lg shadow-blue-500/25'
                 : 'bg-gradient-to-br from-gray-800 to-gray-900 hover:from-blue-600/20 hover:to-blue-700/20'
             }`}
           >
             <div className="relative z-10">
-              <div className={`w-12 h-12 rounded-xl flex items-center justify-center mb-3 ${
+              <div className={`w-16 h-16 lg:w-20 lg:h-20 rounded-xl flex items-center justify-center mb-4 ${
                 activeSection === 'feed' ? 'bg-white/20' : 'bg-blue-500/20'
               }`}>
-                <Activity className={`w-6 h-6 ${
+                <Activity className={`w-8 h-8 lg:w-10 lg:h-10 ${
                   activeSection === 'feed' ? 'text-white' : 'text-blue-400'
                 }`} />
               </div>
-              <h3 className="font-semibold text-white mb-1">Feed</h3>
-              <p className="text-xs text-gray-300">Postagens</p>
+              <h3 className="font-semibold text-white mb-1 text-lg lg:text-xl">Feed</h3>
+              <p className="text-sm lg:text-base text-gray-300">Postagens</p>
             </div>
           </button>
 
@@ -810,7 +810,7 @@ export function DashboardPage() {
                   {
                     user: 'Ana Dev',
                     quantScore: 87,
-                    avatar: 'https://images.pexels.com/photos/774909/pexels-photo-774909.jpeg?auto=compress&cs=tinysrgb&w=50&h=50&fit=crop',
+                {(showAllPosts ? mockPosts : mockPosts.slice(0, 2)).map((post, index) => (
                     type: 'ROBÔ',
                     time: '14/01/2024',
                     content: 'Robô HFT para mini índice com latência <2ms. Implementação em NTSL otimizada.',
@@ -907,7 +907,7 @@ export function DashboardPage() {
           {/* Tutoriais */}
           {activeSection === 'tutorials' && (
             <div className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-2xl p-6">
-              <div className="flex items-center space-x-3 mb-6">
+            className={`group relative overflow-hidden rounded-2xl p-8 lg:p-10 transition-all duration-300 ${
                 <div className="w-10 h-10 bg-blue-500/20 rounded-xl flex items-center justify-center">
                   <BookOpen className="w-5 h-5 text-blue-400" />
                 </div>
@@ -940,7 +940,7 @@ export function DashboardPage() {
                     duration: '12 min',
                     difficulty: 'Médio'
                   },
-                  {
+                {mockTutorials.slice(0, 4).map((tutorial, index) => (
                     title: 'Análise de métricas',
                     description: 'Entenda Sharpe, Drawdown e outras métricas',
                     icon: BarChart2,
@@ -979,15 +979,15 @@ export function DashboardPage() {
                             {tutorial.difficulty}
                           </span>
                         </div>
-                      </div>
+              <div className={`w-16 h-16 lg:w-20 lg:h-20 rounded-xl flex items-center justify-center mb-4 ${
                     </div>
                     <p className="text-sm text-gray-400 mb-3">{tutorial.description}</p>
-                    <button className="w-full py-2 bg-blue-600 hover:bg-blue-700 rounded-lg text-sm font-medium transition-colors">
+                <BookOpen className={`w-8 h-8 lg:w-10 lg:h-10 ${
                       Assistir Tutorial
                     </button>
                   </div>
-                ))}
-              </div>
+              <h3 className="font-semibold text-white mb-1 text-lg lg:text-xl">Tutoriais</h3>
+              <p className="text-sm lg:text-base text-gray-300">Aprenda</p>
             </div>
           )}
 
@@ -1150,51 +1150,51 @@ export function DashboardPage() {
                           <div className="flex items-center space-x-1">
                             <div className={`w-5 h-5 rounded-full flex items-center justify-center text-xs font-bold ${
                               user.quantScore >= 90 ? 'bg-blue-500 text-white' :
-                              user.quantScore >= 70 ? 'bg-emerald-500 text-white' :
+            className={`group relative overflow-hidden rounded-2xl p-8 lg:p-10 transition-all duration-300 ${
                               'bg-gray-500 text-white'
                             }`}>
                               Q
                             </div>
                             <span className={`text-sm font-medium ${
                               user.quantScore >= 90 ? 'text-blue-400' :
-                              user.quantScore >= 70 ? 'text-emerald-400' :
+              <div className={`w-16 h-16 lg:w-20 lg:h-20 rounded-xl flex items-center justify-center mb-4 ${
                               'text-gray-400'
                             }`}>
-                              {user.quantScore}
+                <ShoppingCart className={`w-8 h-8 lg:w-10 lg:h-10 ${
                             </span>
                           </div>
                           <span className={`px-2 py-0.5 rounded-full text-xs ${
-                            user.quantScore >= 90 ? 'bg-blue-500/20 text-blue-400' :
-                            user.quantScore >= 70 ? 'bg-emerald-500/20 text-emerald-400' :
+              <h3 className="font-semibold text-white mb-1 text-lg lg:text-xl">Marketplace</h3>
+              <p className="text-sm lg:text-base text-gray-300">Comprar</p>
                             'bg-gray-500/20 text-gray-400'
                           }`}>
                             {user.quantScore >= 90 ? 'Expert' : user.quantScore >= 70 ? 'Pro' : 'Advanced'}
                           </span>
                         </div>
                         <p className="text-sm text-gray-400">{user.specialty}</p>
-                      </div>
+            className={`group relative overflow-hidden rounded-2xl p-8 lg:p-10 transition-all duration-300 ${
                     </div>
                     
                     <div className="flex space-x-2">
                       <button className="flex-1 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg text-xs font-medium transition-colors flex items-center justify-center">
                         <BarChart2 className="w-3 h-3 mr-1" />
                         Análise
-                      </button>
+              <div className={`w-16 h-16 lg:w-20 lg:h-20 rounded-xl flex items-center justify-center mb-4 ${
                       <button className="flex-1 py-2 bg-emerald-600 hover:bg-emerald-700 rounded-lg text-xs font-medium transition-colors flex items-center justify-center">
                         <Bot className="w-3 h-3 mr-1" />
-                        Robô
+                <Users className={`w-8 h-8 lg:w-10 lg:h-10 ${
                       </button>
                     </div>
                   </div>
-                ))}
-              </div>
+              <h3 className="font-semibold text-white mb-1 text-lg lg:text-xl">Usuários</h3>
+              <p className="text-sm lg:text-base text-gray-300">Encontrar</p>
             </div>
           )}
         </div>
 
         {/* Content Sections */}
         {activeSection === 'users' && (
-          <div className="space-y-6">
+                {mockMarketplace.slice(0, 4).map((item, index) => (
             <div className="bg-gray-800/50 backdrop-blur-sm rounded-xl p-6 border border-gray-700/50">
               <h2 className="text-xl font-bold mb-4 flex items-center">
                 <Users className="w-5 h-5 text-emerald-400 mr-2" />
@@ -1222,7 +1222,7 @@ export function DashboardPage() {
                   <div key={index} className="bg-gray-900/50 rounded-lg p-4 border border-gray-700/50 hover:border-emerald-500/30 transition-all duration-200">
                     <div className="flex items-center space-x-3 mb-4">
                       <img 
-                        src={user.avatar} 
+                {mockUsers.slice(0, 6).map((user, index) => (
                         alt={user.name}
                         className="w-12 h-12 rounded-full object-cover"
                       />
