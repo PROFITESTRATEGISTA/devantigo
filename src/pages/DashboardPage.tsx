@@ -973,11 +973,6 @@ end;`
               </div>
             </div>
           )}
-        </div>
-      </div>
-    </div>
-  );
-};
 
           {/* Marketplace */}
           {activeSection === 'marketplace' && (
@@ -1082,7 +1077,7 @@ end;`
                               user.quantScore >= 70 ? 'text-emerald-400' :
                               'text-gray-400'
                             }`}>
-// Componente TutorialCard
+                              {user.quantScore}
                             </span>
                           </div>
                           <span className={`px-2 py-0.5 rounded-full text-xs ${
@@ -1121,5 +1116,10 @@ end;`
               </div>
             </div>
           )}
+        </div>
+      </div>
+    </div>
+  );
+};
 
 export default DashboardPage;
