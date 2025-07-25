@@ -55,14 +55,14 @@ export function HomePage() {
 
   const getPageTitle = () => {
     return language === 'en' 
-      ? 'Develop trading robots directly in your browser'
-      : 'Desenvolva robôs de trading direto no seu navegador';
+      ? 'Create and analyze quantitative trading strategies'
+      : 'Crie e analise estratégias quantitativas de trading';
   };
 
   const getPageSubtitle = () => {
     return language === 'en'
-      ? 'Create, edit and share robots for Profit, MetaTrader and NTSL. Collaborate in real-time with your team and keep everything organized in one place.'
-      : 'Crie, edite e compartilhe robôs para Profit, MetaTrader e NTSL. Colabore em tempo real com sua equipe e mantenha tudo organizado em um só lugar.';
+      ? 'Complete platform for developing, backtesting and optimizing algorithmic trading strategies. Use AI to create robots, analyze performance and build diversified portfolios.'
+      : 'Plataforma completa para desenvolver, testar e otimizar estratégias de trading algorítmico. Use IA para criar robôs, analisar performance e montar portfólios diversificados.';
   };
 
   return (
