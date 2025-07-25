@@ -100,95 +100,6 @@ end;`;
 
   // Add error boundary for Monaco Editor
   const handleEditorDidMount = (editor: any) => {
-    try {
-      editorRef.current = editor;
-      setIsEditorReady(true);
-
-      editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyF, () => {
-        editor.trigger('', 'actions.find');
-      });
-
-      // Add keyboard shortcut for creating a new version (Ctrl+Alt+S)
-      editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyMod.Alt | monaco.KeyCode.KeyS, () => {
-        setShowCreateVersionModal(true);
-      });
-
-      // Add keyboard shortcut for saving (Ctrl+S)
-      editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyS, () => {
-        setLastSavedContent(editor.getValue());
-        setUnsavedChanges(false);
-        
-        // Show a temporary notification
-        const notification = document.createElement('div');
-        notification.className = 'fixed top-4 right-4 bg-green-500 text-white px-4 py-2 rounded-md z-50 flex items-center';
-        notification.innerHTML = `
-          <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-          </svg>
-          Alterações salvas!
-        `;
-        document.body.appendChild(notification);
-        
-        // Remove notification after 2 seconds
-        setTimeout(() => {
-          if (document.body.contains(notification)) {
-            document.body.removeChild(notification);
-          }
-        }, 2000);
-      });
-
-      if (typeof monaco !== 'undefined' && monaco.languages) {
-        monaco.languages.registerCompletionItemProvider('javascript', {
-          provideCompletionItems: () => ({
-            suggestions: Object.entries(ntslSnippets).map(([name, content]) => ({
-              label: name,
-              kind: monaco.languages.CompletionItemKind.Snippet,
-              insertText: content,
-              documentation: `Snippet: ${name}`,
-              insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet
-            }))
-          })
-        });
-      }
-
-      const resizeObserver = new ResizeObserver(() => {
-        if (editorRef.current) {
-          editorRef.current.layout();
-        }
-      });
-
-      if (containerRef.current) {
-        resizeObserver.observe(containerRef.current);
-      }
-
-      return () => {
-        resizeObserver.disconnect();
-      };
-    } catch (error) {
-      console.error('Error setting up Monaco Editor:', error);
-      setIsEditorReady(true); // Continue even if setup fails
-    }
-  };
-
-  // Track unsaved changes
-  useEffect(() => {
-    if (isEditorReady && lastSavedContent) {
-      setUnsavedChanges(content !== lastSavedContent);
-    }
-  }, [content, lastSavedContent, isEditorReady]);
-
-  // Update lastSavedContent when version changes
-  useEffect(() => {
-    if (selectedVersion) {
-      const version = versions.find(v => v.version_name === selectedVersion);
-      if (version) {
-        setLastSavedContent(content);
-        setUnsavedChanges(false);
-      }
-    }
-  }, [selectedVersion, versions, content]);
-
-  const handleEditorDidMount = (editor: any) => {
     editorRef.current = editor;
     setIsEditorReady(true);
 
@@ -219,7 +130,9 @@ end;`;
       
       // Remove notification after 2 seconds
       setTimeout(() => {
-        document.body.removeChild(notification);
+        if (document.body.contains(notification)) {
+          document.body.removeChild(notification);
+        }
       }, 2000);
     });
 
@@ -249,6 +162,24 @@ end;`;
       resizeObserver.disconnect();
     };
   };
+
+  // Track unsaved changes
+  useEffect(() => {
+    if (isEditorReady && lastSavedContent) {
+      setUnsavedChanges(content !== lastSavedContent);
+    }
+  }, [content, lastSavedContent, isEditorReady]);
+
+  // Update lastSavedContent when version changes
+  useEffect(() => {
+    if (selectedVersion) {
+      const version = versions.find(v => v.version_name === selectedVersion);
+      if (version) {
+        setLastSavedContent(content);
+        setUnsavedChanges(false);
+      }
+    }
+  }, [selectedVersion, versions, content]);
 
   const extractTopics = (code: string): Record<string, Topic> => {
     if (!code) return {};
