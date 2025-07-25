@@ -6,7 +6,10 @@ import {
   Filter, TrendingUp, Clock, Award, Zap, Target,
   CheckCircle, Calendar, FileText, Bot, Coins,
   ArrowRight, Play, ExternalLink, Send, Gift,
-  Activity, Layers, Grid, Sparkles, ChevronRight
+  Activity, Layers, Grid, Sparkles, ChevronRight,
+  Star, Shield, BookOpen, ShoppingCart, UserCheck,
+  Briefcase, Calculator, Wrench, GraduationCap,
+  MessageCircle, Heart, ThumbsUp, Bookmark
 } from 'lucide-react';
 import { Navbar } from '../components/Navbar';
 import { useAuthStore } from '../stores/authStore';
@@ -52,19 +55,31 @@ interface User {
   last_active: string;
 }
 
+interface Expert {
+  id: string;
+  name: string;
+  avatar?: string;
+  specialty: string;
+  rating: number;
+  reviews: number;
+  hourly_rate: number;
+  available: boolean;
+}
+
 export function DashboardPage() {
   const navigate = useNavigate();
   const { profile } = useAuthStore();
-  const [activeTab, setActiveTab] = useState<'feed' | 'challenges' | 'users'>('feed');
+  const [activeSection, setActiveSection] = useState<'feed' | 'strategies' | 'tutorials' | 'marketplace' | 'experts'>('feed');
   const [searchQuery, setSearchQuery] = useState('');
   const [filterType, setFilterType] = useState<'all' | 'analysis' | 'robot'>('all');
   const [posts, setPosts] = useState<CommunityPost[]>([]);
   const [challenges, setChallenges] = useState<Challenge[]>([]);
   const [users, setUsers] = useState<User[]>([]);
+  const [experts, setExperts] = useState<Expert[]>([]);
 
   // Mock data for demonstration
   useEffect(() => {
-    // Mock community posts with more tech-focused content
+    // Mock community posts
     setPosts([
       {
         id: '1',
@@ -89,34 +104,10 @@ export function DashboardPage() {
         views: 156,
         created_at: '2024-01-14T15:45:00Z',
         robot_name: 'HFT_MiniIndice_v2'
-      },
-      {
-        id: '3',
-        user_name: 'Pedro Algo',
-        user_avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop',
-        content: 'Machine Learning aplicado a mean reversion. Modelo XGBoost com 72% de precisão.',
-        type: 'analysis',
-        likes: 28,
-        views: 198,
-        created_at: '2024-01-13T09:20:00Z',
-        analysis_id: 'analysis_002',
-        profit_factor: 1.8,
-        win_rate: 72.3
-      },
-      {
-        id: '4',
-        user_name: 'Marina Sys',
-        user_avatar: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=100&h=100&fit=crop',
-        content: 'Grid trading adaptativo com gestão dinâmica de risco. Backtested em 2 anos de dados.',
-        type: 'robot',
-        likes: 19,
-        views: 89,
-        created_at: '2024-01-12T14:30:00Z',
-        robot_name: 'GridTrading_Adaptive'
       }
     ]);
 
-    // Enhanced challenges with categories
+    // Mock challenges
     setChallenges([
       {
         id: '1',
@@ -137,51 +128,10 @@ export function DashboardPage() {
         progress: 0,
         completed: false,
         category: 'analysis'
-      },
-      {
-        id: '3',
-        title: 'Viral na Comunidade',
-        description: 'Receba 50+ curtidas em um post da comunidade',
-        reward: 1000,
-        difficulty: 'medium',
-        progress: 0,
-        completed: false,
-        category: 'community'
-      },
-      {
-        id: '4',
-        title: 'Alpha Generator',
-        description: 'Desenvolva uma estratégia com Profit Factor > 2.0',
-        reward: 3000,
-        difficulty: 'hard',
-        progress: 60,
-        completed: false,
-        deadline: '2024-02-01',
-        category: 'performance'
-      },
-      {
-        id: '5',
-        title: 'Code Master',
-        description: 'Contribua com 10 robôs únicos para a comunidade',
-        reward: 2500,
-        difficulty: 'hard',
-        progress: 30,
-        completed: false,
-        category: 'creation'
-      },
-      {
-        id: '6',
-        title: 'Network Builder',
-        description: 'Conecte-se com 25 traders na plataforma',
-        reward: 800,
-        difficulty: 'easy',
-        progress: 40,
-        completed: false,
-        category: 'community'
       }
     ]);
 
-    // Enhanced users with performance metrics
+    // Mock users
     setUsers([
       {
         id: '1',
@@ -206,42 +156,30 @@ export function DashboardPage() {
         isFollowing: true,
         performance_score: 87,
         last_active: '1h ago'
-      },
+      }
+    ]);
+
+    // Mock experts
+    setExperts([
       {
-        id: '3',
-        name: 'Pedro Algo',
+        id: '1',
+        name: 'João Contador',
         avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop',
-        specialty: 'Machine Learning',
-        robots: 19,
-        analyses: 25,
-        followers: 178,
-        isFollowing: false,
-        performance_score: 91,
-        last_active: '30min ago'
+        specialty: 'Contabilidade Trader',
+        rating: 4.9,
+        reviews: 127,
+        hourly_rate: 150,
+        available: true
       },
       {
-        id: '4',
-        name: 'Marina Sys',
+        id: '2',
+        name: 'Maria Dev',
         avatar: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=100&h=100&fit=crop',
-        specialty: 'Risk Management',
-        robots: 15,
-        analyses: 22,
-        followers: 134,
-        isFollowing: false,
-        performance_score: 89,
-        last_active: '4h ago'
-      },
-      {
-        id: '5',
-        name: 'Lucas Tech',
-        avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100&h=100&fit=crop',
-        specialty: 'Algorithmic Trading',
-        robots: 28,
-        analyses: 16,
-        followers: 245,
-        isFollowing: false,
-        performance_score: 96,
-        last_active: '1d ago'
+        specialty: 'Desenvolvedor Trader',
+        rating: 4.8,
+        reviews: 89,
+        hourly_rate: 200,
+        available: true
       }
     ]);
   }, []);
@@ -251,8 +189,15 @@ export function DashboardPage() {
   };
 
   const handleViewRobot = (robotName: string) => {
-    // In a real app, you'd get the robot ID and navigate to editor
-    navigate(`/robots`); // For now, navigate to robots page
+    navigate(`/robots`);
+  };
+
+  const handleShareRobotWithUser = (userId: string) => {
+    console.log(`Sharing robot with user ${userId}`);
+  };
+
+  const handleShareAnalysisWithUser = (userId: string) => {
+    console.log(`Sharing analysis with user ${userId}`);
   };
 
   const handleFollowUser = (userId: string) => {
@@ -265,18 +210,6 @@ export function DashboardPage() {
           }
         : user
     ));
-  };
-
-  const handleInviteUser = (userId: string, type: 'analysis' | 'robot') => {
-    // Mock invite functionality
-    console.log(`Inviting user ${userId} to view ${type}`);
-    // In real app, this would open a modal to select which analysis/robot to share
-  };
-
-  const handleShareWithUser = (userId: string, type: 'analysis' | 'robot') => {
-    // Mock share functionality
-    console.log(`Sharing ${type} with user ${userId}`);
-    // In real app, this would open a modal to select what to share
   };
 
   const handleLikePost = (postId: string) => {
@@ -318,13 +251,6 @@ export function DashboardPage() {
     }
   };
 
-  const getPerformanceColor = (score: number) => {
-    if (score >= 90) return 'text-emerald-400';
-    if (score >= 80) return 'text-blue-400';
-    if (score >= 70) return 'text-amber-400';
-    return 'text-gray-400';
-  };
-
   const filteredPosts = posts.filter(post => {
     const matchesSearch = post.content.toLowerCase().includes(searchQuery.toLowerCase()) ||
                          post.user_name.toLowerCase().includes(searchQuery.toLowerCase());
@@ -341,9 +267,9 @@ export function DashboardPage() {
     <div className="min-h-screen bg-[#0A0A0B] text-white">
       <Navbar />
       
-      <div className="max-w-7xl mx-auto px-6 py-8">
-        {/* Modern Header */}
-        <div className="flex items-center justify-between mb-8">
+      <div className="max-w-7xl mx-auto px-4 py-6">
+        {/* Header */}
+        <div className="flex items-center justify-between mb-6">
           <div>
             <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
               Community Hub
@@ -354,14 +280,14 @@ export function DashboardPage() {
           <div className="flex items-center space-x-3">
             <button
               onClick={() => navigate('/backtest-analysis')}
-              className="px-4 py-2 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 rounded-lg flex items-center space-x-2 transition-all duration-200"
+              className="px-4 py-2 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 rounded-xl flex items-center space-x-2 transition-all duration-200"
             >
               <BarChart2 className="w-4 h-4" />
               <span>Nova Análise</span>
             </button>
             <button
               onClick={() => navigate('/robots')}
-              className="px-4 py-2 bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 rounded-lg flex items-center space-x-2 transition-all duration-200"
+              className="px-4 py-2 bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 rounded-xl flex items-center space-x-2 transition-all duration-200"
             >
               <Code2 className="w-4 h-4" />
               <span>Novo Robô</span>
@@ -369,100 +295,193 @@ export function DashboardPage() {
           </div>
         </div>
 
-        {/* Modern Tabs */}
-        <div className="flex space-x-1 mb-8 bg-gray-900/50 p-1 rounded-xl backdrop-blur-sm border border-gray-800">
+        {/* Navigation Cards - Mobile Style */}
+        <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-8">
           <button
-            onClick={() => setActiveTab('feed')}
-            className={`flex-1 py-3 px-6 rounded-lg flex items-center justify-center space-x-2 transition-all duration-200 ${
-              activeTab === 'feed' 
-                ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-lg' 
-                : 'text-gray-400 hover:text-white hover:bg-gray-800/50'
+            onClick={() => setActiveSection('strategies')}
+            className={`p-6 rounded-2xl border transition-all duration-300 ${
+              activeSection === 'strategies' 
+                ? 'bg-gradient-to-br from-green-600/20 to-emerald-600/20 border-green-500/50 shadow-lg shadow-green-500/20' 
+                : 'bg-gray-900/50 border-gray-700/50 hover:border-gray-600/50 hover:bg-gray-800/50'
             }`}
           >
-            <Activity className="w-5 h-5" />
-            <span className="font-medium">Feed</span>
+            <div className="flex flex-col items-center text-center">
+              <div className={`p-3 rounded-xl mb-3 ${
+                activeSection === 'strategies' ? 'bg-green-500/20' : 'bg-gray-700/50'
+              }`}>
+                <Shield className="w-6 h-6 text-green-400" />
+              </div>
+              <h3 className="font-semibold text-sm">Estratégias</h3>
+              <p className="text-xs text-gray-400 mt-1">Verificadas</p>
+            </div>
           </button>
+
           <button
-            onClick={() => setActiveTab('challenges')}
-            className={`flex-1 py-3 px-6 rounded-lg flex items-center justify-center space-x-2 transition-all duration-200 ${
-              activeTab === 'challenges' 
-                ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-lg' 
-                : 'text-gray-400 hover:text-white hover:bg-gray-800/50'
+            onClick={() => setActiveSection('feed')}
+            className={`p-6 rounded-2xl border transition-all duration-300 ${
+              activeSection === 'feed' 
+                ? 'bg-gradient-to-br from-blue-600/20 to-cyan-600/20 border-blue-500/50 shadow-lg shadow-blue-500/20' 
+                : 'bg-gray-900/50 border-gray-700/50 hover:border-gray-600/50 hover:bg-gray-800/50'
             }`}
           >
-            <Trophy className="w-5 h-5" />
-            <span className="font-medium">Ganhe Tokens</span>
+            <div className="flex flex-col items-center text-center">
+              <div className={`p-3 rounded-xl mb-3 ${
+                activeSection === 'feed' ? 'bg-blue-500/20' : 'bg-gray-700/50'
+              }`}>
+                <Activity className="w-6 h-6 text-blue-400" />
+              </div>
+              <h3 className="font-semibold text-sm">Feed</h3>
+              <p className="text-xs text-gray-400 mt-1">Postagens</p>
+            </div>
           </button>
+
           <button
-            onClick={() => setActiveTab('users')}
-            className={`flex-1 py-3 px-6 rounded-lg flex items-center justify-center space-x-2 transition-all duration-200 ${
-              activeTab === 'users' 
-                ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-lg' 
-                : 'text-gray-400 hover:text-white hover:bg-gray-800/50'
+            onClick={() => setActiveSection('tutorials')}
+            className={`p-6 rounded-2xl border transition-all duration-300 ${
+              activeSection === 'tutorials' 
+                ? 'bg-gradient-to-br from-purple-600/20 to-pink-600/20 border-purple-500/50 shadow-lg shadow-purple-500/20' 
+                : 'bg-gray-900/50 border-gray-700/50 hover:border-gray-600/50 hover:bg-gray-800/50'
             }`}
           >
-            <Users className="w-5 h-5" />
-            <span className="font-medium">Traders</span>
+            <div className="flex flex-col items-center text-center">
+              <div className={`p-3 rounded-xl mb-3 ${
+                activeSection === 'tutorials' ? 'bg-purple-500/20' : 'bg-gray-700/50'
+              }`}>
+                <BookOpen className="w-6 h-6 text-purple-400" />
+              </div>
+              <h3 className="font-semibold text-sm">Tutoriais</h3>
+              <p className="text-xs text-gray-400 mt-1">Aprenda</p>
+            </div>
+          </button>
+
+          <button
+            onClick={() => setActiveSection('marketplace')}
+            className={`p-6 rounded-2xl border transition-all duration-300 ${
+              activeSection === 'marketplace' 
+                ? 'bg-gradient-to-br from-orange-600/20 to-red-600/20 border-orange-500/50 shadow-lg shadow-orange-500/20' 
+                : 'bg-gray-900/50 border-gray-700/50 hover:border-gray-600/50 hover:bg-gray-800/50'
+            }`}
+          >
+            <div className="flex flex-col items-center text-center">
+              <div className={`p-3 rounded-xl mb-3 ${
+                activeSection === 'marketplace' ? 'bg-orange-500/20' : 'bg-gray-700/50'
+              }`}>
+                <ShoppingCart className="w-6 h-6 text-orange-400" />
+              </div>
+              <h3 className="font-semibold text-sm">Marketplace</h3>
+              <p className="text-xs text-gray-400 mt-1">Comprar</p>
+            </div>
+          </button>
+
+          <button
+            onClick={() => setActiveSection('experts')}
+            className={`p-6 rounded-2xl border transition-all duration-300 ${
+              activeSection === 'experts' 
+                ? 'bg-gradient-to-br from-yellow-600/20 to-amber-600/20 border-yellow-500/50 shadow-lg shadow-yellow-500/20' 
+                : 'bg-gray-900/50 border-gray-700/50 hover:border-gray-600/50 hover:bg-gray-800/50'
+            }`}
+          >
+            <div className="flex flex-col items-center text-center">
+              <div className={`p-3 rounded-xl mb-3 ${
+                activeSection === 'experts' ? 'bg-yellow-500/20' : 'bg-gray-700/50'
+              }`}>
+                <UserCheck className="w-6 h-6 text-yellow-400" />
+              </div>
+              <h3 className="font-semibold text-sm">Especialistas</h3>
+              <p className="text-xs text-gray-400 mt-1">Encontrar</p>
+            </div>
           </button>
         </div>
 
-        {/* Enhanced Search and Filters */}
-        <div className="flex flex-col md:flex-row gap-4 mb-8">
-          <div className="flex-1 relative">
+        {/* Search Bar */}
+        <div className="mb-6">
+          <div className="relative">
             <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
             <input
               type="text"
               placeholder={
-                activeTab === 'feed' ? 'Buscar análises, robôs ou usuários...' :
-                activeTab === 'users' ? 'Buscar traders por nome ou especialidade...' :
-                'Buscar desafios...'
+                activeSection === 'feed' ? 'Buscar análises, robôs ou usuários...' :
+                activeSection === 'experts' ? 'Buscar especialistas...' :
+                'Buscar...'
               }
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-12 pr-4 py-3 bg-gray-900/50 border border-gray-700/50 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 backdrop-blur-sm transition-all duration-200"
+              className="w-full pl-12 pr-4 py-4 bg-gray-900/50 border border-gray-700/50 rounded-2xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 backdrop-blur-sm transition-all duration-200"
             />
           </div>
-          
-          {activeTab === 'feed' && (
-            <div className="flex items-center space-x-3">
-              <div className="flex bg-gray-900/50 rounded-xl p-1 border border-gray-700/50">
-                <button
-                  onClick={() => setFilterType('all')}
-                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
-                    filterType === 'all' 
-                      ? 'bg-blue-600 text-white' 
-                      : 'text-gray-400 hover:text-white'
-                  }`}
-                >
-                  Todos
-                </button>
-                <button
-                  onClick={() => setFilterType('analysis')}
-                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
-                    filterType === 'analysis' 
-                      ? 'bg-blue-600 text-white' 
-                      : 'text-gray-400 hover:text-white'
-                  }`}
-                >
-                  Análises
-                </button>
-                <button
-                  onClick={() => setFilterType('robot')}
-                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
-                    filterType === 'robot' 
-                      ? 'bg-blue-600 text-white' 
-                      : 'text-gray-400 hover:text-white'
-                  }`}
-                >
-                  Robôs
-                </button>
-              </div>
-            </div>
-          )}
         </div>
 
-        {/* Content based on active tab */}
-        {activeTab === 'feed' && (
+        {/* Content based on active section */}
+        {activeSection === 'strategies' && (
+          <div className="space-y-6">
+            <div className="text-center py-12">
+              <Shield className="w-16 h-16 text-green-500 mx-auto mb-4 opacity-50" />
+              <h2 className="text-xl font-semibold mb-2">Estratégias Verificadas</h2>
+              <p className="text-gray-400">Estratégias testadas e aprovadas pela comunidade</p>
+            </div>
+          </div>
+        )}
+
+        {activeSection === 'tutorials' && (
+          <div className="space-y-6">
+            <div className="text-center py-12">
+              <BookOpen className="w-16 h-16 text-purple-500 mx-auto mb-4 opacity-50" />
+              <h2 className="text-xl font-semibold mb-2">Tutoriais</h2>
+              <p className="text-gray-400">Aprenda com os melhores da comunidade</p>
+            </div>
+          </div>
+        )}
+
+        {activeSection === 'marketplace' && (
+          <div className="space-y-6">
+            <div className="text-center py-12">
+              <ShoppingCart className="w-16 h-16 text-orange-500 mx-auto mb-4 opacity-50" />
+              <h2 className="text-xl font-semibold mb-2">Marketplace</h2>
+              <p className="text-gray-400">Compre e venda robôs e estratégias</p>
+            </div>
+          </div>
+        )}
+
+        {activeSection === 'experts' && (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {experts.map((expert) => (
+              <div key={expert.id} className="bg-gradient-to-br from-gray-900/80 to-gray-800/80 backdrop-blur-sm rounded-2xl p-6 border border-gray-700/50 hover:border-gray-600/50 transition-all duration-200">
+                <div className="flex items-center space-x-4 mb-4">
+                  <div className="relative">
+                    <div className="w-16 h-16 rounded-full bg-gray-700 flex items-center justify-center overflow-hidden">
+                      <img src={expert.avatar} alt={expert.name} className="w-full h-full object-cover" />
+                    </div>
+                    {expert.available && (
+                      <div className="absolute -bottom-1 -right-1 w-5 h-5 bg-green-500 rounded-full border-2 border-gray-900"></div>
+                    )}
+                  </div>
+                  <div className="flex-1">
+                    <h3 className="font-semibold text-lg">{expert.name}</h3>
+                    <p className="text-sm text-gray-400">{expert.specialty}</p>
+                    <div className="flex items-center mt-1">
+                      <Star className="w-4 h-4 text-yellow-500 mr-1" />
+                      <span className="text-sm">{expert.rating}</span>
+                      <span className="text-xs text-gray-400 ml-1">({expert.reviews} avaliações)</span>
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="bg-gray-800/50 rounded-lg p-3 mb-4">
+                  <div className="flex justify-between items-center">
+                    <span className="text-gray-400 text-sm">Taxa por hora</span>
+                    <span className="font-bold text-lg text-green-400">R$ {expert.hourly_rate}</span>
+                  </div>
+                </div>
+                
+                <button className="w-full py-3 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 rounded-xl text-white font-medium transition-all duration-200">
+                  Contratar Especialista
+                </button>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {activeSection === 'feed' && (
           <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
             {/* Main Feed */}
             <div className="lg:col-span-3 space-y-6">
@@ -501,10 +520,44 @@ export function DashboardPage() {
                 </div>
               </div>
 
+              {/* Filter Pills */}
+              <div className="flex space-x-3">
+                <button
+                  onClick={() => setFilterType('all')}
+                  className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 ${
+                    filterType === 'all' 
+                      ? 'bg-blue-600 text-white shadow-lg' 
+                      : 'bg-gray-800/50 text-gray-400 hover:text-white hover:bg-gray-700/50'
+                  }`}
+                >
+                  Todos
+                </button>
+                <button
+                  onClick={() => setFilterType('analysis')}
+                  className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 ${
+                    filterType === 'analysis' 
+                      ? 'bg-blue-600 text-white shadow-lg' 
+                      : 'bg-gray-800/50 text-gray-400 hover:text-white hover:bg-gray-700/50'
+                  }`}
+                >
+                  Análises
+                </button>
+                <button
+                  onClick={() => setFilterType('robot')}
+                  className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 ${
+                    filterType === 'robot' 
+                      ? 'bg-blue-600 text-white shadow-lg' 
+                      : 'bg-gray-800/50 text-gray-400 hover:text-white hover:bg-gray-700/50'
+                  }`}
+                >
+                  Robôs
+                </button>
+              </div>
+
               {/* Posts */}
               {filteredPosts.map((post) => (
                 <div key={post.id} className="bg-gradient-to-br from-gray-900/80 to-gray-800/80 backdrop-blur-sm rounded-2xl p-6 border border-gray-700/50 hover:border-gray-600/50 transition-all duration-200">
-                  <div className="flex items-start space-x-4 mb-4">
+                  <div className="flex items-start space-x-4">
                     <div className="w-12 h-12 rounded-full bg-gray-700 flex items-center justify-center overflow-hidden">
                       {post.user_avatar ? (
                         <img src={post.user_avatar} alt={post.user_name} className="w-full h-full object-cover" />
@@ -552,7 +605,7 @@ export function DashboardPage() {
                             className="flex items-center space-x-2 text-gray-400 hover:text-red-400 transition-colors duration-200"
                           >
                             <div className="w-8 h-8 rounded-full bg-red-500/10 hover:bg-red-500/20 flex items-center justify-center">
-                              <span className="text-sm">❤️</span>
+                              <Heart className="w-4 h-4" />
                             </div>
                             <span className="font-medium">{post.likes}</span>
                           </button>
@@ -588,256 +641,136 @@ export function DashboardPage() {
               ))}
             </div>
 
-            {/* Enhanced Sidebar */}
+            {/* Sidebar */}
             <div className="space-y-6">
+              {/* Ganhe Tokens */}
+              <div className="bg-gradient-to-br from-yellow-900/20 to-orange-900/20 backdrop-blur-sm rounded-2xl p-6 border border-yellow-500/30">
+                <h3 className="text-lg font-semibold mb-4 flex items-center">
+                  <Trophy className="w-5 h-5 text-yellow-500 mr-2" />
+                  Ganhe Tokens
+                </h3>
+                <div className="space-y-3">
+                  {challenges.slice(0, 3).map((challenge) => (
+                    <div key={challenge.id} className="bg-gray-800/50 rounded-lg p-3">
+                      <div className="flex items-center justify-between mb-2">
+                        <h4 className="font-medium text-sm">{challenge.title}</h4>
+                        <div className="flex items-center text-yellow-400 font-bold text-sm">
+                          <Coins className="w-4 h-4 mr-1" />
+                          {challenge.reward}
+                        </div>
+                      </div>
+                      <p className="text-xs text-gray-400 mb-2">{challenge.description}</p>
+                      {challenge.completed ? (
+                        <div className="text-xs text-emerald-400 font-medium">✓ CONCLUÍDO</div>
+                      ) : (
+                        <div className="w-full bg-gray-700/50 rounded-full h-1.5">
+                          <div 
+                            className="bg-gradient-to-r from-yellow-500 to-orange-500 h-1.5 rounded-full transition-all duration-300" 
+                            style={{ width: `${challenge.progress}%` }}
+                          />
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+                <button className="w-full mt-4 py-2 bg-gradient-to-r from-yellow-600 to-orange-600 hover:from-yellow-700 hover:to-orange-700 rounded-lg text-white font-medium transition-all duration-200">
+                  Ver Todos os Desafios
+                </button>
+              </div>
+
+              {/* Encontrar Usuários */}
+              <div className="bg-gradient-to-br from-gray-900/80 to-gray-800/80 backdrop-blur-sm rounded-2xl p-6 border border-gray-700/50">
+                <h3 className="text-lg font-semibold mb-4 flex items-center">
+                  <Users className="w-5 h-5 text-blue-500 mr-2" />
+                  Traders Ativos
+                </h3>
+                <div className="space-y-3">
+                  {filteredUsers.slice(0, 3).map((user) => (
+                    <div key={user.id} className="bg-gray-800/30 rounded-lg p-3">
+                      <div className="flex items-center space-x-3 mb-3">
+                        <div className="w-10 h-10 rounded-full bg-gray-700 flex items-center justify-center overflow-hidden relative">
+                          <img src={user.avatar} alt={user.name} className="w-full h-full object-cover" />
+                          <div className="absolute -bottom-1 -right-1 w-3 h-3 bg-emerald-500 rounded-full border border-gray-900"></div>
+                        </div>
+                        <div className="flex-1">
+                          <h4 className="font-medium text-sm">{user.name}</h4>
+                          <p className="text-xs text-gray-400">{user.specialty}</p>
+                        </div>
+                      </div>
+                      
+                      <div className="grid grid-cols-3 gap-2 mb-3 text-center">
+                        <div>
+                          <div className="text-sm font-bold text-purple-400">{user.robots}</div>
+                          <div className="text-xs text-gray-400">Robôs</div>
+                        </div>
+                        <div>
+                          <div className="text-sm font-bold text-blue-400">{user.analyses}</div>
+                          <div className="text-xs text-gray-400">Análises</div>
+                        </div>
+                        <div>
+                          <div className="text-sm font-bold text-emerald-400">{user.performance_score}</div>
+                          <div className="text-xs text-gray-400">Score</div>
+                        </div>
+                      </div>
+                      
+                      <div className="grid grid-cols-2 gap-2 mb-2">
+                        <button
+                          onClick={() => handleShareAnalysisWithUser(user.id)}
+                          className="py-1.5 px-2 bg-blue-600/20 hover:bg-blue-600/30 border border-blue-500/30 rounded-lg flex items-center justify-center space-x-1 transition-all duration-200"
+                        >
+                          <BarChart2 className="w-3 h-3 text-blue-400" />
+                          <span className="text-blue-400 text-xs font-medium">Compartilhar Análise</span>
+                        </button>
+                        <button
+                          onClick={() => handleShareRobotWithUser(user.id)}
+                          className="py-1.5 px-2 bg-purple-600/20 hover:bg-purple-600/30 border border-purple-500/30 rounded-lg flex items-center justify-center space-x-1 transition-all duration-200"
+                        >
+                          <Bot className="w-3 h-3 text-purple-400" />
+                          <span className="text-purple-400 text-xs font-medium">Compartilhar Robô</span>
+                        </button>
+                      </div>
+                      
+                      <button
+                        onClick={() => handleFollowUser(user.id)}
+                        className={`w-full py-1.5 rounded-lg font-medium text-sm transition-all duration-200 ${
+                          user.isFollowing 
+                            ? 'bg-gray-600/50 hover:bg-gray-600/70 text-gray-300' 
+                            : 'bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white'
+                        }`}
+                      >
+                        {user.isFollowing ? 'Seguindo' : 'Seguir'}
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
               {/* Performance Stats */}
               <div className="bg-gradient-to-br from-gray-900/80 to-gray-800/80 backdrop-blur-sm rounded-2xl p-6 border border-gray-700/50">
                 <h3 className="text-lg font-semibold mb-4 flex items-center">
                   <Award className="w-5 h-5 text-yellow-500 mr-2" />
                   Suas Estatísticas
                 </h3>
-                <div className="space-y-4">
-                  <div className="flex justify-between items-center">
-                    <span className="text-gray-400">Posts Compartilhados</span>
-                    <span className="font-bold text-xl">0</span>
-                  </div>
-                  <div className="flex justify-between items-center">
-                    <span className="text-gray-400">Curtidas Recebidas</span>
-                    <span className="font-bold text-xl text-red-400">0</span>
-                  </div>
-                  <div className="flex justify-between items-center">
-                    <span className="text-gray-400">Seguidores</span>
-                    <span className="font-bold text-xl text-blue-400">0</span>
-                  </div>
-                  <div className="flex justify-between items-center">
-                    <span className="text-gray-400">Performance Score</span>
-                    <span className="font-bold text-xl text-emerald-400">--</span>
-                  </div>
-                </div>
-              </div>
-
-              {/* Top Performers */}
-              <div className="bg-gradient-to-br from-gray-900/80 to-gray-800/80 backdrop-blur-sm rounded-2xl p-6 border border-gray-700/50">
-                <h3 className="text-lg font-semibold mb-4 flex items-center">
-                  <Sparkles className="w-5 h-5 text-purple-500 mr-2" />
-                  Top Performers
-                </h3>
-                <div className="space-y-3">
-                  {users.slice(0, 3).map((user, index) => (
-                    <div key={user.id} className="flex items-center space-x-3 p-3 bg-gray-800/30 rounded-lg">
-                      <div className="flex items-center justify-center w-8 h-8 rounded-full bg-gradient-to-br from-yellow-500 to-orange-500 text-white text-sm font-bold">
-                        {index + 1}
-                      </div>
-                      <div className="w-8 h-8 rounded-full overflow-hidden">
-                        <img src={user.avatar} alt={user.name} className="w-full h-full object-cover" />
-                      </div>
-                      <div className="flex-1">
-                        <p className="font-medium text-sm">{user.name}</p>
-                        <p className="text-xs text-gray-400">{user.performance_score} pts</p>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {activeTab === 'challenges' && (
-          <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
-            {/* Challenges List */}
-            <div className="lg:col-span-3 space-y-6">
-              <div className="bg-gradient-to-br from-gray-900/80 to-gray-800/80 backdrop-blur-sm rounded-2xl p-6 border border-gray-700/50">
-                <h2 className="text-2xl font-bold mb-6 flex items-center">
-                  <Trophy className="w-7 h-7 text-yellow-500 mr-3" />
-                  Desafios Disponíveis
-                </h2>
-                
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {challenges.map((challenge) => (
-                    <div key={challenge.id} className={`bg-gradient-to-br from-gray-800/60 to-gray-700/60 rounded-xl p-5 border transition-all duration-200 hover:scale-[1.02] ${
-                      challenge.completed 
-                        ? 'border-emerald-500/30 bg-emerald-500/5' 
-                        : 'border-gray-600/50 hover:border-gray-500/50'
-                    }`}>
-                      <div className="flex items-start justify-between mb-4">
-                        <div className="flex items-center space-x-3">
-                          <div className={`p-2 rounded-lg ${
-                            challenge.completed ? 'bg-emerald-500/20' : 'bg-gray-700/50'
-                          }`}>
-                            {challenge.completed ? (
-                              <CheckCircle className="w-5 h-5 text-emerald-400" />
-                            ) : (
-                              getCategoryIcon(challenge.category)
-                            )}
-                          </div>
-                          <div>
-                            <h3 className="font-semibold text-lg">{challenge.title}</h3>
-                            <span className={`inline-block px-2 py-1 rounded-full text-xs font-medium border ${getDifficultyColor(challenge.difficulty)}`}>
-                              {challenge.difficulty === 'easy' ? 'FÁCIL' :
-                               challenge.difficulty === 'medium' ? 'MÉDIO' : 'DIFÍCIL'}
-                            </span>
-                          </div>
-                        </div>
-                        <div className="text-right">
-                          <div className="flex items-center text-yellow-400 font-bold text-lg">
-                            <Coins className="w-5 h-5 mr-1" />
-                            {challenge.reward}
-                          </div>
-                          {challenge.completed && (
-                            <span className="text-xs text-emerald-400 font-medium">CONCLUÍDO</span>
-                          )}
-                        </div>
-                      </div>
-                      
-                      <p className="text-gray-300 mb-4 leading-relaxed">{challenge.description}</p>
-                      
-                      {challenge.deadline && !challenge.completed && (
-                        <div className="flex items-center text-xs text-amber-400 mb-3">
-                          <Calendar className="w-3 h-3 mr-1" />
-                          Prazo: {new Date(challenge.deadline).toLocaleDateString()}
-                        </div>
-                      )}
-                      
-                      {/* Progress Bar */}
-                      {!challenge.completed && challenge.progress > 0 && (
-                        <div className="mb-4">
-                          <div className="flex justify-between text-sm text-gray-400 mb-2">
-                            <span>Progresso</span>
-                            <span>{challenge.progress}%</span>
-                          </div>
-                          <div className="w-full bg-gray-700/50 rounded-full h-2">
-                            <div 
-                              className="bg-gradient-to-r from-blue-500 to-purple-500 h-2 rounded-full transition-all duration-300" 
-                              style={{ width: `${challenge.progress}%` }}
-                            />
-                          </div>
-                        </div>
-                      )}
-                      
-                      {!challenge.completed && (
-                        <button className="w-full py-2 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 rounded-lg text-white font-medium transition-all duration-200">
-                          {challenge.progress > 0 ? 'Continuar' : 'Começar Desafio'}
-                        </button>
-                      )}
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-
-            {/* Challenges Sidebar */}
-            <div className="space-y-6">
-              {/* Token Balance */}
-              <div className="bg-gradient-to-br from-yellow-900/20 to-orange-900/20 backdrop-blur-sm rounded-2xl p-6 border border-yellow-500/30">
-                <h3 className="text-lg font-semibold mb-4 flex items-center">
-                  <Zap className="w-5 h-5 text-yellow-500 mr-2" />
-                  Seus Tokens
-                </h3>
-                <div className="text-center">
-                  <div className="text-4xl font-bold text-yellow-400 mb-2">
-                    {profile?.token_balance?.toLocaleString() || '0'}
-                  </div>
-                  <p className="text-gray-400 text-sm mb-4">Tokens disponíveis</p>
-                  <button
-                    onClick={() => navigate('/subscription')}
-                    className="w-full py-2 bg-gradient-to-r from-yellow-600 to-orange-600 hover:from-yellow-700 hover:to-orange-700 rounded-lg text-white font-medium transition-all duration-200"
-                  >
-                    Comprar Mais
-                  </button>
-                </div>
-              </div>
-
-              {/* Challenge Stats */}
-              <div className="bg-gradient-to-br from-gray-900/80 to-gray-800/80 backdrop-blur-sm rounded-2xl p-6 border border-gray-700/50">
-                <h3 className="text-lg font-semibold mb-4">Estatísticas</h3>
-                <div className="space-y-4">
-                  <div className="flex justify-between items-center">
-                    <span className="text-gray-400">Concluídos</span>
-                    <span className="font-bold text-emerald-400">
-                      {challenges.filter(c => c.completed).length}
-                    </span>
-                  </div>
-                  <div className="flex justify-between items-center">
-                    <span className="text-gray-400">Tokens Ganhos</span>
-                    <span className="font-bold text-yellow-400">
-                      {challenges.filter(c => c.completed).reduce((sum, c) => sum + c.reward, 0)}
-                    </span>
-                  </div>
-                  <div className="flex justify-between items-center">
-                    <span className="text-gray-400">Em Progresso</span>
-                    <span className="font-bold text-blue-400">
-                      {challenges.filter(c => !c.completed && c.progress > 0).length}
-                    </span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {activeTab === 'users' && (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filteredUsers.map((user) => (
-              <div key={user.id} className="bg-gradient-to-br from-gray-900/80 to-gray-800/80 backdrop-blur-sm rounded-2xl p-6 border border-gray-700/50 hover:border-gray-600/50 transition-all duration-200">
-                <div className="flex items-center space-x-4 mb-4">
-                  <div className="w-16 h-16 rounded-full bg-gray-700 flex items-center justify-center overflow-hidden relative">
-                    <img src={user.avatar} alt={user.name} className="w-full h-full object-cover" />
-                    <div className="absolute -bottom-1 -right-1 w-5 h-5 bg-emerald-500 rounded-full border-2 border-gray-900"></div>
-                  </div>
-                  <div className="flex-1">
-                    <h3 className="font-semibold text-lg">{user.name}</h3>
-                    <p className="text-sm text-gray-400">{user.specialty}</p>
-                    <p className="text-xs text-gray-500">{user.last_active}</p>
-                  </div>
-                </div>
-                
-                <div className="grid grid-cols-3 gap-3 mb-4 p-3 bg-gray-800/30 rounded-lg">
+                <div className="grid grid-cols-2 gap-4">
                   <div className="text-center">
-                    <div className="text-lg font-bold text-purple-400">{user.robots}</div>
-                    <div className="text-xs text-gray-400">Robôs</div>
+                    <div className="text-2xl font-bold text-blue-400">0</div>
+                    <div className="text-xs text-gray-400">Posts</div>
                   </div>
                   <div className="text-center">
-                    <div className="text-lg font-bold text-blue-400">{user.analyses}</div>
-                    <div className="text-xs text-gray-400">Análises</div>
+                    <div className="text-2xl font-bold text-red-400">0</div>
+                    <div className="text-xs text-gray-400">Curtidas</div>
                   </div>
                   <div className="text-center">
-                    <div className={`text-lg font-bold ${getPerformanceColor(user.performance_score)}`}>
-                      {user.performance_score}
-                    </div>
+                    <div className="text-2xl font-bold text-green-400">0</div>
+                    <div className="text-xs text-gray-400">Seguidores</div>
+                  </div>
+                  <div className="text-center">
+                    <div className="text-2xl font-bold text-purple-400">--</div>
                     <div className="text-xs text-gray-400">Score</div>
                   </div>
                 </div>
-                
-                <div className="grid grid-cols-2 gap-2 mb-3">
-                  <button
-                    onClick={() => handleInviteUser(user.id, 'analysis')}
-                    className="py-2 px-3 bg-blue-600/20 hover:bg-blue-600/30 border border-blue-500/30 rounded-lg flex items-center justify-center space-x-1 transition-all duration-200"
-                  >
-                    <BarChart2 className="w-4 h-4 text-blue-400" />
-                    <span className="text-blue-400 text-sm font-medium">Compartilhar Análise</span>
-                  </button>
-                  <button
-                    onClick={() => handleShareWithUser(user.id, 'robot')}
-                    className="py-2 px-3 bg-purple-600/20 hover:bg-purple-600/30 border border-purple-500/30 rounded-lg flex items-center justify-center space-x-1 transition-all duration-200"
-                  >
-                    <Bot className="w-4 h-4 text-purple-400" />
-                    <span className="text-purple-400 text-sm font-medium">Compartilhar Robô</span>
-                  </button>
-                </div>
-                
-                <button
-                  onClick={() => handleFollowUser(user.id)}
-                  className={`w-full py-2 rounded-lg font-medium transition-all duration-200 ${
-                    user.isFollowing 
-                      ? 'bg-gray-600/50 hover:bg-gray-600/70 text-gray-300' 
-                      : 'bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white'
-                  }`}
-                >
-                  {user.isFollowing ? 'Seguindo' : 'Seguir'}
-                </button>
               </div>
-            ))}
+            </div>
           </div>
         )}
       </div>
