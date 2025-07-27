@@ -423,10 +423,10 @@ export function EditorPage() {
         {/* Main Content */}
         <div className="flex-1 flex flex-col overflow-hidden">
           {/* Header */}
-          <header className="border-b border-gray-800 bg-gray-900 p-4 flex-shrink-0">
+          <header className="border-b border-gray-800 bg-gray-900 p-3 lg:p-4 flex-shrink-0">
             <div className="flex justify-between items-center">
-              <div className="flex items-center space-x-4">
-                <div className="flex items-center space-x-2">
+              <div className="flex items-center space-x-2 lg:space-x-4 flex-1 min-w-0">
+                <div className="flex items-center space-x-1 lg:space-x-2">
                   <button 
                     onClick={() => navigate('/robots')}
                     className="p-2 hover:bg-gray-800 rounded-full"
@@ -437,22 +437,22 @@ export function EditorPage() {
 
                   <button
                     onClick={() => navigate('/robots')}
-                    className="px-3 py-1.5 bg-gray-800 hover:bg-gray-700 rounded-md flex items-center space-x-2 text-sm"
+                    className="px-2 lg:px-3 py-1.5 bg-gray-800 hover:bg-gray-700 rounded-md flex items-center space-x-1 lg:space-x-2 text-xs lg:text-sm"
                     title="View all robots"
                   >
-                    <Grid className="w-4 h-4" />
-                    <span>{t('nav.robots')}</span>
+                    <Grid className="w-3 h-3 lg:w-4 lg:h-4" />
+                    <span className="hidden sm:inline">{t('nav.robots')}</span>
                   </button>
                 </div>
                 
-                <div className="flex items-center space-x-2">
+                <div className="flex items-center space-x-2 flex-1 min-w-0">
                   {isEditingTitle ? (
                     <div className="flex items-center space-x-2">
                       <input
                         type="text"
                         value={robotTitle}
                         onChange={(e) => setRobotTitle(e.target.value)}
-                        className="px-2 py-1 bg-gray-800 border border-gray-700 rounded text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        className="px-2 py-1 bg-gray-800 border border-gray-700 rounded text-white focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm lg:text-base min-w-0 flex-1"
                         autoFocus
                       />
                       <button
@@ -479,7 +479,7 @@ export function EditorPage() {
                     </div>
                   ) : (
                     <div className="flex items-center space-x-2">
-                      <h2 className="text-lg font-medium">{robotTitle}</h2>
+                      <h2 className="text-base lg:text-lg font-medium truncate">{robotTitle}</h2>
                       <button
                         onClick={() => setIsEditingTitle(true)}
                         className="p-1 text-gray-400 hover:text-white"
@@ -490,7 +490,7 @@ export function EditorPage() {
                     </div>
                   )}
                   {selectedVersion && (
-                    <span className="text-sm text-gray-400 ml-2">
+                    <span className="text-xs lg:text-sm text-gray-400 ml-2 hidden sm:inline">
                       ({selectedVersion})
                     </span>
                   )}
@@ -502,49 +502,49 @@ export function EditorPage() {
                 </div>
               </div>
               
-              <div className="flex items-center space-x-3">
+              <div className="flex items-center space-x-1 lg:space-x-3">
                 <button
                   onClick={handleSaveVersion}
-                  className={`px-3 py-1.5 ${isSaving ? 'bg-green-700' : 'bg-green-600 hover:bg-green-700'} rounded-md flex items-center space-x-2`}
+                  className={`px-2 lg:px-3 py-1.5 ${isSaving ? 'bg-green-700' : 'bg-green-600 hover:bg-green-700'} rounded-md flex items-center space-x-1 lg:space-x-2 text-xs lg:text-sm`}
                   title="Save current version"
                   disabled={!selectedVersion || isSaving}
                 >
                   {isSaving ? (
-                    <RefreshCw className="w-4 h-4 animate-spin" />
+                    <RefreshCw className="w-3 h-3 lg:w-4 lg:h-4 animate-spin" />
                   ) : (
-                    <Save className="w-4 h-4" />
+                    <Save className="w-3 h-3 lg:w-4 lg:h-4" />
                   )}
-                  <span>{t('button.save')}</span>
+                  <span className="hidden sm:inline">{t('button.save')}</span>
                 </button>
 
                 <button
                   onClick={() => setShowCreateVersionModal(true)}
-                  className="px-3 py-1.5 bg-blue-600 hover:bg-blue-700 rounded-md flex items-center space-x-2"
+                  className="px-2 lg:px-3 py-1.5 bg-blue-600 hover:bg-blue-700 rounded-md flex items-center space-x-1 lg:space-x-2 text-xs lg:text-sm"
                   title="Create new version"
                 >
-                  <Layers className="w-4 h-4" />
-                  <span>{t('button.newVersion')}</span>
+                  <Layers className="w-3 h-3 lg:w-4 lg:h-4" />
+                  <span className="hidden lg:inline">{t('button.newVersion')}</span>
                 </button>
                 
                 <div className="relative">
                   <button
                     onClick={() => setShowExportMenu(!showExportMenu)}
-                    className="px-3 py-1.5 bg-gray-800 hover:bg-gray-700 rounded-md flex items-center space-x-2"
+                    className="px-2 lg:px-3 py-1.5 bg-gray-800 hover:bg-gray-700 rounded-md flex items-center space-x-1 lg:space-x-2 text-xs lg:text-sm"
                     title="Export code"
                   >
-                    <FileDown className="w-4 h-4" />
-                    <span>{t('button.export')}</span>
-                    <ChevronDown className="w-4 h-4 ml-1" />
+                    <FileDown className="w-3 h-3 lg:w-4 lg:h-4" />
+                    <span className="hidden lg:inline">{t('button.export')}</span>
+                    <ChevronDown className="w-3 h-3 lg:w-4 lg:h-4 ml-1" />
                   </button>
 
                   {showExportMenu && (
-                    <div className="absolute right-0 mt-2 w-48 bg-gray-800 rounded-md shadow-lg py-1 z-10">
+                    <div className="absolute right-0 mt-2 w-40 lg:w-48 bg-gray-800 rounded-md shadow-lg py-1 z-10">
                       <button
                         onClick={() => {
                           handleCopyCode();
                           setShowExportMenu(false);
                         }}
-                        className="flex items-center w-full px-4 py-2 text-sm text-gray-300 hover:bg-gray-700"
+                        className="flex items-center w-full px-3 lg:px-4 py-2 text-xs lg:text-sm text-gray-300 hover:bg-gray-700"
                       >
                         <Copy className="w-4 h-4 mr-2" />
                         Copy to Clipboard
@@ -554,7 +554,7 @@ export function EditorPage() {
                           handleDownloadCode();
                           setShowExportMenu(false);
                         }}
-                        className="flex items-center w-full px-4 py-2 text-sm text-gray-300 hover:bg-gray-700"
+                        className="flex items-center w-full px-3 lg:px-4 py-2 text-xs lg:text-sm text-gray-300 hover:bg-gray-700"
                       >
                         <Download className="w-4 h-4 mr-2" />
                         Download as File
@@ -565,18 +565,18 @@ export function EditorPage() {
                 
                 <button
                   onClick={() => setShowShareModal(true)}
-                  className="px-3 py-1.5 bg-gray-800 hover:bg-gray-700 rounded-md flex items-center space-x-2"
+                  className="px-2 lg:px-3 py-1.5 bg-gray-800 hover:bg-gray-700 rounded-md flex items-center space-x-1 lg:space-x-2 text-xs lg:text-sm"
                   title="Share robot"
                 >
-                  <Share2 className="w-4 h-4" />
-                  <span>{t('button.share')}</span>
+                  <Share2 className="w-3 h-3 lg:w-4 lg:h-4" />
+                  <span className="hidden lg:inline">{t('button.share')}</span>
                 </button>
                 
                 <button
-                  className="p-2 hover:bg-gray-800 rounded-full"
+                  className="p-1.5 lg:p-2 hover:bg-gray-800 rounded-full"
                   title="Settings"
                 >
-                  <Settings className="w-5 h-5 text-gray-400" />
+                  <Settings className="w-4 h-4 lg:w-5 lg:h-5 text-gray-400" />
                 </button>
               </div>
             </div>

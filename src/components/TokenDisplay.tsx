@@ -68,19 +68,19 @@ export function TokenDisplay({ showLabel = true, className = '' }: TokenDisplayP
 
   return (
     <div 
-      className={`flex items-center ${className} cursor-pointer hover:text-blue-300`}
+      className={`flex items-center ${className} cursor-pointer hover:text-blue-300 text-sm lg:text-base`}
       onClick={handleBuyTokens}
       title={tokenBalance < 1000 ? "Você precisa de pelo menos 1000 tokens para análises" : "Buy more tokens"}
     >
-      <Zap className="w-4 h-4 text-yellow-500 mr-1" />
+      <Zap className="w-3 h-3 lg:w-4 lg:h-4 text-yellow-500 mr-1" />
       {showLabel ? (
-        <span className="text-sm">
+        <span className="text-xs lg:text-sm">
           <span className={`font-medium ${tokenBalance < 1000 ? 'text-red-400' : ''}`}>
             {tokenBalance.toLocaleString()}
           </span> {t('tokens.balance')}
         </span>
       ) : (
-        <span className={`font-medium ${tokenBalance < 1000 ? 'text-red-400' : ''}`}>
+        <span className={`font-medium text-xs lg:text-sm ${tokenBalance < 1000 ? 'text-red-400' : ''}`}>
           {tokenBalance.toLocaleString()}
         </span>
       )}

@@ -4,53 +4,17 @@ import { Code2, Mail, Eye, EyeOff, ArrowRight, Terminal, Share2, Zap, Globe, Pho
 import { useAuthStore } from '../stores/authStore';
 import { useLanguageStore } from '../stores/languageStore';
 import { LanguageSwitcher } from '../components/LanguageSwitcher';
+import { AuthModal } from '../components/AuthModal';
 
 export function HomePage() {
   const navigate = useNavigate();
   const [showLogin, setShowLogin] = useState(false);
-  const [isRegistering, setIsRegistering] = useState(false);
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [phone, setPhone] = useState('');
-  const [showPassword, setShowPassword] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [success, setSuccess] = useState<string | null>(null);
-  const { signInWithEmail, signUpWithEmail, isLoading } = useAuthStore();
+  const [authMode, setAuthMode] = useState<'login' | 'register'>('login');
   const { language, t } = useLanguageStore();
 
-  const handleEmailAuth = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError(null);
-    setSuccess(null);
-
-    if (email && password) {
-      try {
-        // Check if supabase is properly configured
-        if (!supabase || typeof supabase.auth?.signInWithPassword !== 'function') {
-          throw new Error('Sistema não configurado. Por favor, tente novamente mais tarde.');
-        }
-        
-        if (isRegistering) {
-          await signUpWithEmail(email, password, phone);
-          // No need to show success message since we'll auto-redirect
-        } else {
-          await signInWithEmail(email, password);
-        }
-      } catch (error) {
-        console.error('Error with authentication:', error);
-        setError(error instanceof Error ? error.message : 
-          isRegistering ? 'Erro ao cadastrar. Tente novamente.' : 'Erro ao fazer login. Verifique suas credenciais.');
-      }
-    }
-  };
-
-  const resetForm = () => {
-    setEmail('');
-    setPassword('');
-    setPhone('');
-    setShowPassword(false);
-    setError(null);
-    setSuccess(null);
+  const openAuthModal = (mode: 'login' | 'register') => {
+    setAuthMode(mode);
+    setShowLogin(true);
   };
 
   const getPageTitle = () => {
@@ -91,9 +55,7 @@ export function HomePage() {
               </button>
               <button 
                 onClick={() => {
-                  setIsRegistering(false);
-                  setShowLogin(true);
-                  resetForm();
+                  openAuthModal('login');
                 }}
                 className="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium"
               >
@@ -101,9 +63,7 @@ export function HomePage() {
               </button>
               <button 
                 onClick={() => {
-                  setIsRegistering(true);
-                  setShowLogin(true);
-                  resetForm();
+                  openAuthModal('register');
                 }}
                 className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm font-medium flex items-center"
               >
@@ -117,9 +77,7 @@ export function HomePage() {
               <div className="flex items-center space-x-1">
                 <button 
                   onClick={() => {
-                    setIsRegistering(false);
-                    setShowLogin(true);
-                    resetForm();
+                    openAuthModal('login');
                   }}
                   className="text-gray-300 hover:text-white px-2 py-1 rounded-md text-sm font-medium"
                 >
@@ -127,9 +85,7 @@ export function HomePage() {
                 </button>
                 <button 
                   onClick={() => {
-                    setIsRegistering(true);
-                    setShowLogin(true);
-                    resetForm();
+                    openAuthModal('register');
                   }}
                   className="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded-md text-sm font-medium"
                 >
@@ -174,9 +130,7 @@ export function HomePage() {
               <div className="rounded-md shadow">
                 <button
                   onClick={() => {
-                    setIsRegistering(true);
-                    setShowLogin(true);
-                    resetForm();
+                    openAuthModal('register');
                   }}
                   className="w-full flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 md:py-4 md:text-lg md:px-10"
                 >
@@ -305,9 +259,7 @@ export function HomePage() {
               </ul>
               <button
                 onClick={() => {
-                  setIsRegistering(true);
-                  setShowLogin(true);
-                  resetForm();
+                  openAuthModal('register');
                 }}
                 className="mt-6 px-6 py-3 bg-blue-600 hover:bg-blue-700 rounded-md text-white font-medium inline-flex items-center"
               >
@@ -365,9 +317,7 @@ export function HomePage() {
               </ul>
               <button
                 onClick={() => {
-                  setIsRegistering(true);
-                  setShowLogin(true);
-                  resetForm();
+                  openAuthModal('register');
                 }}
                 className="mt-6 px-6 py-3 bg-blue-600 hover:bg-blue-700 rounded-md text-white font-medium inline-flex items-center"
               >
@@ -397,9 +347,7 @@ export function HomePage() {
           </p>
           <button
             onClick={() => {
-              setIsRegistering(true);
-              setShowLogin(true);
-              resetForm();
+              openAuthModal('register');
             }}
             className="px-8 py-4 bg-white text-blue-900 rounded-md font-bold text-lg hover:bg-gray-100 transition-colors"
           >
@@ -408,152 +356,12 @@ export function HomePage() {
         </div>
       </div>
 
-      {/* Login/Register Modal */}
-      {showLogin && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-          <div className="bg-[#1E1E1E] rounded-lg max-w-md w-full p-8 relative">
-            <button 
-              onClick={() => {
-                setShowLogin(false);
-                resetForm();
-              }}
-              className="absolute top-4 right-4 text-gray-400 hover:text-white"
-            >
-              ✕
-            </button>
-            <div className="text-center">
-              <div className="flex items-center justify-center mb-4">
-                <Code2 className="w-12 h-12 text-blue-500" />
-              </div>
-              <h2 className="text-3xl font-bold text-gray-100">
-                {isRegistering 
-                  ? (language === 'en' ? 'Create Account' : 'Criar Conta')
-                  : (language === 'en' ? 'Welcome to DevHub' : 'Bem-vindo ao DevHub')}
-              </h2>
-              <p className="mt-2 text-gray-400">
-                {isRegistering 
-                  ? (language === 'en' ? 'Start your development journey' : 'Comece sua jornada de desenvolvimento')
-                  : (language === 'en' ? 'Sign in to continue' : 'Entre para continuar')}
-              </p>
-            </div>
-            
-            <form onSubmit={handleEmailAuth} className="mt-8 space-y-4">
-              {error && (
-                <div className="p-3 bg-red-500 bg-opacity-10 border border-red-500 rounded-md text-red-500 text-sm">
-                  {error}
-                </div>
-              )}
-              
-              {success && (
-                <div className="p-3 bg-green-500 bg-opacity-10 border border-green-500 rounded-md text-green-500 text-sm">
-                  {success}
-                </div>
-              )}
-
-              <div>
-                <label htmlFor="email" className="block text-sm font-medium text-gray-300">
-                  Email
-                </label>
-                <input
-                  id="email"
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  required
-                  className="mt-1 block w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-md text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  placeholder={language === 'en' ? 'your@email.com' : 'seu@email.com'}
-                />
-              </div>
-
-              {isRegistering && (
-                <div>
-                  <label htmlFor="phone" className="block text-sm font-medium text-gray-300">
-                    {language === 'en' ? 'Phone' : 'Telefone'}
-                  </label>
-                  <div className="relative mt-1">
-                    <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-                    <input
-                      id="phone"
-                      type="tel"
-                      value={phone}
-                      onChange={(e) => setPhone(e.target.value)}
-                      className="block w-full pl-10 pr-3 py-2 bg-gray-800 border border-gray-700 rounded-md text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                      placeholder="+55 (11) 98765-4321"
-                    />
-                  </div>
-                </div>
-              )}
-
-              <div>
-                <label htmlFor="password" className="block text-sm font-medium text-gray-300">
-                  {language === 'en' ? 'Password' : 'Senha'}
-                </label>
-                <div className="mt-1 relative">
-                  <input
-                    id="password"
-                    type={showPassword ? 'text' : 'password'}
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    required
-                    className="block w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-md text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent pr-10"
-                    placeholder="••••••••"
-                    minLength={6}
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowPassword(!showPassword)}
-                    className="absolute inset-y-0 right-0 px-3 flex items-center text-gray-400 hover:text-white"
-                  >
-                    {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                  </button>
-                </div>
-              </div>
-
-              <button 
-                type="submit"
-                disabled={isLoading || !email || !password}
-                className="w-full flex items-center justify-center px-4 py-3 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                <Mail className="w-5 h-5 mr-2" />
-                {isRegistering 
-                  ? (language === 'en' ? 'Register with Email' : 'Cadastrar com Email')
-                  : (language === 'en' ? 'Sign in with Email' : 'Entrar com Email')}
-              </button>
-            </form>
-
-            <div className="mt-6 text-center">
-              <p className="text-sm text-gray-400">
-                {isRegistering 
-                  ? (language === 'en' ? 'Already have an account?' : 'Já tem uma conta?')
-                  : (language === 'en' ? 'Don\'t have an account yet?' : 'Ainda não tem conta?')}{' '}
-                <button
-                  type="button"
-                  onClick={() => {
-                    setIsRegistering(!isRegistering);
-                    resetForm();
-                  }}
-                  className="text-blue-500 hover:text-blue-400"
-                >
-                  {isRegistering 
-                    ? (language === 'en' ? 'Sign in' : 'Faça login')
-                    : (language === 'en' ? 'Sign up' : 'Cadastre-se')}
-                </button>
-              </p>
-              <p className="text-sm text-gray-400 mt-4">
-                {language === 'en' 
-                  ? 'By continuing, you agree to our'
-                  : 'Ao continuar, você concorda com nossos'}{' '}
-                <a href="#" className="text-blue-500 hover:text-blue-400">
-                  {language === 'en' ? 'Terms of Service' : 'Termos de Serviço'}
-                </a> {language === 'en' ? 'and' : 'e'}{' '}
-                <a href="#" className="text-blue-500 hover:text-blue-400">
-                  {language === 'en' ? 'Privacy Policy' : 'Política de Privacidade'}
-                </a>
-              </p>
-            </div>
-          </div>
-        </div>
-      )}
+      {/* Auth Modal */}
+      <AuthModal 
+        isOpen={showLogin}
+        onClose={() => setShowLogin(false)}
+        initialMode={authMode}
+      />
     </div>
   );
 }

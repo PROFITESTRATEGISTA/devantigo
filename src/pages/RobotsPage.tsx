@@ -184,8 +184,8 @@ export function RobotsPage() {
         </div>
         
         {/* Search and filters */}
-        <div className="flex justify-between items-center mb-6">
-          <div className="relative w-72">
+        <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 mb-6">
+          <div className="relative w-full lg:w-72">
             <Search className="w-5 h-5 absolute left-3 top-2.5 text-gray-400" />
             <input
               type="text"
@@ -196,7 +196,7 @@ export function RobotsPage() {
             />
           </div>
           
-          <div className="flex items-center space-x-2">
+          <div className="flex items-center space-x-2 w-full lg:w-auto">
             <span className="text-sm text-gray-400">Sort by:</span>
             <select
               value={sortBy}
@@ -271,7 +271,7 @@ export function RobotsPage() {
             )}
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {filteredRobots.map(robot => (
               <div 
                 key={robot.id}
@@ -279,7 +279,7 @@ export function RobotsPage() {
                 onClick={() => navigate(`/editor/${robot.id}`)}
               >
                 <div className="p-4">
-                  <div className="flex justify-between items-start">
+                  <div className="flex justify-between items-start mb-3">
                     <div className="flex items-center">
                       <Folder className="w-8 h-8 text-blue-500 mr-3" />
                       <h3 className="text-lg font-semibold">{robot.name}</h3>
@@ -314,7 +314,7 @@ export function RobotsPage() {
                     </div>
                   </div>
                   
-                  <div className="mt-3 flex items-center text-sm text-gray-400">
+                  <div className="flex items-center text-sm text-gray-400 mb-3">
                     <Clock className="w-4 h-4 mr-1" />
                     <span>Updated {formatDate(robot.updated_at)}</span>
                   </div>
@@ -325,7 +325,7 @@ export function RobotsPage() {
                       <span className="text-sm text-gray-400">{profile?.name || 'You'}</span>
                     </div>
                     
-                    <div className="flex space-x-2">
+                    <div className="flex space-x-1 lg:space-x-2">
                       <button
                         onClick={(e) => handleExportRobot(robot.id, robot.name, e)}
                         className="p-1.5 hover:bg-gray-700 rounded text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity"
