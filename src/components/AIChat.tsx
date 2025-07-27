@@ -930,18 +930,20 @@ Por favor, forneça uma versão corrigida do código que seja funcional, mantend
   };
 
   return (
-    <div className="flex flex-col h-full bg-gray-900">
-      <div className="p-4 border-b border-gray-800 flex justify-between items-center">
-        <div className="flex items-center">
-          <MessageSquare className="w-5 h-5 text-blue-500 mr-2" />
-          <h3 className="font-medium">{t('ai.title')}</h3>
+    <div className="flex flex-col h-full bg-gray-900 min-h-0">
+      <div className="p-3 lg:p-4 border-b border-gray-800 flex-shrink-0">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center">
+            <MessageSquare className="w-4 h-4 lg:w-5 lg:h-5 text-blue-500 mr-2" />
+            <h3 className="font-medium text-sm lg:text-base">{t('ai.title')}</h3>
+          </div>
+          <TokenDisplay />
         </div>
-        <TokenDisplay />
       </div>
 
       <div 
         ref={messagesContainerRef}
-        className="flex-1 overflow-y-auto p-4 space-y-4"
+        className="flex-1 overflow-y-auto p-3 lg:p-4 space-y-3 lg:space-y-4 min-h-0"
         style={{ maxHeight: 'calc(100vh - 280px)' }}
       >
         {messages.length === 0 ? (
