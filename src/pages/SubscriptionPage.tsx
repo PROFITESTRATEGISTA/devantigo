@@ -33,6 +33,7 @@ export function SubscriptionPage() {
       features: [
         'Até 3 robôs de trading',
         '3 robôs gratuitos inclusos',
+        '1.000 tokens mensais',
         'Análise simples de backtest',
         'Community access',
         'CSVs para análise'
@@ -45,10 +46,10 @@ export function SubscriptionPage() {
       features: [
         'Até 25 robôs de trading',
         'IA para gerar robôs',
+        '20.000 tokens mensais',
         'Análise completa de backtest',
         'Montagem de portfólios automática',
-        'Community access',
-        '5,000 tokens/month'
+        'Community access'
       ]
     },
     {
@@ -58,12 +59,10 @@ export function SubscriptionPage() {
       features: [
         'Até 100 robôs de trading',
         'IA para gerar robôs',
+        '50.000 tokens mensais',
         'Análise avançada de backtest',
         'Montagem de portfólios automática',
-        'Priority support',
-        '12,500 tokens/month',
-        'API access',
-        'Custom indicators'
+        'Suporte dedicado'
       ],
       isPopular: true
     },
@@ -74,12 +73,10 @@ export function SubscriptionPage() {
       features: [
         'Até 500 robôs de trading',
         'IA para gerar robôs',
+        '100.000 tokens mensais',
         'Análise avançada de backtest',
         'Montagem de portfólios automática',
-        'Dedicated support',
-        '30,000 tokens/month',
-        'API access',
-        'Custom indicators'
+        'Suporte dedicado'
       ]
     },
     {
@@ -103,12 +100,11 @@ export function SubscriptionPage() {
   // Get token allocation based on plan
   const getTokenAllocation = () => {
     switch (currentPlan.name) {
-      case 'Free Forever': return 0;
-      case 'Pro 1': return 5000;
-      case 'Pro 2': return 12500;
-      case 'Pro 3': return 30000;
-      case 'Pro 4': return 100000;
-      default: return 0;
+      case 'Free Forever': return 1000;
+      case 'Pro 1': return 20000;
+      case 'Pro 2': return 50000;
+      case 'Pro 3': return 100000;
+      default: return 1000;
     }
   };
 

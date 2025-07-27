@@ -17,11 +17,13 @@ export function PublicPlansPage() {
       features: [
         'Até 3 robôs de trading',
         '3 robôs gratuitos para primeiros passos',
+        '1.000 tokens mensais',
         'CSVs para análise básica',
         'Análise simples (limitada)',
         'Acesso à comunidade',
         'Documentação básica',
-        'Suporte por comunidade'
+        'Suporte por comunidade',
+        'Grupo WhatsApp'
       ],
       popular: false,
       cta: 'Começar Grátis'
@@ -34,13 +36,14 @@ export function PublicPlansPage() {
       features: [
         'Até 25 robôs de trading',
         'IA para gerar robôs de trading',
-        '5.000 tokens mensais',
+        '20.000 tokens mensais',
         'Análise de backtest completa',
         'Montagem de portfólios automática',
         'Acesso à comunidade',
-        'Suporte por email'
+        'Suporte por comunidade',
+        'Grupo WhatsApp'
       ],
-      popular: false,
+      popular: true,
       cta: 'Escolher Plano'
     },
     {
@@ -51,14 +54,14 @@ export function PublicPlansPage() {
       features: [
         'Até 100 robôs de trading',
         'IA para gerar robôs de trading',
-        '12.500 tokens mensais',
+        '50.000 tokens mensais',
         'Análise de backtest avançada',
         'Montagem de portfólios automática',
-        'Suporte prioritário',
-        'Acesso a indicadores exclusivos',
-        'API para integração'
+        'Suporte dedicado',
+        'Grupo WhatsApp'
       ],
-      popular: true,
+      popular: false,
+      recommended: true,
       cta: 'Escolher Plano'
     },
     {
@@ -69,13 +72,12 @@ export function PublicPlansPage() {
       features: [
         'Até 500 robôs de trading',
         'IA para gerar robôs de trading',
-        '30.000 tokens mensais',
+        '100.000 tokens mensais',
         'Análise de backtest avançada',
         'Montagem de portfólios automática',
         'Suporte dedicado',
         'Acesso a todos os recursos',
-        'API para integração',
-        'Indicadores exclusivos'
+        'Grupo WhatsApp'
       ],
       popular: false,
       cta: 'Escolher Plano'
@@ -85,17 +87,17 @@ export function PublicPlansPage() {
   const tokenPackages = [
     {
       tokens: '2.500',
-      price: 'R$ 99,80',
+      price: 'R$ 70,00',
       popular: false
     },
     {
       tokens: '7.500',
-      price: 'R$ 259,80',
+      price: 'R$ 150,00',
       popular: true
     },
     {
       tokens: '25.000',
-      price: 'R$ 799,80',
+      price: 'R$ 300,00',
       popular: false
     }
   ];
@@ -185,12 +187,18 @@ export function PublicPlansPage() {
               <div 
                 key={plan.id}
                 className={`bg-gray-800 rounded-lg overflow-hidden ${
-                  plan.popular ? 'ring-2 ring-blue-500 transform scale-105 z-10' : ''
+                  plan.popular ? 'ring-2 ring-blue-500 transform scale-105 z-10' : 
+                  plan.recommended ? 'ring-2 ring-green-500' : ''
                 }`}
               >
                 {plan.popular && (
                   <div className="bg-blue-600 text-center py-2">
-                    <p className="text-sm font-medium">Mais Popular</p>
+                    <p className="text-sm font-medium">Mais Vendido</p>
+                  </div>
+                )}
+                {plan.recommended && (
+                  <div className="bg-green-600 text-center py-2">
+                    <p className="text-sm font-medium">Recomendado</p>
                   </div>
                 )}
                 <div className="p-6">
@@ -216,7 +224,7 @@ export function PublicPlansPage() {
                   <button
                     onClick={plan.id === 'free-forever' ? handleSignUp : handleContactSupport}
                     className={`w-full py-2 rounded-md ${
-                      plan.popular
+                      plan.popular || plan.recommended
                         ? 'bg-blue-600 hover:bg-blue-700'
                         : 'bg-gray-700 hover:bg-gray-600'
                     }`}

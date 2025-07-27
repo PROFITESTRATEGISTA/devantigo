@@ -12,11 +12,11 @@ export function FAQPage() {
       questions: [
         {
           question: 'Qual a diferença entre os planos Pro 1, Pro 2, Pro 3 e Pro 4?',
-          answer: 'Pro 1 (R$ 259,80): Até 25 robôs, IA para gerar robôs, 5.000 tokens. Pro 2 (R$ 499,80): Até 100 robôs, 12.500 tokens, recursos avançados. Pro 3 (R$ 999,80): Até 500 robôs, 30.000 tokens, suporte dedicado. Pro 4 (R$ 1.999,80): Robôs ilimitados, 100.000 tokens, recursos institucionais.'
+          answer: 'Pro 1 (R$ 259,80): Até 25 robôs, IA para gerar robôs, 20.000 tokens. Pro 2 (R$ 499,80): Até 100 robôs, 50.000 tokens, suporte dedicado. Pro 3 (R$ 999,80): Até 500 robôs, 100.000 tokens, todos os recursos premium.'
         },
         {
           question: 'O plano Free tem limitações?',
-          answer: 'Sim, o plano Free inclui até 3 robôs de trading, 3 robôs gratuitos pré-configurados, análise simples de backtest (sem IA avançada), e suporte apenas via comunidade. Não inclui IA para gerar robôs.'
+          answer: 'Sim, o plano Free inclui até 3 robôs de trading, 3 robôs gratuitos pré-configurados, 1.000 tokens mensais, análise simples de backtest (sem IA avançada), e suporte via comunidade e grupo WhatsApp. Não inclui IA para gerar robôs.'
         },
         {
           question: 'Posso fazer upgrade ou downgrade a qualquer momento?',
@@ -46,7 +46,7 @@ export function FAQPage() {
         },
         {
           question: 'Quanto custam os tokens extras?',
-          answer: 'Pacotes disponíveis: 2.500 tokens (R$ 99,80), 7.500 tokens (R$ 259,80), 25.000 tokens (R$ 799,80). Tokens extras nunca expiram e podem ser usados a qualquer momento.'
+          answer: 'Pacotes disponíveis: 2.500 tokens (R$ 70,00), 7.500 tokens (R$ 150,00), 25.000 tokens (R$ 300,00). Tokens extras nunca expiram e podem ser usados a qualquer momento.'
         }
       ]
     },
@@ -122,7 +122,7 @@ export function FAQPage() {
       questions: [
         {
           question: 'Como funciona o suporte em cada plano?',
-          answer: 'Free: Suporte via comunidade e FAQ. Pro 1/2: Email com resposta em 24h. Pro 3: Suporte prioritário em 12h. Pro 4: Suporte dedicado em 4h + WhatsApp direto.'
+          answer: 'Free e Pro 1: Suporte via comunidade e grupo WhatsApp. Pro 2 e Pro 3: Suporte dedicado com resposta prioritária. Todos os planos têm acesso ao grupo WhatsApp da comunidade.'
         },
         {
           question: 'Posso compartilhar meus robôs?',
