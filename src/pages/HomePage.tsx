@@ -70,12 +70,12 @@ export function HomePage() {
       {/* Navigation */}
       <nav className="border-b border-gray-800">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16">
+          <div className="flex items-center justify-between h-16 md:h-20">
             <div className="flex items-center">
-              <Code2 className="w-8 h-8 text-blue-500" />
-              <span className="ml-2 text-xl font-bold text-white">DevHub Trader</span>
+              <Code2 className="w-6 h-6 sm:w-8 sm:h-8 text-blue-500" />
+              <span className="ml-2 text-lg sm:text-xl font-bold text-white">DevHub Trader</span>
             </div>
-            <div className="flex items-center space-x-4">
+            <div className="hidden md:flex items-center space-x-4">
               <LanguageSwitcher />
               <button 
                 onClick={() => navigate('/faq')}
@@ -108,6 +108,51 @@ export function HomePage() {
                 className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm font-medium flex items-center"
               >
                 {language === 'en' ? 'Sign Up' : 'Cadastrar'} <ArrowRight className="w-4 h-4 ml-2" />
+              </button>
+            </div>
+            
+            {/* Mobile menu */}
+            <div className="md:hidden flex items-center space-x-2">
+              <LanguageSwitcher />
+              <div className="flex items-center space-x-1">
+                <button 
+                  onClick={() => {
+                    setIsRegistering(false);
+                    setShowLogin(true);
+                    resetForm();
+                  }}
+                  className="text-gray-300 hover:text-white px-2 py-1 rounded-md text-sm font-medium"
+                >
+                  {language === 'en' ? 'Login' : 'Entrar'}
+                </button>
+                <button 
+                  onClick={() => {
+                    setIsRegistering(true);
+                    setShowLogin(true);
+                    resetForm();
+                  }}
+                  className="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded-md text-sm font-medium"
+                >
+                  {language === 'en' ? 'Sign Up' : 'Cadastrar'}
+                </button>
+              </div>
+            </div>
+          </div>
+          
+          {/* Mobile navigation links */}
+          <div className="md:hidden border-t border-gray-700 py-2">
+            <div className="flex justify-center space-x-6">
+              <button 
+                onClick={() => navigate('/faq')}
+                className="text-gray-300 hover:text-white text-sm font-medium"
+              >
+                {language === 'en' ? 'FAQ' : 'FAQ'}
+              </button>
+              <button 
+                onClick={() => navigate('/plans')}
+                className="text-gray-300 hover:text-white text-sm font-medium"
+              >
+                {language === 'en' ? 'Plans' : 'Planos'}
               </button>
             </div>
           </div>
