@@ -98,6 +98,7 @@ export default function App() {
         <Router>
           <Routes>
             <Route path="/plans" element={<PublicPlansPage />} />
+            <Route path="/faq" element={<FAQPage />} />
             <Route path="*" element={<HomePage />} />
           </Routes>
         </Router>

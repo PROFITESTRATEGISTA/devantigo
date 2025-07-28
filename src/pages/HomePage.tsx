@@ -12,8 +12,8 @@ export function HomePage() {
   const [authMode, setAuthMode] = useState<'login' | 'register'>('login');
   const { language, t } = useLanguageStore();
 
-  const openAuthModal = (mode: 'login' | 'register') => {
-    setAuthMode(mode);
+  const handleSignUp = () => {
+    setAuthMode('register');
     setShowLogin(true);
   };
 
@@ -55,7 +55,8 @@ export function HomePage() {
               </button>
               <button 
                 onClick={() => {
-                  openAuthModal('login');
+                  setAuthMode('login');
+                  setShowLogin(true);
                 }}
                 className="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium"
               >
@@ -63,7 +64,8 @@ export function HomePage() {
               </button>
               <button 
                 onClick={() => {
-                  openAuthModal('register');
+                  setAuthMode('register');
+                  setShowLogin(true);
                 }}
                 className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm font-medium flex items-center"
               >
@@ -77,7 +79,8 @@ export function HomePage() {
               <div className="flex items-center space-x-1">
                 <button 
                   onClick={() => {
-                    openAuthModal('login');
+                    setAuthMode('login');
+                    setShowLogin(true);
                   }}
                   className="text-gray-300 hover:text-white px-2 py-1 rounded-md text-sm font-medium"
                 >
@@ -85,7 +88,8 @@ export function HomePage() {
                 </button>
                 <button 
                   onClick={() => {
-                    openAuthModal('register');
+                    setAuthMode('register');
+                    setShowLogin(true);
                   }}
                   className="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded-md text-sm font-medium"
                 >
@@ -130,7 +134,8 @@ export function HomePage() {
               <div className="rounded-md shadow">
                 <button
                   onClick={() => {
-                    openAuthModal('register');
+                    setAuthMode('register');
+                    setShowLogin(true);
                   }}
                   className="w-full flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 md:py-4 md:text-lg md:px-10"
                 >
@@ -258,9 +263,7 @@ export function HomePage() {
                 </li>
               </ul>
               <button
-                onClick={() => {
-                  openAuthModal('register');
-                }}
+                onClick={handleSignUp}
                 className="mt-6 px-6 py-3 bg-blue-600 hover:bg-blue-700 rounded-md text-white font-medium inline-flex items-center"
               >
                 {language === 'en' ? 'Try Backtest Analysis' : 'Experimente a Análise de Backtest'}
@@ -316,9 +319,7 @@ export function HomePage() {
                 </li>
               </ul>
               <button
-                onClick={() => {
-                  openAuthModal('register');
-                }}
+                onClick={handleSignUp}
                 className="mt-6 px-6 py-3 bg-blue-600 hover:bg-blue-700 rounded-md text-white font-medium inline-flex items-center"
               >
                 {language === 'en' ? 'Create Your First Robot' : 'Crie Seu Primeiro Robô'}
@@ -347,7 +348,8 @@ export function HomePage() {
           </p>
           <button
             onClick={() => {
-              openAuthModal('register');
+              setAuthMode('register');
+              setShowLogin(true);
             }}
             className="px-8 py-4 bg-white text-blue-900 rounded-md font-bold text-lg hover:bg-gray-100 transition-colors"
           >
