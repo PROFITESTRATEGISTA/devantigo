@@ -722,4 +722,3 @@ if (typeof window !== 'undefined') {
     useLanguageStore.getState().setLanguage(savedLanguage);
   }
 }
-}
