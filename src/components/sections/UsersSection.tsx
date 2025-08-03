@@ -192,6 +192,7 @@ export function UsersSection({ users }: UsersSectionProps) {
                   </div>
                 </div>
               </div>
+            </div>
             <div className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-gray-300 mb-1">
@@ -223,7 +224,6 @@ export function UsersSection({ users }: UsersSectionProps) {
                   </label>
                 </div>
               </div>
-            </div>
               <div className="flex justify-end space-x-3">
                 <button
                   onClick={() => setShowShareModal(false)}
@@ -242,6 +242,7 @@ export function UsersSection({ users }: UsersSectionProps) {
             </div>
           </div>
         </div>
-      </>
+      )}
+    </>
   );
 }

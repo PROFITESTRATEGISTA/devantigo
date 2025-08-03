@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { BarChart2 } from 'lucide-react';
+import { Navbar } from '../components/Navbar';
 import { NavigationPanel } from '../components/NavigationPanel';
 import { AnalysesSection } from '../components/sections/AnalysesSection';
 import { RankingSection } from '../components/sections/RankingSection';
@@ -61,6 +62,8 @@ export const DashboardPage = () => {
 
   return (
     <div className="min-h-screen bg-black text-white relative overflow-hidden">
+      <Navbar />
+      
       {/* Animated background */}
       <div className="absolute inset-0 bg-gradient-to-br from-gray-900 via-blue-950 to-black"></div>
       <div className="absolute inset-0">
