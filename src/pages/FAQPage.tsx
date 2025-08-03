@@ -1,4 +1,5 @@
 import React from 'react';
+import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, HelpCircle, Zap, Code2, BarChart2, Users, Crown, Shield, Gift } from 'lucide-react';
 import { LanguageSwitcher } from '../components/LanguageSwitcher';
@@ -6,7 +7,23 @@ import { useLanguageStore } from '../stores/languageStore';
 
 export function FAQPage() {
   const navigate = useNavigate();
-  const { language } = useLanguageStore();
+  const { language, setLanguage } = useLanguageStore();
+
+  // Force re-render when language changes
+  useEffect(() => {
+    const handleLanguageChange = () => {
+      // Force component re-render by updating state
+      navigate('/faq', { replace: true });
+    };
+    
+    window.addEventListener('languageChanged', handleLanguageChange);
+    window.addEventListener('storage', handleLanguageChange);
+    
+    return () => {
+      window.removeEventListener('languageChanged', handleLanguageChange);
+      window.removeEventListener('storage', handleLanguageChange);
+    };
+  }, [navigate]);
 
   const faqCategories = [
     {

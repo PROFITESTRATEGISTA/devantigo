@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { 
   Crown, Zap, Check, ArrowRight, Shield, Users, 
@@ -9,8 +10,24 @@ import { useLanguageStore } from '../stores/languageStore';
 
 export function PublicPlansPage() {
   const navigate = useNavigate();
-  const { language } = useLanguageStore();
+  const { language, setLanguage } = useLanguageStore();
   const [selectedProLevel, setSelectedProLevel] = useState<'pro1' | 'pro2' | 'pro3'>('pro1');
+
+  // Force re-render when language changes
+  useEffect(() => {
+    const handleLanguageChange = () => {
+      // Force component re-render
+      setSelectedProLevel(prev => prev);
+    };
+    
+    window.addEventListener('languageChanged', handleLanguageChange);
+    window.addEventListener('storage', handleLanguageChange);
+    
+    return () => {
+      window.removeEventListener('languageChanged', handleLanguageChange);
+      window.removeEventListener('storage', handleLanguageChange);
+    };
+  }, []);
 
   // Pro plan levels with details
   const proLevels = {
