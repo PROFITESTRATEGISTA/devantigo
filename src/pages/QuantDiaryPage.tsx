@@ -36,6 +36,7 @@ export function QuantDiaryPage() {
   const [userPatrimony, setUserPatrimony] = useState<number>(10000); // Patrimônio inicial padrão
   const [isEditingPatrimony, setIsEditingPatrimony] = useState(false);
   const [patrimonyInput, setPatrimonyInput] = useState('10000');
+  const [showAdvancedMetrics, setShowAdvancedMetrics] = useState(true);
   
   // Dados por ano - agora organizados por ano
   const [calendarData, setCalendarData] = useState<{[year: number]: CalendarData}>({
@@ -271,7 +272,94 @@ export function QuantDiaryPage() {
     };
   };
 
+  // Calculate drawdown based on user's initial capital (patrimony)
+  const calculateDrawdownMetrics = () => {
+    const daysWithTrades = Object.entries(calendarData)
+      .filter(([_, dayData]) => dayData.trades > 0)
+      .sort(([a], [b]) => new Date(a).getTime() - new Date(b).getTime());
+
+    if (daysWithTrades.length === 0) {
+      return { 
+        maxDrawdownPercent: 0, 
+        maxDrawdownAmount: 0, 
+        drawdownPeriod: null,
+        recoveryFactor: 0,
+        sharpeRatio: 0,
+        calmarRatio: 0
+      };
+    }
+
+    let runningPnL = userPatrimony; // Start with user's initial capital
+    let peak = userPatrimony;
+    let maxDrawdown = 0;
+    let maxDrawdownAmount = 0;
+    let drawdownStart: string | null = null;
+    let drawdownEnd: string | null = null;
+    let dailyReturns: number[] = [];
+    let previousValue = userPatrimony;
+
+    daysWithTrades.forEach(([date, dayData]) => {
+      runningPnL += dayData.pnl; // Add daily P&L to running total
+      
+      // Calculate daily return percentage
+      const dailyReturn = previousValue > 0 ? (dayData.pnl / previousValue) : 0;
+      dailyReturns.push(dailyReturn);
+      previousValue = runningPnL;
+      
+      // Update peak if we have a new high
+      if (runningPnL > peak) {
+        peak = runningPnL;
+      }
+      
+      // Calculate current drawdown
+      const currentDrawdown = peak - runningPnL;
+      const currentDrawdownPercent = peak > 0 ? (currentDrawdown / peak) * 100 : 0;
+      
+      // Update maximum drawdown
+      if (currentDrawdown > maxDrawdownAmount) {
+        maxDrawdownAmount = currentDrawdown;
+        maxDrawdown = currentDrawdownPercent;
+        drawdownStart = date;
+        drawdownEnd = date;
+      } else if (currentDrawdown === maxDrawdownAmount && drawdownStart) {
+        drawdownEnd = date;
+      }
+    });
+
+    // Calculate Sharpe Ratio (Calmar Index)
+    const avgDailyReturn = dailyReturns.length > 0 ? 
+      dailyReturns.reduce((sum, ret) => sum + ret, 0) / dailyReturns.length : 0;
+    
+    const dailyReturnStd = dailyReturns.length > 1 ? 
+      Math.sqrt(dailyReturns.reduce((sum, ret) => sum + Math.pow(ret - avgDailyReturn, 2), 0) / (dailyReturns.length - 1)) : 0;
+    
+    // Annualized Sharpe Ratio (assuming 252 trading days per year)
+    const annualizedReturn = avgDailyReturn * 252;
+    const annualizedVolatility = dailyReturnStd * Math.sqrt(252);
+    const sharpeRatio = annualizedVolatility > 0 ? annualizedReturn / annualizedVolatility : 0;
+    
+    // Calmar Ratio (Annual Return / Max Drawdown)
+    const calmarRatio = maxDrawdown > 0 ? (annualizedReturn * 100) / maxDrawdown : 0;
+    
+    // Recovery Factor (Net Profit / Max Drawdown Amount)
+    const totalPnL = runningPnL - userPatrimony;
+    const recoveryFactor = maxDrawdownAmount > 0 ? totalPnL / maxDrawdownAmount : 0;
+    
+    return {
+      maxDrawdownPercent: maxDrawdown,
+      maxDrawdownAmount,
+      recoveryFactor,
+      sharpeRatio,
+      calmarRatio,
+      drawdownPeriod: drawdownStart && drawdownEnd ? {
+        start: drawdownStart,
+        end: drawdownEnd
+      } : null
+    };
+  };
+
   const allTimeStats = calculateAllTimeStats();
+  const drawdownMetrics = calculateDrawdownMetrics();
 
   // Função para obter o número de dias no mês
   const getDaysInMonth = (month: string, year: number) => {
@@ -868,8 +956,14 @@ export function QuantDiaryPage() {
               <span className="text-sm text-gray-400">Sharpe Ratio</span>
               <BarChart2 className="w-4 h-4 text-blue-400" />
             </div>
-            <p className="text-2xl font-bold text-blue-400">{operationalStats.sharpeRatio.value}</p>
-            <p className="text-xs text-gray-500">{operationalStats.sharpeRatio.label}</p>
+            <p className="text-2xl font-bold text-blue-400">
+              {drawdownMetrics.sharpeRatio.toFixed(2)}
+            </p>
+            <p className="text-xs text-gray-400">
+              {drawdownMetrics.sharpeRatio > 1 ? 'Excelente' : 
+               drawdownMetrics.sharpeRatio > 0.5 ? 'Bom' : 
+               drawdownMetrics.sharpeRatio > 0 ? 'Regular' : 'Baixo'}
+            </p>
           </div>
           
           {/* Fator de Lucro */}
@@ -886,10 +980,32 @@ export function QuantDiaryPage() {
           <div className="bg-gray-700 rounded-lg p-4">
             <div className="flex items-center justify-between mb-2">
               <span className="text-sm text-gray-400">Fator Recuperação</span>
-              <Target className="w-4 h-4 text-blue-400" />
+              <Target className="w-4 h-4 text-purple-400" />
             </div>
-            <p className="text-2xl font-bold text-blue-400">{operationalStats.recoveryFactor.value}</p>
-            <p className="text-xs text-gray-500">{operationalStats.recoveryFactor.label}</p>
+            <p className="text-2xl font-bold text-purple-400">
+              {drawdownMetrics.recoveryFactor.toFixed(2)}
+            </p>
+            <p className="text-xs text-gray-400">
+              {drawdownMetrics.recoveryFactor > 3 ? 'Excelente' : 
+               drawdownMetrics.recoveryFactor > 1 ? 'Bom' : 
+               drawdownMetrics.recoveryFactor > 0 ? 'Regular' : 'Baixo'}
+            </p>
+          </div>
+          
+          {/* Índice Calmar */}
+          <div className="bg-gray-700 rounded-lg p-4">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-sm text-gray-400">Índice Calmar</span>
+              <TrendingUp className="w-4 h-4 text-green-400" />
+            </div>
+            <p className="text-2xl font-bold text-green-400">
+              {drawdownMetrics.calmarRatio.toFixed(2)}
+            </p>
+            <p className="text-xs text-gray-400">
+              {drawdownMetrics.calmarRatio > 1 ? 'Excelente' : 
+               drawdownMetrics.calmarRatio > 0.5 ? 'Bom' : 
+               drawdownMetrics.calmarRatio > 0 ? 'Regular' : 'Baixo'}
+            </p>
           </div>
           
           {/* Drawdown Máximo */}
@@ -899,18 +1015,17 @@ export function QuantDiaryPage() {
               <AlertTriangle className="w-4 h-4 text-orange-400" />
             </div>
             <p className="text-2xl font-bold text-orange-400">
-              {allTimeStats.maxDrawdown.toFixed(1)}%
+              {drawdownMetrics.maxDrawdownPercent.toFixed(1)}%
             </p>
             <p className="text-xs text-gray-400">
-              R$ {allTimeStats.maxDrawdownAmount.toFixed(2)}
+              R$ {drawdownMetrics.maxDrawdownAmount.toFixed(2)}
             </p>
-            {allTimeStats.drawdownStartDate && allTimeStats.drawdownEndDate && (
+            {drawdownMetrics.drawdownPeriod && (
               <p className="text-xs text-gray-500 mt-1">
-                {allTimeStats.drawdownStartDate} - {allTimeStats.drawdownEndDate}
+                {new Date(drawdownMetrics.drawdownPeriod.start).toLocaleDateString()} - {new Date(drawdownMetrics.drawdownPeriod.end).toLocaleDateString()}
               </p>
             )}
           </div>
-          
           </div>
         </div>
         
