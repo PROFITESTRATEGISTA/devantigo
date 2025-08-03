@@ -293,67 +293,6 @@ export function QuantDiaryPage() {
         </div>
       </div>
 
-      {/* Performance Acumulada */}
-      <div className="bg-gray-800 rounded-lg p-6">
-        <h3 className="text-xl font-semibold mb-6 flex items-center">
-          <BarChart2 className="w-5 h-5 text-purple-400 mr-2" />
-          Performance Acumulada (Todos os Tempos)
-        </h3>
-
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-          <div className="bg-gray-700 rounded-lg p-4">
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-sm text-gray-400">P&L Total</span>
-              <TrendingUp className="w-4 h-4 text-green-400" />
-            </div>
-            <p className="text-2xl font-bold text-green-400">+R$ {accumulatedStats.pnlTotal.toFixed(2)}</p>
-          </div>
-
-          <div className="bg-gray-700 rounded-lg p-4">
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-sm text-gray-400">Total de Trades</span>
-              <Hash className="w-4 h-4 text-blue-400" />
-            </div>
-            <p className="text-2xl font-bold text-blue-400">{accumulatedStats.totalTrades}</p>
-          </div>
-
-          <div className="bg-gray-700 rounded-lg p-4">
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-sm text-gray-400">Taxa de Acerto</span>
-              <div className="w-3 h-3 rounded-full bg-red-500"></div>
-            </div>
-            <p className="text-2xl font-bold text-red-400">{accumulatedStats.taxaAcerto.toFixed(1)}%</p>
-          </div>
-
-          <div className="bg-gray-700 rounded-lg p-4">
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-sm text-gray-400">Dias Operados</span>
-              <Calendar className="w-4 h-4 text-purple-400" />
-            </div>
-            <p className="text-2xl font-bold text-purple-400">{accumulatedStats.diasOperados}</p>
-          </div>
-
-          <div className="bg-gray-700 rounded-lg p-4">
-            <span className="text-sm text-gray-400">Profit Factor</span>
-            <p className="text-xl font-bold text-red-400">{accumulatedStats.profitFactor.toFixed(2)}</p>
-          </div>
-
-          <div className="bg-gray-700 rounded-lg p-4">
-            <span className="text-sm text-gray-400">Sharpe Ratio</span>
-            <p className="text-xl font-bold text-red-400">{accumulatedStats.sharpeRatio.toFixed(2)}</p>
-          </div>
-
-          <div className="bg-gray-700 rounded-lg p-4">
-            <span className="text-sm text-gray-400">Drawdown Máx.</span>
-            <p className="text-xl font-bold text-green-400">R$ {accumulatedStats.drawdownMax.toFixed(2)}</p>
-          </div>
-
-          <div className="bg-gray-700 rounded-lg p-4">
-            <span className="text-sm text-gray-400">Melhor Dia</span>
-            <p className="text-xl font-bold text-green-400">R$ {accumulatedStats.melhorDia.toFixed(2)}</p>
-          </div>
-        </div>
-      </div>
 
       {/* Breakdown Mensal */}
       <div className="bg-gray-800 rounded-lg p-6">
