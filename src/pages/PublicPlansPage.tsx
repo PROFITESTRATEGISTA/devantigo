@@ -681,80 +681,144 @@ export function PublicPlansPage() {
       <div className="py-16 bg-gray-900">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold mb-4">Perguntas Frequentes</h2>
+            <h2 className="text-3xl font-bold mb-4">
+              {language === 'en' ? 'Frequently Asked Questions' : 'Perguntas Frequentes'}
+            </h2>
             <p className="text-xl text-gray-400">
-              Tire suas dúvidas sobre nossos planos e serviços
+              {language === 'en' 
+                ? 'Get answers about our plans and services'
+                : 'Tire suas dúvidas sobre nossos planos e serviços'}
             </p>
           </div>
 
           <div className="space-y-6">
             <div className="bg-gray-800 rounded-lg p-6">
-              <h3 className="text-xl font-medium mb-3">O que são tokens e como funcionam?</h3>
+              <h3 className="text-xl font-medium mb-3">
+                {language === 'en' 
+                  ? 'What are tokens and how do they work?'
+                  : 'O que são tokens e como funcionam?'}
+              </h3>
               <p className="text-gray-300">
-                Tokens são a moeda utilizada para acessar recursos de IA na plataforma. Cada interação com a IA (criação de robô, análise de backtest, montagem de portfólios) consome tokens. Você pode ganhar tokens completando desafios ou comprando pacotes adicionais.
+                {language === 'en'
+                  ? 'Tokens are the currency used to access AI features on the platform. Each AI interaction (robot creation, backtest analysis, portfolio assembly) consumes tokens. You can earn tokens by completing challenges or purchasing additional packages.'
+                  : 'Tokens são a moeda utilizada para acessar recursos de IA na plataforma. Cada interação com a IA (criação de robô, análise de backtest, montagem de portfólios) consome tokens. Você pode ganhar tokens completando desafios ou comprando pacotes adicionais.'}
               </p>
             </div>
 
             <div className="bg-gray-800 rounded-lg p-6">
-              <h3 className="text-xl font-medium mb-3">Posso mudar de plano a qualquer momento?</h3>
+              <h3 className="text-xl font-medium mb-3">
+                {language === 'en'
+                  ? 'Can I change plans at any time?'
+                  : 'Posso mudar de plano a qualquer momento?'}
+              </h3>
               <p className="text-gray-300">
-                Sim, você pode fazer upgrade ou downgrade do seu plano a qualquer momento. Ao fazer upgrade, você terá acesso imediato aos novos recursos e tokens. Ao fazer downgrade, as mudanças serão aplicadas no próximo ciclo de faturamento.
+                {language === 'en'
+                  ? 'Yes, you can upgrade or downgrade your plan at any time. When upgrading, you will have immediate access to new features and tokens. When downgrading, changes will be applied in the next billing cycle.'
+                  : 'Sim, você pode fazer upgrade ou downgrade do seu plano a qualquer momento. Ao fazer upgrade, você terá acesso imediato aos novos recursos e tokens. Ao fazer downgrade, as mudanças serão aplicadas no próximo ciclo de faturamento.'}
               </p>
             </div>
 
             <div className="bg-gray-800 rounded-lg p-6">
-              <h3 className="text-xl font-medium mb-3">Qual a diferença entre análise simples e completa?</h3>
+              <h3 className="text-xl font-medium mb-3">
+                {language === 'en'
+                  ? 'What is the difference between simple and complete analysis?'
+                  : 'Qual a diferença entre análise simples e completa?'}
+              </h3>
               <p className="text-gray-300">
-                A análise simples (Free) fornece métricas básicas como Profit Factor e Win Rate. A análise completa (Pro) inclui insights avançados de IA, sugestões de otimização, análise de correlação e recomendações personalizadas para melhorar sua estratégia.
+                {language === 'en'
+                  ? 'Simple analysis (Free) provides basic metrics like Profit Factor and Win Rate. Complete analysis (Pro) includes advanced AI insights, optimization suggestions, correlation analysis and personalized recommendations to improve your strategy.'
+                  : 'A análise simples (Free) fornece métricas básicas como Profit Factor e Win Rate. A análise completa (Pro) inclui insights avançados de IA, sugestões de otimização, análise de correlação e recomendações personalizadas para melhorar sua estratégia.'}
               </p>
             </div>
 
             <div className="bg-gray-800 rounded-lg p-6">
-              <h3 className="text-xl font-medium mb-3">Como funciona a IA para gerar robôs?</h3>
+              <h3 className="text-xl font-medium mb-3">
+                {language === 'en'
+                  ? 'How does AI work to generate robots?'
+                  : 'Como funciona a IA para gerar robôs?'}
+              </h3>
               <p className="text-gray-300">
-                A IA para gerar robôs está disponível a partir do plano Pro 1. Você descreve sua estratégia em linguagem natural e a IA gera automaticamente o código do robô em NTSL, MQL5 ou outras linguagens. O código pode ser exportado diretamente para sua plataforma de trading.
+                {language === 'en'
+                  ? 'AI to generate robots is available from Pro 1 plan. You describe your strategy in natural language and AI automatically generates robot code in NTSL, MQL5 or other languages. The code can be exported directly to your trading platform.'
+                  : 'A IA para gerar robôs está disponível a partir do plano Pro 1. Você descreve sua estratégia em linguagem natural e a IA gera automaticamente o código do robô em NTSL, MQL5 ou outras linguagens. O código pode ser exportado diretamente para sua plataforma de trading.'}
               </p>
             </div>
 
             <div className="bg-gray-800 rounded-lg p-6">
-              <h3 className="text-xl font-medium mb-3">Como ganhar tokens gratuitos?</h3>
+              <h3 className="text-xl font-medium mb-3">
+                {language === 'en'
+                  ? 'How to earn free tokens?'
+                  : 'Como ganhar tokens gratuitos?'}
+              </h3>
               <p className="text-gray-300">
-                Você pode ganhar tokens completando desafios da plataforma, como criar seu primeiro robô, fazer análises de backtest, compartilhar estratégias com a comunidade, participar de competições e contribuir com tutoriais. Novos desafios são adicionados semanalmente.
+                {language === 'en'
+                  ? 'You can earn tokens by completing platform challenges, such as creating your first robot, doing backtest analysis, sharing strategies with the community, participating in competitions and contributing tutorials. New challenges are added weekly.'
+                  : 'Você pode ganhar tokens completando desafios da plataforma, como criar seu primeiro robô, fazer análises de backtest, compartilhar estratégias com a comunidade, participar de competições e contribuir com tutoriais. Novos desafios são adicionados semanalmente.'}
               </p>
             </div>
 
             <div className="bg-gray-800 rounded-lg p-6">
-              <h3 className="text-xl font-medium mb-3">O que são os robôs gratuitos do plano Free?</h3>
+              <h3 className="text-xl font-medium mb-3">
+                {language === 'en'
+                  ? 'What are the free robots in the Free plan?'
+                  : 'O que são os robôs gratuitos do plano Free?'}
+              </h3>
               <p className="text-gray-300">
-                O plano Free inclui 3 robôs pré-configurados para você começar: um robô de scalping, um de trend following e um de grid trading. Estes robôs são otimizados e prontos para usar, perfeitos para aprender os conceitos básicos de trading automatizado.
+                {language === 'en'
+                  ? 'The Free plan includes 3 pre-configured robots to get you started: a scalping robot, a trend following robot and a grid trading robot. These robots are optimized and ready to use, perfect for learning the basics of automated trading.'
+                  : 'O plano Free inclui 3 robôs pré-configurados para você começar: um robô de scalping, um de trend following e um de grid trading. Estes robôs são otimizados e prontos para usar, perfeitos para aprender os conceitos básicos de trading automatizado.'}
               </p>
             </div>
 
             <div className="bg-gray-800 rounded-lg p-6">
-              <h3 className="text-xl font-medium mb-3">Os tokens expiram?</h3>
+              <h3 className="text-xl font-medium mb-3">
+                {language === 'en'
+                  ? 'Do tokens expire?'
+                  : 'Os tokens expiram?'}
+              </h3>
               <p className="text-gray-300">
-                Tokens incluídos em sua assinatura mensal são renovados a cada ciclo de faturamento. Tokens não utilizados não são acumulados para o próximo mês. Tokens ganhos em desafios e comprados separadamente não expiram.
+                {language === 'en'
+                  ? 'Tokens included in your monthly subscription are renewed each billing cycle. Unused tokens are not carried over to the next month. Tokens earned from challenges and purchased separately do not expire.'
+                  : 'Tokens incluídos em sua assinatura mensal são renovados a cada ciclo de faturamento. Tokens não utilizados não são acumulados para o próximo mês. Tokens ganhos em desafios e comprados separadamente não expiram.'}
               </p>
             </div>
 
             <div className="bg-gray-800 rounded-lg p-6">
-              <h3 className="text-xl font-medium mb-3">Posso cancelar minha assinatura?</h3>
+              <h3 className="text-xl font-medium mb-3">
+                {language === 'en'
+                  ? 'Can I cancel my subscription?'
+                  : 'Posso cancelar minha assinatura?'}
+              </h3>
               <p className="text-gray-300">
-                Sim, você pode cancelar sua assinatura a qualquer momento. Após o cancelamento, você manterá o acesso ao plano atual até o final do período de faturamento. Depois disso, sua conta será convertida para o plano gratuito, mantendo seus robôs existentes dentro do limite do plano gratuito.
+                {language === 'en'
+                  ? 'Yes, you can cancel your subscription at any time. After cancellation, you will maintain access to the current plan until the end of the billing period. After that, your account will be converted to the free plan, keeping your existing robots within the free plan limit.'
+                  : 'Sim, você pode cancelar sua assinatura a qualquer momento. Após o cancelamento, você manterá o acesso ao plano atual até o final do período de faturamento. Depois disso, sua conta será convertida para o plano gratuito, mantendo seus robôs existentes dentro do limite do plano gratuito.'}
               </p>
             </div>
 
             <div className="bg-gray-800 rounded-lg p-6">
-              <h3 className="text-xl font-medium mb-3">Como funciona o suporte?</h3>
+              <h3 className="text-xl font-medium mb-3">
+                {language === 'en'
+                  ? 'How does support work?'
+                  : 'Como funciona o suporte?'}
+              </h3>
               <p className="text-gray-300">
-                O nível de suporte varia de acordo com seu plano. O plano Free oferece suporte via comunidade, Pro 1 e Pro 2 incluem suporte por email, Pro 3 oferece suporte prioritário, e Pro 4 inclui suporte dedicado com tempos de resposta mais rápidos.
+                {language === 'en'
+                  ? 'Support level varies according to your plan. Free plan offers community support, Pro 1 and Pro 2 include email support, Pro 3 offers priority support, and Business includes dedicated support with faster response times.'
+                  : 'O nível de suporte varia de acordo com seu plano. O plano Free oferece suporte via comunidade, Pro 1 e Pro 2 incluem suporte por email, Pro 3 oferece suporte prioritário, e Business inclui suporte dedicado com tempos de resposta mais rápidos.'}
               </p>
             </div>
 
             <div className="bg-gray-800 rounded-lg p-6">
-              <h3 className="text-xl font-medium mb-3">Posso usar os robôs em qualquer corretora?</h3>
+              <h3 className="text-xl font-medium mb-3">
+                {language === 'en'
+                  ? 'Can I use the robots with any broker?'
+                  : 'Posso usar os robôs em qualquer corretora?'}
+              </h3>
               <p className="text-gray-300">
-                Sim! Nossos robôs são compatíveis com as principais plataformas: Profit, MetaTrader 4/5, NTSL e outras. O código gerado pode ser exportado no formato adequado para sua plataforma de preferência.
+                {language === 'en'
+                  ? 'Yes! Our robots are compatible with major platforms: Profit, MetaTrader 4/5, NTSL and others. The generated code can be exported in the appropriate format for your preferred platform.'
+                  : 'Sim! Nossos robôs são compatíveis com as principais plataformas: Profit, MetaTrader 4/5, NTSL e outras. O código gerado pode ser exportado no formato adequado para sua plataforma de preferência.'}
               </p>
             </div>
           </div>
