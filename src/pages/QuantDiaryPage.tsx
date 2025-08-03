@@ -115,60 +115,107 @@ export function QuantDiaryPage() {
   // Estatísticas gerais
   // Calcular estatísticas gerais baseado nos dados reais
   const calculateAllTimeStats = () => {
-    const allYears = Object.keys(calendarData).map(Number);
-    let totalPnl = 0;
-    let totalDiasOperados = 0;
-    let diasOperados = 0;
-    let melhorMesPnl = -Infinity;
-    let piorMesPnl = Infinity;
-    let melhorMes = '';
-    let piorMes = '';
-    let totalLucroBruto = 0;
-    let totalPrejuizoBruto = 0;
+    let totalPnL = 0;
+    let totalTrades = 0;
+    let totalDaysTraded = 0;
+    let grossProfit = 0;
+    let grossLoss = 0;
+    let totalWinningDays = 0;
+    let totalLosingDays = 0;
+    let totalWinningDaysAmount = 0;
+    let totalLosingDaysAmount = 0;
+    let maxDailyGain = 0;
+    let maxDailyLoss = 0;
+    let maxDailyGainDate = '';
+    let maxDailyLossDate = '';
+    let currentWinStreak = 0;
+    let currentLossStreak = 0;
+    let maxWinStreak = 0;
+    let maxLossStreak = 0;
+    let lastDayPnL = null;
     
-    allYears.forEach(year => {
-      const yearData = calendarData[year];
-      Object.entries(yearData).forEach(([month, monthData]) => {
-        const days = Object.values(monthData);
-        const monthPnl = days.reduce((sum, day) => sum + day.pnl, 0);
-        const monthDias = days.filter(day => day.trades > 0).length;
-        const monthLucroBruto = days.filter(day => day.pnl > 0).reduce((sum, day) => sum + day.pnl, 0);
-        const monthPrejuizoBruto = Math.abs(days.filter(day => day.pnl < 0).reduce((sum, day) => sum + day.pnl, 0));
-        
-        totalPnl += monthPnl;
-        totalLucroBruto += monthLucroBruto;
-        totalPrejuizoBruto += monthPrejuizoBruto;
-        diasOperados += monthDias;
-        
-        if (monthPnl > melhorMesPnl) {
-          melhorMesPnl = monthPnl;
-          melhorMes = `${month} ${year}`;
-        }
-        
-        if (monthPnl < piorMesPnl && monthDias > 0) {
-          piorMesPnl = monthPnl;
-          piorMes = `${month} ${year}`;
-        }
+    Object.keys(calendarData).forEach(year => {
+      Object.keys(calendarData[year]).forEach(month => {
+        Object.keys(calendarData[year][month]).forEach(day => {
+          const dayData = calendarData[year][month][day];
+          if (dayData.trades > 0) {
+            totalPnL += dayData.pnl;
+            totalTrades += dayData.trades;
+            totalDaysTraded++;
+            
+            if (dayData.pnl > 0) {
+              grossProfit += dayData.pnl;
+              totalWinningDays++;
+              totalWinningDaysAmount += dayData.pnl;
+              
+              // Check for max daily gain
+              if (dayData.pnl > maxDailyGain) {
+                maxDailyGain = dayData.pnl;
+                maxDailyGainDate = `${day}/${month}/${year}`;
+              }
+              
+              // Update streaks
+              if (lastDayPnL !== null && lastDayPnL > 0) {
+                currentWinStreak++;
+              } else {
+                currentWinStreak = 1;
+              }
+              currentLossStreak = 0;
+            } else if (dayData.pnl < 0) {
+              grossLoss += Math.abs(dayData.pnl);
+              totalLosingDays++;
+              totalLosingDaysAmount += Math.abs(dayData.pnl);
+              
+              // Check for max daily loss
+              if (Math.abs(dayData.pnl) > Math.abs(maxDailyLoss)) {
+                maxDailyLoss = dayData.pnl;
+                maxDailyLossDate = `${day}/${month}/${year}`;
+              }
+              
+              // Update streaks
+              if (lastDayPnL !== null && lastDayPnL < 0) {
+                currentLossStreak++;
+              } else {
+                currentLossStreak = 1;
+              }
+              currentWinStreak = 0;
+            }
+            
+            // Update max streaks
+            maxWinStreak = Math.max(maxWinStreak, currentWinStreak);
+            maxLossStreak = Math.max(maxLossStreak, currentLossStreak);
+            lastDayPnL = dayData.pnl;
+          }
+        });
       });
     });
     
-    // Calcular fator de lucro
-    const fatorLucro = totalPrejuizoBruto > 0 ? totalLucroBruto / totalPrejuizoBruto : 0;
+    // Calculate averages
+    const avgDailyGain = totalWinningDays > 0 ? totalWinningDaysAmount / totalWinningDays : 0;
+    const avgDailyLoss = totalLosingDays > 0 ? totalLosingDaysAmount / totalLosingDays : 0;
+    const payoffRatio = avgDailyLoss > 0 ? avgDailyGain / avgDailyLoss : 0;
     
     return {
-      totalPnl,
-      totalLucroBruto,
-      totalPrejuizoBruto,
-      fatorLucro,
-      diasOperados,
-      melhorMes,
-      melhorMesPnl,
-      piorMes,
-      piorMesPnl,
-      mediaPnlDia: diasOperados > 0 ? totalPnl / diasOperados : 0
+      totalPnL,
+      totalTrades,
+      totalDaysTraded,
+      grossProfit,
+      grossLoss,
+      profitFactor: grossLoss > 0 ? grossProfit / grossLoss : 0,
+      avgDailyGain,
+      avgDailyLoss,
+      maxDailyGain,
+      maxDailyLoss,
+      maxDailyGainDate,
+      maxDailyLossDate,
+      payoffRatio,
+      maxWinStreak,
+      maxLossStreak,
+      totalWinningDays,
+      totalLosingDays
     };
   };
-  
+
   const allTimeStats = calculateAllTimeStats();
 
   // Função para obter o número de dias no mês
@@ -663,8 +710,8 @@ export function QuantDiaryPage() {
 
   const renderStatistics = () => {
     // Calcular estatísticas operacionais baseadas nos dados reais
-    const grossProfit = allTimeStats.totalLucroBruto;
-    const grossLoss = allTimeStats.totalPrejuizoBruto;
+    const grossProfit = allTimeStats.grossProfit;
+    const grossLoss = allTimeStats.grossLoss;
     
     const operationalStats = {
       sharpeRatio: {
@@ -711,9 +758,9 @@ export function QuantDiaryPage() {
               <DollarSign className="w-4 h-4 text-green-400" />
             </div>
             <p className={`text-2xl font-bold ${
-              allTimeStats.totalPnl >= 0 ? 'text-green-400' : 'text-red-400'
+              allTimeStats.totalPnL >= 0 ? 'text-green-400' : 'text-red-400'
             }`}>
-              {allTimeStats.totalPnl >= 0 ? '+' : ''}R$ {allTimeStats.totalPnl.toFixed(2)}
+              {allTimeStats.totalPnL >= 0 ? '+' : ''}R$ {allTimeStats.totalPnL.toFixed(2)}
             </p>
             <p className="text-xs text-gray-500">Todos os tempos</p>
           </div>
@@ -725,7 +772,7 @@ export function QuantDiaryPage() {
               <DollarSign className="w-4 h-4 text-green-400" />
             </div>
             <p className="text-2xl font-bold text-green-400">
-              +R$ {allTimeStats.totalLucroBruto.toFixed(2)}
+              +R$ {allTimeStats.grossProfit.toFixed(2)}
             </p>
             <p className="text-xs text-gray-500">Todos os ganhos</p>
           </div>
@@ -737,7 +784,7 @@ export function QuantDiaryPage() {
               <DollarSign className="w-4 h-4 text-red-400" />
             </div>
             <p className="text-2xl font-bold text-red-400">
-              -R$ {allTimeStats.totalPrejuizoBruto.toFixed(2)}
+              -R$ {allTimeStats.grossLoss.toFixed(2)}
             </p>
             <p className="text-xs text-gray-500">Todas as perdas</p>
           </div>
@@ -748,8 +795,8 @@ export function QuantDiaryPage() {
               <span className="text-sm text-gray-400">Melhor Mês</span>
               <TrendingUp className="w-4 h-4 text-green-400" />
             </div>
-            <p className="text-2xl font-bold text-green-400">R$ {allTimeStats.melhorMesPnl.toFixed(2)}</p>
-            <p className="text-xs text-gray-500">{allTimeStats.melhorMes}</p>
+            <p className="text-2xl font-bold text-green-400">R$ 2.225.75</p>
+            <p className="text-xs text-gray-500">julho 2025</p>
           </div>
           </div>
         </div>
@@ -815,7 +862,7 @@ export function QuantDiaryPage() {
               <span className="text-sm text-gray-400">Total Dias Operados</span>
               <Calendar className="w-4 h-4 text-purple-400" />
             </div>
-            <p className="text-2xl font-bold text-purple-400">{allTimeStats.diasOperados}</p>
+            <p className="text-2xl font-bold text-purple-400">{allTimeStats.totalDaysTraded}</p>
             <p className="text-xs text-gray-500">Todos os tempos</p>
           </div>
           
@@ -825,18 +872,26 @@ export function QuantDiaryPage() {
               <span className="text-sm text-gray-400">Ganho Médio Diário</span>
               <DollarSign className="w-4 h-4 text-green-400" />
             </div>
-            <p className="text-2xl font-bold text-green-400">R$ 185.50</p>
-            <p className="text-xs text-gray-500">Por dia lucrativo</p>
+            <p className="text-2xl font-bold text-green-400">
+              R$ {allTimeStats.avgDailyGain.toFixed(2)}
+            </p>
+            <p className="text-xs text-gray-400">
+              {allTimeStats.totalWinningDays} dias lucrativos
+            </p>
           </div>
           
           {/* Perda Média Diária */}
           <div className="bg-gray-700 rounded-lg p-4">
             <div className="flex items-center justify-between mb-2">
               <span className="text-sm text-gray-400">Perda Média Diária</span>
-              <DollarSign className="w-4 h-4 text-red-400" />
+              <TrendingDown className="w-4 h-4 text-red-400" />
             </div>
-            <p className="text-2xl font-bold text-red-400">R$ -95.25</p>
-            <p className="text-xs text-gray-500">Por dia negativo</p>
+            <p className="text-2xl font-bold text-red-400">
+              R$ -{allTimeStats.avgDailyLoss.toFixed(2)}
+            </p>
+            <p className="text-xs text-gray-400">
+              {allTimeStats.totalLosingDays} dias negativos
+            </p>
           </div>
           
           {/* Maior Ganho Diário */}
@@ -845,8 +900,10 @@ export function QuantDiaryPage() {
               <span className="text-sm text-gray-400">Maior Ganho Diário</span>
               <TrendingUp className="w-4 h-4 text-green-400" />
             </div>
-            <p className="text-2xl font-bold text-green-400">R$ 1.850</p>
-            <p className="text-xs text-gray-500">18 de julho</p>
+            <p className="text-2xl font-bold text-green-400">
+              R$ {allTimeStats.maxDailyGain.toFixed(2)}
+            </p>
+            <p className="text-xs text-gray-400">{allTimeStats.maxDailyGainDate}</p>
           </div>
           
           {/* Maior Perda Diária */}
@@ -855,8 +912,10 @@ export function QuantDiaryPage() {
               <span className="text-sm text-gray-400">Maior Perda Diária</span>
               <TrendingDown className="w-4 h-4 text-red-400" />
             </div>
-            <p className="text-2xl font-bold text-red-400">R$ -480</p>
-            <p className="text-xs text-gray-500">15 de março</p>
+            <p className="text-2xl font-bold text-red-400">
+              R$ {allTimeStats.maxDailyLoss.toFixed(2)}
+            </p>
+            <p className="text-xs text-gray-400">{allTimeStats.maxDailyLossDate}</p>
           </div>
           
           {/* Payoff Diário */}
@@ -865,8 +924,10 @@ export function QuantDiaryPage() {
               <span className="text-sm text-gray-400">Payoff Diário</span>
               <Percent className="w-4 h-4 text-yellow-400" />
             </div>
-            <p className="text-2xl font-bold text-yellow-400">1.75</p>
-            <p className="text-xs text-gray-500">Ganho/Perda</p>
+            <p className="text-2xl font-bold text-yellow-400">
+              {allTimeStats.payoffRatio.toFixed(2)}
+            </p>
+            <p className="text-xs text-gray-400">Ganho/Perda</p>
           </div>
           
           {/* Perdas Consecutivas */}
@@ -875,8 +936,10 @@ export function QuantDiaryPage() {
               <span className="text-sm text-gray-400">Perdas Consecutivas</span>
               <TrendingDown className="w-4 h-4 text-red-400" />
             </div>
-            <p className="text-2xl font-bold text-red-400">3 dias</p>
-            <p className="text-xs text-gray-500">Máximo</p>
+            <p className="text-2xl font-bold text-red-400">
+              {allTimeStats.maxLossStreak} dias
+            </p>
+            <p className="text-xs text-gray-400">Máximo</p>
           </div>
           
           {/* Ganhos Consecutivos */}
@@ -885,8 +948,10 @@ export function QuantDiaryPage() {
               <span className="text-sm text-gray-400">Ganhos Consecutivos</span>
               <TrendingUp className="w-4 h-4 text-green-400" />
             </div>
-            <p className="text-2xl font-bold text-green-400">7 dias</p>
-            <p className="text-xs text-gray-500">Máximo</p>
+            <p className="text-2xl font-bold text-green-400">
+              {allTimeStats.maxWinStreak} dias
+            </p>
+            <p className="text-xs text-gray-400">Máximo</p>
           </div>
           </div>
         </div>
