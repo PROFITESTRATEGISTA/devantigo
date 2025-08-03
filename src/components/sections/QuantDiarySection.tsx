@@ -154,17 +154,11 @@ export function QuantDiarySection() {
   const getWeekDays = () => {
     const days = [];
     const startDate = new Date(currentWeekStart);
-    const currentMonth = currentDate.getMonth();
-    const currentYear = currentDate.getFullYear();
     
     for (let i = 0; i < (showWeekends ? 7 : 5); i++) {
       const day = new Date(startDate);
       day.setDate(startDate.getDate() + i);
-      
-      // Só adiciona dias do mês atual
-      if (day.getMonth() === currentMonth && day.getFullYear() === currentYear) {
-        days.push(day);
-      }
+      days.push(day);
     }
     
     return days;
