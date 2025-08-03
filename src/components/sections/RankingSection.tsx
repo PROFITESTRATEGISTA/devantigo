@@ -118,10 +118,10 @@ export function RankingSection({ analyses, onNavigate }: RankingSectionProps) {
               >
                 <option value="profitFactor">{t('analyses.profitFactor')}</option>
                 <option value="winRate">{t('analyses.winRate')}</option>
-                <option value="sharpeRatio">{t('analyses.sharpeRatio')}</option>
-                <option value="recoveryFactor">{t('analyses.recoveryFactor')}</option>
-                <option value="maxDrawdown">{t('analyses.maxDrawdown')}</option>
-                <option value="totalTrades">{t('analyses.totalTrades')}</option>
+                <option value="sharpeRatio">Sharpe Ratio</option>
+                <option value="recoveryFactor">Fator de Recuperação</option>
+                <option value="maxDrawdown">Drawdown Máximo</option>
+                <option value="totalTrades">Total de Trades</option>
               </select>
               <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
             </div>
@@ -138,8 +138,8 @@ export function RankingSection({ analyses, onNavigate }: RankingSectionProps) {
                 onChange={(e) => setSortOrder(e.target.value as 'desc' | 'asc')}
                 className="w-full bg-gray-700 border border-gray-600 rounded-md px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-blue-500 appearance-none"
               >
-                <option value="desc">{t('ranking.highestToLowest')}</option>
-                <option value="asc">{t('ranking.lowestToHighest')}</option>
+                <option value="desc">Maior para Menor</option>
+                <option value="asc">Menor para Maior</option>
               </select>
               <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
             </div>
@@ -156,10 +156,10 @@ export function RankingSection({ analyses, onNavigate }: RankingSectionProps) {
                 onChange={(e) => setTimeFilter(e.target.value as 'all' | 'week' | 'month' | 'year')}
                 className="w-full bg-gray-700 border border-gray-600 rounded-md px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-blue-500 appearance-none"
               >
-                <option value="all">{t('ranking.allTime')}</option>
-                <option value="week">{t('ranking.thisWeek')}</option>
-                <option value="month">{t('ranking.thisMonth')}</option>
-                <option value="year">{t('ranking.thisYear')}</option>
+                <option value="all">Todos os Tempos</option>
+                <option value="week">Esta Semana</option>
+                <option value="month">Este Mês</option>
+                <option value="year">Este Ano</option>
               </select>
               <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
             </div>
@@ -170,17 +170,23 @@ export function RankingSection({ analyses, onNavigate }: RankingSectionProps) {
         <div className="mt-4 flex flex-wrap gap-2">
           {filterBy && filterBy !== 'profitFactor' && (
             <span className="px-2 py-1 bg-blue-600 text-white rounded-full text-xs">
-              {t('ranking.sortBy')}: {t(`analyses.${filterBy}`)}
+              Ordenar por: {filterBy === 'winRate' ? 'Taxa de Acerto' : 
+                          filterBy === 'sharpeRatio' ? 'Sharpe Ratio' :
+                          filterBy === 'recoveryFactor' ? 'Fator de Recuperação' :
+                          filterBy === 'maxDrawdown' ? 'Drawdown Máximo' :
+                          filterBy === 'totalTrades' ? 'Total de Trades' : filterBy}
             </span>
           )}
           {sortOrder !== 'desc' && (
             <span className="px-2 py-1 bg-blue-600 text-white rounded-full text-xs">
-              {t('ranking.order')}: {t('ranking.lowestToHighest')}
+              Ordem: Menor para Maior
             </span>
           )}
           {timeFilter !== 'all' && (
             <span className="px-2 py-1 bg-blue-600 text-white rounded-full text-xs">
-              {t('ranking.period')}: {timeFilter === 'week' ? t('ranking.thisWeek') : timeFilter === 'month' ? t('ranking.thisMonth') : t('ranking.thisYear')}
+              Período: {timeFilter === 'week' ? 'Esta Semana' : 
+                       timeFilter === 'month' ? 'Este Mês' : 
+                       timeFilter === 'year' ? 'Este Ano' : timeFilter}
             </span>
           )}
         </div>
