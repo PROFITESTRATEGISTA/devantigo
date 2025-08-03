@@ -460,135 +460,154 @@ export function QuantDiaryPage() {
       <div className="flex items-center justify-between mb-6">
         <h3 className="text-xl font-semibold flex items-center">
           <BarChart2 className="w-5 h-5 text-blue-400 mr-2" />
-          {showAllTime ? 'Performance Todos os Tempos' : 'Performance Mensal'}
+          Métricas de Performance
         </h3>
-        
-        <div className="flex items-center space-x-3">
-          <span className="text-sm text-gray-400">Mensal</span>
-          <label className="relative inline-flex items-center cursor-pointer">
-            <input 
-              type="checkbox" 
-              checked={showAllTime} 
-              onChange={() => setShowAllTime(!showAllTime)} 
-              className="sr-only peer"
-            />
-            <div className="w-11 h-6 bg-gray-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
-          </label>
-          <span className="text-sm text-gray-400">Todos os Tempos</span>
-        </div>
       </div>
 
-      {showAllTime ? (
-        <div className="space-y-6">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <div className="bg-gray-700 rounded-lg p-4">
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-sm text-gray-400">P&L Total</span>
-                <DollarSign className="w-4 h-4 text-green-400" />
-              </div>
-              <p className="text-2xl font-bold text-green-400">
-                +R$ {allTimeStats.totalPnl.toFixed(2)}
-              </p>
-              <p className="text-xs text-gray-500">Desde o início</p>
-            </div>
-            
-            <div className="bg-gray-700 rounded-lg p-4">
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-sm text-gray-400">Total Trades</span>
-                <Hash className="w-4 h-4 text-blue-400" />
-              </div>
-              <p className="text-2xl font-bold text-blue-400">{allTimeStats.totalTrades}</p>
-              <p className="text-xs text-gray-500">{allTimeStats.diasOperados} dias operados</p>
-            </div>
-            
-            <div className="bg-gray-700 rounded-lg p-4">
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-sm text-gray-400">Média P&L/Dia</span>
-                <Target className="w-4 h-4 text-purple-400" />
-              </div>
-              <p className="text-2xl font-bold text-purple-400">
-                R$ {allTimeStats.mediaPnlDia.toFixed(2)}
-              </p>
-              <p className="text-xs text-gray-500">Por dia operado</p>
-            </div>
-            
-            <div className="bg-gray-700 rounded-lg p-4">
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-sm text-gray-400">Média Trades/Dia</span>
-                <Clock className="w-4 h-4 text-yellow-400" />
-              </div>
-              <p className="text-2xl font-bold text-yellow-400">
-                {allTimeStats.mediaTradesDia.toFixed(1)}
-              </p>
-              <p className="text-xs text-gray-500">Trades por dia</p>
-            </div>
+      {/* Métricas de Performance */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+        {/* Sharpe Ratio */}
+        <div className="bg-gray-700 rounded-lg p-4">
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-sm text-gray-400">Sharpe Ratio</span>
+            <BarChart2 className="w-4 h-4 text-blue-400" />
           </div>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="bg-gray-700 rounded-lg p-4">
-              <h4 className="font-medium mb-3 text-green-400">Melhor Mês</h4>
-              <p className="text-xl font-bold capitalize">{allTimeStats.melhorMes} 2025</p>
-              <p className="text-lg text-green-400">+R$ {allTimeStats.melhorMesPnl.toFixed(2)}</p>
-            </div>
-            
-            <div className="bg-gray-700 rounded-lg p-4">
-              <h4 className="font-medium mb-3 text-red-400">Pior Mês</h4>
-              <p className="text-xl font-bold capitalize">{allTimeStats.piorMes} 2025</p>
-              <p className="text-lg text-red-400">+R$ {allTimeStats.piorMesPnl.toFixed(2)}</p>
-            </div>
+          <p className="text-2xl font-bold text-blue-400">1.85</p>
+          <p className="text-xs text-gray-500">Excelente</p>
+        </div>
+        
+        {/* Fator de Lucro */}
+        <div className="bg-gray-700 rounded-lg p-4">
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-sm text-gray-400">Fator de Lucro</span>
+            <TrendingUp className="w-4 h-4 text-green-400" />
+          </div>
+          <p className="text-2xl font-bold text-green-400">2.45</p>
+          <p className="text-xs text-gray-500">Muito bom</p>
+        </div>
+        
+        {/* Total Trades */}
+        <div className="bg-gray-700 rounded-lg p-4">
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-sm text-gray-400">Total Trades</span>
+            <Hash className="w-4 h-4 text-purple-400" />
+          </div>
+          <p className="text-2xl font-bold text-purple-400">306</p>
+          <p className="text-xs text-gray-500">151 dias operados</p>
+        </div>
+        
+        {/* Payoff Diário */}
+        <div className="bg-gray-700 rounded-lg p-4">
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-sm text-gray-400">Payoff Diário</span>
+            <Percent className="w-4 h-4 text-yellow-400" />
+          </div>
+          <p className="text-2xl font-bold text-yellow-400">1.75</p>
+          <p className="text-xs text-gray-500">Ganho/Perda</p>
+        </div>
+        
+        {/* Ganho Médio Diário */}
+        <div className="bg-gray-700 rounded-lg p-4">
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-sm text-gray-400">Ganho Médio Diário</span>
+            <DollarSign className="w-4 h-4 text-green-400" />
+          </div>
+          <p className="text-2xl font-bold text-green-400">R$ 185.50</p>
+          <p className="text-xs text-gray-500">Por dia lucrativo</p>
+        </div>
+        
+        {/* Perda Média Diária */}
+        <div className="bg-gray-700 rounded-lg p-4">
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-sm text-gray-400">Perda Média Diária</span>
+            <DollarSign className="w-4 h-4 text-red-400" />
+          </div>
+          <p className="text-2xl font-bold text-red-400">R$ -95.25</p>
+          <p className="text-xs text-gray-500">Por dia negativo</p>
+        </div>
+        
+        {/* Fator de Recuperação */}
+        <div className="bg-gray-700 rounded-lg p-4">
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-sm text-gray-400">Fator Recuperação</span>
+            <Target className="w-4 h-4 text-blue-400" />
+          </div>
+          <p className="text-2xl font-bold text-blue-400">3.2</p>
+          <p className="text-xs text-gray-500">Excelente</p>
+        </div>
+        
+        {/* Maior Ganho Diário */}
+        <div className="bg-gray-700 rounded-lg p-4">
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-sm text-gray-400">Maior Ganho Diário</span>
+            <TrendingUp className="w-4 h-4 text-green-400" />
+          </div>
+          <p className="text-2xl font-bold text-green-400">R$ 1.850</p>
+          <p className="text-xs text-gray-500">18 de julho</p>
+        </div>
+      </div>
+      
+      {/* Segunda linha de métricas */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+        {/* Maior Perda Diária */}
+        <div className="bg-gray-700 rounded-lg p-4">
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-sm text-gray-400">Maior Perda Diária</span>
+            <TrendingDown className="w-4 h-4 text-red-400" />
+          </div>
+          <p className="text-2xl font-bold text-red-400">R$ -480</p>
+          <p className="text-xs text-gray-500">15 de março</p>
+        </div>
+        
+        {/* Drawdown Máximo */}
+        <div className="bg-gray-700 rounded-lg p-4">
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-sm text-gray-400">Drawdown Máximo</span>
+            <AlertTriangle className="w-4 h-4 text-orange-400" />
+          </div>
+          <p className="text-2xl font-bold text-orange-400">12.5%</p>
+          <p className="text-xs text-gray-500">R$ 2.275</p>
+        </div>
+        
+        {/* Perdas Consecutivas */}
+        <div className="bg-gray-700 rounded-lg p-4">
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-sm text-gray-400">Perdas Consecutivas</span>
+            <TrendingDown className="w-4 h-4 text-red-400" />
+          </div>
+          <p className="text-2xl font-bold text-red-400">3 dias</p>
+          <p className="text-xs text-gray-500">Máximo</p>
+        </div>
+        
+        {/* Ganhos Consecutivos */}
+        <div className="bg-gray-700 rounded-lg p-4">
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-sm text-gray-400">Ganhos Consecutivos</span>
+            <TrendingUp className="w-4 h-4 text-green-400" />
+          </div>
+          <p className="text-2xl font-bold text-green-400">7 dias</p>
+          <p className="text-xs text-gray-500">Máximo</p>
+        </div>
+      </div>
+      
+      {/* Resumo Geral */}
+      <div className="bg-gray-700 rounded-lg p-4">
+        <h4 className="text-lg font-medium mb-4 text-center">Resumo Geral</h4>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="text-center">
+            <p className="text-3xl font-bold text-green-400">+R$ {allTimeStats.totalPnl.toFixed(2)}</p>
+            <p className="text-sm text-gray-400">P&L Total</p>
+          </div>
+          <div className="text-center">
+            <p className="text-3xl font-bold text-blue-400">{allTimeStats.diasOperados}</p>
+            <p className="text-sm text-gray-400">Dias Operados</p>
+          </div>
+          <div className="text-center">
+            <p className="text-3xl font-bold text-purple-400">R$ {allTimeStats.mediaPnlDia.toFixed(2)}</p>
+            <p className="text-sm text-gray-400">Média P&L/Dia</p>
           </div>
         </div>
-      ) : (
-        <div className="space-y-4">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            {monthlyBreakdown.slice(0, 6).map((month) => (
-              <div key={month.month} className="bg-gray-700 rounded-lg p-4">
-                <h4 className="font-medium mb-2 capitalize">{month.month}</h4>
-                <div className="space-y-2">
-                  <div className="flex justify-between">
-                    <span className="text-sm text-gray-400">Trades</span>
-                    <span className="text-sm">{month.trades}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-sm text-gray-400">Dias</span>
-                    <span className="text-sm">{month.dias}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-sm text-gray-400">P&L</span>
-                    <span className={`text-sm font-medium ${month.pnl >= 0 ? 'text-green-400' : 'text-red-400'}`}>
-                      {month.pnl >= 0 ? '+' : ''}R$ {month.pnl.toFixed(2)}
-                    </span>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-          
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            {monthlyBreakdown.slice(6).map((month) => (
-              <div key={month.month} className="bg-gray-700 rounded-lg p-4">
-                <h4 className="font-medium mb-2 capitalize">{month.month}</h4>
-                <div className="space-y-2">
-                  <div className="flex justify-between">
-                    <span className="text-sm text-gray-400">Trades</span>
-                    <span className="text-sm">{month.trades}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-sm text-gray-400">Dias</span>
-                    <span className="text-sm">{month.dias}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-sm text-gray-400">P&L</span>
-                    <span className={`text-sm font-medium ${month.pnl >= 0 ? 'text-green-400' : 'text-red-400'}`}>
-                      {month.pnl >= 0 ? '+' : ''}R$ {month.pnl.toFixed(2)}
-                    </span>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
+      </div>
     </div>
   );
 
