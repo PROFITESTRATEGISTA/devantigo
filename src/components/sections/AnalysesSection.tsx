@@ -19,6 +19,38 @@ interface AnalysesSectionProps {
 export function AnalysesSection({ analyses, onNavigate }: AnalysesSectionProps) {
   const { t } = useLanguageStore();
 
+  // Show empty state when no analyses
+  if (!analyses || analyses.length === 0) {
+    return (
+      <div className="space-y-6">
+        <div className="flex items-center justify-between">
+          <h2 className="text-2xl font-bold text-white">{t('analyses.title')}</h2>
+          <button
+            onClick={() => onNavigate('/backtest-analysis')}
+            className="px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-md text-white"
+          >
+            {t('analyses.newAnalysis')}
+          </button>
+        </div>
+        
+        <div className="text-center py-12">
+          <BarChart2 className="w-16 h-16 text-gray-600 mx-auto mb-4" />
+          <h3 className="text-xl font-semibold text-gray-400 mb-2">{t('analyses.noAnalyses')}</h3>
+          <p className="text-gray-500 mb-6">
+            {t('analyses.createFirst')}
+          </p>
+          <button
+            onClick={() => onNavigate('/backtest-analysis')}
+            className="px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-md text-white flex items-center mx-auto"
+          >
+            <BarChart2 className="w-4 h-4 mr-2" />
+            {t('analyses.backtestAnalysis')}
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -68,7 +100,7 @@ export function AnalysesSection({ analyses, onNavigate }: AnalysesSectionProps) 
               <div>
                 <p className="text-xs text-gray-400">Total Trades</p>
                 <p className="text-lg font-bold text-blue-400">
-                  {analysis.totalTrades || 0}
+                  {(analysis as any).totalTrades || 0}
                 </p>
               </div>
             </div>
@@ -78,7 +110,7 @@ export function AnalysesSection({ analyses, onNavigate }: AnalysesSectionProps) 
                 onClick={() => onNavigate('/backtest-analysis')}
                 className="w-full py-2 bg-gray-700 hover:bg-gray-600 rounded-lg text-white transition-colors text-sm"
               >
-                View Analysis
+                {t('analyses.viewAnalysis')}
               </button>
               
               <button
@@ -116,7 +148,7 @@ export function AnalysesSection({ analyses, onNavigate }: AnalysesSectionProps) 
                 className="w-full py-2 bg-green-600 hover:bg-green-700 rounded-lg text-white transition-colors flex items-center justify-center text-sm"
               >
                 <Share2 className="w-4 h-4 mr-2" />
-                Share Analysis
+                {t('analyses.shareAnalysis')}
               </button>
               
               <button
@@ -128,7 +160,7 @@ export function AnalysesSection({ analyses, onNavigate }: AnalysesSectionProps) 
                 className="w-full py-2 bg-blue-600 hover:bg-blue-700 rounded-lg text-white transition-colors flex items-center justify-center text-sm"
               >
                 <Trophy className="w-4 h-4 mr-2" />
-                Add to Ranking
+                {t('analyses.addToRanking')}
               </button>
             </div>
           </div>

@@ -72,7 +72,7 @@ export const DashboardPage = () => {
       case 'analyses':
         return (
           <AnalysesSection 
-            analyses={mockAnalyses} 
+            analyses={[]} 
             onNavigate={handleNavigate} 
           />
         );
