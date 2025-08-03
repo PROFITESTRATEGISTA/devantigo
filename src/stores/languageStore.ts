@@ -357,6 +357,14 @@ const translations: Record<Language, Record<string, string>> = {
     'analyses.totalTrades': 'Total Trades',
     
     // Additional challenge tips
+    'footer.myRobots': 'My Robots',
+    'footer.myAnalyses': 'My Analyses',
+    'footer.faq': 'FAQ',
+    'footer.plans': 'Plans',
+    'footer.profile': 'Profile',
+    'footer.subscription': 'Subscription',
+    'footer.copyright': '© {{year}} DevHub Trader. All rights reserved.',
+    
     'challenges.tips.title': 'Tips to Earn More Tokens',
     'challenges.tips.dailyStrategies': 'Daily Strategies',
     'challenges.tips.dailyLogin': 'Login daily to maintain your streak',
@@ -732,6 +740,14 @@ const translations: Record<Language, Record<string, string>> = {
     'users.noUsersSearch': 'Nenhum usuário corresponde à busca',
     
     // Misc
+    'footer.myRobots': 'Meus Robôs',
+    'footer.myAnalyses': 'Minhas Análises',
+    'footer.faq': 'FAQ',
+    'footer.plans': 'Planos',
+    'footer.profile': 'Perfil',
+    'footer.subscription': 'Assinatura',
+    'footer.copyright': '© {{year}} DevHub Trader. Todos os direitos reservados.',
+    
     'loading': 'Carregando...',
     'error': 'Ocorreu um erro',
     'success': 'Sucesso!',

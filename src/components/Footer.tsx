@@ -1,9 +1,25 @@
 import React from 'react';
 import { Code2 } from 'lucide-react';
+import { useLanguageStore } from '../stores/languageStore';
 
 export function Footer() {
+  const { t, language } = useLanguageStore();
   const currentYear = new Date().getFullYear();
 
+  // Force re-render when language changes
+  React.useEffect(() => {
+    const handleLanguageChange = () => {
+      // Force component re-render
+    };
+    
+    window.addEventListener('languageChanged', handleLanguageChange);
+    window.addEventListener('storage', handleLanguageChange);
+    
+    return () => {
+      window.removeEventListener('languageChanged', handleLanguageChange);
+      window.removeEventListener('storage', handleLanguageChange);
+    };
+  }, []);
   return (
     <footer className="bg-gray-900 border-t border-gray-800 py-6 mt-auto">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -20,43 +36,43 @@ export function Footer() {
               onClick={() => window.location.href = '/robots'}
               className="text-gray-400 hover:text-white transition-colors"
             >
-              Meus Robôs
+              {t('footer.myRobots')}
             </button>
             <button
               onClick={() => window.location.href = '/backtest-analysis'}
               className="text-gray-400 hover:text-white transition-colors"
             >
-              Minhas Análises
+              {t('footer.myAnalyses')}
             </button>
             <button
               onClick={() => window.location.href = '/faq'}
               className="text-gray-400 hover:text-white transition-colors"
             >
-              FAQ
+              {t('footer.faq')}
             </button>
             <button
               onClick={() => window.location.href = '/plans'}
               className="text-gray-400 hover:text-white transition-colors"
             >
-              Planos
+              {t('footer.plans')}
             </button>
             <button
               onClick={() => window.location.href = '/profile'}
               className="text-gray-400 hover:text-white transition-colors"
             >
-              Perfil
+              {t('footer.profile')}
             </button>
             <button
               onClick={() => window.location.href = '/subscription'}
               className="text-gray-400 hover:text-white transition-colors"
             >
-              Assinatura
+              {t('footer.subscription')}
             </button>
           </div>
           
           {/* Copyright */}
           <div className="text-sm text-gray-400">
-            © {currentYear} DevHub Trader. Todos os direitos reservados.
+            {t('footer.copyright', { year: currentYear })}
           </div>
         </div>
       </div>
