@@ -212,3 +212,10 @@ export function QuantDiaryPage() {
     'Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho',
     'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'
   ];
+
+  return (
+    <div>
+      <Navbar />
+    </div>
+  );
+}
