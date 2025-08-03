@@ -48,18 +48,18 @@ export function NavigationPanel({ activeSection, onSectionChange }: NavigationPa
 
   return (
     <div className="bg-gray-800 rounded-lg p-6 border border-gray-700">
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
         {sections.map((section) => (
           <button
             key={section.id}
             onClick={() => onSectionChange(section.id)}
-            className={`group relative p-4 rounded-lg transition-all duration-300 ${
+            className={`group relative p-3 lg:p-4 rounded-lg transition-all duration-300 ${
               activeSection === section.id
                 ? 'bg-blue-600 text-white'
                 : 'bg-gray-700 text-gray-300 hover:bg-gray-600 hover:text-white'
             }`}
           >
-            <div className="flex flex-col items-center space-y-2">
+            <div className="flex flex-col items-center space-y-1 lg:space-y-2">
               <div className={`p-2 rounded-lg ${
                 activeSection === section.id
                   ? 'bg-white/20'
@@ -68,8 +68,8 @@ export function NavigationPanel({ activeSection, onSectionChange }: NavigationPa
                 {section.icon}
               </div>
               <div className="text-center">
-                <h3 className="font-semibold text-sm">{section.name}</h3>
-                <p className="text-xs opacity-75 mt-1">{section.description}</p>
+                <h3 className="font-semibold text-xs lg:text-sm">{section.name}</h3>
+                <p className="text-xs opacity-75 mt-0.5 lg:mt-1 hidden sm:block">{section.description}</p>
               </div>
             </div>
           </button>
