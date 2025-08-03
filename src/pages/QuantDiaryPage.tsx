@@ -32,46 +32,129 @@ export function QuantDiaryPage() {
   const [selectedDay, setSelectedDay] = useState<number | null>(null);
   const [editingDay, setEditingDay] = useState<DayData>({ pnl: 0, trades: 0, comment: '' });
   const [actionType, setActionType] = useState<'analysis' | 'comment' | null>(null);
-  const [calendarData, setCalendarData] = useState<CalendarData>({
-    agosto: {
-      5: { pnl: 450.75, trades: 8, comment: 'Ótimo dia! Estratégia de scalping funcionou muito bem.' },
-      12: { pnl: -120.50, trades: 3, comment: 'Mercado lateral, muitos falsos sinais.' },
-      18: { pnl: 890.25, trades: 12, comment: 'Excelente performance com trend following.' },
-      23: { pnl: -45.00, trades: 2, comment: 'Parei cedo devido à volatilidade.' }
+  
+  // Dados por ano - agora organizados por ano
+  const [calendarData, setCalendarData] = useState<{[year: number]: CalendarData}>({
+    2024: {
+      dezembro: {
+        5: { pnl: 320.50, trades: 6, comment: 'Fim de ano positivo' },
+        12: { pnl: 450.75, trades: 8, comment: 'Boa performance' },
+        18: { pnl: -120.50, trades: 3, comment: 'Mercado instável' },
+        23: { pnl: 280.25, trades: 5, comment: 'Recuperação' }
+      },
+      novembro: {
+        8: { pnl: 560.75, trades: 9, comment: 'Excelente dia' },
+        15: { pnl: -180.50, trades: 4, comment: 'Volatilidade alta' },
+        22: { pnl: 720.25, trades: 11, comment: 'Estratégia funcionou' }
+      }
     },
-    julho: {
-      3: { pnl: 320.50, trades: 6, comment: 'Bom início de mês' },
-      10: { pnl: 675.25, trades: 9, comment: 'Estratégia otimizada funcionou' },
-      15: { pnl: -200.75, trades: 4, comment: 'Mercado instável' },
-      22: { pnl: 540.00, trades: 7, comment: 'Recuperação consistente' },
-      28: { pnl: 890.75, trades: 11, comment: 'Melhor dia do mês!' }
+    2025: {
+      agosto: {
+        5: { pnl: 450.75, trades: 8, comment: 'Ótimo dia! Estratégia de scalping funcionou muito bem.' },
+        12: { pnl: -120.50, trades: 3, comment: 'Mercado lateral, muitos falsos sinais.' },
+        18: { pnl: 890.25, trades: 12, comment: 'Excelente performance com trend following.' },
+        23: { pnl: -45.00, trades: 2, comment: 'Parei cedo devido à volatilidade.' }
+      },
+      julho: {
+        3: { pnl: 320.50, trades: 6, comment: 'Bom início de mês' },
+        10: { pnl: 675.25, trades: 9, comment: 'Estratégia otimizada funcionou' },
+        15: { pnl: -200.75, trades: 4, comment: 'Mercado instável' },
+        22: { pnl: 540.00, trades: 7, comment: 'Recuperação consistente' },
+        28: { pnl: 890.75, trades: 11, comment: 'Melhor dia do mês!' }
+      },
+      junho: {
+        5: { pnl: 380.50, trades: 7, comment: 'Bom início de junho' },
+        12: { pnl: 520.75, trades: 9, comment: 'Estratégia consistente' },
+        19: { pnl: -150.25, trades: 3, comment: 'Dia difícil' },
+        26: { pnl: 690.25, trades: 10, comment: 'Fechamento forte' }
+      },
+      maio: {
+        8: { pnl: 420.75, trades: 8, comment: 'Maio começou bem' },
+        15: { pnl: 780.50, trades: 12, comment: 'Excelente performance' },
+        22: { pnl: -90.25, trades: 2, comment: 'Mercado lateral' },
+        29: { pnl: 650.00, trades: 9, comment: 'Fechamento positivo' }
+      }
     }
   });
 
   // Mock data para demonstração
-  const monthlyBreakdown = [
-    { month: 'janeiro', trades: 45, dias: 22, pnl: 2450.75 },
-    { month: 'fevereiro', trades: 38, dias: 20, pnl: 1890.50 },
-    { month: 'março', trades: 52, dias: 23, pnl: 3120.25 },
-    { month: 'abril', trades: 41, dias: 21, pnl: 2780.00 },
-    { month: 'maio', trades: 47, dias: 22, pnl: 2950.75 },
-    { month: 'junho', trades: 39, dias: 21, pnl: 2340.50 },
-    { month: 'julho', trades: 44, dias: 22, pnl: 2680.25 },
-    { month: 'agosto', trades: 25, dias: 4, pnl: 1175.50 }
-  ];
+  // Função para calcular dados mensais baseado nos dados do calendário
+  const calculateMonthlyBreakdown = (year: number) => {
+    const months = [
+      'janeiro', 'fevereiro', 'março', 'abril', 'maio', 'junho',
+      'julho', 'agosto', 'setembro', 'outubro', 'novembro', 'dezembro'
+    ];
+    
+    return months.map(month => {
+      const monthData = calendarData[year]?.[month] || {};
+      const days = Object.values(monthData);
+      
+      const totalPnl = days.reduce((sum, day) => sum + day.pnl, 0);
+      const totalTrades = days.reduce((sum, day) => sum + day.trades, 0);
+      const diasOperados = days.filter(day => day.trades > 0).length;
+      
+      return {
+        month,
+        trades: totalTrades,
+        dias: diasOperados,
+        pnl: totalPnl
+      };
+    });
+  };
+  
+  // Calcular dados mensais para o ano atual
+  const monthlyBreakdown = calculateMonthlyBreakdown(currentYear);
 
   // Estatísticas gerais
-  const allTimeStats = {
-    totalPnl: 18212.00,
-    totalTrades: 306,
-    diasOperados: 151,
-    melhorMes: 'março',
-    melhorMesPnl: 3120.25,
-    piorMes: 'fevereiro',
-    piorMesPnl: 1890.50,
-    mediaTradesDia: 2.03,
-    mediaPnlDia: 120.61
+  // Calcular estatísticas gerais baseado nos dados reais
+  const calculateAllTimeStats = () => {
+    const allYears = Object.keys(calendarData).map(Number);
+    let totalPnl = 0;
+    let totalTrades = 0;
+    let diasOperados = 0;
+    let melhorMesPnl = -Infinity;
+    let piorMesPnl = Infinity;
+    let melhorMes = '';
+    let piorMes = '';
+    
+    allYears.forEach(year => {
+      const yearData = calendarData[year];
+      Object.entries(yearData).forEach(([month, monthData]) => {
+        const days = Object.values(monthData);
+        const monthPnl = days.reduce((sum, day) => sum + day.pnl, 0);
+        const monthTrades = days.reduce((sum, day) => sum + day.trades, 0);
+        const monthDias = days.filter(day => day.trades > 0).length;
+        
+        totalPnl += monthPnl;
+        totalTrades += monthTrades;
+        diasOperados += monthDias;
+        
+        if (monthPnl > melhorMesPnl) {
+          melhorMesPnl = monthPnl;
+          melhorMes = `${month} ${year}`;
+        }
+        
+        if (monthPnl < piorMesPnl && monthTrades > 0) {
+          piorMesPnl = monthPnl;
+          piorMes = `${month} ${year}`;
+        }
+      });
+    });
+    
+    return {
+      totalPnl,
+      totalTrades,
+      diasOperados,
+      melhorMes,
+      melhorMesPnl,
+      piorMes,
+      piorMesPnl,
+      mediaTradesDia: diasOperados > 0 ? totalTrades / diasOperados : 0,
+      mediaPnlDia: diasOperados > 0 ? totalPnl / diasOperados : 0
+    };
   };
+  
+  const allTimeStats = calculateAllTimeStats();
 
   // Função para obter o número de dias no mês
   const getDaysInMonth = (month: string, year: number) => {
@@ -101,7 +184,7 @@ export function QuantDiaryPage() {
     
     weekDays.forEach(day => {
       if (day > 0) { // Apenas dias válidos
-        const dayData = calendarData[currentMonth]?.[day];
+        const dayData = calendarData[currentYear]?.[currentMonth]?.[day];
         if (dayData) {
           weeklyPnL += dayData.pnl;
           weeklyTrades += dayData.trades;
@@ -189,7 +272,7 @@ export function QuantDiaryPage() {
     setActionType(action);
     setShowActionModal(false);
     
-    const dayData = calendarData[currentMonth]?.[selectedDay!] || { pnl: 0, trades: 0, comment: '' };
+    const dayData = calendarData[currentYear]?.[currentMonth]?.[selectedDay!] || { pnl: 0, trades: 0, comment: '' };
     setEditingDay({ ...dayData });
     setShowDayModal(true);
   };
@@ -199,9 +282,12 @@ export function QuantDiaryPage() {
 
     setCalendarData(prev => ({
       ...prev,
-      [currentMonth]: {
-        ...prev[currentMonth],
-        [selectedDay]: { ...editingDay }
+      [currentYear]: {
+        ...prev[currentYear],
+        [currentMonth]: {
+          ...prev[currentYear]?.[currentMonth],
+          [selectedDay]: { ...editingDay }
+        }
       }
     }));
 
@@ -215,8 +301,8 @@ export function QuantDiaryPage() {
 
     setCalendarData(prev => {
       const newData = { ...prev };
-      if (newData[currentMonth]) {
-        delete newData[currentMonth][selectedDay];
+      if (newData[currentYear]?.[currentMonth]) {
+        delete newData[currentYear][currentMonth][selectedDay];
       }
       return newData;
     });
@@ -310,7 +396,7 @@ export function QuantDiaryPage() {
                   return <div key={`empty-${weekIndex}-${dayIndex}`} className="aspect-square"></div>;
                 }
                 
-                const dayData = calendarData[currentMonth]?.[day] || { pnl: 0, trades: 0 };
+                const dayData = calendarData[currentYear]?.[currentMonth]?.[day] || { pnl: 0, trades: 0 };
                 const hasData = dayData.trades > 0;
                 const isPositive = dayData.pnl > 0;
                 const isClickable = calendarViewMode === 'daily';
@@ -472,7 +558,7 @@ export function QuantDiaryPage() {
                 {hasData ? (
                   <>
                     <div className="text-sm mb-1">
-                      {monthPnL >= 0 ? '+' : ''}R$ {monthPnL.toFixed(0)}
+                      {monthPnL >= 0 ? '+' : ''}R$ {Math.abs(monthPnL).toFixed(0)}
                     </div>
                     <div className="text-xs text-gray-400">
                       {monthTrades} trades • {monthDays} dias
@@ -484,6 +570,33 @@ export function QuantDiaryPage() {
               </button>
             );
           })}
+        </div>
+
+        {/* Resumo do Ano */}
+        <div className="mt-6 bg-gray-900 rounded-lg p-4">
+          <h4 className="text-lg font-semibold mb-4 text-center">Resumo do Ano {currentYear}</h4>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div className="text-center">
+              <p className="text-sm text-gray-400">P&L Total</p>
+              <p className={`text-xl font-bold ${
+                allTimeStats.totalPnl >= 0 ? 'text-green-400' : 'text-red-400'
+              }`}>
+                {allTimeStats.totalPnl >= 0 ? '+' : ''}R$ {allTimeStats.totalPnl.toFixed(2)}
+              </p>
+            </div>
+            <div className="text-center">
+              <p className="text-sm text-gray-400">Total Trades</p>
+              <p className="text-xl font-bold text-blue-400">{allTimeStats.totalTrades}</p>
+            </div>
+            <div className="text-center">
+              <p className="text-sm text-gray-400">Dias Operados</p>
+              <p className="text-xl font-bold text-purple-400">{allTimeStats.diasOperados}</p>
+            </div>
+            <div className="text-center">
+              <p className="text-sm text-gray-400">Média P&L/Dia</p>
+              <p className="text-xl font-bold text-yellow-400">R$ {allTimeStats.mediaPnlDia.toFixed(2)}</p>
+            </div>
+          </div>
         </div>
 
         <div className="flex items-center justify-center space-x-6">
@@ -526,7 +639,11 @@ export function QuantDiaryPage() {
             <span className="text-sm text-gray-400">P&L Total</span>
             <DollarSign className="w-4 h-4 text-green-400" />
           </div>
-          <p className="text-2xl font-bold text-green-400">R$ 18.212,00</p>
+          <p className={`text-2xl font-bold ${
+            allTimeStats.totalPnl >= 0 ? 'text-green-400' : 'text-red-400'
+          }`}>
+            {allTimeStats.totalPnl >= 0 ? '+' : ''}R$ {allTimeStats.totalPnl.toFixed(2)}
+          </p>
           <p className="text-xs text-gray-500">Todos os tempos</p>
         </div>
         
@@ -536,8 +653,12 @@ export function QuantDiaryPage() {
             <span className="text-sm text-gray-400">P&L Mensal</span>
             <DollarSign className="w-4 h-4 text-green-400" />
           </div>
-          <p className="text-2xl font-bold text-green-400">R$ 1.175,50</p>
-          <p className="text-xs text-gray-500">Agosto 2025</p>
+          <p className={`text-2xl font-bold ${
+            monthlyBreakdown.find(m => m.month === currentMonth)?.pnl >= 0 ? 'text-green-400' : 'text-red-400'
+          }`}>
+            {monthlyBreakdown.find(m => m.month === currentMonth)?.pnl >= 0 ? '+' : ''}R$ {(monthlyBreakdown.find(m => m.month === currentMonth)?.pnl || 0).toFixed(2)}
+          </p>
+          <p className="text-xs text-gray-500">{currentMonth.charAt(0).toUpperCase() + currentMonth.slice(1)} {currentYear}</p>
         </div>
         
         {/* Média P&L/Dia */}
@@ -546,7 +667,7 @@ export function QuantDiaryPage() {
             <span className="text-sm text-gray-400">Média P&L/Dia</span>
             <DollarSign className="w-4 h-4 text-purple-400" />
           </div>
-          <p className="text-2xl font-bold text-purple-400">R$ 120,61</p>
+          <p className="text-2xl font-bold text-purple-400">R$ {allTimeStats.mediaPnlDia.toFixed(2)}</p>
           <p className="text-xs text-gray-500">Por dia operado</p>
         </div>
         
@@ -556,8 +677,8 @@ export function QuantDiaryPage() {
             <span className="text-sm text-gray-400">Melhor Mês</span>
             <TrendingUp className="w-4 h-4 text-green-400" />
           </div>
-          <p className="text-2xl font-bold text-green-400">R$ 3.120,25</p>
-          <p className="text-xs text-gray-500">Março 2025</p>
+          <p className="text-2xl font-bold text-green-400">R$ {allTimeStats.melhorMesPnl.toFixed(2)}</p>
+          <p className="text-xs text-gray-500">{allTimeStats.melhorMes}</p>
         </div>
         </div>
       </div>
