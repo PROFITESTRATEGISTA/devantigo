@@ -36,6 +36,90 @@ export function QuantDiaryPage() {
   const [userPatrimony, setUserPatrimony] = useState<number>(10000); // Patrimônio inicial padrão
   const [isEditingPatrimony, setIsEditingPatrimony] = useState(false);
   const [patrimonyInput, setPatrimonyInput] = useState('10000');
+  
+  // Função para calcular drawdown baseado no patrimônio
+  const calculateDrawdownMetrics = () => {
+    // Dados mockados para demonstração
+    const dailyPnL = [
+      { date: '2024-01-01', pnl: 150 },
+      { date: '2024-01-02', pnl: -80 },
+      { date: '2024-01-03', pnl: 200 },
+      { date: '2024-01-04', pnl: -300 },
+      { date: '2024-01-05', pnl: 100 },
+      { date: '2024-01-08', pnl: -150 },
+      { date: '2024-01-09', pnl: 250 },
+      { date: '2024-01-10', pnl: -200 }
+    ];
+    
+    let runningCapital = userPatrimony;
+    let peak = userPatrimony;
+    let maxDrawdownValue = 0;
+    let maxDrawdownPercent = 0;
+    let currentDrawdown = 0;
+    
+    // Calcular running capital e drawdown
+    dailyPnL.forEach(day => {
+      runningCapital += day.pnl;
+      
+      // Atualizar pico se necessário
+      if (runningCapital > peak) {
+        peak = runningCapital;
+      }
+      
+      // Calcular drawdown atual
+      currentDrawdown = peak - runningCapital;
+      
+      // Atualizar drawdown máximo se necessário
+      if (currentDrawdown > maxDrawdownValue) {
+        maxDrawdownValue = currentDrawdown;
+      }
+    });
+    
+    // Calcular drawdown percentual baseado no patrimônio inicial
+    maxDrawdownPercent = (maxDrawdownValue / userPatrimony) * 100;
+    
+    // Calcular métricas avançadas
+    const totalPnL = dailyPnL.reduce((sum, day) => sum + day.pnl, 0);
+    const finalCapital = userPatrimony + totalPnL;
+    const totalReturn = (finalCapital - userPatrimony) / userPatrimony;
+    
+    // Calcular retornos diários
+    const dailyReturns = [];
+    let capital = userPatrimony;
+    
+    dailyPnL.forEach(day => {
+      const dailyReturn = day.pnl / capital;
+      dailyReturns.push(dailyReturn);
+      capital += day.pnl;
+    });
+    
+    // Calcular Sharpe Ratio
+    const avgDailyReturn = dailyReturns.reduce((sum, ret) => sum + ret, 0) / dailyReturns.length;
+    const variance = dailyReturns.reduce((sum, ret) => sum + Math.pow(ret - avgDailyReturn, 2), 0) / dailyReturns.length;
+    const volatility = Math.sqrt(variance);
+    
+    const annualizedReturn = avgDailyReturn * 252 * 100; // em %
+    const annualizedVolatility = volatility * Math.sqrt(252) * 100; // em %
+    const sharpeRatio = annualizedVolatility > 0 ? annualizedReturn / annualizedVolatility : 0;
+    
+    // Fator de Recuperação
+    const recoveryFactor = maxDrawdownValue > 0 ? totalPnL / maxDrawdownValue : 0;
+    
+    // Índice de Calmar
+    const calmarRatio = maxDrawdownPercent > 0 ? annualizedReturn / maxDrawdownPercent : 0;
+    
+    return {
+      drawdownPercent: maxDrawdownPercent,
+      drawdownValue: maxDrawdownValue,
+      sharpeRatio,
+      recoveryFactor,
+      calmarRatio,
+      annualizedReturn,
+      annualizedVolatility
+    };
+  };
+  
+  const drawdownMetrics = calculateDrawdownMetrics();
   const [showAdvancedMetrics, setShowAdvancedMetrics] = useState(true);
   
   // Dados por ano - agora organizados por ano
