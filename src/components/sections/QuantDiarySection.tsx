@@ -20,18 +20,8 @@ export function QuantDiarySection() {
   const { profile } = useAuthStore();
   const [currentDate, setCurrentDate] = useState(new Date());
   const [currentWeekStart, setCurrentWeekStart] = useState(() => {
-    // Encontrar o domingo da semana atual
-    const today = new Date(2025, 0, 5); // 5 de janeiro de 2025 (primeiro domingo)
-    const dayOfWeek = today.getDay(); // 0 = domingo, 1 = segunda, ..., 6 = sábado
-    
-    // Calcular quantos dias voltar para chegar no domingo
-    const daysToSunday = dayOfWeek; // Se domingo (0), não volta nenhum dia
-    
-    const sunday = new Date(today);
-    sunday.setDate(today.getDate() - daysToSunday);
-    sunday.setHours(0, 0, 0, 0);
-    
-    return sunday;
+    // Começar na semana 1 de janeiro (29 dez 2024 - 4 jan 2025)
+    return new Date(2024, 11, 29); // 29 de dezembro de 2024 (domingo)
   });
   const [viewType, setViewType] = useState<'calendar' | 'weekly'>('weekly');
   const [showWeekends, setShowWeekends] = useState(false);
@@ -137,20 +127,15 @@ export function QuantDiarySection() {
       const nextWeekStart = new Date(currentWeekStart);
       nextWeekStart.setDate(currentWeekStart.getDate() + 7);
       
-      // Verificar se ainda está em 2025
-      if (nextWeekStart.getFullYear() <= 2025) {
-        setCurrentWeekStart(nextWeekStart);
-        setCurrentDate(new Date(nextWeekStart));
-      }
-      
-    } else {
-      const prevWeekStart = new Date(currentWeekStart);
-      prevWeekStart.setDate(currentWeekStart.getDate() - 7);
-      
-      // Verificar se ainda está em 2025
-      if (prevWeekStart.getFullYear() >= 2025) {
-        setCurrentWeekStart(prevWeekStart);
-        setCurrentDate(new Date(prevWeekStart));
+      // Verificar se não passou de 2025
+      if (nextWeekStart.getFullYear() <= 2025 || 
+          (nextWeekStart.getFullYear() === 2026 && nextWeekStart.getMonth() === 0 && nextWeekStart.getDate() <= 4)) {
+        // Encontrar a semana 1 do novo mês (domingo que contém o dia 1)
+        const firstDayOfMonth = new Date(2025, newDate.getMonth(), 1);
+        const dayOfWeek = firstDayOfMonth.getDay();
+        const sundayOfWeek1 = new Date(firstDayOfMonth);
+        sundayOfWeek1.setDate(1 - dayOfWeek);
+        setCurrentWeekStart(sundayOfWeek1);
       }
     }
   };
@@ -223,20 +208,14 @@ export function QuantDiarySection() {
   const getWeekDays = () => {
     const days = [];
     
-    // Semana começa no domingo: Dom, Seg, Ter, Qua, Qui, Sex, Sáb
     for (let i = 0; i < 7; i++) {
       const date = new Date(currentWeekStart);
       date.setDate(currentWeekStart.getDate() + i);
       
-      // Parar se mudou de ano (não permitir ir além de 2025)
-      if (date.getFullYear() !== 2025) {
-        break;
-      }
-      
       // Filtrar fins de semana se necessário
       if (!showWeekends) {
-        const dayOfWeek = date.getDay(); // 0 = domingo, 1 = segunda, ..., 6 = sábado
-        if (dayOfWeek === 0 || dayOfWeek === 6) { // domingo ou sábado
+        const dayOfWeek = date.getDay();
+        if (dayOfWeek === 0 || dayOfWeek === 6) {
           continue;
         }
       }
@@ -529,7 +508,7 @@ export function QuantDiarySection() {
         
         <h3 className="text-lg font-semibold">
           {viewType === 'weekly' 
-            ? `${getMonthName(currentWeekStart)} de 2025 - Semana ${getWeekOfMonth(currentWeekStart)} (Semana ${getWeekOfYear(currentWeekStart)} do ano)`
+            ? `${getMonthName(currentDate)} de 2025 - Semana ${getWeekOfMonth(currentDate)} (Semana ${getWeekOfYear(currentDate)} do ano)`
             : `${getMonthName(currentDate)} de ${currentDate.getFullYear()}`}
         </h3>
         
