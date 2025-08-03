@@ -143,6 +143,7 @@ export function Navbar() {
                   ) : (
                     <User className="w-3 h-3 lg:w-4 lg:h-4 text-gray-400" />
                   )}
+                </div>
               </button>
               
               {showUserMenu && (
