@@ -4,7 +4,6 @@ import { useLanguageStore } from '../stores/languageStore';
 
 export function Footer() {
   const { t, language } = useLanguageStore();
-  const currentYear = new Date().getFullYear();
 
   // Force re-render when language changes
   React.useEffect(() => {
@@ -72,7 +71,7 @@ export function Footer() {
           
           {/* Copyright */}
           <div className="text-sm text-gray-400">
-            {t('footer.copyright', { year: currentYear })}
+            {t('footer.copyright', { year: new Date().getFullYear() })}
           </div>
         </div>
       </div>
