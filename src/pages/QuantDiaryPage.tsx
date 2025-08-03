@@ -175,9 +175,9 @@ export function QuantDiaryPage() {
     ];
     
     return months.map(month => {
-      const monthData = calendarData[year]?.[month] || {};
-      const days = Object.values(monthData);
-      
+      // Sharpe Ratio: (Lucro Total - Taxa de Juros nos meses analisados) / Drawdown
+      const excessReturn = totalPnL - riskFreeAmount;
+      const sharpeRatio = drawdownPercentage > 0 ? (excessReturn / initialCapital * 100) / drawdownPercentage : 0;
       const totalPnl = days.reduce((sum, day) => sum + day.pnl, 0);
       const totalTrades = days.reduce((sum, day) => sum + day.trades, 0);
       const diasOperados = days.filter(day => day.trades > 0).length;
