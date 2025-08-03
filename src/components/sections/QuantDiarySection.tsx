@@ -450,12 +450,12 @@ export function QuantDiarySection() {
               
                   {entry && (
                     <div className="space-y-1 mb-3">
-                      {entry.pnl !== undefined && entry.pnl !== 0 && (
+               className={`min-h-32 p-3 rounded-lg border transition-all duration-300 group ${
                         <div className={`text-xs font-medium ${
                           entry.pnl > 0 ? 'text-green-400' : 'text-red-400'
                         }`}>
                           R$ {entry.pnl.toFixed(0)}
-                        </div>
+                     : 'border-gray-700 bg-gray-800 hover:border-blue-500 hover:bg-gray-700'
                       )}
                   
                       {entry.trades !== undefined && entry.trades > 0 && (
@@ -474,7 +474,7 @@ export function QuantDiarySection() {
                   <div className="space-y-1">
                     <button
                       onClick={(e) => {
-                        e.stopPropagation();
+                     <div className="space-y-1 mb-2">
                         openModal(day, 'comment');
                       }}
                       className="w-full py-1 px-2 bg-blue-600 hover:bg-blue-700 rounded text-xs text-white flex items-center justify-center transition-colors"
@@ -554,7 +554,7 @@ export function QuantDiarySection() {
                       { value: 'positive', emoji: '📈', label: language === 'en' ? 'Positive' : 'Positivo' },
                       { value: 'neutral', emoji: '➡️', label: language === 'en' ? 'Neutral' : 'Neutro' },
                       { value: 'negative', emoji: '📉', label: language === 'en' ? 'Negative' : 'Negativo' }
-                    ].map(mood => (
+                   <div className="space-y-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
                       <button
                         key={mood.value}
                         onClick={() => setNewEntry(prev => ({ ...prev, mood: mood.value as any }))}
@@ -562,9 +562,9 @@ export function QuantDiarySection() {
                           newEntry.mood === mood.value
                             ? 'border-blue-500 bg-blue-900 bg-opacity-30'
                             : 'border-gray-600 hover:border-gray-500'
-                        }`}
+                       className="w-full py-1.5 px-2 bg-blue-600 hover:bg-blue-700 rounded text-xs text-white flex items-center justify-center transition-colors"
                       >
-                        <div className="text-center">
+                       className="w-full py-1.5 px-2 bg-green-600 hover:bg-green-700 rounded text-xs text-white flex items-center justify-center transition-colors"
                           <div className="text-2xl mb-1">{mood.emoji}</div>
                           <div className="text-sm">{mood.label}</div>
                         </div>
