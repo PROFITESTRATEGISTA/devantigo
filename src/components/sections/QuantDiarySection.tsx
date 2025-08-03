@@ -227,34 +227,43 @@ export function QuantDiarySection() {
   const getWeekDays = () => {
     const days = [];
     
-    // Calcular o primeiro dia da semana (segunda-feira)
-    const startDate = new Date(currentWeekStart);
-    const dayOfWeek = startDate.getDay();
-    const mondayOffset = dayOfWeek === 0 ? -6 : 1 - dayOfWeek; // Ajustar para segunda-feira
+    // Calcular semana baseada no currentWeekStart
+    const startOfYear = new Date(2025, 0, 1); // 1º de janeiro de 2025
+    const dayOfYear = Math.floor((currentWeekStart.getTime() - startOfYear.getTime()) / (24 * 60 * 60 * 1000)) + 1;
+    const weekOfYear = Math.ceil(dayOfYear / 7);
     
-    const monday = new Date(startDate);
-    monday.setDate(startDate.getDate() + mondayOffset);
+    // Calcular o primeiro dia desta semana do ano
+    const firstDayOfWeek = new Date(2025, 0, ((weekOfYear - 1) * 7) + 1);
     
-    // Garantir que está em 2025
-    if (monday.getFullYear() !== 2025) {
-      return [];
-    }
+    // Se é semana 5 ou mais, verificar se deve incluir dia 1 do próximo mês
+    const weekOfMonth = getWeekOfMonth(firstDayOfWeek);
+    const isWeek5OrMore = weekOfMonth >= 5;
     
-    const currentMonth = monday.getMonth();
-    
-    // Adicionar dias da semana, mas parar se mudar de mês
+    // Adicionar dias da semana
     for (let i = 0; i < 7; i++) {
-      const date = new Date(monday);
-      date.setDate(monday.getDate() + i);
+      const date = new Date(firstDayOfWeek);
+      date.setDate(firstDayOfWeek.getDate() + i);
       
       // Parar se mudou de ano
       if (date.getFullYear() !== 2025) {
         break;
       }
       
-      // Parar se mudou de mês
-      if (date.getMonth() !== currentMonth) {
-        break;
+      // Para semana 5+: incluir até dia 1 do próximo mês (marca d'água)
+      if (isWeek5OrMore) {
+        const currentMonth = firstDayOfWeek.getMonth();
+        const dateMonth = date.getMonth();
+        
+        // Se mudou de mês, só incluir se for dia 1 (marca d'água)
+        if (dateMonth !== currentMonth && date.getDate() !== 1) {
+          break;
+        }
+      } else {
+        // Para outras semanas: não misturar meses
+        const currentMonth = firstDayOfWeek.getMonth();
+        if (date.getMonth() !== currentMonth) {
+          break;
+        }
       }
       
       // Filtrar fins de semana se necessário
