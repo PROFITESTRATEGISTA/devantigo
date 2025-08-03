@@ -5,9 +5,11 @@ import {
   Code2, BarChart2, Sparkles, MessageSquare, Star, Building
 } from 'lucide-react';
 import { LanguageSwitcher } from '../components/LanguageSwitcher';
+import { useLanguageStore } from '../stores/languageStore';
 
 export function PublicPlansPage() {
   const navigate = useNavigate();
+  const { language } = useLanguageStore();
   const [selectedProLevel, setSelectedProLevel] = useState<'pro1' | 'pro2' | 'pro3'>('pro1');
 
   // Pro plan levels with details
@@ -70,30 +72,44 @@ export function PublicPlansPage() {
   };
 
   const handleContactSupport = () => {
-    const message = "Olá vim do DevHub Trader e quero mais informações sobre os planos";
+    const message = language === 'en' 
+      ? "Hello, I came from DevHub Trader and want more information about the plans"
+      : "Olá vim do DevHub Trader e quero mais informações sobre os planos";
     const encodedMessage = encodeURIComponent(message);
     window.open(`https://wa.me/5511975333355?text=${encodedMessage}`, '_blank');
   };
 
   const handleUpgradeClick = (planId: string) => {
     // Determine which plan to upgrade to
-    let message = "Olá vim do DevHub Trader e quero mais informações e ajuda para criar robôs";
+    let message = language === 'en' 
+      ? "Hello, I came from DevHub Trader and want more information and help to create robots"
+      : "Olá vim do DevHub Trader e quero mais informações e ajuda para criar robôs";
     
     switch(planId) {
       case 'pro1':
-        message = `Olá vim do DevHub Trader e quero mais informações e ajuda para contratar o plano Pro 1 (R$ 259,80/mês).`;
+        message = language === 'en'
+          ? `Hello, I came from DevHub Trader and want more information and help to contract the Pro 1 plan (R$ 259.80/month).`
+          : `Olá vim do DevHub Trader e quero mais informações e ajuda para contratar o plano Pro 1 (R$ 259,80/mês).`;
         break;
       case 'pro2':
-        message = `Olá vim do DevHub Trader e quero mais informações e ajuda para contratar o plano Pro 2 (R$ 499,80/mês).`;
+        message = language === 'en'
+          ? `Hello, I came from DevHub Trader and want more information and help to contract the Pro 2 plan (R$ 499.80/month).`
+          : `Olá vim do DevHub Trader e quero mais informações e ajuda para contratar o plano Pro 2 (R$ 499,80/mês).`;
         break;
       case 'pro3':
-        message = `Olá vim do DevHub Trader e quero mais informações e ajuda para contratar o plano Pro 3 (R$ 999,80/mês).`;
+        message = language === 'en'
+          ? `Hello, I came from DevHub Trader and want more information and help to contract the Pro 3 plan (R$ 999.80/month).`
+          : `Olá vim do DevHub Trader e quero mais informações e ajuda para contratar o plano Pro 3 (R$ 999,80/mês).`;
         break;
       case 'business':
-        message = `Olá vim do DevHub Trader e quero mais informações sobre o plano Business com preços personalizados, robôs e tokens customizados para minha empresa.`;
+        message = language === 'en'
+          ? `Hello, I came from DevHub Trader and want more information about the Business plan with custom pricing, personalized robots and tokens for my company.`
+          : `Olá vim do DevHub Trader e quero mais informações sobre o plano Business com preços personalizados, robôs e tokens customizados para minha empresa.`;
         break;
       default:
-        message = "Olá vim do DevHub Trader e quero mais informações sobre os planos";
+        message = language === 'en'
+          ? "Hello, I came from DevHub Trader and want more information about the plans"
+          : "Olá vim do DevHub Trader e quero mais informações sobre os planos";
     }
     
     // Encode the message for WhatsApp
