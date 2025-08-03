@@ -226,28 +226,46 @@ export function QuantDiarySection() {
 
   const getWeekDays = () => {
     const days = [];
-
-    // Encontrar o primeiro dia da semana atual baseado no CSV
-    const currentWeekOfYear = getWeekOfYear(currentWeekStart);
     
-    // Encontrar todos os dias que pertencem a esta semana do ano
-    const startOfYear = new Date(2025, 0, 1);
+    // Calcular o primeiro dia da semana (segunda-feira)
+    const startDate = new Date(currentWeekStart);
+    const dayOfWeek = startDate.getDay();
+    const mondayOffset = dayOfWeek === 0 ? -6 : 1 - dayOfWeek; // Ajustar para segunda-feira
     
-    for (let dayOfYear = 1; dayOfYear <= 365; dayOfYear++) {
-      const date = new Date(2025, 0, dayOfYear);
-      const weekOfYear = Math.ceil(dayOfYear / 7);
+    const monday = new Date(startDate);
+    monday.setDate(startDate.getDate() + mondayOffset);
+    
+    // Garantir que está em 2025
+    if (monday.getFullYear() !== 2025) {
+      return [];
+    }
+    
+    const currentMonth = monday.getMonth();
+    
+    // Adicionar dias da semana, mas parar se mudar de mês
+    for (let i = 0; i < 7; i++) {
+      const date = new Date(monday);
+      date.setDate(monday.getDate() + i);
       
-      if (weekOfYear === currentWeekOfYear) {
-        // Se não mostrar fins de semana, filtrar sábado (6) e domingo (0)
-        if (!showWeekends) {
-          const dayOfWeek = date.getDay();
-          if (dayOfWeek === 0 || dayOfWeek === 6) {
-            continue; // Pular fins de semana
-          }
-        }
-        
-        days.push(date);
+      // Parar se mudou de ano
+      if (date.getFullYear() !== 2025) {
+        break;
       }
+      
+      // Parar se mudou de mês
+      if (date.getMonth() !== currentMonth) {
+        break;
+      }
+      
+      // Filtrar fins de semana se necessário
+      if (!showWeekends) {
+        const dayOfWeek = date.getDay();
+        if (dayOfWeek === 0 || dayOfWeek === 6) {
+          continue;
+        }
+      }
+      
+      days.push(date);
     }
     
     return days;
