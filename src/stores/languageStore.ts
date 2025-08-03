@@ -105,9 +105,13 @@ const translations: Record<Language, Record<string, string>> = {
     'faq.category.robots': 'Robot Creation and Management',
     'faq.category.ai': 'AI Assistant',
     'faq.category.analysis': 'Backtest Analysis',
-    'faq.category.tokens': 'Tokens and Plans',
+    'faq.category.platforms': 'Trading Platforms',
+    'faq.category.tokens': 'Tokens and Challenges',
+    'faq.category.plans': 'Plans and Pricing',
     'faq.category.collaboration': 'Collaboration and Sharing',
+    'faq.category.security': 'Security and Privacy',
     'faq.category.technical': 'Technical Support',
+    'faq.category.marketplace': 'Strategy Marketplace',
     
     // FAQ Questions and Answers
     'faq.robots.q1': 'How to create my first robot?',
@@ -117,15 +121,89 @@ const translations: Record<Language, Record<string, string>> = {
     'faq.robots.q3': 'How to share a robot with other users?',
     'faq.robots.a3': 'In the robot editor, click "Share" and choose between generating a public link or inviting specific users by email. You can set view or edit permissions.',
     
+    // Platforms
+    'faq.platforms.q1': 'Which trading platforms are supported?',
+    'faq.platforms.a1': 'We support Profit (NTSL), MetaTrader 4/5 (MQL4/MQL5), TradingView (Pine Script), Python for backtesting, and other popular platforms. Code can be exported in compatible formats.',
+    'faq.platforms.q2': 'Can I use the robots on any broker?',
+    'faq.platforms.a2': 'Yes! Our robots are compatible with most brokers that support the respective platforms. The generated code is standard and works with any compatible broker.',
+    'faq.platforms.q3': 'How do I export my robot to MetaTrader?',
+    'faq.platforms.a3': 'In the robot editor, click "Export" and select "MetaTrader 4/5". The code will be converted to MQL format and downloaded as an .mq4 or .mq5 file.',
+    'faq.platforms.q4': 'Do you support cryptocurrency exchanges?',
+    'faq.platforms.a4': 'Currently we focus on traditional markets (stocks, forex, futures). Cryptocurrency support is planned for future releases.',
+    
     'faq.ai.q1': 'How to use AI to create robots?',
     'faq.ai.a1': 'In the assistant chat, describe your strategy in natural language. For example: "Create a robot that buys when RSI < 30 and sells when RSI > 70". The AI will generate the code automatically.',
     'faq.ai.q2': 'How much does it cost to use AI?',
     'faq.ai.a2': 'Each AI interaction consumes tokens: robot creation (500 tokens), backtest analysis (1000 tokens), strategy optimization (300 tokens). Check your balance in the header.',
     
+    // Tokens
+    'faq.tokens.q1': 'How do I earn free tokens?',
+    'faq.tokens.a1': 'Complete daily and weekly challenges: create first robot (+500 tokens), first analysis (+200 tokens), share strategy (+100 tokens), participate in competitions (up to 1000 tokens), contribute tutorials (+300 tokens).',
+    'faq.tokens.q2': 'What challenges are available?',
+    'faq.tokens.a2': 'Daily: Daily login (+10 tokens), backtest analysis (+50 tokens). Weekly: Create robot (+500 tokens), optimize strategy (+300 tokens). Monthly: Performance competition (+2000 tokens), community tutorial (+1000 tokens).',
+    'faq.tokens.q3': 'Do tokens expire?',
+    'faq.tokens.a3': 'Monthly plan tokens are renewed each cycle. Tokens earned from challenges and purchased separately never expire. Unused monthly tokens are not carried over.',
+    'faq.tokens.q4': 'How much do extra tokens cost?',
+    'faq.tokens.a4': 'Available packages: 2,500 tokens ($70), 7,500 tokens ($150), 25,000 tokens ($300). Extra tokens never expire and can be used anytime.',
+    'faq.tokens.q5': 'Can I transfer tokens to other users?',
+    'faq.tokens.a5': 'No, tokens are non-transferable and tied to your account. However, you can share robots and analyses with other users for free.',
+    
     'faq.analysis.q1': 'How to upload backtest data?',
     'faq.analysis.a1': 'Go to "Backtest Analysis", drag your CSV file or click to select. The file should contain columns: Date, Entry Price, Exit Price, Result, Direction.',
     'faq.analysis.q2': 'What metrics are calculated?',
     'faq.analysis.a2': 'We calculate Profit Factor, Win Rate, Payoff, Max Drawdown, Sharpe Ratio, Recovery Factor, and analysis by day of week and month.',
+    
+    // Collaboration
+    'faq.collaboration.q1': 'How does real-time collaboration work?',
+    'faq.collaboration.a1': 'Multiple users can edit the same robot simultaneously. Changes are synchronized in real-time, and you can see who is editing what section of the code.',
+    'faq.collaboration.q2': 'Can I control who has access to my robots?',
+    'faq.collaboration.a2': 'Yes! You can set permissions (view-only or edit) for each collaborator and revoke access at any time. You maintain full control over your robots.',
+    'faq.collaboration.q3': 'How do I resolve conflicts when multiple people edit?',
+    'faq.collaboration.a3': 'Our system uses operational transformation to merge changes automatically. If conflicts occur, the system will highlight them and allow manual resolution.',
+    'faq.collaboration.q4': 'Is there a limit to collaborators per robot?',
+    'faq.collaboration.a4': 'Free plan: 2 collaborators per robot. Pro plans: unlimited collaborators. All collaborators need their own DevHub Trader accounts.',
+    
+    // Plans
+    'faq.plans.q1': 'What\'s the difference between Pro 1, Pro 2, and Pro 3?',
+    'faq.plans.a1': 'Pro 1 ($259.80): Up to 25 robots, AI robot generation, 20,000 tokens. Pro 2 ($499.80): Up to 100 robots, 50,000 tokens, dedicated support. Pro 3 ($999.80): Up to 500 robots, 100,000 tokens, all premium features.',
+    'faq.plans.q2': 'Can I upgrade or downgrade anytime?',
+    'faq.plans.a2': 'Yes! Upgrades are applied immediately. Downgrades take effect at the next billing cycle. You keep access to current plan features until then.',
+    'faq.plans.q3': 'What happens if I cancel my subscription?',
+    'faq.plans.a3': 'Your account reverts to the Free plan. You keep your existing robots (up to the free limit) and can export all your data. Premium features become unavailable.',
+    'faq.plans.q4': 'Do you offer refunds?',
+    'faq.plans.a4': 'We offer a 7-day money-back guarantee for new subscriptions. Contact support within 7 days if you\'re not satisfied.',
+    'faq.plans.q5': 'Can I pause my subscription?',
+    'faq.plans.a5': 'Currently we don\'t offer subscription pausing. You can cancel and resubscribe later, but you\'ll lose any unused monthly tokens.',
+    
+    // Security
+    'faq.security.q1': 'How secure is my data?',
+    'faq.security.a1': 'We use AES-256 encryption, secure servers, automatic backups, and GDPR compliance. Your code and strategies are private by default.',
+    'faq.security.q2': 'Can DevHub Trader access my robots?',
+    'faq.security.a2': 'No! Your robots are private by default. We only have access if you share them publicly or request specific support. We never share data without permission.',
+    'faq.security.q3': 'Can I export my data?',
+    'faq.security.a3': 'Yes! You can export all your robots, analyses, and data anytime in JSON, CSV, or source code format. No platform lock-in.',
+    'faq.security.q4': 'What happens to my data if I delete my account?',
+    'faq.security.a4': 'Your data is permanently deleted within 30 days of account deletion, in compliance with GDPR. You can export everything before deletion.',
+    
+    // Technical
+    'faq.technical.q1': 'My robot isn\'t working as expected. What should I do?',
+    'faq.technical.a1': 'First, check the robot\'s logic and parameters. Use our debugging tools and AI assistant for help. If issues persist, contact support with your robot details.',
+    'faq.technical.q2': 'How do I optimize my robot\'s performance?',
+    'faq.technical.a2': 'Use our AI analysis tools to identify weaknesses, run backtests with different parameters, and follow the optimization suggestions provided by our system.',
+    'faq.technical.q3': 'Can I import robots from other platforms?',
+    'faq.technical.a3': 'Yes! You can paste code from MetaTrader, TradingView, or other platforms. Our AI can help convert and adapt the code to work optimally.',
+    'faq.technical.q4': 'What programming languages do you support?',
+    'faq.technical.a4': 'We support NTSL (Profit), MQL4/MQL5 (MetaTrader), Pine Script (TradingView), Python, and can generate code for most trading platforms.',
+    'faq.technical.q5': 'How do I report bugs or request features?',
+    'faq.technical.a5': 'Use the feedback system in the platform, email support@devhubtrader.com.br, or report via our community. Confirmed bugs earn token rewards.',
+    
+    // Marketplace
+    'faq.marketplace.q1': 'How does the strategy marketplace work?',
+    'faq.marketplace.a1': 'Users can sell/buy verified strategies. Sellers earn 70% of the value, platform keeps 30%. All strategies undergo performance verification.',
+    'faq.marketplace.q2': 'How do I sell my strategy?',
+    'faq.marketplace.a2': 'Submit your strategy for verification with at least 6 months of backtest data. Once approved, set your price and start earning from sales.',
+    'faq.marketplace.q3': 'Are marketplace strategies guaranteed to work?',
+    'faq.marketplace.a3': 'All strategies are verified for historical performance, but past results don\'t guarantee future performance. Always test strategies before live trading.',
     
     // Dashboard
     'dashboard.title': 'Dashboard',
@@ -332,9 +410,13 @@ const translations: Record<Language, Record<string, string>> = {
     'faq.category.robots': 'Criação e Gerenciamento de Robôs',
     'faq.category.ai': 'Assistente de IA',
     'faq.category.analysis': 'Análise de Backtest',
-    'faq.category.tokens': 'Tokens e Planos',
+    'faq.category.platforms': 'Plataformas de Trading',
+    'faq.category.tokens': 'Tokens e Desafios',
+    'faq.category.plans': 'Planos e Preços',
     'faq.category.collaboration': 'Colaboração e Compartilhamento',
+    'faq.category.security': 'Segurança e Privacidade',
     'faq.category.technical': 'Suporte Técnico',
+    'faq.category.marketplace': 'Marketplace de Estratégias',
     
     // FAQ Questions and Answers
     'faq.robots.q1': 'Como criar meu primeiro robô?',
@@ -344,15 +426,89 @@ const translations: Record<Language, Record<string, string>> = {
     'faq.robots.q3': 'Como compartilhar um robô com outros usuários?',
     'faq.robots.a3': 'No editor do robô, clique em "Compartilhar" e escolha entre gerar um link público ou convidar usuários específicos por email. Você pode definir permissões de visualização ou edição.',
     
+    // Plataformas
+    'faq.platforms.q1': 'Quais plataformas de trading são suportadas?',
+    'faq.platforms.a1': 'Suportamos Profit (NTSL), MetaTrader 4/5 (MQL4/MQL5), TradingView (Pine Script), Python para backtesting e outras plataformas populares. O código pode ser exportado em formatos compatíveis.',
+    'faq.platforms.q2': 'Posso usar os robôs em qualquer corretora?',
+    'faq.platforms.a2': 'Sim! Nossos robôs são compatíveis com a maioria das corretoras que suportam as respectivas plataformas. O código gerado é padrão e funciona com qualquer corretora compatível.',
+    'faq.platforms.q3': 'Como exportar meu robô para o MetaTrader?',
+    'faq.platforms.a3': 'No editor do robô, clique em "Exportar" e selecione "MetaTrader 4/5". O código será convertido para formato MQL e baixado como arquivo .mq4 ou .mq5.',
+    'faq.platforms.q4': 'Vocês suportam exchanges de criptomoedas?',
+    'faq.platforms.a4': 'Atualmente focamos em mercados tradicionais (ações, forex, futuros). Suporte para criptomoedas está planejado para versões futuras.',
+    
     'faq.ai.q1': 'Como usar a IA para criar robôs?',
     'faq.ai.a1': 'No chat do assistente, descreva sua estratégia em linguagem natural. Por exemplo: "Crie um robô que compra quando RSI < 30 e vende quando RSI > 70". A IA gerará o código automaticamente.',
     'faq.ai.q2': 'Quanto custa usar a IA?',
     'faq.ai.a2': 'Cada interação com a IA consome tokens: criação de robô (500 tokens), análise de backtest (1000 tokens), otimização de estratégia (300 tokens). Consulte seu saldo no header.',
     
+    // Tokens
+    'faq.tokens.q1': 'Como ganhar tokens gratuitos?',
+    'faq.tokens.a1': 'Complete desafios diários e semanais: criar primeiro robô (+500 tokens), primeira análise (+200 tokens), compartilhar estratégia (+100 tokens), participar de competições (até 1000 tokens), contribuir com tutoriais (+300 tokens).',
+    'faq.tokens.q2': 'Quais são os desafios disponíveis?',
+    'faq.tokens.a2': 'Diários: Login diário (+10 tokens), análise de backtest (+50 tokens). Semanais: Criar robô (+500 tokens), otimizar estratégia (+300 tokens). Mensais: Competição de performance (+2000 tokens), tutorial da comunidade (+1000 tokens).',
+    'faq.tokens.q3': 'Os tokens expiram?',
+    'faq.tokens.a3': 'Tokens mensais do plano são renovados a cada ciclo. Tokens ganhos em desafios e comprados separadamente nunca expiram. Tokens não utilizados do plano mensal não são acumulados.',
+    'faq.tokens.q4': 'Quanto custam os tokens extras?',
+    'faq.tokens.a4': 'Pacotes disponíveis: 2.500 tokens (R$ 70), 7.500 tokens (R$ 150), 25.000 tokens (R$ 300). Tokens extras nunca expiram.',
+    'faq.tokens.q5': 'Posso transferir tokens para outros usuários?',
+    'faq.tokens.a5': 'Não, tokens são intransferíveis e vinculados à sua conta. Porém, você pode compartilhar robôs e análises com outros usuários gratuitamente.',
+    
     'faq.analysis.q1': 'Como fazer upload de dados de backtest?',
     'faq.analysis.a1': 'Vá para "Backtest Analysis", arraste seu arquivo CSV ou clique para selecionar. O arquivo deve conter colunas: Data, Preço Entrada, Preço Saída, Resultado, Direção.',
     'faq.analysis.q2': 'Que métricas são calculadas?',
     'faq.analysis.a2': 'Calculamos Profit Factor, Win Rate, Payoff, Max Drawdown, Sharpe Ratio, Recovery Factor, e análises por dia da semana e mês.',
+    
+    // Colaboração
+    'faq.collaboration.q1': 'Como funciona a colaboração em tempo real?',
+    'faq.collaboration.a1': 'Múltiplos usuários podem editar o mesmo robô simultaneamente. As mudanças são sincronizadas em tempo real, e você pode ver quem está editando qual seção do código.',
+    'faq.collaboration.q2': 'Posso controlar quem tem acesso aos meus robôs?',
+    'faq.collaboration.a2': 'Sim! Você pode definir permissões (apenas visualização ou edição) para cada colaborador e revogar acesso a qualquer momento. Você mantém controle total sobre seus robôs.',
+    'faq.collaboration.q3': 'Como resolver conflitos quando várias pessoas editam?',
+    'faq.collaboration.a3': 'Nosso sistema usa transformação operacional para mesclar mudanças automaticamente. Se conflitos ocorrerem, o sistema os destacará e permitirá resolução manual.',
+    'faq.collaboration.q4': 'Há limite de colaboradores por robô?',
+    'faq.collaboration.a4': 'Plano Free: 2 colaboradores por robô. Planos Pro: colaboradores ilimitados. Todos os colaboradores precisam ter suas próprias contas DevHub Trader.',
+    
+    // Planos
+    'faq.plans.q1': 'Qual a diferença entre Pro 1, Pro 2 e Pro 3?',
+    'faq.plans.a1': 'Pro 1 (R$ 259,80): Até 25 robôs, IA para gerar robôs, 20.000 tokens. Pro 2 (R$ 499,80): Até 100 robôs, 50.000 tokens, suporte dedicado. Pro 3 (R$ 999,80): Até 500 robôs, 100.000 tokens, todos os recursos premium.',
+    'faq.plans.q2': 'Posso fazer upgrade ou downgrade a qualquer momento?',
+    'faq.plans.a2': 'Sim! Upgrades são aplicados imediatamente. Downgrades entram em vigor no próximo ciclo de faturamento. Você mantém acesso aos recursos do plano atual até então.',
+    'faq.plans.q3': 'O que acontece se eu cancelar minha assinatura?',
+    'faq.plans.a3': 'Sua conta volta para o plano Free. Você mantém seus robôs existentes (até o limite gratuito) e pode exportar todos os seus dados. Recursos premium ficam indisponíveis.',
+    'faq.plans.q4': 'Vocês oferecem reembolso?',
+    'faq.plans.a4': 'Oferecemos garantia de 7 dias para novas assinaturas. Entre em contato com o suporte em até 7 dias se não estiver satisfeito.',
+    'faq.plans.q5': 'Posso pausar minha assinatura?',
+    'faq.plans.a5': 'Atualmente não oferecemos pausa de assinatura. Você pode cancelar e reativar depois, mas perderá tokens mensais não utilizados.',
+    
+    // Segurança
+    'faq.security.q1': 'Quão seguros são meus dados?',
+    'faq.security.a1': 'Usamos criptografia AES-256, servidores seguros, backup automático e conformidade com LGPD. Seus códigos e estratégias são privados por padrão.',
+    'faq.security.q2': 'A DevHub Trader pode acessar meus robôs?',
+    'faq.security.a2': 'Não! Seus robôs são privados por padrão. Só temos acesso se você compartilhar publicamente ou solicitar suporte específico. Nunca compartilhamos dados sem permissão.',
+    'faq.security.q3': 'Posso exportar meus dados?',
+    'faq.security.a3': 'Sim! Você pode exportar todos os seus robôs, análises e dados a qualquer momento em formato JSON, CSV ou código fonte. Não há lock-in na plataforma.',
+    'faq.security.q4': 'O que acontece com meus dados se eu deletar minha conta?',
+    'faq.security.a4': 'Seus dados são permanentemente deletados em até 30 dias após exclusão da conta, em conformidade com a LGPD. Você pode exportar tudo antes da exclusão.',
+    
+    // Técnico
+    'faq.technical.q1': 'Meu robô não está funcionando como esperado. O que fazer?',
+    'faq.technical.a1': 'Primeiro, verifique a lógica e parâmetros do robô. Use nossas ferramentas de debug e assistente de IA para ajuda. Se problemas persistirem, contate o suporte com detalhes do robô.',
+    'faq.technical.q2': 'Como otimizar a performance do meu robô?',
+    'faq.technical.a2': 'Use nossas ferramentas de análise de IA para identificar fraquezas, execute backtests com diferentes parâmetros e siga as sugestões de otimização fornecidas pelo sistema.',
+    'faq.technical.q3': 'Posso importar robôs de outras plataformas?',
+    'faq.technical.a3': 'Sim! Você pode colar código do MetaTrader, TradingView ou outras plataformas. Nossa IA pode ajudar a converter e adaptar o código para funcionar otimamente.',
+    'faq.technical.q4': 'Quais linguagens de programação vocês suportam?',
+    'faq.technical.a4': 'Suportamos NTSL (Profit), MQL4/MQL5 (MetaTrader), Pine Script (TradingView), Python, e podemos gerar código para a maioria das plataformas de trading.',
+    'faq.technical.q5': 'Como reportar bugs ou solicitar recursos?',
+    'faq.technical.a5': 'Use o sistema de feedback na plataforma, envie email para suporte@devhubtrader.com.br ou reporte via nossa comunidade. Bugs confirmados geram recompensas em tokens.',
+    
+    // Marketplace
+    'faq.marketplace.q1': 'Como funciona o marketplace de estratégias?',
+    'faq.marketplace.a1': 'Usuários podem vender/comprar estratégias verificadas. Vendedores ganham 70% do valor, plataforma fica com 30%. Todas as estratégias passam por verificação de performance.',
+    'faq.marketplace.q2': 'Como vender minha estratégia?',
+    'faq.marketplace.a2': 'Submeta sua estratégia para verificação com pelo menos 6 meses de dados de backtest. Uma vez aprovada, defina seu preço e comece a ganhar com as vendas.',
+    'faq.marketplace.q3': 'Estratégias do marketplace são garantidas?',
+    'faq.marketplace.a3': 'Todas as estratégias são verificadas quanto à performance histórica, mas resultados passados não garantem performance futura. Sempre teste estratégias antes de operar ao vivo.',
     
     // Dashboard
     'dashboard.title': 'Dashboard',

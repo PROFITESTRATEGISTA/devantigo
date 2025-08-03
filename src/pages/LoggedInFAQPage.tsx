@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, HelpCircle, Zap, Code2, BarChart2, Users, Crown, Shield, ChevronDown, ChevronUp } from 'lucide-react';
+import { ArrowLeft, HelpCircle, Zap, Code2, BarChart2, Users, Crown, Shield, ChevronDown, ChevronUp, Settings, Store } from 'lucide-react';
 import { Navbar } from '../components/Navbar';
 import { useLanguageStore } from '../stores/languageStore';
 
@@ -34,6 +34,29 @@ export function LoggedInFAQPage() {
       ]
     },
     {
+      id: 'platforms',
+      title: t('faq.category.platforms'),
+      icon: <BarChart2 className="w-6 h-6 text-purple-500" />,
+      questions: [
+        {
+          question: t('faq.platforms.q1'),
+          answer: t('faq.platforms.a1')
+        },
+        {
+          question: t('faq.platforms.q2'),
+          answer: t('faq.platforms.a2')
+        },
+        {
+          question: t('faq.platforms.q3'),
+          answer: t('faq.platforms.a3')
+        },
+        {
+          question: t('faq.platforms.q4'),
+          answer: t('faq.platforms.a4')
+        }
+      ]
+    },
+    {
       id: 'ai',
       title: t('faq.category.ai'),
       icon: <Zap className="w-6 h-6 text-yellow-500" />,
@@ -49,6 +72,33 @@ export function LoggedInFAQPage() {
       ]
     },
     {
+      id: 'tokens',
+      title: t('faq.category.tokens'),
+      icon: <Zap className="w-6 h-6 text-yellow-400" />,
+      questions: [
+        {
+          question: t('faq.tokens.q1'),
+          answer: t('faq.tokens.a1')
+        },
+        {
+          question: t('faq.tokens.q2'),
+          answer: t('faq.tokens.a2')
+        },
+        {
+          question: t('faq.tokens.q3'),
+          answer: t('faq.tokens.a3')
+        },
+        {
+          question: t('faq.tokens.q4'),
+          answer: t('faq.tokens.a4')
+        },
+        {
+          question: t('faq.tokens.q5'),
+          answer: t('faq.tokens.a5')
+        }
+      ]
+    },
+    {
       id: 'analysis',
       title: t('faq.category.analysis'),
       icon: <BarChart2 className="w-6 h-6 text-green-500" />,
@@ -60,6 +110,126 @@ export function LoggedInFAQPage() {
         {
           question: t('faq.analysis.q2'),
           answer: t('faq.analysis.a2')
+        }
+      ]
+    }
+    },
+    {
+      id: 'collaboration',
+      title: t('faq.category.collaboration'),
+      icon: <Users className="w-6 h-6 text-indigo-500" />,
+      questions: [
+        {
+          question: t('faq.collaboration.q1'),
+          answer: t('faq.collaboration.a1')
+        },
+        {
+          question: t('faq.collaboration.q2'),
+          answer: t('faq.collaboration.a2')
+        },
+        {
+          question: t('faq.collaboration.q3'),
+          answer: t('faq.collaboration.a3')
+        },
+        {
+          question: t('faq.collaboration.q4'),
+          answer: t('faq.collaboration.a4')
+        }
+      ]
+    },
+    {
+      id: 'plans',
+      title: t('faq.category.plans'),
+      icon: <Crown className="w-6 h-6 text-yellow-500" />,
+      questions: [
+        {
+          question: t('faq.plans.q1'),
+          answer: t('faq.plans.a1')
+        },
+        {
+          question: t('faq.plans.q2'),
+          answer: t('faq.plans.a2')
+        },
+        {
+          question: t('faq.plans.q3'),
+          answer: t('faq.plans.a3')
+        },
+        {
+          question: t('faq.plans.q4'),
+          answer: t('faq.plans.a4')
+        },
+        {
+          question: t('faq.plans.q5'),
+          answer: t('faq.plans.a5')
+        }
+      ]
+    },
+    {
+      id: 'security',
+      title: t('faq.category.security'),
+      icon: <Shield className="w-6 h-6 text-red-500" />,
+      questions: [
+        {
+          question: t('faq.security.q1'),
+          answer: t('faq.security.a1')
+        },
+        {
+          question: t('faq.security.q2'),
+          answer: t('faq.security.a2')
+        },
+        {
+          question: t('faq.security.q3'),
+          answer: t('faq.security.a3')
+        },
+        {
+          question: t('faq.security.q4'),
+          answer: t('faq.security.a4')
+        }
+      ]
+    },
+    {
+      id: 'technical',
+      title: t('faq.category.technical'),
+      icon: <Settings className="w-6 h-6 text-gray-500" />,
+      questions: [
+        {
+          question: t('faq.technical.q1'),
+          answer: t('faq.technical.a1')
+        },
+        {
+          question: t('faq.technical.q2'),
+          answer: t('faq.technical.a2')
+        },
+        {
+          question: t('faq.technical.q3'),
+          answer: t('faq.technical.a3')
+        },
+        {
+          question: t('faq.technical.q4'),
+          answer: t('faq.technical.a4')
+        },
+        {
+          question: t('faq.technical.q5'),
+          answer: t('faq.technical.a5')
+        }
+      ]
+    },
+    {
+      id: 'marketplace',
+      title: t('faq.category.marketplace'),
+      icon: <Store className="w-6 h-6 text-orange-500" />,
+      questions: [
+        {
+          question: t('faq.marketplace.q1'),
+          answer: t('faq.marketplace.a1')
+        },
+        {
+          question: t('faq.marketplace.q2'),
+          answer: t('faq.marketplace.a2')
+        },
+        {
+          question: t('faq.marketplace.q3'),
+          answer: t('faq.marketplace.a3')
         }
       ]
     }
