@@ -20,17 +20,21 @@ export function QuantDiarySection() {
   const { profile } = useAuthStore();
   const [currentDate, setCurrentDate] = useState(new Date());
   const [currentWeekStart, setCurrentWeekStart] = useState(() => {
-    // Limitar a 2025
+    // Garantir que sempre comece em 2025
     const today = new Date();
     if (today.getFullYear() < 2025) {
       today.setFullYear(2025, 0, 1); // 1º de janeiro de 2025
     }
-    const dayOfWeek = today.getDay();
-    const mondayOffset = dayOfWeek === 0 ? -6 : 1 - dayOfWeek;
-    const monday = new Date(today);
-    monday.setDate(today.getDate() + mondayOffset);
-    monday.setHours(0, 0, 0, 0);
-    return monday;
+    
+    // Calcular a semana baseada no dia do ano
+    const startOfYear = new Date(2025, 0, 1); // 1º de janeiro de 2025
+    const dayOfYear = Math.floor((today.getTime() - startOfYear.getTime()) / (24 * 60 * 60 * 1000)) + 1;
+    const weekOfYear = Math.ceil(dayOfYear / 7);
+    
+    // Calcular o primeiro dia da semana atual
+    const firstDayOfWeek = new Date(2025, 0, ((weekOfYear - 1) * 7) + 1);
+    firstDayOfWeek.setHours(0, 0, 0, 0);
+    return firstDayOfWeek;
   });
   const [viewType, setViewType] = useState<'calendar' | 'weekly'>('weekly');
   const [showWeekends, setShowWeekends] = useState(false);
@@ -132,41 +136,38 @@ export function QuantDiarySection() {
   }, []);
 
   const navigateWeek = (direction: 'prev' | 'next') => {
-    const currentWeekOfYear = getWeekOfYear(currentWeekStart);
+    // Calcular semana atual do ano
+    const startOfYear = new Date(2025, 0, 1);
+    const dayOfYear = Math.floor((currentWeekStart.getTime() - startOfYear.getTime()) / (24 * 60 * 60 * 1000)) + 1;
+    const currentWeekOfYear = Math.ceil(dayOfYear / 7);
     
     if (direction === 'next') {
-      // Próxima semana: sempre +1
       const nextWeekOfYear = currentWeekOfYear + 1;
       
-      // Calcular a data da próxima semana (sempre 7 dias depois)
-      const nextWeekStart = new Date(currentWeekStart);
-      nextWeekStart.setDate(currentWeekStart.getDate() + 7);
-      
-      // Garantir que não saia de 2025
-      if (nextWeekStart.getFullYear() > 2025) {
-        return; // Não permitir ir além de 2025
+      // Verificar se não ultrapassa o ano de 2025
+      if (nextWeekOfYear > 52) {
+        return; // Não permitir ir além da semana 52 de 2025
       }
       
-      setCurrentWeekStart(nextWeekStart);
-      setCurrentDate(new Date(nextWeekStart.getFullYear(), nextWeekStart.getMonth(), 15));
+      // Calcular o primeiro dia da próxima semana
+      const nextWeekStart = new Date(2025, 0, ((nextWeekOfYear - 1) * 7) + 1);
+      
+      // Verificar se ainda está em 2025
+      if (nextWeekStart.getFullYear() <= 2025) {
+        setCurrentWeekStart(nextWeekStart);
+        setCurrentDate(new Date(nextWeekStart.getFullYear(), nextWeekStart.getMonth(), 15));
+      }
       
     } else {
-      // Semana anterior: sempre -1, mas nunca menor que 1
-      const prevWeekOfYear = Math.max(1, currentWeekOfYear - 1);
+      const prevWeekOfYear = currentWeekOfYear - 1;
       
-      // Se já estamos na semana 1, não permitir voltar
-      if (currentWeekOfYear <= 1) {
-        return;
+      // Não permitir voltar antes da semana 1
+      if (prevWeekOfYear < 1) {
+        return; // Não permitir ir antes da semana 1 de 2025
       }
       
-      // Calcular a data da semana anterior (sempre 7 dias antes)
-      const prevWeekStart = new Date(currentWeekStart);
-      prevWeekStart.setDate(currentWeekStart.getDate() - 7);
-      
-      // Garantir que não saia de 2025
-      if (prevWeekStart.getFullYear() < 2025) {
-        return; // Não permitir ir antes de 2025
-      }
+      // Calcular o primeiro dia da semana anterior
+      const prevWeekStart = new Date(2025, 0, ((prevWeekOfYear - 1) * 7) + 1);
       
       setCurrentWeekStart(prevWeekStart);
       setCurrentDate(new Date(prevWeekStart.getFullYear(), prevWeekStart.getMonth(), 15));
@@ -180,9 +181,12 @@ export function QuantDiarySection() {
                    newMonth > 11 ? currentDate.getFullYear() + 1 : 
                    currentDate.getFullYear();
     
-    // Limitar a 2025 ou superior
+    // Limitar apenas a 2025
     if (newYear < 2025) {
       return; // Não permitir navegar para antes de 2025
+    }
+    if (newYear > 2025) {
+      return; // Não permitir navegar para depois de 2025
     }
     
     newDate.setFullYear(newYear);
@@ -190,45 +194,64 @@ export function QuantDiarySection() {
     setCurrentDate(newDate);
     
     if (viewType === 'weekly') {
-      // Ajustar currentWeekStart para a primeira semana do novo mês (dia 1)
-      const firstWeekStart = new Date(newDate.getFullYear(), newDate.getMonth(), 1);
+      // Calcular a primeira semana do novo mês
+      const firstDayOfMonth = new Date(2025, newDate.getMonth(), 1);
+      const startOfYear = new Date(2025, 0, 1);
+      const dayOfYear = Math.floor((firstDayOfMonth.getTime() - startOfYear.getTime()) / (24 * 60 * 60 * 1000)) + 1;
+      const weekOfYear = Math.ceil(dayOfYear / 7);
+      
+      const firstWeekStart = new Date(2025, 0, ((weekOfYear - 1) * 7) + 1);
       setCurrentWeekStart(firstWeekStart);
     }
   };
 
-  // Função para calcular o número da semana no mês
-  const getWeekOfMonth = (date: Date) => {
-    const dayOfMonth = date.getDate();
-    return Math.ceil(dayOfMonth / 7);
-  };
-
-  // Função para calcular o número da semana no ano (cumulativo desde 1º janeiro)
+  // Função para calcular o número da semana no ano (baseado no CSV)
   const getWeekOfYear = (date: Date) => {
-    // Garantir que estamos em 2025
-    const year = Math.max(2025, date.getFullYear());
-    const firstDayOfYear = new Date(date.getFullYear(), 0, 1);
+    if (date.getFullYear() !== 2025) return 1;
+    
+    const firstDayOfYear = new Date(2025, 0, 1); // 1º de janeiro de 2025
     const dayOfYear = Math.floor((date.getTime() - firstDayOfYear.getTime()) / (24 * 60 * 60 * 1000)) + 1;
     
-    // Contagem cumulativa: semana 1 = dias 1-7, semana 2 = dias 8-14, etc.
+    // Matemática simples: cada 7 dias = 1 semana
+    // Semana 1 = dias 1-7, Semana 2 = dias 8-14, etc.
     return Math.ceil(dayOfYear / 7);
+  };
+  
+  // Função para calcular o número da semana no mês (baseado no CSV)
+  const getWeekOfMonth = (date: Date) => {
+    const dayOfMonth = date.getDate();
+    // Semana 1 = dias 1-7, Semana 2 = dias 8-14, etc.
+    return Math.ceil(dayOfMonth / 7);
   };
 
   const getWeekDays = () => {
     const days = [];
     
-    // Usar currentWeekStart como base e gerar 7 dias consecutivos
-    const startOfWeek = new Date(currentWeekStart);
+    // Calcular a semana atual do ano
+    const startOfYear = new Date(2025, 0, 1);
+    const dayOfYear = Math.floor((currentWeekStart.getTime() - startOfYear.getTime()) / (24 * 60 * 60 * 1000)) + 1;
+    const weekOfYear = Math.ceil(dayOfYear / 7);
     
-    // Gerar dias da semana
+    // Calcular os dias da semana baseado na semana do ano
+    const firstDayOfWeek = ((weekOfYear - 1) * 7) + 1; // Primeiro dia da semana no ano
+    const lastDayOfWeek = Math.min(firstDayOfWeek + 6, 365); // Último dia da semana (máximo 365)
+    
     const daysToShow = showWeekends ? 7 : 5;
+    let daysAdded = 0;
     
-    for (let i = 0; i < daysToShow; i++) {
-      const day = new Date(startOfWeek);
-      day.setDate(startOfWeek.getDate() + i);
+    for (let dayOfYearCurrent = firstDayOfWeek; dayOfYearCurrent <= lastDayOfWeek && daysAdded < daysToShow; dayOfYearCurrent++) {
+      const day = new Date(2025, 0, dayOfYearCurrent); // Converter dia do ano para data
       
-      // Garantir que não saia de 2025
-      if (day.getFullYear() >= 2025) {
+      // Verificar se é fim de semana e se deve mostrar
+      const dayOfWeek = day.getDay();
+      if (!showWeekends && (dayOfWeek === 0 || dayOfWeek === 6)) {
+        continue; // Pular fins de semana se não deve mostrar
+      }
+      
+      // Garantir que está em 2025
+      if (day.getFullYear() === 2025) {
         days.push(day);
+        daysAdded++;
       }
     }
     
@@ -236,32 +259,52 @@ export function QuantDiarySection() {
   };
 
   const getCalendarDays = () => {
-    let year = currentDate.getFullYear();
-    // Garantir que estamos em 2025 ou superior
-    if (year < 2025) {
-      year = 2025;
-    }
+    const year = 2025; // Sempre usar 2025
     const month = currentDate.getMonth();
     
+    // Primeiro e último dia do mês
     const firstDay = new Date(year, month, 1);
     const lastDay = new Date(year, month + 1, 0);
-    const startDate = new Date(firstDay);
-    
-    // Ajustar para começar na segunda-feira
-    const dayOfWeek = firstDay.getDay();
-    const mondayOffset = dayOfWeek === 0 ? -6 : 1 - dayOfWeek;
-    startDate.setDate(firstDay.getDate() + mondayOffset);
     
     const days = [];
-    const currentDay = new Date(startDate);
     
-    // Gerar 42 dias (6 semanas)
-    for (let i = 0; i < 42; i++) {
-      days.push(new Date(currentDay));
-      currentDay.setDate(currentDay.getDate() + 1);
+    // Adicionar apenas os dias do mês atual (sem resquícios de outros meses)
+    for (let day = 1; day <= lastDay.getDate(); day++) {
+      days.push(new Date(year, month, day));
     }
     
     return days;
+  };
+  
+  // Função para obter o layout do calendário mensal (7 colunas)
+  const getCalendarLayout = () => {
+    const year = 2025;
+    const month = currentDate.getMonth();
+    const firstDay = new Date(year, month, 1);
+    const lastDay = new Date(year, month + 1, 0);
+    
+    // Calcular quantos dias vazios no início (para alinhar com os dias da semana)
+    const dayOfWeek = firstDay.getDay();
+    const emptyDaysAtStart = dayOfWeek === 0 ? 6 : dayOfWeek - 1; // Domingo = 6 dias vazios, Segunda = 0
+    
+    const layout = [];
+    
+    // Adicionar dias vazios no início
+    for (let i = 0; i < emptyDaysAtStart; i++) {
+      layout.push(null);
+    }
+    
+    // Adicionar todos os dias do mês
+    for (let day = 1; day <= lastDay.getDate(); day++) {
+      layout.push(new Date(year, month, day));
+    }
+    
+    // Completar a última semana com dias vazios se necessário
+    while (layout.length % 7 !== 0) {
+      layout.push(null);
+    }
+    
+    return layout;
   };
 
   const formatDate = (date: Date) => {
@@ -497,7 +540,7 @@ export function QuantDiarySection() {
         
         <h3 className="text-lg font-semibold">
           {viewType === 'weekly' 
-            ? `${getMonthName(currentWeekStart)} de ${currentWeekStart.getFullYear()} - Semana ${getWeekOfMonth(currentWeekStart)} (Semana ${getWeekOfYear(currentWeekStart)} do ano)`
+            ? `${getMonthName(currentWeekStart)} de 2025 - Semana ${getWeekOfMonth(currentWeekStart)} (Semana ${getWeekOfYear(currentWeekStart)} do ano)`
             : `${getMonthName(currentDate)} de ${currentDate.getFullYear()}`}
         </h3>
         
@@ -641,7 +684,7 @@ export function QuantDiarySection() {
           })}
         </div>
       ) : (
-        <div className="grid grid-cols-7 gap-2">
+        <div className="grid grid-cols-7 gap-1">
           {/* Header dos dias da semana */}
           {['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb', 'Dom'].map(day => (
             <div key={day} className="p-2 text-center text-sm font-medium text-gray-400">
@@ -650,8 +693,8 @@ export function QuantDiarySection() {
           ))}
           
           {/* Dias do calendário */}
-          {getCalendarDays().map((day, index) => {
-            const entry = getEntryForDate(day);
+          {getCalendarLayout().map((day, index) => {
+            const entry = day ? getEntryForDate(day) : null;
             const isCurrentMonth = day.getMonth() === currentDate.getMonth();
             const isToday = formatDate(day) === formatDate(new Date());
             
@@ -659,48 +702,53 @@ export function QuantDiarySection() {
               <div
                 key={index}
                 className={`min-h-24 p-2 rounded-lg border transition-all duration-300 hover:border-blue-500 cursor-pointer ${
-                  isToday 
-                    ? 'border-blue-500 bg-blue-900 bg-opacity-20' 
-                    : isCurrentMonth 
-                      ? 'border-gray-700 bg-gray-800' 
-                      : 'border-gray-800 bg-gray-900 opacity-50'
+                  !day 
+                    ? 'border-transparent bg-transparent cursor-default' // Dias vazios
+                    : isToday 
+                      ? 'border-blue-500 bg-blue-900 bg-opacity-20' 
+                      : 'border-gray-700 bg-gray-800'
                 }`}
-                onClick={() => openModal(day, 'comment')}
+                onClick={() => day && openModal(day, 'comment')}
               >
-                <div className="text-center mb-2">
-                  <span className={`text-sm font-medium ${
-                    isCurrentMonth ? 'text-white' : 'text-gray-500'
-                  }`}>
-                    {day.getDate()}
-                  </span>
-                </div>
-                
-                {entry && (
-                  <div className="space-y-1">
-                    {entry.pnl !== undefined && entry.pnl !== 0 && (
-                      <div className={`text-xs font-medium ${
-                        entry.pnl > 0 ? 'text-green-400' : 'text-red-400'
-                      }`}>
-                        R$ {entry.pnl.toFixed(0)}
+                {day && (
+                  <>
+                    <div className="text-center mb-2">
+                      <span className="text-sm font-medium text-white">
+                        {day.getDate()}
+                      </span>
+                      <div className="text-xs text-gray-400">
+                        Sem {getWeekOfMonth(day)} (S{getWeekOfYear(day)})
                       </div>
-                    )}
-                    
-                    {entry.trades !== undefined && entry.trades > 0 && (
-                      <div className="text-xs text-blue-400">
-                        {entry.trades} trades
-                      </div>
-                    )}
-                    
-                    <div className="text-center">
-                      <span className="text-sm">{getMoodEmoji(entry.mood || 'neutral')}</span>
                     </div>
-                  </div>
-                )}
                 
-                {!entry && isCurrentMonth && (
-                  <div className="flex items-center justify-center h-full">
-                    <Plus className="w-4 h-4 text-gray-600" />
-                  </div>
+                    {entry && (
+                      <div className="space-y-1">
+                        {entry.pnl !== undefined && entry.pnl !== 0 && (
+                          <div className={`text-xs font-medium ${
+                            entry.pnl > 0 ? 'text-green-400' : 'text-red-400'
+                          }`}>
+                            R$ {entry.pnl.toFixed(0)}
+                          </div>
+                        )}
+                    
+                        {entry.trades !== undefined && entry.trades > 0 && (
+                          <div className="text-xs text-blue-400">
+                            {entry.trades} trades
+                          </div>
+                        )}
+                    
+                        <div className="text-center">
+                          <span className="text-sm">{getMoodEmoji(entry.mood || 'neutral')}</span>
+                        </div>
+                      </div>
+                    )}
+                
+                    {!entry && (
+                      <div className="flex items-center justify-center h-full">
+                        <Plus className="w-4 h-4 text-gray-600" />
+                      </div>
+                    )}
+                  </>
                 )}
               </div>
             );
@@ -726,12 +774,12 @@ export function QuantDiarySection() {
                   : (language === 'en' ? 'Add Saved Analysis' : 'Adicionar Análise Salva')}
               </h2>
               <p className="mt-2 text-gray-400">
-                {selectedDate.toLocaleDateString('pt-BR', { 
+                {selectedDate && selectedDate.toLocaleDateString('pt-BR', { 
                   weekday: 'long', 
                   year: 'numeric', 
                   month: 'long', 
                   day: 'numeric' 
-                })}
+                }) + ` - Semana ${getWeekOfMonth(selectedDate)} do mês (Semana ${getWeekOfYear(selectedDate)} do ano)`}
               </p>
             </div>
 
