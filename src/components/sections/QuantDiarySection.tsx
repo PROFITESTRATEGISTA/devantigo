@@ -469,13 +469,13 @@ export function QuantDiarySection() {
                   )}
               
                   {/* Botões de ação */}
-                  <div className="space-y-1">
+                  <div className="space-y-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
                     <button
                       onClick={(e) => {
                         e.stopPropagation();
                         openModal(day, 'comment');
                       }}
-                      className="w-full py-1 px-2 bg-blue-600 hover:bg-blue-700 rounded text-xs text-white flex items-center justify-center transition-colors"
+                      className="w-full py-1.5 px-2 bg-blue-600 hover:bg-blue-700 rounded text-xs text-white flex items-center justify-center transition-all duration-200 transform hover:scale-105"
                     >
                       <MessageSquare className="w-3 h-3 mr-1" />
                       Comentários
@@ -486,7 +486,7 @@ export function QuantDiarySection() {
                         e.stopPropagation();
                         openModal(day, 'analysis');
                       }}
-                      className="w-full py-1 px-2 bg-green-600 hover:bg-green-700 rounded text-xs text-white flex items-center justify-center transition-colors"
+                      className="w-full py-1.5 px-2 bg-green-600 hover:bg-green-700 rounded text-xs text-white flex items-center justify-center transition-all duration-200 transform hover:scale-105"
                     >
                       <BarChart2 className="w-3 h-3 mr-1" />
                       Análise
