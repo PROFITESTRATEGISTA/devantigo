@@ -2,7 +2,28 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { 
   ArrowLeft, Calendar, BarChart2, TrendingUp, 
+} from 'lucide-react';
+import Navbar from '../components/Navbar';
 
+export default function DiarioQuant() {
+  const navigate = useNavigate();
+  const [viewMode, setViewMode] = useState('calendar');
+  const [monthlyBreakdown, setMonthlyBreakdown] = useState([]);
+
+  const renderCalendar = () => (
+    <div className="bg-gray-800 rounded-lg p-6">
+      <h3 className="text-xl font-semibold mb-6 flex items-center">
+        <Calendar className="w-5 h-5 text-blue-400 mr-2" />
+        Calendário de Trading
+      </h3>
+      <div className="text-center text-gray-400">
+        <p>Calendário será implementado em breve</p>
+      </div>
+    </div>
+  );
+
+  const renderStatistics = () => (
+    <div className="space-y-6">
       {/* Breakdown Mensal */}
       <div className="bg-gray-800 rounded-lg p-6">
         <h3 className="text-xl font-semibold mb-6 flex items-center">
