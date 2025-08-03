@@ -98,7 +98,7 @@ export function QuantDiaryPage() {
       const prejuizoBruto = Math.abs(days.filter(day => day.pnl < 0).reduce((sum, day) => sum + day.pnl, 0));
       
       return {
-  const allTimeStats = calculateAllTimeStats();
+      allTimeStats: calculateAllTimeStats(),
 
   // Função para obter o número de dias no mês
   const getDaysInMonth = (month: string, year: number) => {
