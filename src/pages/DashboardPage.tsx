@@ -9,6 +9,7 @@ import { TutorialsSection } from '../components/sections/TutorialsSection';
 import { MarketplaceSection } from '../components/sections/MarketplaceSection';
 import { UsersSection } from '../components/sections/UsersSection';
 import { RobotsSection } from '../components/sections/RobotsSection';
+import { useLanguageStore } from '../stores/languageStore';
 import { 
   mockAnalyses, 
   mockRankingAnalyses,
@@ -19,7 +20,24 @@ import {
 
 export const DashboardPage = () => {
   const navigate = useNavigate();
+  const { t, language } = useLanguageStore();
   const [activeSection, setActiveSection] = useState('analyses');
+
+  // Force re-render when language changes
+  React.useEffect(() => {
+    const handleLanguageChange = () => {
+      // Force component re-render
+      setActiveSection(prev => prev);
+    };
+    
+    window.addEventListener('languageChanged', handleLanguageChange);
+    window.addEventListener('storage', handleLanguageChange);
+    
+    return () => {
+      window.removeEventListener('languageChanged', handleLanguageChange);
+      window.removeEventListener('storage', handleLanguageChange);
+    };
+  }, []);
 
   useEffect(() => {
     setActiveSection('robots');
@@ -74,8 +92,8 @@ export const DashboardPage = () => {
       <div className="max-w-7xl mx-auto px-4 py-8">
         {/* Page Header */}
         <div className="mb-8">
-          <h1 className="text-2xl font-bold mb-2">Dashboard</h1>
-          <p className="text-gray-400">Visão geral da sua atividade de trading</p>
+          <h1 className="text-2xl font-bold mb-2">{t('dashboard.title')}</h1>
+          <p className="text-gray-400">{t('dashboard.subtitle')}</p>
         </div>
 
         {/* Navigation */}

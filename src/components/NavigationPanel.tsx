@@ -1,5 +1,6 @@
 import React from 'react';
 import { BarChart2, TrendingUp, BookOpen, Store, Users, Code2 } from 'lucide-react';
+import { useLanguageStore } from '../stores/languageStore';
 
 interface NavigationPanelProps {
   activeSection: string;
@@ -7,42 +8,44 @@ interface NavigationPanelProps {
 }
 
 export function NavigationPanel({ activeSection, onSectionChange }: NavigationPanelProps) {
+  const { t } = useLanguageStore();
+
   const sections = [
     {
       id: 'robots',
-      name: 'Meus Robôs',
+      name: t('dashboard.myRobots'),
       icon: <Code2 className="w-5 h-5" />,
-      description: 'Seus robôs de trading'
+      description: t('dashboard.myRobotsDesc')
     },
     {
       id: 'analyses',
-      name: 'Análises',
+      name: t('dashboard.analyses'),
       icon: <BarChart2 className="w-5 h-5" />,
-      description: 'Análises de backtest e estratégias'
+      description: t('dashboard.analysesDesc')
     },
     {
       id: 'ranking',
-      name: 'Ranking',
+      name: t('dashboard.ranking'),
       icon: <TrendingUp className="w-5 h-5" />,
-      description: 'Ranking de performance'
+      description: t('dashboard.rankingDesc')
     },
     {
       id: 'tutorials',
-      name: 'Tutoriais',
+      name: t('dashboard.tutorials'),
       icon: <BookOpen className="w-5 h-5" />,
-      description: 'Tutoriais e guias'
+      description: t('dashboard.tutorialsDesc')
     },
     {
       id: 'marketplace',
-      name: 'Marketplace',
+      name: t('dashboard.marketplace'),
       icon: <Store className="w-5 h-5" />,
-      description: 'Marketplace de estratégias'
+      description: t('dashboard.marketplaceDesc')
     },
     {
       id: 'users',
-      name: 'Usuários',
+      name: t('dashboard.users'),
       icon: <Users className="w-5 h-5" />,
-      description: 'Comunidade de usuários'
+      description: t('dashboard.usersDesc')
     }
   ];
 
