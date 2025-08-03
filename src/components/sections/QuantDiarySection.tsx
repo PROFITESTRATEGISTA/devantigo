@@ -963,5 +963,3 @@ export function QuantDiarySection() {
   );
 }
 
-
-export { QuantDiarySection }
