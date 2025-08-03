@@ -40,9 +40,9 @@ export function Navbar() {
 
   const menuItems = [
     { path: '/dashboard', label: 'Dashboard', icon: <BarChart2 className="w-5 h-5" />, external: false },
-    { path: '/robots', label: t('nav.robots'), icon: <Code2 className="w-5 h-5" />, external: false },
+    { path: '/robots', label: t('nav.robots') || 'Meus Robôs', icon: <Code2 className="w-5 h-5" />, external: false },
     { path: '/backtest-analysis', label: 'Backtest Analysis', icon: <FileSpreadsheet className="w-5 h-5" />, external: false },
-    { path: '/faq', label: 'FAQ', icon: <HelpCircle className="w-5 h-5" />, external: false },
+    { path: '/faq', label: t('nav.faq') || 'FAQ', icon: <HelpCircle className="w-5 h-5" />, external: false },
   ];
 
   return (

@@ -2,9 +2,11 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, HelpCircle, Zap, Code2, BarChart2, Users, Crown, Shield, ChevronDown, ChevronUp } from 'lucide-react';
 import { Navbar } from '../components/Navbar';
+import { useLanguageStore } from '../stores/languageStore';
 
 export function LoggedInFAQPage() {
   const navigate = useNavigate();
+  const { t } = useLanguageStore();
   const [expandedCategory, setExpandedCategory] = useState<string | null>(null);
 
   const toggleCategory = (categoryId: string) => {
@@ -172,10 +174,10 @@ export function LoggedInFAQPage() {
           </button>
           <div>
             <h1 className="text-3xl font-bold mb-2">
-              Perguntas Frequentes
+              {t('faq.title')}
             </h1>
             <p className="text-gray-400">
-              Encontre respostas para as dúvidas mais comuns sobre a plataforma
+              {t('faq.subtitle')}
             </p>
           </div>
         </div>
@@ -220,9 +222,9 @@ export function LoggedInFAQPage() {
 
         {/* Contact Section */}
         <div className="mt-12 bg-gradient-to-r from-blue-900 to-indigo-900 rounded-lg p-6 text-center">
-          <h2 className="text-2xl font-bold mb-4">Não encontrou sua resposta?</h2>
+          <h2 className="text-2xl font-bold mb-4">{t('faq.notFound')}</h2>
           <p className="text-blue-100 mb-6">
-            Nossa equipe está pronta para ajudar você com qualquer dúvida
+            {t('faq.contact')}
           </p>
           <div className="flex flex-wrap justify-center gap-4">
             <button
@@ -233,19 +235,19 @@ export function LoggedInFAQPage() {
               }}
               className="px-6 py-3 bg-green-600 hover:bg-green-700 text-white rounded-md font-medium"
             >
-              Falar no WhatsApp
+              {t('faq.whatsapp')}
             </button>
             <button
               onClick={() => window.open('mailto:suporte@devhubtrader.com.br', '_blank')}
               className="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-md font-medium"
             >
-              Enviar Email
+              {t('faq.email')}
             </button>
             <button
               onClick={() => navigate('/dashboard')}
               className="px-6 py-3 bg-gray-700 hover:bg-gray-600 text-white rounded-md font-medium"
             >
-              Voltar ao Dashboard
+              {t('faq.backToDashboard')}
             </button>
           </div>
         </div>

@@ -18,6 +18,8 @@ const translations: Record<Language, Record<string, string>> = {
     'nav.subscription': 'Subscription',
     'nav.experts': 'Experts',
     'nav.signOut': 'Sign Out',
+    'nav.dashboard': 'Dashboard',
+    'nav.faq': 'FAQ',
     
     // Buttons
     'button.createRobot': 'Create Robot',
@@ -27,12 +29,18 @@ const translations: Record<Language, Record<string, string>> = {
     'button.export': 'Export',
     'button.cancel': 'Cancel',
     'button.back': 'Back',
+    'button.analyze': 'Analyze',
+    'button.upload': 'Upload',
+    'button.download': 'Download',
     
     // Robot actions
     'robot.edit': 'Edit',
     'robot.delete': 'Delete',
     'robot.view': 'View',
     'robot.rename': 'Rename',
+    'robot.create': 'Create Robot',
+    'robot.noRobots': 'No robots found',
+    'robot.createFirst': 'Create your first robot to get started',
     
     // Sharing
     'share.title': 'Share Robot',
@@ -56,6 +64,8 @@ const translations: Record<Language, Record<string, string>> = {
     // Tokens
     'tokens.balance': 'tokens',
     'tokens.buy': 'Buy Tokens',
+    'tokens.insufficient': 'Insufficient tokens',
+    'tokens.required': 'tokens required',
     
     // Profile
     'profile.title': 'Profile Settings',
@@ -63,6 +73,8 @@ const translations: Record<Language, Record<string, string>> = {
     'profile.email': 'Email Address',
     'profile.name': 'Display Name',
     'profile.save': 'Save Changes',
+    'profile.phone': 'Phone Number',
+    'profile.currentPlan': 'Current Plan',
     
     // Subscription
     'subscription.title': 'Subscription & Tokens',
@@ -70,11 +82,33 @@ const translations: Record<Language, Record<string, string>> = {
     'subscription.status': 'Status',
     'subscription.renewal': 'Next Renewal',
     'subscription.manage': 'Manage Subscription',
+    'subscription.upgrade': 'Upgrade Plan',
+    'subscription.tokenBalance': 'Token Balance',
+    
+    // Analysis
+    'analysis.backtest': 'Backtest Analysis',
+    'analysis.strategy': 'Strategy Analysis',
+    'analysis.upload': 'Upload Data',
+    'analysis.results': 'Analysis Results',
+    'analysis.metrics': 'Performance Metrics',
+    
+    // FAQ
+    'faq.title': 'Frequently Asked Questions',
+    'faq.subtitle': 'Find answers to common questions about the platform',
+    'faq.notFound': 'Didn\'t find your answer?',
+    'faq.contact': 'Our team is ready to help you with any questions',
+    'faq.whatsapp': 'Chat on WhatsApp',
+    'faq.email': 'Send Email',
+    'faq.backToDashboard': 'Back to Dashboard',
     
     // Misc
     'loading': 'Loading...',
     'error': 'An error occurred',
     'success': 'Success!',
+    'search': 'Search...',
+    'filter': 'Filter',
+    'sort': 'Sort',
+    'actions': 'Actions',
   },
   pt: {
     // Navigation
@@ -84,6 +118,8 @@ const translations: Record<Language, Record<string, string>> = {
     'nav.subscription': 'Assinatura',
     'nav.experts': 'Especialistas',
     'nav.signOut': 'Sair',
+    'nav.dashboard': 'Dashboard',
+    'nav.faq': 'FAQ',
     
     // Buttons
     'button.createRobot': 'Criar Robô',
@@ -93,12 +129,18 @@ const translations: Record<Language, Record<string, string>> = {
     'button.export': 'Exportar',
     'button.cancel': 'Cancelar',
     'button.back': 'Voltar',
+    'button.analyze': 'Analisar',
+    'button.upload': 'Enviar',
+    'button.download': 'Baixar',
     
     // Robot actions
     'robot.edit': 'Editar',
     'robot.delete': 'Excluir',
     'robot.view': 'Visualizar',
     'robot.rename': 'Renomear',
+    'robot.create': 'Criar Robô',
+    'robot.noRobots': 'Nenhum robô encontrado',
+    'robot.createFirst': 'Crie seu primeiro robô para começar',
     
     // Sharing
     'share.title': 'Compartilhar Robô',
@@ -122,6 +164,8 @@ const translations: Record<Language, Record<string, string>> = {
     // Tokens
     'tokens.balance': 'tokens',
     'tokens.buy': 'Comprar Tokens',
+    'tokens.insufficient': 'Tokens insuficientes',
+    'tokens.required': 'tokens necessários',
     
     // Profile
     'profile.title': 'Configurações de Perfil',
@@ -129,6 +173,8 @@ const translations: Record<Language, Record<string, string>> = {
     'profile.email': 'Endereço de Email',
     'profile.name': 'Nome de Exibição',
     'profile.save': 'Salvar Alterações',
+    'profile.phone': 'Telefone',
+    'profile.currentPlan': 'Plano Atual',
     
     // Subscription
     'subscription.title': 'Assinatura e Tokens',
@@ -136,11 +182,33 @@ const translations: Record<Language, Record<string, string>> = {
     'subscription.status': 'Status',
     'subscription.renewal': 'Próxima Renovação',
     'subscription.manage': 'Gerenciar Assinatura',
+    'subscription.upgrade': 'Atualizar Plano',
+    'subscription.tokenBalance': 'Saldo de Tokens',
+    
+    // Analysis
+    'analysis.backtest': 'Análise de Backtest',
+    'analysis.strategy': 'Análise de Estratégia',
+    'analysis.upload': 'Enviar Dados',
+    'analysis.results': 'Resultados da Análise',
+    'analysis.metrics': 'Métricas de Performance',
+    
+    // FAQ
+    'faq.title': 'Perguntas Frequentes',
+    'faq.subtitle': 'Encontre respostas para as dúvidas mais comuns sobre a plataforma',
+    'faq.notFound': 'Não encontrou sua resposta?',
+    'faq.contact': 'Nossa equipe está pronta para ajudar você com qualquer dúvida',
+    'faq.whatsapp': 'Falar no WhatsApp',
+    'faq.email': 'Enviar Email',
+    'faq.backToDashboard': 'Voltar ao Dashboard',
     
     // Misc
     'loading': 'Carregando...',
     'error': 'Ocorreu um erro',
     'success': 'Sucesso!',
+    'search': 'Buscar...',
+    'filter': 'Filtrar',
+    'sort': 'Ordenar',
+    'actions': 'Ações',
   }
 };
 
