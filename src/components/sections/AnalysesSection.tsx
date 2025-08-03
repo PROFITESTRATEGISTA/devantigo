@@ -76,9 +76,9 @@ export function AnalysesSection({ analyses, onNavigate }: AnalysesSectionProps) 
             <div className="space-y-2">
               <button
                 onClick={() => onNavigate('/backtest-analysis')}
-                className="w-full py-2 bg-gray-700 hover:bg-gray-600 rounded-lg text-white transition-colors"
+                className="w-full py-2 bg-gray-700 hover:bg-gray-600 rounded-lg text-white transition-colors text-sm"
               >
-                {t('analyses.viewAnalysis')}
+                View Analysis
               </button>
               
               <button
@@ -113,10 +113,10 @@ export function AnalysesSection({ analyses, onNavigate }: AnalysesSectionProps) 
                     }).catch(console.error);
                   }
                 }}
-                className="w-full py-2 bg-green-600 hover:bg-green-700 rounded-lg text-white transition-colors flex items-center justify-center"
+                className="w-full py-2 bg-green-600 hover:bg-green-700 rounded-lg text-white transition-colors flex items-center justify-center text-sm"
               >
                 <Share2 className="w-4 h-4 mr-2" />
-                Compartilhar Análise
+                Share Analysis
               </button>
               
               <button
@@ -125,10 +125,10 @@ export function AnalysesSection({ analyses, onNavigate }: AnalysesSectionProps) 
                   console.log('Adding to ranking:', analysis.name);
                   // You can implement the actual ranking logic here
                 }}
-                className="w-full py-2 bg-blue-600 hover:bg-blue-700 rounded-lg text-white transition-colors flex items-center justify-center"
+                className="w-full py-2 bg-blue-600 hover:bg-blue-700 rounded-lg text-white transition-colors flex items-center justify-center text-sm"
               >
                 <Trophy className="w-4 h-4 mr-2" />
-                {t('analyses.addToRanking')}
+                Add to Ranking
               </button>
             </div>
           </div>

@@ -626,6 +626,8 @@ const translations: Record<Language, Record<string, string>> = {
     'analyses.viewAnalysis': 'Ver Análise',
     'analyses.noAnalyses': 'Nenhuma análise encontrada',
     'analyses.createFirst': 'Crie sua primeira análise para começar',
+    'analyses.shareAnalysis': 'Compartilhar Análise',
+    'analyses.addToRanking': 'Adicionar ao Ranking',
     'analyses.profitFactor': 'Fator de Lucro',
     'analyses.winRate': 'Taxa de Acerto',
     'analyses.addToRanking': 'Adicionar ao Ranking',
