@@ -1,5 +1,6 @@
 import React from 'react';
 import { BookOpen, Play, Clock, User } from 'lucide-react';
+import { useLanguageStore } from '../../stores/languageStore';
 
 interface Tutorial {
   id: string;
@@ -16,13 +17,18 @@ interface TutorialsSectionProps {
 }
 
 export function TutorialsSection({ tutorials }: TutorialsSectionProps) {
+  const { t } = useLanguageStore();
+  
   const getDifficultyColor = (difficulty: string) => {
     switch (difficulty.toLowerCase()) {
       case 'iniciante':
+      case 'beginner':
         return 'bg-green-500 bg-opacity-20 text-green-400';
       case 'intermediário':
+      case 'intermediate':
         return 'bg-yellow-500 bg-opacity-20 text-yellow-400';
       case 'avançado':
+      case 'advanced':
         return 'bg-red-500 bg-opacity-20 text-red-400';
       default:
         return 'bg-gray-500 bg-opacity-20 text-gray-400';
@@ -31,7 +37,7 @@ export function TutorialsSection({ tutorials }: TutorialsSectionProps) {
 
   return (
     <div className="space-y-6">
-      <h2 className="text-2xl font-bold text-white">Tutoriais e Guias</h2>
+      <h2 className="text-2xl font-bold text-white">{t('tutorials.title')}</h2>
       
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {tutorials.map((tutorial) => (
@@ -43,7 +49,7 @@ export function TutorialsSection({ tutorials }: TutorialsSectionProps) {
             <div className="p-6">
               <div className="flex items-center justify-between mb-2">
                 <span className={`px-2 py-1 rounded-full text-xs font-medium ${getDifficultyColor(tutorial.difficulty)}`}>
-                  {tutorial.difficulty}
+                  {t(`tutorials.${tutorial.difficulty.toLowerCase()}`)}
                 </span>
                 <div className="flex items-center text-xs text-gray-400">
                   <Clock className="w-3 h-3 mr-1" />
@@ -60,7 +66,7 @@ export function TutorialsSection({ tutorials }: TutorialsSectionProps) {
                   {tutorial.author}
                 </div>
                 <button className="px-3 py-1 bg-blue-600 hover:bg-blue-700 rounded text-sm text-white">
-                  Assistir
+                  {t('tutorials.watch')}
                 </button>
               </div>
             </div>

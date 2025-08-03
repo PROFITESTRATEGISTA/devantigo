@@ -1,5 +1,6 @@
 import React from 'react';
 import { Store, Star } from 'lucide-react';
+import { useLanguageStore } from '../../stores/languageStore';
 
 interface MarketplaceCompany {
   id: string;
@@ -16,9 +17,11 @@ interface MarketplaceSectionProps {
 }
 
 export function MarketplaceSection({ companies }: MarketplaceSectionProps) {
+  const { t } = useLanguageStore();
+  
   return (
     <div className="space-y-6">
-      <h2 className="text-2xl font-bold text-white">Marketplace de Estratégias</h2>
+      <h2 className="text-2xl font-bold text-white">{t('marketplace.title')}</h2>
       
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {companies.map((company) => (
@@ -46,7 +49,7 @@ export function MarketplaceSection({ companies }: MarketplaceSectionProps) {
               }}
               className="w-full py-2 bg-blue-600 hover:bg-blue-700 rounded-lg text-white transition-colors"
             >
-              Conhecer Parceiro
+              {t('marketplace.explorePartner')}
             </button>
           </div>
         ))}

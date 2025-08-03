@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Users, MapPin, Star, MessageSquare, Search, Share2, BarChart2, Bot } from 'lucide-react';
+import { useLanguageStore } from '../../stores/languageStore';
 
 interface User {
   id: string;
@@ -16,6 +17,7 @@ interface UsersSectionProps {
 }
 
 export function UsersSection({ users }: UsersSectionProps) {
+  const { t } = useLanguageStore();
   const [searchQuery, setSearchQuery] = useState('');
   const [showShareModal, setShowShareModal] = useState(false);
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
@@ -60,12 +62,12 @@ export function UsersSection({ users }: UsersSectionProps) {
     <>
       <div className="space-y-6">
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-          <h2 className="text-2xl font-bold text-white">Comunidade de Usuários</h2>
+          <h2 className="text-2xl font-bold text-white">{t('users.title')}</h2>
           <div className="relative w-full sm:w-64">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
             <input
               type="text"
-              placeholder="Buscar usuários..."
+              placeholder={t('users.searchUsers')}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="w-full pl-10 pr-4 py-2 bg-gray-800 border border-gray-700 rounded-md text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -76,9 +78,9 @@ export function UsersSection({ users }: UsersSectionProps) {
         {filteredUsers.length === 0 ? (
           <div className="text-center py-12">
             <Users className="w-16 h-16 text-gray-600 mx-auto mb-4" />
-            <h3 className="text-xl font-semibold text-gray-400 mb-2">Nenhum usuário encontrado</h3>
+            <h3 className="text-xl font-semibold text-gray-400 mb-2">{t('users.noUsers')}</h3>
             <p className="text-gray-500">
-              {searchQuery ? `Nenhum usuário corresponde à busca "${searchQuery}"` : 'Nenhum usuário disponível'}
+              {searchQuery ? `${t('users.noUsersSearch')} "${searchQuery}"` : t('users.subtitle')}
             </p>
           </div>
         ) : (
@@ -111,32 +113,32 @@ export function UsersSection({ users }: UsersSectionProps) {
                     <span className="text-sm text-gray-400">{user.rating.toFixed(1)}</span>
                   </div>
                   <div className="text-sm text-gray-400">
-                    {user.strategies} estratégias
+                    {user.strategies} {t('marketplace.strategies')}
                   </div>
                 </div>
                 
                 <div className="space-y-2">
                   <button className="w-full py-2 bg-blue-600 hover:bg-blue-700 rounded-lg text-white transition-colors flex items-center justify-center">
                     <MessageSquare className="w-4 h-4 mr-2" />
-                    Conectar
+                    {t('users.connect')}
                   </button>
                   
                   <div className="flex space-x-2">
                     <button 
                       onClick={() => handleShareAnalysis(user)}
                       className="flex-1 py-1.5 bg-green-600 hover:bg-green-700 rounded-md text-white text-sm transition-colors flex items-center justify-center"
-                      title="Compartilhar análise"
+                      title={t('users.shareAnalysis')}
                     >
                       <BarChart2 className="w-3 h-3 mr-1" />
-                      Análise
+                      {t('analyses.title').split(' ')[0]}
                     </button>
                     <button 
                       onClick={() => handleShareRobot(user)}
                       className="flex-1 py-1.5 bg-purple-600 hover:bg-purple-700 rounded-md text-white text-sm transition-colors flex items-center justify-center"
-                      title="Compartilhar robô"
+                      title={t('users.shareRobot')}
                     >
                       <Bot className="w-3 h-3 mr-1" />
-                      Robô
+                      {t('nav.robots').split(' ')[1] || 'Robot'}
                     </button>
                   </div>
                 </div>
@@ -166,10 +168,10 @@ export function UsersSection({ users }: UsersSectionProps) {
                 )}
               </div>
               <h2 className="text-2xl font-bold text-gray-100">
-                Compartilhar {shareType === 'analysis' ? 'Análise' : 'Robô'}
+                {t('button.share')} {shareType === 'analysis' ? t('analyses.title').split(' ')[0] : t('nav.robots').split(' ')[1]}
               </h2>
               <p className="mt-2 text-gray-400">
-                Compartilhar com {selectedUser.name}
+                {t('button.share')} {t('users.connect').toLowerCase()} {selectedUser.name}
               </p>
             </div>
 
@@ -191,7 +193,7 @@ export function UsersSection({ users }: UsersSectionProps) {
             <div className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-gray-300 mb-1">
-                  Tipo de Compartilhamento
+                  {t('share.permission')}
                 </label>
                 <div className="flex space-x-4">
                   <label className="flex items-center">
@@ -203,7 +205,7 @@ export function UsersSection({ users }: UsersSectionProps) {
                       className="sr-only"
                     />
                     <div className="px-3 py-1.5 rounded bg-blue-600 text-white text-sm">
-                      Visualizar
+                      {t('share.viewOnly')}
                     </div>
                   </label>
                   <label className="flex items-center">
@@ -214,7 +216,7 @@ export function UsersSection({ users }: UsersSectionProps) {
                       className="sr-only"
                     />
                     <div className="px-3 py-1.5 rounded bg-gray-700 text-gray-300 text-sm">
-                      Editar
+                      {t('share.canEdit')}
                     </div>
                   </label>
                 </div>
@@ -224,14 +226,14 @@ export function UsersSection({ users }: UsersSectionProps) {
                   onClick={() => setShowShareModal(false)}
                   className="px-4 py-2 bg-gray-700 hover:bg-gray-600 rounded-md text-white"
                 >
-                  Cancelar
+                  {t('button.cancel')}
                 </button>
                 <button
                   onClick={handleShare}
                   className="px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-md text-white flex items-center"
                 >
                   <Share2 className="w-4 h-4 mr-2" />
-                  Compartilhar
+                  {t('button.share')}
                 </button>
               </div>
             </div>

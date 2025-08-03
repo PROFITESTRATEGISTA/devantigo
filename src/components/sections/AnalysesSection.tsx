@@ -22,12 +22,12 @@ export function AnalysesSection({ analyses, onNavigate }: AnalysesSectionProps) 
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h2 className="text-2xl font-bold text-white">{t('dashboard.analyses')}</h2>
+        <h2 className="text-2xl font-bold text-white">{t('analyses.title')}</h2>
         <button
           onClick={() => onNavigate('/backtest-analysis')}
           className="px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-md text-white"
         >
-          {t('analysis.backtest')}
+          {t('analyses.backtestAnalysis')}
         </button>
       </div>
       
@@ -72,7 +72,7 @@ export function AnalysesSection({ analyses, onNavigate }: AnalysesSectionProps) 
                 onClick={() => onNavigate('/backtest-analysis')}
                 className="w-full py-2 bg-gray-700 hover:bg-gray-600 rounded-lg text-white transition-colors"
               >
-                {t('robot.view')}
+                {t('analyses.viewAnalysis')}
               </button>
               
               <button
@@ -84,7 +84,7 @@ export function AnalysesSection({ analyses, onNavigate }: AnalysesSectionProps) 
                 className="w-full py-2 bg-blue-600 hover:bg-blue-700 rounded-lg text-white transition-colors flex items-center justify-center"
               >
                 <Trophy className="w-4 h-4 mr-2" />
-                {t('dashboard.ranking')}
+                {t('analyses.addToRanking')}
               </button>
             </div>
           </div>
