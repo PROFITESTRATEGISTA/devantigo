@@ -110,6 +110,22 @@ export function Navbar() {
               <TokenDisplay />
             </div>
             
+            {/* Earn Tokens Button */}
+            <div className="hidden lg:flex">
+              <button
+                onClick={() => {
+                  const message = "Olá vim do DevHub Trader e quero saber como ganhar tokens completando desafios";
+                  const encodedMessage = encodeURIComponent(message);
+                  window.open(`https://wa.me/5511975333355?text=${encodedMessage}`, '_blank');
+                }}
+                className="flex items-center space-x-1 px-2 py-1 bg-green-800 hover:bg-green-700 rounded-md text-xs text-green-300 transition-colors"
+                title="Complete desafios para ganhar tokens"
+              >
+                <span className="text-xs">🏆</span>
+                <span>Ganhe Tokens</span>
+              </button>
+            </div>
+            
             {/* Language Switcher */}
             <div className="hidden lg:flex">
               <LanguageSwitcher />
@@ -244,6 +260,17 @@ export function Navbar() {
             <div className="pt-4 pb-3 border-t border-gray-700">
               <div className="flex flex-col space-y-3 px-3">
                 <TokenDisplay />
+                <button
+                  onClick={() => {
+                    const message = "Olá vim do DevHub Trader e quero saber como ganhar tokens completando desafios";
+                    const encodedMessage = encodeURIComponent(message);
+                    window.open(`https://wa.me/5511975333355?text=${encodedMessage}`, '_blank');
+                  }}
+                  className="flex items-center space-x-1 px-2 py-1 bg-green-800 hover:bg-green-700 rounded-md text-xs text-green-300 transition-colors"
+                >
+                  <span className="text-xs">🏆</span>
+                  <span>Ganhe Tokens</span>
+                </button>
                 <LanguageSwitcher />
               </div>
             </div>
