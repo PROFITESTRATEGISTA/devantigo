@@ -25,6 +25,7 @@ export function QuantDiarySection() {
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [modalType, setModalType] = useState<'comment' | 'analysis'>('comment');
   const [showSelectionModal, setShowSelectionModal] = useState(false);
+  const [showDayPerformance, setShowDayPerformance] = useState(false);
   const [newEntry, setNewEntry] = useState({
     title: '',
     content: '',
@@ -235,8 +236,17 @@ export function QuantDiarySection() {
   };
 
   const openSelectionModal = (date: Date) => {
-    setSelectedDate(date);
-    setShowSelectionModal(true);
+    const entry = getEntryForDate(date);
+    
+    if (entry && (entry.pnl !== undefined || entry.trades !== undefined)) {
+      // Se tem dados, mostrar performance do dia
+      setSelectedDate(date);
+      setShowDayPerformance(true);
+    } else {
+      // Se não tem dados, mostrar seleção para adicionar
+      setSelectedDate(date);
+      setShowSelectionModal(true);
+    }
   };
 
   const handleSelectionChoice = (type: 'comment' | 'analysis') => {
@@ -310,7 +320,60 @@ export function QuantDiarySection() {
     const totalDays = relevantEntries.filter(entry => (entry.trades || 0) > 0).length;
     const winRate = totalDays > 0 ? (profitableDays / totalDays) * 100 : 0;
     
-    return { totalPnL, totalTrades, winRate, totalDays };
+    // Métricas avançadas
+    const bestDay = entries.length > 0 ? Math.max(...entries.map(e => e.pnl || 0)) : 0;
+    const worstDay = entries.length > 0 ? Math.min(...entries.map(e => e.pnl || 0)) : 0;
+    const profitableTrades = relevantEntries.reduce((sum, entry) => {
+      return sum + (entry.pnl && entry.pnl > 0 ? entry.trades || 0 : 0);
+    }, 0);
+    const lossTrades = totalTrades - profitableTrades;
+    
+    // Calcular Profit Factor
+    const grossProfit = relevantEntries.reduce((sum, entry) => {
+      return sum + (entry.pnl && entry.pnl > 0 ? entry.pnl : 0);
+    }, 0);
+    const grossLoss = Math.abs(relevantEntries.reduce((sum, entry) => {
+      return sum + (entry.pnl && entry.pnl < 0 ? entry.pnl : 0);
+    }, 0));
+    const profitFactor = grossLoss > 0 ? grossProfit / grossLoss : 0;
+    
+    // Calcular Sharpe Ratio (simplificado)
+    const dailyReturns = relevantEntries.map(e => e.pnl || 0);
+    const avgReturn = dailyReturns.length > 0 ? totalPnL / dailyReturns.length : 0;
+    const variance = dailyReturns.length > 0 ? 
+      dailyReturns.reduce((sum, ret) => sum + Math.pow(ret - avgReturn, 2), 0) / dailyReturns.length : 0;
+    const stdDev = Math.sqrt(variance);
+    const sharpeRatio = stdDev > 0 ? (avgReturn / stdDev) * Math.sqrt(252) : 0; // Anualizado
+    
+    // Calcular Drawdown
+    let maxDrawdown = 0;
+    let peak = 0;
+    let cumulativePnL = 0;
+    
+    for (const entry of relevantEntries.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())) {
+      cumulativePnL += entry.pnl || 0;
+      if (cumulativePnL > peak) {
+        peak = cumulativePnL;
+      }
+      const drawdown = peak - cumulativePnL;
+      if (drawdown > maxDrawdown) {
+        maxDrawdown = drawdown;
+      }
+    }
+    
+    return { 
+      totalPnL, 
+      totalTrades, 
+      winRate, 
+      totalDays,
+      bestDay,
+      worstDay,
+      profitFactor,
+      sharpeRatio,
+      maxDrawdown,
+      grossProfit,
+      grossLoss
+    };
   };
 
   const stats = getStats();
@@ -507,31 +570,54 @@ export function QuantDiarySection() {
           <div className="bg-gray-700 rounded-lg p-4">
             <div className="flex items-center justify-between mb-2">
               <p className="text-sm text-gray-400">
-                {language === 'en' ? 'Avg P&L/Day' : 'P&L Médio/Dia'}
+                {language === 'en' ? 'Profit Factor' : 'Fator de Lucro'}
               </p>
-              <Clock className="w-4 h-4 text-purple-400" />
+              <TrendingUp className="w-4 h-4 text-purple-400" />
             </div>
             <p className={`text-2xl font-bold ${
-              stats.totalDays > 0 && stats.totalPnL / stats.totalDays >= 0 ? 'text-green-400' : 'text-red-400'
+              stats.profitFactor >= 1.5 ? 'text-green-400' : 
+              stats.profitFactor >= 1.0 ? 'text-yellow-400' : 'text-red-400'
             }`}>
-              R$ {stats.totalDays > 0 ? (stats.totalPnL / stats.totalDays).toFixed(2) : '0.00'}
+              {stats.profitFactor.toFixed(2)}
             </p>
             <p className="text-xs text-gray-500 mt-1">
-              {language === 'en' ? 'per trading day' : 'por dia operado'}
+              {stats.profitFactor >= 1.0 ? 'Lucrativo' : 'Prejuízo'}
             </p>
           </div>
         </div>
         
         {/* Additional Stats Row */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
+          <div className="bg-gray-700 rounded-lg p-3">
+            <p className="text-xs text-gray-400 mb-1">
+              {language === 'en' ? 'Sharpe Ratio' : 'Sharpe Ratio'}
+            </p>
+            <p className={`text-lg font-bold ${
+              stats.sharpeRatio >= 1.0 ? 'text-green-400' : 
+              stats.sharpeRatio >= 0.5 ? 'text-yellow-400' : 'text-red-400'
+            }`}>
+              {stats.sharpeRatio.toFixed(2)}
+            </p>
+          </div>
+          
+          <div className="bg-gray-700 rounded-lg p-3">
+            <p className="text-xs text-gray-400 mb-1">
+              {language === 'en' ? 'Max Drawdown' : 'Drawdown Máximo'}
+            </p>
+            <p className={`text-lg font-bold ${
+              stats.maxDrawdown <= 500 ? 'text-green-400' : 
+              stats.maxDrawdown <= 1000 ? 'text-yellow-400' : 'text-red-400'
+            }`}>
+              R$ {stats.maxDrawdown.toFixed(2)}
+            </p>
+          </div>
+          
           <div className="bg-gray-700 rounded-lg p-3">
             <p className="text-xs text-gray-400 mb-1">
               {language === 'en' ? 'Best Day' : 'Melhor Dia'}
             </p>
             <p className="text-lg font-bold text-green-400">
-              {entries.length > 0 
-                ? `R$ ${Math.max(...entries.map(e => e.pnl || 0)).toFixed(2)}`
-                : 'R$ 0.00'}
+              R$ {stats.bestDay.toFixed(2)}
             </p>
           </div>
           
@@ -540,9 +626,21 @@ export function QuantDiarySection() {
               {language === 'en' ? 'Worst Day' : 'Pior Dia'}
             </p>
             <p className="text-lg font-bold text-red-400">
-              {entries.length > 0 
-                ? `R$ ${Math.min(...entries.map(e => e.pnl || 0)).toFixed(2)}`
-                : 'R$ 0.00'}
+              R$ {stats.worstDay.toFixed(2)}
+            </p>
+          </div>
+        </div>
+        
+        {/* Third Stats Row */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <div className="bg-gray-700 rounded-lg p-3">
+            <p className="text-xs text-gray-400 mb-1">
+              {language === 'en' ? 'Avg P&L/Day' : 'P&L Médio/Dia'}
+            </p>
+            <p className={`text-lg font-bold ${
+              stats.totalDays > 0 && stats.totalPnL / stats.totalDays >= 0 ? 'text-green-400' : 'text-red-400'
+            }`}>
+              R$ {stats.totalDays > 0 ? (stats.totalPnL / stats.totalDays).toFixed(2) : '0.00'}
             </p>
           </div>
           
@@ -561,6 +659,15 @@ export function QuantDiarySection() {
             </p>
             <p className="text-lg font-bold text-orange-400">
               {entries.filter(e => (e.pnl || 0) < 0).length}
+            </p>
+          </div>
+          
+          <div className="bg-gray-700 rounded-lg p-3">
+            <p className="text-xs text-gray-400 mb-1">
+              {language === 'en' ? 'Gross Profit' : 'Lucro Bruto'}
+            </p>
+            <p className="text-lg font-bold text-green-400">
+              R$ {stats.grossProfit.toFixed(2)}
             </p>
           </div>
         </div>
@@ -664,6 +771,157 @@ export function QuantDiarySection() {
       ) : (
         /* Graph View */
         renderGraphView()
+      )}
+
+      {/* Day Performance Modal */}
+      {showDayPerformance && selectedDate && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+          <div className="bg-gray-800 rounded-lg max-w-2xl w-full p-6 relative">
+            <button 
+              onClick={() => setShowDayPerformance(false)}
+              className="absolute top-4 right-4 text-gray-400 hover:text-white"
+            >
+              ×
+            </button>
+            
+            {(() => {
+              const entry = getEntryForDate(selectedDate);
+              return (
+                <div>
+                  <div className="text-center mb-6">
+                    <Calendar className="w-12 h-12 text-blue-500 mx-auto mb-4" />
+                    <h2 className="text-2xl font-bold text-gray-100">
+                      {language === 'en' ? 'Daily Performance' : 'Performance do Dia'}
+                    </h2>
+                    <p className="mt-2 text-gray-400">
+                      {selectedDate.toLocaleDateString('pt-BR', { 
+                        weekday: 'long', 
+                        year: 'numeric', 
+                        month: 'long', 
+                        day: 'numeric' 
+                      })}
+                    </p>
+                  </div>
+
+                  {entry ? (
+                    <div className="space-y-6">
+                      {/* Performance Summary */}
+                      <div className="bg-gray-700 rounded-lg p-4">
+                        <h3 className="text-lg font-medium mb-4 flex items-center">
+                          <BarChart2 className="w-5 h-5 text-blue-400 mr-2" />
+                          {language === 'en' ? 'Performance Summary' : 'Resumo da Performance'}
+                        </h3>
+                        
+                        <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                          <div className="text-center">
+                            <p className="text-xs text-gray-400 mb-1">P&L do Dia</p>
+                            <p className={`text-2xl font-bold ${
+                              (entry.pnl || 0) > 0 ? 'text-green-400' : 
+                              (entry.pnl || 0) < 0 ? 'text-red-400' : 'text-gray-400'
+                            }`}>
+                              {(entry.pnl || 0) > 0 ? '+' : ''}R$ {(entry.pnl || 0).toFixed(2)}
+                            </p>
+                          </div>
+                          
+                          <div className="text-center">
+                            <p className="text-xs text-gray-400 mb-1">Total de Trades</p>
+                            <p className="text-2xl font-bold text-blue-400">
+                              {entry.trades || 0}
+                            </p>
+                          </div>
+                          
+                          <div className="text-center">
+                            <p className="text-xs text-gray-400 mb-1">Humor do Dia</p>
+                            <div className="text-2xl">
+                              {getMoodEmoji(entry.mood || 'neutral')}
+                            </div>
+                            <p className={`text-sm font-medium ${getMoodColor(entry.mood || 'neutral')}`}>
+                              {entry.mood === 'positive' ? 'Positivo' : 
+                               entry.mood === 'negative' ? 'Negativo' : 'Neutro'}
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Session Details */}
+                      {entry.title && (
+                        <div className="bg-gray-700 rounded-lg p-4">
+                          <h3 className="text-lg font-medium mb-2">
+                            {language === 'en' ? 'Session Title' : 'Título da Sessão'}
+                          </h3>
+                          <p className="text-gray-300">{entry.title}</p>
+                        </div>
+                      )}
+
+                      {/* Comments */}
+                      {entry.predefinedComments && entry.predefinedComments.length > 0 && (
+                        <div className="bg-gray-700 rounded-lg p-4">
+                          <h3 className="text-lg font-medium mb-3">
+                            {language === 'en' ? 'Daily Analysis' : 'Análise do Dia'}
+                          </h3>
+                          <div className="space-y-2">
+                            {entry.predefinedComments.map((comment, index) => (
+                              <div key={index} className="flex items-start">
+                                <div className="w-2 h-2 bg-blue-400 rounded-full mt-2 mr-3 flex-shrink-0"></div>
+                                <p className="text-sm text-gray-300">{comment}</p>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+
+                      {/* Detailed Notes */}
+                      {entry.content && (
+                        <div className="bg-gray-700 rounded-lg p-4">
+                          <h3 className="text-lg font-medium mb-3">
+                            {language === 'en' ? 'Detailed Analysis' : 'Análise Detalhada'}
+                          </h3>
+                          <p className="text-gray-300 whitespace-pre-line">{entry.content}</p>
+                        </div>
+                      )}
+
+                      {/* Action Buttons */}
+                      <div className="flex justify-between space-x-3">
+                        <button
+                          onClick={() => {
+                            setShowDayPerformance(false);
+                            openModal(selectedDate, 'comment');
+                          }}
+                          className="flex-1 py-2 px-4 bg-blue-600 hover:bg-blue-700 rounded-md text-white flex items-center justify-center"
+                        >
+                          <Edit2 className="w-4 h-4 mr-2" />
+                          {language === 'en' ? 'Edit Entry' : 'Editar Entrada'}
+                        </button>
+                        
+                        <button
+                          onClick={() => setShowDayPerformance(false)}
+                          className="px-4 py-2 bg-gray-700 hover:bg-gray-600 rounded-md text-white"
+                        >
+                          {language === 'en' ? 'Close' : 'Fechar'}
+                        </button>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="text-center py-8">
+                      <p className="text-gray-400 mb-4">
+                        {language === 'en' ? 'No data for this day' : 'Nenhum dado para este dia'}
+                      </p>
+                      <button
+                        onClick={() => {
+                          setShowDayPerformance(false);
+                          setShowSelectionModal(true);
+                        }}
+                        className="px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-md text-white"
+                      >
+                        {language === 'en' ? 'Add Data' : 'Adicionar Dados'}
+                      </button>
+                    </div>
+                  )}
+                </div>
+              );
+            })()}
+          </div>
+        </div>
       )}
 
       {/* Selection Modal */}
