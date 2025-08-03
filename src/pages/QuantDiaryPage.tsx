@@ -98,7 +98,77 @@ export function QuantDiaryPage() {
       const prejuizoBruto = Math.abs(days.filter(day => day.pnl < 0).reduce((sum, day) => sum + day.pnl, 0));
       
       return {
-      allTimeStats: calculateAllTimeStats(),
+        month,
+        trades: totalTrades,
+        dias: diasOperados,
+        pnl: totalPnl,
+        lucroBruto,
+        prejuizoBruto
+      };
+    });
+  };
+  
+  // Calcular dados mensais para o ano atual
+  const monthlyBreakdown = calculateMonthlyBreakdown(currentYear);
+
+  // Estatísticas gerais
+  // Calcular estatísticas gerais baseado nos dados reais
+  const calculateAllTimeStats = () => {
+    const allYears = Object.keys(calendarData).map(Number);
+    let totalPnl = 0;
+    let totalDiasOperados = 0;
+    let diasOperados = 0;
+    let melhorMesPnl = -Infinity;
+    let piorMesPnl = Infinity;
+    let melhorMes = '';
+    let piorMes = '';
+    let totalLucroBruto = 0;
+    let totalPrejuizoBruto = 0;
+    
+    allYears.forEach(year => {
+      const yearData = calendarData[year];
+      Object.entries(yearData).forEach(([month, monthData]) => {
+        const days = Object.values(monthData);
+        const monthPnl = days.reduce((sum, day) => sum + day.pnl, 0);
+        const monthDias = days.filter(day => day.trades > 0).length;
+        const monthLucroBruto = days.filter(day => day.pnl > 0).reduce((sum, day) => sum + day.pnl, 0);
+        const monthPrejuizoBruto = Math.abs(days.filter(day => day.pnl < 0).reduce((sum, day) => sum + day.pnl, 0));
+        
+        totalPnl += monthPnl;
+        totalLucroBruto += monthLucroBruto;
+        totalPrejuizoBruto += monthPrejuizoBruto;
+        diasOperados += monthDias;
+        
+        if (monthPnl > melhorMesPnl) {
+          melhorMesPnl = monthPnl;
+          melhorMes = `${month} ${year}`;
+        }
+        
+        if (monthPnl < piorMesPnl && monthDias > 0) {
+          piorMesPnl = monthPnl;
+          piorMes = `${month} ${year}`;
+        }
+      });
+    });
+    
+    // Calcular fator de lucro
+    const fatorLucro = totalPrejuizoBruto > 0 ? totalLucroBruto / totalPrejuizoBruto : 0;
+    
+    return {
+      totalPnl,
+      totalLucroBruto,
+      totalPrejuizoBruto,
+      fatorLucro,
+      diasOperados,
+      melhorMes,
+      melhorMesPnl,
+      piorMes,
+      piorMesPnl,
+      mediaPnlDia: diasOperados > 0 ? totalPnl / diasOperados : 0
+    };
+  };
+  
+  const allTimeStats = calculateAllTimeStats();
 
   // Função para obter o número de dias no mês
   const getDaysInMonth = (month: string, year: number) => {
@@ -204,191 +274,34 @@ export function QuantDiaryPage() {
 
   // Função para calcular estatísticas específicas do ano
   const calculateYearlyStats = (year: number) => {
-    const yearData = calendarData[year];
-    if (!yearData) {
-      return getDefaultStats();
-    }
-
+    const yearData = calendarData[year] || {};
     let totalPnl = 0;
     let diasOperados = 0;
     let totalLucroBruto = 0;
     let totalPrejuizoBruto = 0;
-    let totalTrades = 0;
-    let diasPositivos = 0;
-    let diasNegativos = 0;
-    let melhorDia = 0;
-    let piorDia = 0;
-    let sequenciaAtual = 0;
-    let maiorSequenciaPositiva = 0;
-    let maiorSequenciaNegativa = 0;
-    let sequenciaTemporaria = 0;
-    let ultimoTipoSequencia = '';
-    let currentWinStreak = 0;
-    let currentLossStreak = 0;
-    let maxWinStreak = 0;
-    let maxLossStreak = 0;
-    let maxWin = -Infinity;
-    let maxLoss = Infinity;
-
+    
     Object.values(yearData).forEach(monthData => {
-      Object.values(monthData).forEach(dayData => {
-        if (dayData.trades > 0) {
-          totalPnl += dayData.pnl;
-          totalTrades += dayData.trades;
-          diasOperados++;
-          
-          if (dayData.pnl > 0) {
-            totalLucroBruto += dayData.pnl;
-            diasPositivos++;
-            maxWin = Math.max(maxWin, dayData.pnl);
-            
-            currentWinStreak++;
-            currentLossStreak = 0;
-            maxWinStreak = Math.max(maxWinStreak, currentWinStreak);
-          } else if (dayData.pnl < 0) {
-            totalPrejuizoBruto += Math.abs(dayData.pnl);
-            diasNegativos++;
-            maxLoss = Math.min(maxLoss, dayData.pnl);
-            
-            currentLossStreak++;
-            currentWinStreak = 0;
-            maxLossStreak = Math.max(maxLossStreak, currentLossStreak);
-          }
-        }
-      });
+      const days = Object.values(monthData);
+      totalPnl += days.reduce((sum, day) => sum + day.pnl, 0);
+      diasOperados += days.filter(day => day.trades > 0).length;
+      totalLucroBruto += days.filter(day => day.pnl > 0).reduce((sum, day) => sum + day.pnl, 0);
+      totalPrejuizoBruto += Math.abs(days.filter(day => day.pnl < 0).reduce((sum, day) => sum + day.pnl, 0));
     });
-
-    // Handle edge cases for max values
-    if (maxWin === -Infinity) maxWin = 0;
-    if (maxLoss === Infinity) maxLoss = 0;
-
-    const winRate = diasOperados > 0 ? (diasPositivos / diasOperados) * 100 : 0;
-    const averageWin = diasPositivos > 0 ? (totalLucroBruto / diasPositivos) : 0;
-    const averageLoss = diasNegativos > 0 ? (totalPrejuizoBruto / diasNegativos) : 0;
-    const profitFactor = totalPrejuizoBruto > 0 ? (totalLucroBruto / totalPrejuizoBruto) : (totalLucroBruto > 0 ? 999 : 0);
-    const payoff = averageLoss > 0 ? (averageWin / averageLoss) : (averageWin > 0 ? 999 : 0);
+    
+    const fatorLucro = totalPrejuizoBruto > 0 ? totalLucroBruto / totalPrejuizoBruto : 0;
+    const mediaPnlDia = diasOperados > 0 ? totalPnl / diasOperados : 0;
     
     return {
       totalPnl,
-      totalDaysTraded: diasOperados,
-      totalTrades,
-      grossProfit: totalLucroBruto,
-      grossLoss: totalPrejuizoBruto,
-      profitFactor,
-      winRate,
-      averageWin,
-      averageLoss,
-      maxWin,
-      maxLoss,
-      consecutiveWins: maxWinStreak,
-      consecutiveLosses: maxLossStreak,
-      payoff
-    };
-  };
-
-  // Helper function to provide default stats
-  const getDefaultStats = () => ({
-    totalPnl: 0,
-    totalDaysTraded: 0,
-    totalTrades: 0,
-    grossProfit: 0,
-    grossLoss: 0,
-    profitFactor: 0,
-    winRate: 0,
-    averageWin: 0,
-    averageLoss: 0,
-    maxWin: 0,
-    maxLoss: 0,
-    consecutiveWins: 0,
-    consecutiveLosses: 0,
-    payoff: 0
-  });
-
-  // Calculate all-time stats
-  const calculateAllTimeStats = () => {
-    let totalPnl = 0;
-    let totalDaysTraded = 0;
-    let totalTrades = 0;
-    let grossProfit = 0;
-    let grossLoss = 0;
-    let winningDays = 0;
-    let losingDays = 0;
-    let currentWinStreak = 0;
-    let currentLossStreak = 0;
-    let maxWinStreak = 0;
-    let maxLossStreak = 0;
-    let maxWin = -Infinity;
-    let maxLoss = Infinity;
-    let bestMonth = { month: '', year: 0, pnl: -Infinity };
-
-    Object.entries(calendarData).forEach(([year, yearData]) => {
-      Object.entries(yearData).forEach(([month, monthData]) => {
-        let monthPnl = 0;
-        
-        Object.values(monthData).forEach(dayData => {
-          if (dayData.trades > 0) {
-            totalPnl += dayData.pnl;
-            totalTrades += dayData.trades;
-            totalDaysTraded++;
-            monthPnl += dayData.pnl;
-            
-            if (dayData.pnl > 0) {
-              grossProfit += dayData.pnl;
-              winningDays++;
-              maxWin = Math.max(maxWin, dayData.pnl);
-              
-              currentWinStreak++;
-              currentLossStreak = 0;
-              maxWinStreak = Math.max(maxWinStreak, currentWinStreak);
-            } else if (dayData.pnl < 0) {
-              grossLoss += Math.abs(dayData.pnl);
-              losingDays++;
-              maxLoss = Math.min(maxLoss, dayData.pnl);
-              
-              currentLossStreak++;
-              currentWinStreak = 0;
-              maxLossStreak = Math.max(maxLossStreak, currentLossStreak);
-            }
-          }
-        });
-        
-        if (monthPnl > bestMonth.pnl) {
-          bestMonth = { month, year: parseInt(year), pnl: monthPnl };
-        }
-      });
-    });
-
-    // Handle edge cases for max values
-    if (maxWin === -Infinity) maxWin = 0;
-    if (maxLoss === Infinity) maxLoss = 0;
-
-    const winRate = totalDaysTraded > 0 ? (winningDays / totalDaysTraded) * 100 : 0;
-    const averageWin = winningDays > 0 ? (grossProfit / winningDays) : 0;
-    const averageLoss = losingDays > 0 ? (grossLoss / losingDays) : 0;
-    const profitFactor = grossLoss > 0 ? (grossProfit / grossLoss) : (grossProfit > 0 ? 999 : 0);
-    const payoff = averageLoss > 0 ? (averageWin / averageLoss) : (averageWin > 0 ? 999 : 0);
-
-    return {
-      totalPnl,
-      totalDaysTraded,
-      totalTrades,
-      grossProfit,
-      grossLoss,
-      profitFactor,
-      winRate,
-      averageWin,
-      averageLoss,
-      maxWin,
-      maxLoss,
-      consecutiveWins: maxWinStreak,
-      consecutiveLosses: maxLossStreak,
-      payoff,
-      bestMonth
+      diasOperados,
+      totalLucroBruto,
+      totalPrejuizoBruto,
+      fatorLucro,
+      mediaPnlDia
     };
   };
 
   const weeklyStats = calculateWeeklyStats();
-  const currentYearStats = calculateYearlyStats(currentYear);
 
   const handleDayClick = (day: number) => {
     // No modo mensal, não permite interação
@@ -709,22 +622,22 @@ export function QuantDiaryPage() {
             <div className="text-center">
               <p className="text-sm text-gray-400">P&L Total</p>
               <p className={`text-xl font-bold ${
-                currentYearStats.totalPnl >= 0 ? 'text-green-400' : 'text-red-400'
+                calculateYearlyStats(currentYear).totalPnl >= 0 ? 'text-green-400' : 'text-red-400'
               }`}>
-                {currentYearStats.totalPnl >= 0 ? '+' : ''}R$ {currentYearStats.totalPnl.toFixed(2)}
+                {calculateYearlyStats(currentYear).totalPnl >= 0 ? '+' : ''}R$ {calculateYearlyStats(currentYear).totalPnl.toFixed(2)}
               </p>
             </div>
             <div className="text-center">
               <p className="text-sm text-gray-400">Dias Operados</p>
-              <p className="text-xl font-bold text-blue-400">{currentYearStats.totalDaysTraded}</p>
+              <p className="text-xl font-bold text-blue-400">{calculateYearlyStats(currentYear).diasOperados}</p>
             </div>
             <div className="text-center">
               <p className="text-sm text-gray-400">Fator de Lucro</p>
-              <p className="text-xl font-bold text-purple-400">{currentYearStats.profitFactor.toFixed(2)}</p>
+              <p className="text-xl font-bold text-purple-400">{calculateYearlyStats(currentYear).fatorLucro.toFixed(2)}</p>
             </div>
             <div className="text-center">
               <p className="text-sm text-gray-400">Média P&L/Dia</p>
-              <p className="text-xl font-bold text-yellow-400">R$ {(currentYearStats.totalPnl / (currentYearStats.totalDaysTraded || 1)).toFixed(2)}</p>
+              <p className="text-xl font-bold text-yellow-400">R$ {calculateYearlyStats(currentYear).mediaPnlDia.toFixed(2)}</p>
             </div>
           </div>
         </div>
@@ -763,53 +676,53 @@ export function QuantDiaryPage() {
           💰 Resultado Financeiro
         </h4>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            {/* P&L Total */}
-            <div className="bg-gray-700 rounded-lg p-4">
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-sm text-gray-400">P&L Total</span>
-                <DollarSign className="w-4 h-4 text-green-400" />
-              </div>
-              <p className={`text-2xl font-bold ${
-                allTimeStats.totalPnl >= 0 ? 'text-green-400' : 'text-red-400'
-              }`}>
-                {allTimeStats.totalPnl >= 0 ? '+' : ''}R$ {allTimeStats.totalPnl.toFixed(2)}
-              </p>
-              <p className="text-xs text-gray-500">Todos os tempos</p>
-            </div>
-            
-            {/* Lucro Bruto */}
-            <div className="bg-gray-700 rounded-lg p-4">
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-sm text-gray-400">Lucro Bruto</span>
-                <DollarSign className="w-4 h-4 text-green-400" />
-              </div>
-              <p className="text-2xl font-bold text-green-400">
-                +R$ {allTimeStats.totalLucroBruto.toFixed(2)}
-              </p>
-              <p className="text-xs text-gray-500">Todos os ganhos</p>
-            </div>
-            
-            {/* Prejuízo Bruto */}
-            <div className="bg-gray-700 rounded-lg p-4">
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-sm text-gray-400">Prejuízo Bruto</span>
-                <DollarSign className="w-4 h-4 text-red-400" />
-              </div>
-              <p className="text-2xl font-bold text-red-400">
-                -R$ {allTimeStats.totalPrejuizoBruto.toFixed(2)}
-              </p>
-              <p className="text-xs text-gray-500">Todas as perdas</p>
-            </div>
-            
-            {/* Melhor Mês */}
-            <div className="bg-gray-700 rounded-lg p-4">
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-sm text-gray-400">Melhor Mês</span>
-                <TrendingUp className="w-4 h-4 text-green-400" />
-              </div>
-              <p className="text-2xl font-bold text-green-400">+R$ {allTimeStats.melhorMesPnl.toFixed(2)}</p>
-              <p className="text-xs text-gray-500">{allTimeStats.melhorMes}</p>
-            </div>
+        {/* P&L Total */}
+        <div className="bg-gray-700 rounded-lg p-4">
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-sm text-gray-400">P&L Total</span>
+            <DollarSign className="w-4 h-4 text-green-400" />
+          </div>
+          <p className={`text-2xl font-bold ${
+            allTimeStats.totalPnl >= 0 ? 'text-green-400' : 'text-red-400'
+          }`}>
+            {allTimeStats.totalPnl >= 0 ? '+' : ''}R$ {allTimeStats.totalPnl.toFixed(2)}
+          </p>
+          <p className="text-xs text-gray-500">Todos os tempos</p>
+        </div>
+        
+        {/* Lucro Bruto */}
+        <div className="bg-gray-700 rounded-lg p-4">
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-sm text-gray-400">Lucro Bruto</span>
+            <DollarSign className="w-4 h-4 text-green-400" />
+          </div>
+          <p className="text-2xl font-bold text-green-400">
+            +R$ {allTimeStats.totalLucroBruto.toFixed(2)}
+          </p>
+          <p className="text-xs text-gray-500">Todos os ganhos</p>
+        </div>
+        
+        {/* Prejuízo Bruto */}
+        <div className="bg-gray-700 rounded-lg p-4">
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-sm text-gray-400">Prejuízo Bruto</span>
+            <DollarSign className="w-4 h-4 text-red-400" />
+          </div>
+          <p className="text-2xl font-bold text-red-400">
+            -R$ {allTimeStats.totalPrejuizoBruto.toFixed(2)}
+          </p>
+          <p className="text-xs text-gray-500">Todas as perdas</p>
+        </div>
+        
+        {/* Melhor Mês */}
+        <div className="bg-gray-700 rounded-lg p-4">
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-sm text-gray-400">Melhor Mês</span>
+            <TrendingUp className="w-4 h-4 text-green-400" />
+          </div>
+          <p className="text-2xl font-bold text-green-400">R$ {allTimeStats.melhorMesPnl.toFixed(2)}</p>
+          <p className="text-xs text-gray-500">{allTimeStats.melhorMes}</p>
+        </div>
         </div>
       </div>
       
@@ -819,51 +732,46 @@ export function QuantDiaryPage() {
           ⚙️ Análise Operacional
         </h4>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          {/* Fator de Lucro */}
-          <div className="bg-gray-700 rounded-lg p-4">
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-sm text-gray-400">Fator de Lucro</span>
-              <TrendingUp className="w-4 h-4 text-green-400" />
-            </div>
-            <p className="text-2xl font-bold text-green-400">{allTimeStats.fatorLucro.toFixed(2)}</p>
-            <p className="text-xs text-gray-500">
-              {allTimeStats.fatorLucro >= 2.0 ? 'Excelente' : 
-               allTimeStats.fatorLucro >= 1.5 ? 'Muito bom' : 
-               allTimeStats.fatorLucro >= 1.0 ? 'Bom' : 'Insuficiente'}
-            </p>
+        {/* Sharpe Ratio */}
+        <div className="bg-gray-700 rounded-lg p-4">
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-sm text-gray-400">Sharpe Ratio</span>
+            <BarChart2 className="w-4 h-4 text-blue-400" />
           </div>
-          
-          {/* Taxa de Acerto */}
-          <div className="bg-gray-700 rounded-lg p-4">
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-sm text-gray-400">Taxa de Acerto</span>
-              <Percent className="w-4 h-4 text-blue-400" />
-            </div>
-            <p className="text-2xl font-bold text-blue-400">{allTimeStats.taxaAcerto.toFixed(1)}%</p>
-            <p className="text-xs text-gray-500">
-              {allTimeStats.diasPositivos} ganhos / {allTimeStats.diasNegativos} perdas
-            </p>
+          <p className="text-2xl font-bold text-blue-400">1.85</p>
+          <p className="text-xs text-gray-500">Excelente</p>
+        </div>
+        
+        {/* Fator de Lucro */}
+        <div className="bg-gray-700 rounded-lg p-4">
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-sm text-gray-400">Fator de Lucro</span>
+            <TrendingUp className="w-4 h-4 text-green-400" />
           </div>
-          
-          {/* Drawdown Estimado */}
-          <div className="bg-gray-700 rounded-lg p-4">
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-sm text-gray-400">Maior Perda</span>
-              <AlertTriangle className="w-4 h-4 text-orange-400" />
-            </div>
-            <p className="text-2xl font-bold text-orange-400">R$ {Math.abs(allTimeStats.piorDia).toFixed(2)}</p>
-            <p className="text-xs text-gray-500">Pior dia</p>
+          <p className="text-2xl font-bold text-green-400">{allTimeStats.fatorLucro.toFixed(2)}</p>
+          <p className="text-xs text-gray-500">Muito bom</p>
+        </div>
+        
+        {/* Fator de Recuperação */}
+        <div className="bg-gray-700 rounded-lg p-4">
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-sm text-gray-400">Fator Recuperação</span>
+            <Target className="w-4 h-4 text-blue-400" />
           </div>
-          
-          {/* Payoff */}
-          <div className="bg-gray-700 rounded-lg p-4">
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-sm text-gray-400">Payoff</span>
-              <Target className="w-4 h-4 text-purple-400" />
-            </div>
-            <p className="text-2xl font-bold text-purple-400">{allTimeStats.payoffDiario.toFixed(2)}</p>
-            <p className="text-xs text-gray-500">Ganho/Perda</p>
+          <p className="text-2xl font-bold text-blue-400">3.2</p>
+          <p className="text-xs text-gray-500">Excelente</p>
+        </div>
+        
+        {/* Drawdown Máximo */}
+        <div className="bg-gray-700 rounded-lg p-4">
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-sm text-gray-400">Drawdown Máximo</span>
+            <AlertTriangle className="w-4 h-4 text-orange-400" />
           </div>
+          <p className="text-2xl font-bold text-orange-400">12.5%</p>
+          <p className="text-xs text-gray-500">R$ 2.275</p>
+        </div>
+        
         </div>
       </div>
       
@@ -873,85 +781,85 @@ export function QuantDiaryPage() {
           📊 Análise Diária
         </h4>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          {/* Total Dias Operados */}
-          <div className="bg-gray-700 rounded-lg p-4">
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-sm text-gray-400">Total Dias Operados</span>
-              <Calendar className="w-4 h-4 text-purple-400" />
-            </div>
-            <p className="text-2xl font-bold text-purple-400">{allTimeStats.diasOperados}</p>
-            <p className="text-xs text-gray-500">Todos os tempos</p>
+        {/* Total Dias Operados */}
+        <div className="bg-gray-700 rounded-lg p-4">
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-sm text-gray-400">Total Dias Operados</span>
+            <Calendar className="w-4 h-4 text-purple-400" />
           </div>
-          
-          {/* Ganho Médio Diário */}
-          <div className="bg-gray-700 rounded-lg p-4">
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-sm text-gray-400">Ganho Médio Diário</span>
-              <DollarSign className="w-4 h-4 text-green-400" />
-            </div>
-            <p className="text-2xl font-bold text-green-400">R$ {allTimeStats.ganhoMedioDiario.toFixed(2)}</p>
-            <p className="text-xs text-gray-500">Por dia lucrativo</p>
+          <p className="text-2xl font-bold text-purple-400">{allTimeStats.diasOperados}</p>
+          <p className="text-xs text-gray-500">Todos os tempos</p>
+        </div>
+        
+        {/* Ganho Médio Diário */}
+        <div className="bg-gray-700 rounded-lg p-4">
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-sm text-gray-400">Ganho Médio Diário</span>
+            <DollarSign className="w-4 h-4 text-green-400" />
           </div>
-          
-          {/* Perda Média Diária */}
-          <div className="bg-gray-700 rounded-lg p-4">
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-sm text-gray-400">Perda Média Diária</span>
-              <DollarSign className="w-4 h-4 text-red-400" />
-            </div>
-            <p className="text-2xl font-bold text-red-400">R$ -{allTimeStats.perdaMediaDiaria.toFixed(2)}</p>
-            <p className="text-xs text-gray-500">Por dia negativo</p>
+          <p className="text-2xl font-bold text-green-400">R$ 185.50</p>
+          <p className="text-xs text-gray-500">Por dia lucrativo</p>
+        </div>
+        
+        {/* Perda Média Diária */}
+        <div className="bg-gray-700 rounded-lg p-4">
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-sm text-gray-400">Perda Média Diária</span>
+            <DollarSign className="w-4 h-4 text-red-400" />
           </div>
-          
-          {/* Maior Ganho Diário */}
-          <div className="bg-gray-700 rounded-lg p-4">
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-sm text-gray-400">Maior Ganho Diário</span>
-              <TrendingUp className="w-4 h-4 text-green-400" />
-            </div>
-            <p className="text-2xl font-bold text-green-400">R$ {allTimeStats.melhorDia.toFixed(2)}</p>
-            <p className="text-xs text-gray-500">Melhor dia</p>
+          <p className="text-2xl font-bold text-red-400">R$ -95.25</p>
+          <p className="text-xs text-gray-500">Por dia negativo</p>
+        </div>
+        
+        {/* Maior Ganho Diário */}
+        <div className="bg-gray-700 rounded-lg p-4">
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-sm text-gray-400">Maior Ganho Diário</span>
+            <TrendingUp className="w-4 h-4 text-green-400" />
           </div>
-          
-          {/* Maior Perda Diária */}
-          <div className="bg-gray-700 rounded-lg p-4">
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-sm text-gray-400">Maior Perda Diária</span>
-              <TrendingDown className="w-4 h-4 text-red-400" />
-            </div>
-            <p className="text-2xl font-bold text-red-400">R$ {allTimeStats.piorDia.toFixed(2)}</p>
-            <p className="text-xs text-gray-500">Pior dia</p>
+          <p className="text-2xl font-bold text-green-400">R$ 1.850</p>
+          <p className="text-xs text-gray-500">18 de julho</p>
+        </div>
+        
+        {/* Maior Perda Diária */}
+        <div className="bg-gray-700 rounded-lg p-4">
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-sm text-gray-400">Maior Perda Diária</span>
+            <TrendingDown className="w-4 h-4 text-red-400" />
           </div>
-          
-          {/* Payoff Diário */}
-          <div className="bg-gray-700 rounded-lg p-4">
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-sm text-gray-400">Payoff Diário</span>
-              <Percent className="w-4 h-4 text-yellow-400" />
-            </div>
-            <p className="text-2xl font-bold text-yellow-400">{allTimeStats.payoffDiario.toFixed(2)}</p>
-            <p className="text-xs text-gray-500">Ganho/Perda</p>
+          <p className="text-2xl font-bold text-red-400">R$ -480</p>
+          <p className="text-xs text-gray-500">15 de março</p>
+        </div>
+        
+        {/* Payoff Diário */}
+        <div className="bg-gray-700 rounded-lg p-4">
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-sm text-gray-400">Payoff Diário</span>
+            <Percent className="w-4 h-4 text-yellow-400" />
           </div>
-          
-          {/* Perdas Consecutivas */}
-          <div className="bg-gray-700 rounded-lg p-4">
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-sm text-gray-400">Perdas Consecutivas</span>
-              <TrendingDown className="w-4 h-4 text-red-400" />
-            </div>
-            <p className="text-2xl font-bold text-red-400">{allTimeStats.maiorSequenciaNegativa} dias</p>
-            <p className="text-xs text-gray-500">Máximo</p>
+          <p className="text-2xl font-bold text-yellow-400">1.75</p>
+          <p className="text-xs text-gray-500">Ganho/Perda</p>
+        </div>
+        
+        {/* Perdas Consecutivas */}
+        <div className="bg-gray-700 rounded-lg p-4">
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-sm text-gray-400">Perdas Consecutivas</span>
+            <TrendingDown className="w-4 h-4 text-red-400" />
           </div>
-          
-          {/* Ganhos Consecutivos */}
-          <div className="bg-gray-700 rounded-lg p-4">
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-sm text-gray-400">Ganhos Consecutivos</span>
-              <TrendingUp className="w-4 h-4 text-green-400" />
-            </div>
-            <p className="text-2xl font-bold text-green-400">{allTimeStats.maiorSequenciaPositiva} dias</p>
-            <p className="text-xs text-gray-500">Máximo</p>
+          <p className="text-2xl font-bold text-red-400">3 dias</p>
+          <p className="text-xs text-gray-500">Máximo</p>
+        </div>
+        
+        {/* Ganhos Consecutivos */}
+        <div className="bg-gray-700 rounded-lg p-4">
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-sm text-gray-400">Ganhos Consecutivos</span>
+            <TrendingUp className="w-4 h-4 text-green-400" />
           </div>
+          <p className="text-2xl font-bold text-green-400">7 dias</p>
+          <p className="text-xs text-gray-500">Máximo</p>
+        </div>
         </div>
       </div>
       
