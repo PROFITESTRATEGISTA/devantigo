@@ -20,7 +20,7 @@ export function QuantDiarySection() {
   const { profile } = useAuthStore();
   const [currentDate, setCurrentDate] = useState(new Date());
   const [entries, setEntries] = useState<DiaryEntry[]>([]);
-  const [viewMode, setViewMode] = useState<'calendar' | 'graph'>('calendar');
+  const [viewMode, setViewMode] = useState<'calendar' | 'statistics' | 'graph'>('calendar');
   const [showModal, setShowModal] = useState(false);
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [modalType, setModalType] = useState<'comment' | 'analysis'>('comment');
@@ -189,6 +189,226 @@ export function QuantDiarySection() {
     return layout;
   };
 
+  // Função para renderizar estatísticas acumuladas
+  const renderStatisticsView = () => {
+    const allTimeStats = getStats();
+    
+    // Calcular estatísticas por mês
+    const monthlyStats = [];
+    for (let month = 0; month < 12; month++) {
+      const monthStart = new Date(2025, month, 1);
+      const monthEnd = new Date(2025, month + 1, 0);
+      const monthEntries = entries.filter(entry => {
+        const entryDate = new Date(entry.date);
+        return entryDate >= monthStart && entryDate <= monthEnd;
+      });
+      
+      const monthPnL = monthEntries.reduce((sum, entry) => sum + (entry.pnl || 0), 0);
+      const monthTrades = monthEntries.reduce((sum, entry) => sum + (entry.trades || 0), 0);
+      const monthDays = monthEntries.filter(entry => (entry.trades || 0) > 0).length;
+      
+      monthlyStats.push({
+        month,
+        name: getMonthName(new Date(2025, month, 1)),
+        pnl: monthPnL,
+        trades: monthTrades,
+        days: monthDays
+      });
+    }
+    
+    return (
+      <div className="space-y-6">
+        {/* Estatísticas Gerais Acumuladas */}
+        <div className="bg-gray-800 rounded-lg p-6">
+          <h3 className="text-xl font-medium mb-6 flex items-center">
+            <BarChart2 className="w-6 h-6 text-blue-400 mr-3" />
+            {language === 'en' ? 'Cumulative Performance (All Time)' : 'Performance Acumulada (Todos os Tempos)'}
+          </h3>
+          
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-8">
+            <div className="bg-gray-700 rounded-lg p-4 text-center">
+              <div className="flex items-center justify-center mb-2">
+                <TrendingUp className="w-5 h-5 text-green-400 mr-2" />
+                <p className="text-sm text-gray-400">P&L Total</p>
+              </div>
+              <p className={`text-3xl font-bold ${allTimeStats.totalPnL >= 0 ? 'text-green-400' : 'text-red-400'}`}>
+                {allTimeStats.totalPnL >= 0 ? '+' : ''}R$ {allTimeStats.totalPnL.toFixed(2)}
+              </p>
+            </div>
+            
+            <div className="bg-gray-700 rounded-lg p-4 text-center">
+              <div className="flex items-center justify-center mb-2">
+                <Hash className="w-5 h-5 text-blue-400 mr-2" />
+                <p className="text-sm text-gray-400">Total de Trades</p>
+              </div>
+              <p className="text-3xl font-bold text-blue-400">{allTimeStats.totalTrades}</p>
+            </div>
+            
+            <div className="bg-gray-700 rounded-lg p-4 text-center">
+              <div className="flex items-center justify-center mb-2">
+                <div className={`w-5 h-5 rounded-full mr-2 ${
+                  allTimeStats.winRate >= 60 ? 'bg-green-400' : 
+                  allTimeStats.winRate >= 40 ? 'bg-yellow-400' : 'bg-red-400'
+                }`} />
+                <p className="text-sm text-gray-400">Taxa de Acerto</p>
+              </div>
+              <p className={`text-3xl font-bold ${
+                allTimeStats.winRate >= 60 ? 'text-green-400' : 
+                allTimeStats.winRate >= 40 ? 'text-yellow-400' : 'text-red-400'
+              }`}>
+                {allTimeStats.winRate.toFixed(1)}%
+              </p>
+            </div>
+            
+            <div className="bg-gray-700 rounded-lg p-4 text-center">
+              <div className="flex items-center justify-center mb-2">
+                <Calendar className="w-5 h-5 text-purple-400 mr-2" />
+                <p className="text-sm text-gray-400">Dias Operados</p>
+              </div>
+              <p className="text-3xl font-bold text-purple-400">{allTimeStats.totalDays}</p>
+            </div>
+          </div>
+          
+          {/* Métricas Avançadas */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div className="bg-gray-700 rounded-lg p-3">
+              <p className="text-xs text-gray-400 mb-1">Profit Factor</p>
+              <p className={`text-lg font-bold ${
+                allTimeStats.profitFactor >= 1.5 ? 'text-green-400' : 
+                allTimeStats.profitFactor >= 1.0 ? 'text-yellow-400' : 'text-red-400'
+              }`}>
+                {allTimeStats.profitFactor.toFixed(2)}
+              </p>
+            </div>
+            
+            <div className="bg-gray-700 rounded-lg p-3">
+              <p className="text-xs text-gray-400 mb-1">Sharpe Ratio</p>
+              <p className={`text-lg font-bold ${
+                allTimeStats.sharpeRatio >= 1.0 ? 'text-green-400' : 
+                allTimeStats.sharpeRatio >= 0.5 ? 'text-yellow-400' : 'text-red-400'
+              }`}>
+                {allTimeStats.sharpeRatio.toFixed(2)}
+              </p>
+            </div>
+            
+            <div className="bg-gray-700 rounded-lg p-3">
+              <p className="text-xs text-gray-400 mb-1">Drawdown Máx.</p>
+              <p className={`text-lg font-bold ${
+                allTimeStats.maxDrawdown <= 500 ? 'text-green-400' : 
+                allTimeStats.maxDrawdown <= 1000 ? 'text-yellow-400' : 'text-red-400'
+              }`}>
+                R$ {allTimeStats.maxDrawdown.toFixed(2)}
+              </p>
+            </div>
+            
+            <div className="bg-gray-700 rounded-lg p-3">
+              <p className="text-xs text-gray-400 mb-1">Melhor Dia</p>
+              <p className="text-lg font-bold text-green-400">
+                R$ {allTimeStats.bestDay.toFixed(2)}
+              </p>
+            </div>
+          </div>
+        </div>
+        
+        {/* Performance Mensal */}
+        <div className="bg-gray-800 rounded-lg p-6">
+          <h3 className="text-xl font-medium mb-4 flex items-center">
+            <Calendar className="w-6 h-6 text-blue-400 mr-3" />
+            {language === 'en' ? 'Monthly Breakdown (2025)' : 'Breakdown Mensal (2025)'}
+          </h3>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {monthlyStats.map((monthStat) => (
+              <div key={monthStat.month} className="bg-gray-700 rounded-lg p-4">
+                <div className="flex items-center justify-between mb-3">
+                  <h4 className="font-medium text-white">{monthStat.name}</h4>
+                  <span className={`text-sm font-bold ${
+                    monthStat.pnl > 0 ? 'text-green-400' : 
+                    monthStat.pnl < 0 ? 'text-red-400' : 'text-gray-400'
+                  }`}>
+                    {monthStat.pnl > 0 ? '+' : ''}R$ {monthStat.pnl.toFixed(0)}
+                  </span>
+                </div>
+                
+                <div className="grid grid-cols-2 gap-3 text-sm">
+                  <div>
+                    <p className="text-xs text-gray-400">Trades</p>
+                    <p className="font-medium text-blue-400">{monthStat.trades}</p>
+                  </div>
+                  <div>
+                    <p className="text-xs text-gray-400">Dias</p>
+                    <p className="font-medium text-purple-400">{monthStat.days}</p>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+        
+        {/* Evolução Temporal */}
+        <div className="bg-gray-800 rounded-lg p-6">
+          <h3 className="text-xl font-medium mb-4 flex items-center">
+            <TrendingUp className="w-6 h-6 text-green-400 mr-3" />
+            {language === 'en' ? 'Cumulative P&L Evolution' : 'Evolução do P&L Acumulado'}
+          </h3>
+          
+          {/* Gráfico de linha simples */}
+          <div className="h-64 bg-gray-900 rounded-lg p-4 flex items-end justify-between">
+            {monthlyStats.map((monthStat, index) => {
+              const cumulativePnL = monthlyStats.slice(0, index + 1).reduce((sum, m) => sum + m.pnl, 0);
+              const maxCumulative = Math.max(...monthlyStats.map((_, i) => 
+                monthlyStats.slice(0, i + 1).reduce((sum, m) => sum + m.pnl, 0)
+              ));
+              const minCumulative = Math.min(...monthlyStats.map((_, i) => 
+                monthlyStats.slice(0, i + 1).reduce((sum, m) => sum + m.pnl, 0)
+              ));
+              
+              const range = Math.max(Math.abs(maxCumulative), Math.abs(minCumulative));
+              const height = range > 0 ? Math.abs(cumulativePnL) / range * 200 : 0;
+              const isPositive = cumulativePnL >= 0;
+              
+              return (
+                <div key={index} className="flex flex-col items-center group relative">
+                  <div
+                    className={`w-4 rounded-t ${
+                      isPositive ? 'bg-green-500' : 'bg-red-500'
+                    } transition-all duration-200 hover:opacity-80`}
+                    style={{ 
+                      height: `${height}px`,
+                      marginTop: isPositive ? 'auto' : '0',
+                      marginBottom: isPositive ? '0' : 'auto'
+                    }}
+                  />
+                  <span className="text-xs text-gray-400 mt-1">{monthStat.name.substring(0, 3)}</span>
+                  
+                  {/* Tooltip */}
+                  <div className="absolute bottom-full mb-2 hidden group-hover:block bg-gray-700 text-white text-xs rounded px-2 py-1 whitespace-nowrap z-10">
+                    <div>{monthStat.name}</div>
+                    <div>Mensal: R$ {monthStat.pnl.toFixed(2)}</div>
+                    <div>Acumulado: R$ {cumulativePnL.toFixed(2)}</div>
+                    <div>Trades: {monthStat.trades}</div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+          
+          {/* Legenda */}
+          <div className="flex justify-center space-x-6 mt-4">
+            <div className="flex items-center">
+              <div className="w-3 h-3 bg-green-500 rounded mr-2"></div>
+              <span className="text-sm text-gray-400">P&L Positivo</span>
+            </div>
+            <div className="flex items-center">
+              <div className="w-3 h-3 bg-red-500 rounded mr-2"></div>
+              <span className="text-sm text-gray-400">P&L Negativo</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
   const formatDate = (date: Date) => {
     return date.toISOString().split('T')[0];
   };
@@ -307,12 +527,18 @@ export function QuantDiarySection() {
   const getStats = () => {
     let relevantEntries = entries;
     
-    const monthStart = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
-    const monthEnd = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0);
-    relevantEntries = entries.filter(entry => {
-      const entryDate = new Date(entry.date);
-      return entryDate >= monthStart && entryDate <= monthEnd;
-    });
+    // Para estatísticas, usar todos os dados (acumulado)
+    if (viewMode === 'statistics') {
+      relevantEntries = entries; // Todos os dados
+    } else {
+      // Para calendário e gráfico, usar apenas o mês atual
+      const monthStart = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
+      const monthEnd = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0);
+      relevantEntries = entries.filter(entry => {
+        const entryDate = new Date(entry.date);
+        return entryDate >= monthStart && entryDate <= monthEnd;
+      });
+    }
     
     const totalPnL = relevantEntries.reduce((sum, entry) => sum + (entry.pnl || 0), 0);
     const totalTrades = relevantEntries.reduce((sum, entry) => sum + (entry.trades || 0), 0);
@@ -477,27 +703,40 @@ export function QuantDiarySection() {
           <span className="text-sm text-gray-400">
             {language === 'en' ? 'View:' : 'Visualização:'}
           </span>
-          <div className="bg-gray-800 rounded-lg p-1 flex">
+          <div className="bg-gray-800 rounded-lg p-1 flex space-x-1">
             <button
               onClick={() => setViewMode('calendar')}
-              className={`px-3 py-2 rounded-md text-sm font-medium transition-colors flex items-center ${
+              className={`px-4 py-2 rounded-md text-sm font-medium transition-all duration-200 flex items-center ${
                 viewMode === 'calendar'
-                  ? 'bg-blue-600 text-white'
+                  ? 'bg-blue-600 text-white shadow-lg'
                   : 'text-gray-400 hover:text-white hover:bg-gray-700'
               }`}
             >
               <Calendar className="w-4 h-4 mr-2" />
               {language === 'en' ? 'Calendar' : 'Calendário'}
             </button>
+            
             <button
-              onClick={() => setViewMode('graph')}
-              className={`px-3 py-2 rounded-md text-sm font-medium transition-colors flex items-center ${
-                viewMode === 'graph'
-                  ? 'bg-blue-600 text-white'
+              onClick={() => setViewMode('statistics')}
+              className={`px-4 py-2 rounded-md text-sm font-medium transition-all duration-200 flex items-center ${
+                viewMode === 'statistics'
+                  ? 'bg-blue-600 text-white shadow-lg'
                   : 'text-gray-400 hover:text-white hover:bg-gray-700'
               }`}
             >
               <BarChart2 className="w-4 h-4 mr-2" />
+              {language === 'en' ? 'Statistics' : 'Estatísticas'}
+            </button>
+            
+            <button
+              onClick={() => setViewMode('graph')}
+              className={`px-4 py-2 rounded-md text-sm font-medium transition-all duration-200 flex items-center ${
+                viewMode === 'graph'
+                  ? 'bg-blue-600 text-white shadow-lg'
+                  : 'text-gray-400 hover:text-white hover:bg-gray-700'
+              }`}
+            >
+              <TrendingUp className="w-4 h-4 mr-2" />
               {language === 'en' ? 'Graph' : 'Gráfico'}
             </button>
           </div>
@@ -509,11 +748,16 @@ export function QuantDiarySection() {
         <div className="flex items-center justify-between mb-4">
           <h3 className="text-lg font-medium flex items-center">
             <TrendingUp className="w-5 h-5 text-blue-400 mr-2" />
-            {language === 'en' ? 'Performance Statistics' : 'Estatísticas de Performance'}
+            {viewMode === 'statistics' 
+              ? (language === 'en' ? 'All-Time Performance' : 'Performance Geral')
+              : (language === 'en' ? 'Monthly Performance' : 'Performance Mensal')
+            }
           </h3>
-          <span className="text-sm text-gray-400">
-            {getMonthName(currentDate)} {currentDate.getFullYear()}
-          </span>
+          {viewMode !== 'statistics' && (
+            <span className="text-sm text-gray-400">
+              {getMonthName(currentDate)} {currentDate.getFullYear()}
+            </span>
+          )}
         </div>
         
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
@@ -673,31 +917,35 @@ export function QuantDiarySection() {
         </div>
       </div>
 
-      {/* Navigation */}
-      <div className="flex items-center justify-between bg-gray-800 rounded-lg p-4">
-        <button
-          onClick={() => navigateMonth('prev')}
-          className="p-2 hover:bg-gray-700 rounded-full transition-colors"
-          title="Mês anterior"
-        >
-          <ChevronLeft className="w-5 h-5" />
-        </button>
-        
-        <h3 className="text-lg font-semibold">
-          {`${getMonthName(currentDate)} de ${currentDate.getFullYear()}`}
-        </h3>
-        
-        <button
-          onClick={() => navigateMonth('next')}
-          className="p-2 hover:bg-gray-700 rounded-full transition-colors"
-          title="Próximo mês"
-        >
-          <ChevronRight className="w-5 h-5" />
-        </button>
-      </div>
+      {/* Navigation - Only show for calendar and graph modes */}
+      {viewMode !== 'statistics' && (
+        <div className="flex items-center justify-between bg-gray-800 rounded-lg p-4">
+          <button
+            onClick={() => navigateMonth('prev')}
+            className="p-2 hover:bg-gray-700 rounded-full transition-colors"
+            title="Mês anterior"
+          >
+            <ChevronLeft className="w-5 h-5" />
+          </button>
+          
+          <h3 className="text-lg font-semibold">
+            {`${getMonthName(currentDate)} de ${currentDate.getFullYear()}`}
+          </h3>
+          
+          <button
+            onClick={() => navigateMonth('next')}
+            className="p-2 hover:bg-gray-700 rounded-full transition-colors"
+            title="Próximo mês"
+          >
+            <ChevronRight className="w-5 h-5" />
+          </button>
+        </div>
+      )}
 
       {/* Content based on view mode */}
-      {viewMode === 'calendar' ? (
+      {viewMode === 'statistics' ? (
+        renderStatisticsView()
+      ) : viewMode === 'calendar' ? (
         /* Calendar View */
         <div className="grid grid-cols-7 gap-2">
           {/* Header dos dias da semana */}
