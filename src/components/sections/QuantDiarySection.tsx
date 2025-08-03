@@ -19,12 +19,6 @@ export function QuantDiarySection() {
   const { language } = useLanguageStore();
   const { profile } = useAuthStore();
   const [currentDate, setCurrentDate] = useState(new Date());
-  const [currentWeekStart, setCurrentWeekStart] = useState(() => {
-    // Começar na semana 1 de janeiro (29 dez 2024 - 4 jan 2025)
-    return new Date(2024, 11, 29); // 29 de dezembro de 2024 (domingo)
-  });
-  const [viewType, setViewType] = useState<'calendar' | 'weekly'>('weekly');
-  const [showWeekends, setShowWeekends] = useState(false);
   const [entries, setEntries] = useState<DiaryEntry[]>([]);
   const [showModal, setShowModal] = useState(false);
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
@@ -122,20 +116,6 @@ export function QuantDiarySection() {
     setEntries(mockEntries);
   }, []);
 
-  const navigateWeek = (direction: 'prev' | 'next') => {
-    const newWeekStart = new Date(currentWeekStart);
-    
-    if (direction === 'next') {
-      newWeekStart.setDate(currentWeekStart.getDate() + 7);
-    } else {
-      newWeekStart.setDate(currentWeekStart.getDate() - 7);
-    }
-    
-    // Verificar limites de 2025 (permitir 29 dez 2024 até final de 2025)
-    if (newWeekStart >= new Date(2024, 11, 29) && newWeekStart <= new Date(2025, 11, 31)) {
-      setCurrentWeekStart(newWeekStart);
-    }
-  };
 
   const navigateMonth = (direction: 'prev' | 'next') => {
     const newDate = new Date(currentDate);
@@ -155,21 +135,6 @@ export function QuantDiarySection() {
     }
     
     setCurrentDate(newDate);
-    
-    if (viewType === 'weekly') {
-      // Encontrar o primeiro domingo do novo mês
-      const firstDayOfMonth = new Date(2025, newDate.getMonth(), 1);
-      const firstDayOfWeek = firstDayOfMonth.getDay(); // 0 = domingo
-      
-      // Se o primeiro dia não é domingo, voltar para o domingo anterior
-      const firstSunday = new Date(firstDayOfMonth);
-      if (firstDayOfWeek !== 0) {
-        firstSunday.setDate(1 - firstDayOfWeek);
-      }
-      
-      const firstWeekStart = firstSunday;
-      setCurrentWeekStart(firstWeekStart);
-    }
   };
 
   // Função para calcular o número da semana no ano (baseado no CSV)
@@ -202,26 +167,6 @@ export function QuantDiarySection() {
     return Math.floor(daysDiff / 7) + 1; // +1 porque a primeira semana é a semana 1
   };
 
-  const getWeekDays = () => {
-    const days = [];
-    
-    for (let i = 0; i < 7; i++) {
-      const date = new Date(currentWeekStart);
-      date.setDate(currentWeekStart.getDate() + i);
-      
-      // Filtrar fins de semana se necessário
-      if (!showWeekends) {
-        const dayOfWeek = date.getDay();
-        if (dayOfWeek === 0 || dayOfWeek === 6) {
-          continue;
-        }
-      }
-      
-      days.push(date);
-    }
-    
-    return days;
-  };
 
   const getCalendarDays = () => {
     const year = 2025; // Sempre usar 2025
@@ -378,21 +323,12 @@ export function QuantDiarySection() {
   const getStats = () => {
     let relevantEntries = entries;
     
-    if (viewType === 'weekly') {
-      const weekEnd = new Date(currentWeekStart);
-      weekEnd.setDate(currentWeekStart.getDate() + 6);
-      relevantEntries = entries.filter(entry => {
-        const entryDate = new Date(entry.date);
-        return entryDate >= currentWeekStart && entryDate <= weekEnd;
-      });
-    } else {
-      const monthStart = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
-      const monthEnd = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0);
-      relevantEntries = entries.filter(entry => {
-        const entryDate = new Date(entry.date);
-        return entryDate >= monthStart && entryDate <= monthEnd;
-      });
-    }
+    const monthStart = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
+    const monthEnd = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0);
+    relevantEntries = entries.filter(entry => {
+      const entryDate = new Date(entry.date);
+      return entryDate >= monthStart && entryDate <= monthEnd;
+    });
     
     const totalPnL = relevantEntries.reduce((sum, entry) => sum + (entry.pnl || 0), 0);
     const totalTrades = relevantEntries.reduce((sum, entry) => sum + (entry.trades || 0), 0);
@@ -412,59 +348,13 @@ export function QuantDiarySection() {
         <h2 className="text-2xl font-bold text-white">
           {language === 'en' ? 'Quant Diary' : 'Diário Quant'}
         </h2>
-        
-        <div className="flex items-center space-x-4">
-          {/* View Type Switcher */}
-          <div className="flex bg-gray-800 rounded-lg p-1">
-            <button
-              onClick={() => setViewType('weekly')}
-              className={`px-3 py-1.5 rounded-md text-sm transition-colors ${
-                viewType === 'weekly'
-                  ? 'bg-blue-600 text-white'
-                  : 'text-gray-400 hover:text-white'
-              }`}
-            >
-              {language === 'en' ? 'Weekly' : 'Semanal'}
-            </button>
-            <button
-              onClick={() => setViewType('calendar')}
-              className={`px-3 py-1.5 rounded-md text-sm transition-colors ${
-                viewType === 'calendar'
-                  ? 'bg-blue-600 text-white'
-                  : 'text-gray-400 hover:text-white'
-              }`}
-            >
-              {language === 'en' ? 'Calendar' : 'Calendário'}
-            </button>
-          </div>
-          
-          {/* Weekend Toggle for Weekly View */}
-          {viewType === 'weekly' && (
-            <div className="flex items-center space-x-2">
-              <span className="text-sm text-gray-400">
-                {language === 'en' ? 'Weekends' : 'Fins de semana'}
-              </span>
-              <label className="relative inline-flex items-center cursor-pointer">
-                <input 
-                  type="checkbox" 
-                  checked={showWeekends} 
-                  onChange={() => setShowWeekends(!showWeekends)} 
-                  className="sr-only peer"
-                />
-                <div className="w-11 h-6 bg-gray-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
-              </label>
-            </div>
-          )}
-        </div>
       </div>
 
       {/* Stats */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         <div className="bg-gray-800 rounded-lg p-4">
           <p className="text-sm text-gray-400">
-            {viewType === 'weekly' 
-              ? (language === 'en' ? 'Week P&L' : 'P&L Semana')
-              : (language === 'en' ? 'Month P&L' : 'P&L Mês')}
+            {language === 'en' ? 'Month P&L' : 'P&L Mês'}
           </p>
           <p className={`text-2xl font-bold ${stats.totalPnL >= 0 ? 'text-green-400' : 'text-red-400'}`}>
             R$ {stats.totalPnL.toFixed(2)}
@@ -496,231 +386,116 @@ export function QuantDiarySection() {
       {/* Navigation */}
       <div className="flex items-center justify-between bg-gray-800 rounded-lg p-4">
         <button
-          onClick={() => viewType === 'weekly' ? navigateWeek('prev') : navigateMonth('prev')}
+          onClick={() => navigateMonth('prev')}
           className="p-2 hover:bg-gray-700 rounded-full transition-colors"
-          title={viewType === 'weekly' ? 'Semana anterior' : 'Mês anterior'}
+          title="Mês anterior"
         >
           <ChevronLeft className="w-5 h-5" />
         </button>
         
         <h3 className="text-lg font-semibold">
-          {viewType === 'weekly' 
-            ? `${getMonthName(currentDate)} de 2025 - Semana ${getWeekOfMonth(currentDate)} (Semana ${getWeekOfYear(currentDate)} do ano)`
-            : `${getMonthName(currentDate)} de ${currentDate.getFullYear()}`}
+          {`${getMonthName(currentDate)} de ${currentDate.getFullYear()}`}
         </h3>
         
         <button
-          onClick={() => viewType === 'weekly' ? navigateWeek('next') : navigateMonth('next')}
+          onClick={() => navigateMonth('next')}
           className="p-2 hover:bg-gray-700 rounded-full transition-colors"
-          title={viewType === 'weekly' ? 'Próxima semana' : 'Próximo mês'}
+          title="Próximo mês"
         >
           <ChevronRight className="w-5 h-5" />
         </button>
       </div>
 
-      {/* Calendar Views */}
-      {viewType === 'weekly' ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6">
-          {getWeekDays().map((day, index) => {
-            const entry = getEntryForDate(day);
-            const isToday = formatDate(day) === formatDate(new Date());
-            
-            return (
-              <div
-                key={index}
-                className={`bg-gray-800 rounded-lg p-6 border-2 transition-all duration-300 hover:border-blue-500 min-h-80 flex flex-col ${
-                  isToday ? 'border-blue-500 bg-blue-900 bg-opacity-20' : 'border-gray-700'
-                }`}
-              >
-                {/* Header do Card */}
-                <div className="text-center mb-4">
-                  <p className="text-sm text-gray-400 mb-1">{getDayName(day)}</p>
-                  <p className="text-3xl font-bold">{day.getDate()}</p>
-                </div>
-                
-                {/* Conteúdo Principal */}
-                <div className="flex-1 space-y-3">
-                  {entry ? (
-                    <>
-                      {/* P&L em destaque */}
+      </div>
+
+      {/* Calendar View */}
+      <div className="grid grid-cols-7 gap-2">
+        {/* Header dos dias da semana */}
+        {['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'].map(day => (
+          <div key={day} className="p-3 text-center text-sm font-medium text-gray-400 bg-gray-800 rounded-lg">
+            {day}
+          </div>
+        ))}
+        
+        {/* Dias do calendário */}
+        {getCalendarLayout().map((day, index) => {
+          const entry = day ? getEntryForDate(day) : null;
+          const isToday = day ? formatDate(day) === formatDate(new Date()) : false;
+          
+          return (
+            <div
+              key={index}
+              className={`min-h-32 p-3 rounded-lg border transition-all duration-300 ${
+                !day 
+                  ? 'border-transparent bg-transparent cursor-default' // Dias vazios
+                  : isToday 
+                    ? 'border-blue-500 bg-blue-900 bg-opacity-20' 
+                    : 'border-gray-700 bg-gray-800 hover:border-blue-500'
+              }`}
+            >
+              {day && (
+                <>
+                  <div className="text-center mb-2">
+                    <span className="text-lg font-bold text-white">
+                      {day.getDate()}
+                    </span>
+                    <div className="text-xs text-gray-400">
+                      Sem {getWeekOfMonth(day)} (S{getWeekOfYear(day)})
+                    </div>
+                  </div>
+              
+                  {entry && (
+                    <div className="space-y-1 mb-3">
                       {entry.pnl !== undefined && entry.pnl !== 0 && (
-                        <div className={`p-3 rounded-lg ${
-                          entry.pnl > 0 ? 'bg-green-900 bg-opacity-30' : 'bg-red-900 bg-opacity-30'
+                        <div className={`text-xs font-medium ${
+                          entry.pnl > 0 ? 'text-green-400' : 'text-red-400'
                         }`}>
-                          <p className="text-xs text-gray-400">P&L</p>
-                          <p className={`text-lg font-bold ${
-                            entry.pnl > 0 ? 'text-green-400' : 'text-red-400'
-                          }`}>
-                            R$ {entry.pnl.toFixed(2)}
-                          </p>
+                          R$ {entry.pnl.toFixed(0)}
                         </div>
                       )}
-                      
-                      {/* Título da sessão */}
-                      {entry.title && (
-                        <div>
-                          <p className="text-xs text-gray-400">Sessão</p>
-                          <p className="font-medium text-white text-sm">{entry.title}</p>
-                        </div>
-                      )}
-                      
-                      {/* Preview do conteúdo */}
-                      {entry.content && (
-                        <div>
-                          <p className="text-xs text-gray-400">Notas</p>
-                          <p className="text-sm text-gray-300">
-                            {entry.content.length > 80 
-                              ? `${entry.content.substring(0, 80)}...` 
-                              : entry.content}
-                          </p>
-                        </div>
-                      )}
-                      
-                      {/* Comentários predefinidos */}
-                      {entry.predefinedComments && entry.predefinedComments.length > 0 && (
-                        <div>
-                          <p className="text-xs text-gray-400 mb-1">Comentários</p>
-                          <div className="space-y-1">
-                            {entry.predefinedComments.slice(0, 2).map((comment, idx) => (
-                              <div key={idx} className="flex items-start">
-                                <Hash className="w-3 h-3 text-blue-400 mr-1 mt-0.5 flex-shrink-0" />
-                                <p className="text-xs text-gray-300">{comment}</p>
-                              </div>
-                            ))}
-                            {entry.predefinedComments.length > 2 && (
-                              <p className="text-xs text-blue-400">
-                                +{entry.predefinedComments.length - 2} mais
-                              </p>
-                            )}
-                          </div>
-                        </div>
-                      )}
-                      
-                      {/* Número de trades */}
+                  
                       {entry.trades !== undefined && entry.trades > 0 && (
-                        <div>
-                          <p className="text-xs text-gray-400">Trades</p>
-                          <p className="text-sm font-medium text-blue-400">{entry.trades}</p>
+                        <div className="text-xs text-blue-400">
+                          {entry.trades} trades
                         </div>
                       )}
-                    </>
-                  ) : (
-                    <div className="flex-1 flex items-center justify-center">
-                      <p className="text-gray-500 text-sm text-center">
-                        {language === 'en' ? 'No entries' : 'Sem registros'}
-                      </p>
+                  
+                      <div className="text-center">
+                        <span className="text-sm">{getMoodEmoji(entry.mood || 'neutral')}</span>
+                      </div>
                     </div>
                   )}
-                </div>
-                
-                {/* Botões de Ação */}
-                <div className="space-y-2 mt-4">
-                  <button
-                    onClick={() => openModal(day, 'comment')}
-                    className="w-full py-2 px-3 bg-blue-600 hover:bg-blue-700 rounded-lg text-white text-sm flex items-center justify-center transition-colors"
-                  >
-                    <Plus className="w-4 h-4 mr-2" />
-                    Add Comentários
-                  </button>
-                  
-                  <button
-                    onClick={() => openModal(day, 'analysis')}
-                    className="w-full py-2 px-3 bg-green-600 hover:bg-green-700 rounded-lg text-white text-sm flex items-center justify-center transition-colors"
-                  >
-                    <BarChart2 className="w-4 h-4 mr-2" />
-                    Add Análise Salva
-                  </button>
-                </div>
-                
-                {/* Footer com humor e horário */}
-                {entry && (
-                  <div className="flex items-center justify-between mt-3 pt-3 border-t border-gray-700">
-                    <span className="text-lg">{getMoodEmoji(entry.mood || 'neutral')}</span>
-                    {entry.time && (
-                      <div className="flex items-center text-xs text-gray-400">
-                        <Clock className="w-3 h-3 mr-1" />
-                        {entry.time}
-                      </div>
-                    )}
+              
+                  {/* Botões de ação */}
+                  <div className="space-y-1">
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        openModal(day, 'comment');
+                      }}
+                      className="w-full py-1 px-2 bg-blue-600 hover:bg-blue-700 rounded text-xs text-white flex items-center justify-center transition-colors"
+                    >
+                      <MessageSquare className="w-3 h-3 mr-1" />
+                      Comentários
+                    </button>
+                    
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        openModal(day, 'analysis');
+                      }}
+                      className="w-full py-1 px-2 bg-green-600 hover:bg-green-700 rounded text-xs text-white flex items-center justify-center transition-colors"
+                    >
+                      <BarChart2 className="w-3 h-3 mr-1" />
+                      Análise
+                    </button>
                   </div>
-                )}
-              </div>
-            );
-          })}
-        </div>
-      ) : (
-        <div className="grid grid-cols-7 gap-1">
-          {/* Header dos dias da semana */}
-          {['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'].map(day => (
-            <div key={day} className="p-2 text-center text-sm font-medium text-gray-400">
-              {day}
+                </>
+              )}
             </div>
-          ))}
-          
-          {/* Dias do calendário */}
-          {getCalendarLayout().map((day, index) => {
-            const entry = day ? getEntryForDate(day) : null;
-            const isCurrentMonth = day ? day.getMonth() === currentDate.getMonth() : false;
-            const isToday = day ? formatDate(day) === formatDate(new Date()) : false;
-            
-            return (
-              <div
-                key={index}
-                className={`min-h-24 p-2 rounded-lg border transition-all duration-300 hover:border-blue-500 cursor-pointer ${
-                  !day 
-                    ? 'border-transparent bg-transparent cursor-default' // Dias vazios
-                    : isToday 
-                      ? 'border-blue-500 bg-blue-900 bg-opacity-20' 
-                      : 'border-gray-700 bg-gray-800'
-                }`}
-                onClick={() => day && openModal(day, 'comment')}
-              >
-                {day && (
-                  <>
-                    <div className="text-center mb-2">
-                      <span className="text-sm font-medium text-white">
-                        {day.getDate()}
-                      </span>
-                      <div className="text-xs text-gray-400">
-                        Sem {getWeekOfMonth(day)} (S{getWeekOfYear(day)})
-                      </div>
-                    </div>
-                
-                    {entry && (
-                      <div className="space-y-1">
-                        {entry.pnl !== undefined && entry.pnl !== 0 && (
-                          <div className={`text-xs font-medium ${
-                            entry.pnl > 0 ? 'text-green-400' : 'text-red-400'
-                          }`}>
-                            R$ {entry.pnl.toFixed(0)}
-                          </div>
-                        )}
-                    
-                        {entry.trades !== undefined && entry.trades > 0 && (
-                          <div className="text-xs text-blue-400">
-                            {entry.trades} trades
-                          </div>
-                        )}
-                    
-                        <div className="text-center">
-                          <span className="text-sm">{getMoodEmoji(entry.mood || 'neutral')}</span>
-                        </div>
-                      </div>
-                    )}
-                
-                    {!entry && (
-                      <div className="flex items-center justify-center h-full">
-                        <Plus className="w-4 h-4 text-gray-600" />
-                      </div>
-                    )}
-                  </>
-                )}
-              </div>
-            );
-          })}
-        </div>
-      )}
-
+          );
+        })}
+      </div>
       {/* Modal */}
       {showModal && selectedDate && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
