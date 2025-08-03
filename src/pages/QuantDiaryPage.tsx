@@ -155,6 +155,12 @@ export function QuantDiaryPage() {
   };
 
   const renderCalendar = () => {
+    // Se estiver em modo mensal, mostrar grid de meses
+    if (calendarViewMode === 'monthly') {
+      return renderMonthlyView();
+    }
+    
+    // Modo diário - mostrar dias do mês
     const daysInMonth = getDaysInMonth(currentMonth, currentYear);
     const firstDayOfWeek = getFirstDayOfMonth(currentMonth, currentYear);
     
@@ -332,6 +338,117 @@ export function QuantDiaryPage() {
           <div className="flex items-center">
             <MessageSquare className="w-3 h-3 text-blue-400 mr-2" />
             <span className="text-sm text-gray-400">Com Comentários</span>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
+  const renderMonthlyView = () => {
+    const months = [
+      'janeiro', 'fevereiro', 'março', 'abril', 'maio', 'junho',
+      'julho', 'agosto', 'setembro', 'outubro', 'novembro', 'dezembro'
+    ];
+    
+    return (
+      <div className="bg-gray-800 rounded-lg p-6">
+        <div className="flex items-center justify-between mb-6">
+          <h3 className="text-xl font-semibold flex items-center">
+            <Calendar className="w-5 h-5 text-blue-400 mr-2" />
+            Visão Anual - {currentYear}
+          </h3>
+          <div className="flex items-center space-x-4">
+            {/* Switch para visão diária/mensal */}
+            <div className="flex items-center space-x-2">
+              <span className="text-sm text-gray-400">Diária</span>
+              <label className="relative inline-flex items-center cursor-pointer">
+                <input 
+                  type="checkbox" 
+                  checked={calendarViewMode === 'monthly'} 
+                  onChange={() => setCalendarViewMode(calendarViewMode === 'daily' ? 'monthly' : 'daily')} 
+                  className="sr-only peer"
+                />
+                <div className="w-11 h-6 bg-gray-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+              </label>
+              <span className="text-sm text-gray-400">Mensal</span>
+            </div>
+            
+            <button
+              onClick={() => setCurrentYear(prev => prev - 1)}
+              className="p-2 hover:bg-gray-700 rounded-full"
+            >
+              ←
+            </button>
+            <span className="text-sm text-gray-300 min-w-[80px] text-center">
+              {currentYear}
+            </span>
+            <button
+              onClick={() => setCurrentYear(prev => prev + 1)}
+              className="p-2 hover:bg-gray-700 rounded-full"
+            >
+              →
+            </button>
+          </div>
+        </div>
+
+        {/* Grid de meses 4x3 */}
+        <div className="grid grid-cols-3 gap-4 mb-6">
+          {months.map((month, index) => {
+            const monthData = monthlyBreakdown.find(m => m.month === month);
+            const monthPnL = monthData?.pnl || 0;
+            const monthTrades = monthData?.trades || 0;
+            const monthDays = monthData?.dias || 0;
+            const hasData = monthTrades > 0;
+            const isPositive = monthPnL > 0;
+            const isCurrentMonth = month === currentMonth;
+            
+            return (
+              <button
+                key={month}
+                onClick={() => {
+                  setCurrentMonth(month);
+                  setCalendarViewMode('daily');
+                }}
+                className={`p-4 rounded-lg border text-center transition-all hover:scale-105 cursor-pointer ${
+                  isCurrentMonth
+                    ? 'ring-2 ring-blue-500 border-blue-500'
+                    : hasData
+                      ? isPositive
+                        ? 'bg-green-900 border-green-700 text-green-300 hover:bg-green-800'
+                        : 'bg-red-900 border-red-700 text-red-300 hover:bg-red-800'
+                      : 'bg-gray-700 border-gray-600 text-gray-400 hover:bg-gray-600'
+                }`}
+              >
+                <div className="text-lg font-bold capitalize mb-2">{month}</div>
+                {hasData ? (
+                  <>
+                    <div className="text-sm mb-1">
+                      {monthPnL >= 0 ? '+' : ''}R$ {monthPnL.toFixed(0)}
+                    </div>
+                    <div className="text-xs text-gray-400">
+                      {monthTrades} trades • {monthDays} dias
+                    </div>
+                  </>
+                ) : (
+                  <div className="text-xs text-gray-500">Sem dados</div>
+                )}
+              </button>
+            );
+          })}
+        </div>
+
+        <div className="flex items-center justify-center space-x-6">
+          <div className="flex items-center">
+            <div className="w-3 h-3 bg-blue-500 rounded-full mr-2"></div>
+            <span className="text-sm text-gray-400">Visão Mensal (clique para ver detalhes)</span>
+          </div>
+          <div className="flex items-center">
+            <div className="w-3 h-3 bg-green-500 rounded-full mr-2"></div>
+            <span className="text-sm text-gray-400">Meses Lucrativos</span>
+          </div>
+          <div className="flex items-center">
+            <div className="w-3 h-3 bg-red-500 rounded-full mr-2"></div>
+            <span className="text-sm text-gray-400">Meses de Perda</span>
           </div>
         </div>
       </div>
