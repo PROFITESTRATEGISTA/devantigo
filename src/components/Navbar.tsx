@@ -158,12 +158,9 @@ export function Navbar() {
               {showUserMenu && (
                 <div className="absolute right-0 mt-2 w-48 bg-gray-800 rounded-md shadow-lg py-1 z-50">
                   <div className="px-4 py-2 border-b border-gray-700">
-                    <p className="text-sm font-medium truncate">{profile?.name || profile?.email?.split('@')[0] || 'User'}</p>
-                    <p className="text-xs text-gray-400 truncate">{profile?.email}</p>
-                    <div className="mt-1 flex items-center">
-                      <TokenDisplay showLabel={false} showAddButton={false} />
-                      <span className="ml-1 text-xs text-gray-400">tokens</span>
-                    </div>
+                  <div className="hidden md:flex bg-gray-700 text-gray-300 px-2 py-1 rounded text-xs items-center">
+                    <span className="text-blue-400 font-medium mr-1">Q</span>
+                    <span className="font-medium">87</span>
                   </div>
                   <button
                     onClick={() => {
