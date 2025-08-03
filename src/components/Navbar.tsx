@@ -158,9 +158,10 @@ export function Navbar() {
               {showUserMenu && (
                 <div className="absolute right-0 mt-2 w-48 bg-gray-800 rounded-md shadow-lg py-1 z-50">
                   <div className="px-4 py-2 border-b border-gray-700">
-                  <div className="hidden md:flex bg-gray-700 text-gray-300 px-2 py-1 rounded text-xs items-center">
-                    <span className="text-blue-400 font-medium mr-1">Q</span>
-                    <span className="font-medium">87</span>
+                    <div className="hidden md:flex bg-gray-700 text-gray-300 px-2 py-1 rounded text-xs items-center">
+                      <span className="text-blue-400 font-medium mr-1">Q</span>
+                      <span className="font-medium">87</span>
+                    </div>
                   </div>
                   <button
                     onClick={() => {
