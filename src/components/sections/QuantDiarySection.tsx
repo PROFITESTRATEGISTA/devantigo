@@ -226,29 +226,28 @@ export function QuantDiarySection() {
 
   const getWeekDays = () => {
     const days = [];
+
+    // Encontrar o primeiro dia da semana atual baseado no CSV
+    const currentWeekOfYear = getWeekOfYear(currentWeekStart);
     
-    // Calcular quantos dias mostrar
-    const maxDaysToShow = showWeekends ? 7 : 5;
+    // Encontrar todos os dias que pertencem a esta semana do ano
+    const startOfYear = new Date(2025, 0, 1);
     
-    // Começar a partir do currentWeekStart
-    for (let i = 0; i < maxDaysToShow; i++) {
-      const day = new Date(currentWeekStart);
-      day.setDate(currentWeekStart.getDate() + i);
+    for (let dayOfYear = 1; dayOfYear <= 365; dayOfYear++) {
+      const date = new Date(2025, 0, dayOfYear);
+      const weekOfYear = Math.ceil(dayOfYear / 7);
       
-      // Verificar se ainda está em 2025
-      if (day.getFullYear() !== 2025) {
-        break; // Parar se mudou de ano
-      }
-      
-      // Se não mostrar fins de semana, pular sábado (6) e domingo (0)
-      if (!showWeekends) {
-        const dayOfWeek = day.getDay();
-        if (dayOfWeek === 0 || dayOfWeek === 6) {
-          continue; // Pular fins de semana
+      if (weekOfYear === currentWeekOfYear) {
+        // Se não mostrar fins de semana, filtrar sábado (6) e domingo (0)
+        if (!showWeekends) {
+          const dayOfWeek = date.getDay();
+          if (dayOfWeek === 0 || dayOfWeek === 6) {
+            continue; // Pular fins de semana
+          }
         }
+        
+        days.push(date);
       }
-      
-      days.push(day);
     }
     
     return days;
