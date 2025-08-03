@@ -27,7 +27,6 @@ export function QuantDiaryPage() {
   const [showAllTime, setShowAllTime] = useState(false);
   const [currentMonth, setCurrentMonth] = useState('agosto');
   const [currentYear, setCurrentYear] = useState(2025);
-  const [metricsYear, setMetricsYear] = useState(2025);
   const [showDayModal, setShowDayModal] = useState(false);
   const [showActionModal, setShowActionModal] = useState(false);
   const [selectedDay, setSelectedDay] = useState<number | null>(null);
@@ -37,6 +36,7 @@ export function QuantDiaryPage() {
   const [userPatrimony, setUserPatrimony] = useState<number>(10000); // Patrimônio inicial padrão
   const [isEditingPatrimony, setIsEditingPatrimony] = useState(false);
   const [patrimonyInput, setPatrimonyInput] = useState('10000');
+  const [metricsYear, setMetricsYear] = useState(2025);
   
   // Função para calcular drawdown baseado no patrimônio
   const calculateDrawdownMetrics = () => {
@@ -876,9 +876,6 @@ export function QuantDiaryPage() {
       }
     };
 
-    // Get available years for the dropdown
-    const availableYears = Object.keys(calendarData).map(year => parseInt(year)).sort((a, b) => b - a);
-
     return (
       <div className="bg-gray-800 rounded-lg p-6">
         <div className="flex items-center justify-between mb-6">
@@ -886,18 +883,6 @@ export function QuantDiaryPage() {
             <BarChart2 className="w-5 h-5 text-blue-400 mr-2" />
             Métricas de Performance
           </h3>
-          <div className="flex items-center space-x-2">
-            <span className="text-sm text-gray-400">Ano:</span>
-            <select
-              value={metricsYear}
-              onChange={(e) => setMetricsYear(parseInt(e.target.value))}
-              className="bg-gray-700 border border-gray-600 rounded-md px-3 py-1 text-white text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-            >
-              {availableYears.map(year => (
-                <option key={year} value={year}>{year}</option>
-              ))}
-            </select>
-          </div>
         </div>
 
         {/* Métricas de Performance */}
