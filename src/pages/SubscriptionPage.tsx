@@ -1,6 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, Crown, Check, Star, Shield, Zap, MessageSquare, Building } from 'lucide-react';
+import { ArrowLeft, Crown, Check, Star, Shield, Zap, MessageSquare, Building, Users } from 'lucide-react';
 import { useAuthStore } from '../stores/authStore';
 import { TokenDisplay } from '../components/TokenDisplay';
 import { Navbar } from '../components/Navbar';
@@ -241,76 +241,217 @@ export function SubscriptionPage() {
           </div>
         </div>
 
-        {/* Available Plans */}
+        {/* Simplified Plan Selector */}
         <h2 className="text-xl font-semibold mb-6">
-          {language === 'en' ? 'Available Plans' : 'Planos Disponíveis'}
+          {language === 'en' ? 'Choose Your Plan' : 'Escolha Seu Plano'}
         </h2>
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
-          {plans.map((plan) => (
-            <div 
-              key={plan.id}
-              className={`bg-gray-800 rounded-lg p-6 relative ${
-                plan.isPopular ? 'ring-2 ring-blue-500' : 
-                plan.isRecommended ? 'ring-2 ring-green-500' :
-                plan.isBusiness ? 'ring-2 ring-purple-500' : ''
+        
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
+          {/* Free Plan */}
+          <div className="bg-gray-800 rounded-lg p-6 relative">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-xl font-semibold">Free Forever</h3>
+              <Users className="w-6 h-6 text-green-500" />
+            </div>
+            <p className="text-3xl font-bold mb-4">R$ 0,00</p>
+            <p className="text-gray-400 mb-6">
+              {language === 'en' ? 'Perfect for getting started' : 'Perfeito para começar'}
+            </p>
+            
+            <ul className="space-y-3 mb-6">
+              <li className="flex items-center text-gray-300">
+                <Check className="w-4 h-4 text-green-500 mr-2 flex-shrink-0" />
+                <span>{language === 'en' ? 'Up to 3 trading robots' : 'Até 3 robôs de trading'}</span>
+              </li>
+              <li className="flex items-center text-gray-300">
+                <Check className="w-4 h-4 text-green-500 mr-2 flex-shrink-0" />
+                <span>{language === 'en' ? '1,000 monthly tokens' : '1.000 tokens mensais'}</span>
+              </li>
+              <li className="flex items-center text-gray-300">
+                <Check className="w-4 h-4 text-green-500 mr-2 flex-shrink-0" />
+                <span>{language === 'en' ? 'Basic backtest analysis' : 'Análise básica de backtest'}</span>
+              </li>
+              <li className="flex items-center text-gray-300">
+                <Check className="w-4 h-4 text-green-500 mr-2 flex-shrink-0" />
+                <span>{language === 'en' ? 'Community access' : 'Acesso à comunidade'}</span>
+              </li>
+            </ul>
+
+            <button 
+              onClick={() => currentPlan.name === 'Free Forever' ? null : handleUpgradeClick('free-forever')}
+              className={`w-full py-3 rounded-md flex items-center justify-center ${
+                currentPlan.name === 'Free Forever'
+                  ? 'bg-green-600 hover:bg-green-700 text-white'
+                  : 'bg-gray-700 hover:bg-gray-600 text-white'
               }`}
             >
-              {plan.isPopular && (
-                <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-1 bg-blue-600 rounded-full text-sm font-medium">
-                  {language === 'en' ? 'Most Popular' : 'Mais Popular'}
-                </div>
+              {currentPlan.name === 'Free Forever' ? (
+                language === 'en' ? 'Current Plan' : 'Plano Atual'
+              ) : (
+                <>
+                  <MessageSquare className="w-4 h-4 mr-2" />
+                  {language === 'en' ? 'Get Started' : 'Começar'}
+                </>
               )}
-              {plan.isRecommended && (
-                <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-1 bg-green-600 rounded-full text-sm font-medium">
-                  {language === 'en' ? 'Recommended' : 'Recomendado'}
-                </div>
-              )}
-              {plan.isBusiness && (
-                <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-1 bg-purple-600 rounded-full text-sm font-medium">
-                  {language === 'en' ? 'For Companies' : 'Para Empresas'}
-                </div>
-              )}
+            </button>
+          </div>
 
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="text-lg font-semibold">{plan.name}</h3>
-                {plan.id === 'pro1' && <Star className="w-5 h-5 text-blue-500" />}
-                {plan.id === 'pro2' && <Shield className="w-5 h-5 text-green-500" />}
-                {plan.id === 'pro3' && <Crown className="w-5 h-5 text-yellow-500" />}
-                {plan.id === 'business' && <Building className="w-5 h-5 text-purple-500" />}
-              </div>
-
-              <p className="text-2xl font-bold mb-4">{plan.price}</p>
-
-              <ul className="space-y-3 mb-6">
-                {plan.features.map((feature, index) => (
-                  <li key={index} className="flex items-center text-gray-300">
-                    <Check className="w-4 h-4 text-green-500 mr-2 flex-shrink-0" />
-                    <span>{feature}</span>
-                  </li>
-                ))}
-              </ul>
-
-              <button 
-                onClick={() => currentPlan.name === plan.name ? null : handleUpgradeClick(plan.id)}
-                className={`w-full py-2 rounded-md flex items-center justify-center ${
-                  currentPlan.name === plan.name
-                    ? 'bg-green-600 hover:bg-green-700'
-                    : plan.isPopular || plan.isRecommended
-                      ? 'bg-blue-600 hover:bg-blue-700'
-                    : plan.isBusiness
-                      ? 'bg-purple-600 hover:bg-purple-700'
-                      : 'bg-gray-700 hover:bg-gray-600'
-                }`}
-              >
-                {currentPlan.name === plan.name ? (language === 'en' ? 'Current Plan' : 'Plano Atual') : (
-                  <>
-                    <MessageSquare className="w-4 h-4 mr-2" />
-                    {language === 'en' ? 'Contract' : 'Contratar'}
-                  </>
-                )}
-              </button>
+          {/* Pro Plan */}
+          <div className="bg-gray-800 rounded-lg p-6 relative ring-2 ring-blue-500">
+            <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-1 bg-blue-600 rounded-full text-sm font-medium">
+              {language === 'en' ? 'Most Popular' : 'Mais Popular'}
             </div>
-          ))}
+            
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-xl font-semibold">Pro</h3>
+              <Star className="w-6 h-6 text-blue-500" />
+            </div>
+            
+            <div className="mb-4">
+              <p className="text-sm text-gray-400 mb-2">
+                {language === 'en' ? 'Choose your level:' : 'Escolha seu nível:'}
+              </p>
+              <div className="space-y-2">
+                <div className="flex items-center justify-between p-2 bg-gray-700 rounded">
+                  <span className="text-sm">Pro 1</span>
+                  <span className="text-lg font-bold">R$ 259,80/mês</span>
+                </div>
+                <div className="flex items-center justify-between p-2 bg-gray-700 rounded">
+                  <span className="text-sm">Pro 2</span>
+                  <span className="text-lg font-bold">R$ 499,80/mês</span>
+                </div>
+                <div className="flex items-center justify-between p-2 bg-gray-700 rounded">
+                  <span className="text-sm">Pro 3</span>
+                  <span className="text-lg font-bold">R$ 999,80/mês</span>
+                </div>
+              </div>
+            </div>
+            
+            <p className="text-gray-400 mb-6">
+              {language === 'en' ? 'AI-powered robot creation and advanced features' : 'Criação de robôs com IA e recursos avançados'}
+            </p>
+            
+            <ul className="space-y-3 mb-6">
+              <li className="flex items-center text-gray-300">
+                <Check className="w-4 h-4 text-green-500 mr-2 flex-shrink-0" />
+                <span>{language === 'en' ? 'AI robot generation' : 'IA para gerar robôs'}</span>
+              </li>
+              <li className="flex items-center text-gray-300">
+                <Check className="w-4 h-4 text-green-500 mr-2 flex-shrink-0" />
+                <span>{language === 'en' ? 'Advanced backtest analysis' : 'Análise avançada de backtest'}</span>
+              </li>
+              <li className="flex items-center text-gray-300">
+                <Check className="w-4 h-4 text-green-500 mr-2 flex-shrink-0" />
+                <span>{language === 'en' ? 'Portfolio automation' : 'Automação de portfólios'}</span>
+              </li>
+              <li className="flex items-center text-gray-300">
+                <Check className="w-4 h-4 text-green-500 mr-2 flex-shrink-0" />
+                <span>{language === 'en' ? 'Up to 25-500 robots' : 'Até 25-500 robôs'}</span>
+              </li>
+              <li className="flex items-center text-gray-300">
+                <Check className="w-4 h-4 text-green-500 mr-2 flex-shrink-0" />
+                <span>{language === 'en' ? '20,000-100,000 tokens' : '20.000-100.000 tokens'}</span>
+              </li>
+            </ul>
+
+            <button 
+              onClick={() => handleUpgradeClick('pro')}
+              className="w-full py-3 bg-blue-600 hover:bg-blue-700 rounded-md flex items-center justify-center text-white"
+            >
+              <MessageSquare className="w-4 h-4 mr-2" />
+              {language === 'en' ? 'Choose Pro Level' : 'Escolher Nível Pro'}
+            </button>
+          </div>
+
+          {/* Business Plan */}
+          <div className="bg-gray-800 rounded-lg p-6 relative ring-2 ring-purple-500">
+            <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-1 bg-purple-600 rounded-full text-sm font-medium">
+              {language === 'en' ? 'For Companies' : 'Para Empresas'}
+            </div>
+            
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-xl font-semibold">Business</h3>
+              <Building className="w-6 h-6 text-purple-500" />
+            </div>
+            <p className="text-3xl font-bold mb-4">R$ 1.999,80/mês</p>
+            <p className="text-gray-400 mb-6">
+              {language === 'en' ? 'Enterprise solutions and white-label options' : 'Soluções empresariais e opções white-label'}
+            </p>
+            
+            <ul className="space-y-3 mb-6">
+              <li className="flex items-center text-gray-300">
+                <Check className="w-4 h-4 text-green-500 mr-2 flex-shrink-0" />
+                <span>{language === 'en' ? 'Unlimited robots' : 'Robôs ilimitados'}</span>
+              </li>
+              <li className="flex items-center text-gray-300">
+                <Check className="w-4 h-4 text-green-500 mr-2 flex-shrink-0" />
+                <span>{language === 'en' ? 'AI robot generation' : 'IA para gerar robôs'}</span>
+              </li>
+              <li className="flex items-center text-gray-300">
+                <Check className="w-4 h-4 text-green-500 mr-2 flex-shrink-0" />
+                <span>{language === 'en' ? '100,000 tokens/month' : '100.000 tokens/mês'}</span>
+              </li>
+              <li className="flex items-center text-gray-300">
+                <Check className="w-4 h-4 text-green-500 mr-2 flex-shrink-0" />
+                <span>{language === 'en' ? 'API access' : 'Acesso à API'}</span>
+              </li>
+              <li className="flex items-center text-gray-300">
+                <Check className="w-4 h-4 text-green-500 mr-2 flex-shrink-0" />
+                <span>{language === 'en' ? 'White-label options' : 'Opções white-label'}</span>
+              </li>
+              <li className="flex items-center text-gray-300">
+                <Check className="w-4 h-4 text-green-500 mr-2 flex-shrink-0" />
+                <span>{language === 'en' ? 'Dedicated support' : 'Suporte dedicado'}</span>
+              </li>
+            </ul>
+
+            <button 
+              onClick={() => handleUpgradeClick('business')}
+              className="w-full py-3 bg-purple-600 hover:bg-purple-700 rounded-md flex items-center justify-center text-white"
+            >
+              <MessageSquare className="w-4 h-4 mr-2" />
+              {language === 'en' ? 'Contact Sales' : 'Contatar Vendas'}
+            </button>
+          </div>
+        </div>
+        
+        {/* Pro Plan Details Modal Trigger */}
+        <div className="bg-blue-900 bg-opacity-20 rounded-lg p-4 mb-8">
+          <h3 className="text-lg font-medium mb-2 flex items-center">
+            <Star className="w-5 h-5 text-blue-400 mr-2" />
+            {language === 'en' ? 'Pro Plan Levels' : 'Níveis do Plano Pro'}
+          </h3>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="bg-gray-800 p-4 rounded-lg">
+              <h4 className="font-medium mb-2">Pro 1 - R$ 259,80/mês</h4>
+              <ul className="text-sm text-gray-300 space-y-1">
+                <li>• {language === 'en' ? 'Up to 25 robots' : 'Até 25 robôs'}</li>
+                <li>• {language === 'en' ? '20,000 tokens' : '20.000 tokens'}</li>
+                <li>• {language === 'en' ? 'AI robot generation' : 'IA para gerar robôs'}</li>
+              </ul>
+            </div>
+            <div className="bg-gray-800 p-4 rounded-lg ring-2 ring-green-500">
+              <div className="flex items-center justify-between mb-2">
+                <h4 className="font-medium">Pro 2 - R$ 499,80/mês</h4>
+                <span className="text-xs bg-green-600 px-2 py-1 rounded-full">
+                  {language === 'en' ? 'Recommended' : 'Recomendado'}
+                </span>
+              </div>
+              <ul className="text-sm text-gray-300 space-y-1">
+                <li>• {language === 'en' ? 'Up to 100 robots' : 'Até 100 robôs'}</li>
+                <li>• {language === 'en' ? '50,000 tokens' : '50.000 tokens'}</li>
+                <li>• {language === 'en' ? 'Dedicated support' : 'Suporte dedicado'}</li>
+              </ul>
+            </div>
+            <div className="bg-gray-800 p-4 rounded-lg">
+              <h4 className="font-medium mb-2">Pro 3 - R$ 999,80/mês</h4>
+              <ul className="text-sm text-gray-300 space-y-1">
+                <li>• {language === 'en' ? 'Up to 500 robots' : 'Até 500 robôs'}</li>
+                <li>• {language === 'en' ? '100,000 tokens' : '100.000 tokens'}</li>
+                <li>• {language === 'en' ? 'All premium features' : 'Todos os recursos premium'}</li>
+              </ul>
+            </div>
+          </div>
         </div>
 
         {/* Token Reload */}
