@@ -1,5 +1,5 @@
 import React from 'react';
-import { BarChart2, TrendingUp, BookOpen, Store, Users } from 'lucide-react';
+import { BarChart2, TrendingUp, BookOpen, Store, Users, Code2 } from 'lucide-react';
 
 interface NavigationPanelProps {
   activeSection: string;
@@ -8,6 +8,12 @@ interface NavigationPanelProps {
 
 export function NavigationPanel({ activeSection, onSectionChange }: NavigationPanelProps) {
   const sections = [
+    {
+      id: 'robots',
+      name: 'Meus Robôs',
+      icon: <Code2 className="w-5 h-5" />,
+      description: 'Seus robôs de trading'
+    },
     {
       id: 'analyses',
       name: 'Análises',

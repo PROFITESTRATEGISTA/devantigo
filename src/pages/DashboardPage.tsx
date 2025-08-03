@@ -8,6 +8,7 @@ import { RankingSection } from '../components/sections/RankingSection';
 import { TutorialsSection } from '../components/sections/TutorialsSection';
 import { MarketplaceSection } from '../components/sections/MarketplaceSection';
 import { UsersSection } from '../components/sections/UsersSection';
+import { RobotsSection } from '../components/sections/RobotsSection';
 import { 
   mockAnalyses, 
   mockRankingAnalyses,
@@ -21,7 +22,7 @@ export const DashboardPage = () => {
   const [activeSection, setActiveSection] = useState('analyses');
 
   useEffect(() => {
-    setActiveSection('analyses');
+    setActiveSection('robots');
   }, []);
 
   const handleNavigate = (path: string) => {
@@ -30,6 +31,12 @@ export const DashboardPage = () => {
 
   const renderActiveSection = () => {
     switch (activeSection) {
+      case 'robots':
+        return (
+          <RobotsSection 
+            onNavigate={handleNavigate} 
+          />
+        );
       case 'analyses':
         return (
           <AnalysesSection 

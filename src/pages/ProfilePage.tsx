@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { User, Mail, Camera, X, ArrowLeft, Bell, Crown, Zap, Phone } from 'lucide-react';
+import { User, Mail, Camera, X, ArrowLeft, Bell, Crown, Zap, Phone, Users } from 'lucide-react';
 import { useAuthStore } from '../stores/authStore';
 import { supabase } from '../lib/supabase';
 import { useNavigate } from 'react-router-dom';
@@ -195,6 +195,68 @@ export function ProfilePage() {
                 <h2 className="text-lg font-medium">Pending Invites</h2>
               </div>
               <InvitesList />
+            </div>
+
+            {/* Friends Section */}
+            <div className="mb-8">
+              <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center">
+                  <Users className="w-5 h-5 text-green-400 mr-2" />
+                  <h2 className="text-lg font-medium">Amigos Conectados</h2>
+                </div>
+                <button
+                  onClick={() => navigate('/dashboard?section=users')}
+                  className="text-blue-400 hover:text-blue-300 text-sm"
+                >
+                  Ver Todos →
+                </button>
+              </div>
+              
+              <div className="bg-gray-700 rounded-lg p-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {/* Mock friends data - in real app this would come from API */}
+                  {[
+                    { id: '1', name: 'Carlos Silva', specialty: 'Scalping Expert', avatar: null, status: 'online' },
+                    { id: '2', name: 'Ana Costa', specialty: 'Swing Trading', avatar: null, status: 'offline' },
+                    { id: '3', name: 'Pedro Santos', specialty: 'Grid Trading', avatar: null, status: 'online' }
+                  ].map((friend) => (
+                    <div key={friend.id} className="bg-gray-800 rounded-lg p-3 flex items-center space-x-3">
+                      <div className="relative">
+                        <div className="w-10 h-10 bg-gray-600 rounded-full flex items-center justify-center overflow-hidden">
+                          {friend.avatar ? (
+                            <img 
+                              src={friend.avatar} 
+                              alt={friend.name}
+                              className="w-full h-full object-cover"
+                            />
+                          ) : (
+                            <User className="w-5 h-5 text-gray-400" />
+                          )}
+                        </div>
+                        <div className={`absolute -bottom-1 -right-1 w-3 h-3 rounded-full border-2 border-gray-800 ${
+                          friend.status === 'online' ? 'bg-green-500' : 'bg-gray-500'
+                        }`} />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="font-medium text-white truncate">{friend.name}</p>
+                        <p className="text-xs text-gray-400 truncate">{friend.specialty}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+                
+                {/* Empty state if no friends */}
+                <div className="hidden text-center py-8">
+                  <Users className="w-12 h-12 text-gray-600 mx-auto mb-3" />
+                  <p className="text-gray-400 mb-2">Nenhum amigo conectado ainda</p>
+                  <button
+                    onClick={() => navigate('/dashboard?section=users')}
+                    className="text-blue-400 hover:text-blue-300 text-sm"
+                  >
+                    Encontrar usuários para conectar
+                  </button>
+                </div>
+              </div>
             </div>
 
             <form onSubmit={handleSubmit} className="space-y-6">
