@@ -1324,3 +1324,5 @@ ${entry.predefinedComments.length > 0
     </div>
   );
 }
+
+export { QuantDiarySection }
