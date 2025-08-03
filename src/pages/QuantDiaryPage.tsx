@@ -190,7 +190,7 @@ export function QuantDiaryPage() {
                 maxDailyLoss = dayData.pnl;
                 maxDailyLossDate = dayDate.toLocaleDateString('pt-BR');
               }
-              
+    // Calculate drawdown with user's initial capital
               // Update streaks
               if (lastDayPnL !== null && lastDayPnL < 0) {
                 currentLossStreak++;
