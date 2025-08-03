@@ -362,6 +362,7 @@ const translations: Record<Language, Record<string, string>> = {
     'nav.signOut': 'Sair',
     'nav.dashboard': 'Dashboard',
     'nav.faq': 'FAQ',
+    'nav.earnTokens': 'Ganhe Tokens',
     
     // Buttons
     'button.createRobot': 'Criar Robô',

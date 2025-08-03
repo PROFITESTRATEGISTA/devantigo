@@ -263,7 +263,7 @@ export function ChallengesPage() {
               <ArrowLeft className="w-6 h-6" />
             </button>
             <div>
-              <h1 className="text-2xl lg:text-3xl font-bold mb-2 flex items-center">
+              <h1 className="text-xl lg:text-2xl font-bold mb-2 flex items-center">
                 <Trophy className="w-8 h-8 text-yellow-500 mr-3" />
                 {t('challenges.title')}
               </h1>
