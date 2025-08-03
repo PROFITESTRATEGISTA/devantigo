@@ -514,6 +514,54 @@ export function QuantDiaryPage() {
       </div>
 
       {/* Métricas de Performance */}
+      {/* Resultado Financeiro */}
+      <div className="mb-8">
+        <h4 className="text-lg font-semibold mb-4 text-gray-300 border-b border-gray-700 pb-2">
+          💰 Resultado Financeiro
+        </h4>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        {/* P&L Total */}
+        <div className="bg-gray-700 rounded-lg p-4">
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-sm text-gray-400">P&L Total</span>
+            <DollarSign className="w-4 h-4 text-green-400" />
+          </div>
+          <p className="text-2xl font-bold text-green-400">R$ 18.212,00</p>
+          <p className="text-xs text-gray-500">Todos os tempos</p>
+        </div>
+        
+        {/* P&L Mensal */}
+        <div className="bg-gray-700 rounded-lg p-4">
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-sm text-gray-400">P&L Mensal</span>
+            <DollarSign className="w-4 h-4 text-green-400" />
+          </div>
+          <p className="text-2xl font-bold text-green-400">R$ 1.175,50</p>
+          <p className="text-xs text-gray-500">Agosto 2025</p>
+        </div>
+        
+        {/* Média P&L/Dia */}
+        <div className="bg-gray-700 rounded-lg p-4">
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-sm text-gray-400">Média P&L/Dia</span>
+            <DollarSign className="w-4 h-4 text-purple-400" />
+          </div>
+          <p className="text-2xl font-bold text-purple-400">R$ 120,61</p>
+          <p className="text-xs text-gray-500">Por dia operado</p>
+        </div>
+        
+        {/* Melhor Mês */}
+        <div className="bg-gray-700 rounded-lg p-4">
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-sm text-gray-400">Melhor Mês</span>
+            <TrendingUp className="w-4 h-4 text-green-400" />
+          </div>
+          <p className="text-2xl font-bold text-green-400">R$ 3.120,25</p>
+          <p className="text-xs text-gray-500">Março 2025</p>
+        </div>
+        </div>
+      </div>
+      
       {/* Análise Operacional */}
       <div className="mb-8">
         <h4 className="text-lg font-semibold mb-4 text-gray-300 border-b border-gray-700 pb-2">
