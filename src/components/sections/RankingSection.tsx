@@ -9,6 +9,10 @@ interface RankingAnalysis {
   winRate: number;
   rank: number;
   author: string;
+  sharpeRatio?: number;
+  recoveryFactor?: number;
+  maxDrawdown?: number;
+  totalTrades?: number;
 }
 
 interface RankingSectionProps {
@@ -77,6 +81,7 @@ export function RankingSection({ analyses, onNavigate }: RankingSectionProps) {
     });
     
     return filtered;
+  }, [analyses, filterBy, sortOrder, timeFilter]);
 
   return (
     <div className="space-y-6">
