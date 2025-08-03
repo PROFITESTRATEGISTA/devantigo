@@ -250,7 +250,7 @@ export function Navbar() {
                   className="flex items-center justify-center space-x-2 px-4 py-3 bg-green-600 hover:bg-green-700 rounded-md text-base font-medium text-white transition-colors"
                 >
                   <span className="text-base">🏆</span>
-                  <span>Ganhe Tokens</span>
+                  <span>{t('nav.earnTokens')}</span>
                 </button>
                 <LanguageSwitcher />
               </div>
