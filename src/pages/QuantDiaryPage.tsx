@@ -5,7 +5,7 @@ import {
 } from 'lucide-react';
 import { Navbar } from '../components/Navbar';
 
-export default function DiarioQuant() {
+export function QuantDiaryPage() {
   const navigate = useNavigate();
   const [viewMode, setViewMode] = useState('calendar');
   const [monthlyBreakdown, setMonthlyBreakdown] = useState([]);
