@@ -513,18 +513,31 @@ export function QuantDiaryPage() {
   const weeklyStats = calculateWeeklyStats();
 
   const handleDayClick = (day: number) => {
-    if (calendarViewMode === 'monthly') return;
-    
-    setSelectedDay(day);
-    // Se o dia tem dados, abre o painel diretamente
-    if (dayData && (dayData.pnl !== 0 || dayData.trades > 0 || dayData.comments)) {
-  };
-
-  const handleActionSelect = (action: 'analysis' | 'comment') => {
-    setActionType(action);
-    setShowActionModal(false);
-    
-    // Carregar dados existentes do dia
+    try {
+      const dayKey = `${currentDate.getFullYear()}-${String(currentDate.getMonth() + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+      const dayData = diaryData[dayKey];
+      
+      setSelectedDay(day);
+      
+      // Verifica se o dia tem dados
+      const hasData = dayData && (
+        (dayData.pnl && dayData.pnl !== 0) ||
+        (dayData.trades && dayData.trades > 0) ||
+        (dayData.comments && dayData.comments.trim() !== '')
+      );
+      
+      if (hasData) {
+        // Dia com dados: vai direto para o painel
+        setShowDayPanel(true);
+        setShowDayModal(false);
+      } else {
+        // Dia sem dados: mostra modal de opções
+        setShowDayModal(true);
+        setShowDayPanel(false);
+      }
+    } catch (error) {
+      console.error('Erro ao processar clique no dia:', error);
+    }
     const existingData = calendarData[currentYear]?.[currentMonth]?.[selectedDay!] || { pnl: 0, trades: 0, comment: '' };
     setEditingDay(existingData);
     setShowDayModal(true);
