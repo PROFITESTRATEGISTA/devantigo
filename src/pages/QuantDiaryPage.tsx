@@ -15,6 +15,7 @@ export function QuantDiaryPage() {
   const [viewMode, setViewMode] = useState<'calendar' | 'statistics' | 'chart'>('calendar');
   const [currentMonth, setCurrentMonth] = useState(new Date());
   const [selectedDay, setSelectedDay] = useState<number | null>(null);
+  const [selectedStatsMonth, setSelectedStatsMonth] = useState(new Date());
 
   // Mock data for demonstration
   const monthlyStats = {
@@ -65,6 +66,24 @@ export function QuantDiaryPage() {
     });
   };
 
+  const formatMonthShort = (date: Date) => {
+    return date.toLocaleDateString('pt-BR', { 
+      month: 'long', 
+      year: 'numeric' 
+    });
+  };
+
+  const navigateStatsMonth = (direction: 'prev' | 'next') => {
+    setSelectedStatsMonth(prev => {
+      const newDate = new Date(prev);
+      if (direction === 'prev') {
+        newDate.setMonth(prev.getMonth() - 1);
+      } else {
+        newDate.setMonth(prev.getMonth() + 1);
+      }
+      return newDate;
+    });
+  };
   const getDaysInMonth = (date: Date) => {
     return new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate();
   };
@@ -166,11 +185,33 @@ export function QuantDiaryPage() {
       {/* Performance Mensal */}
       <div className="bg-gray-800 rounded-lg p-6">
         <div className="flex items-center justify-between mb-6">
-          <h3 className="text-xl font-semibold flex items-center">
-            <TrendingUp className="w-5 h-5 text-blue-400 mr-2" />
-            Performance Mensal
-          </h3>
-          <span className="text-sm text-gray-400">agosto 2025</span>
+          <div className="flex items-center space-x-4">
+            <h3 className="text-xl font-semibold flex items-center">
+              <TrendingUp className="w-5 h-5 text-blue-400 mr-2" />
+              Performance Mensal
+            </h3>
+          </div>
+          <div className="flex items-center space-x-3">
+            <button
+              onClick={() => navigateStatsMonth('prev')}
+              className="p-2 hover:bg-gray-700 rounded-full transition-colors"
+              title="Mês anterior"
+            >
+              <ChevronLeft className="w-4 h-4 text-gray-400" />
+            </button>
+            <div className="bg-gray-700 px-4 py-2 rounded-lg">
+              <span className="text-sm font-medium capitalize">
+                {formatMonthShort(selectedStatsMonth)}
+              </span>
+            </div>
+            <button
+              onClick={() => navigateStatsMonth('next')}
+              className="p-2 hover:bg-gray-700 rounded-full transition-colors"
+              title="Próximo mês"
+            >
+              <ChevronRight className="w-4 h-4 text-gray-400" />
+            </button>
+          </div>
         </div>
 
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
