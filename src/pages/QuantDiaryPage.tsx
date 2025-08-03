@@ -274,7 +274,11 @@ export function QuantDiaryPage() {
 
   // Função para calcular estatísticas específicas do ano
   const calculateYearlyStats = (year: number) => {
-    const yearData = calendarData[year] || {};
+    const yearData = calendarData[year];
+    if (!yearData) {
+      return getDefaultStats();
+    }
+
     let totalPnl = 0;
     let diasOperados = 0;
     let totalLucroBruto = 0;
@@ -289,79 +293,167 @@ export function QuantDiaryPage() {
     let maiorSequenciaNegativa = 0;
     let sequenciaTemporaria = 0;
     let ultimoTipoSequencia = '';
-    
+    let currentWinStreak = 0;
+    let currentLossStreak = 0;
+    let maxWinStreak = 0;
+    let maxLossStreak = 0;
+    let maxWin = -Infinity;
+    let maxLoss = Infinity;
+
     Object.values(yearData).forEach(monthData => {
-      const days = Object.values(monthData);
-      totalPnl += days.reduce((sum, day) => sum + day.pnl, 0);
-      totalTrades += days.reduce((sum, day) => sum + day.trades, 0);
-      diasOperados += days.filter(day => day.trades > 0).length;
-      totalLucroBruto += days.filter(day => day.pnl > 0).reduce((sum, day) => sum + day.pnl, 0);
-      totalPrejuizoBruto += Math.abs(days.filter(day => day.pnl < 0).reduce((sum, day) => sum + day.pnl, 0));
-      
-      // Calcular dias positivos e negativos
-      diasPositivos += days.filter(day => day.pnl > 0 && day.trades > 0).length;
-      diasNegativos += days.filter(day => day.pnl < 0 && day.trades > 0).length;
-      
-      // Encontrar melhor e pior dia
-      days.forEach(day => {
-        if (day.trades > 0) {
-          if (day.pnl > melhorDia) melhorDia = day.pnl;
-          if (day.pnl < piorDia) piorDia = day.pnl;
-        }
-      });
-      
-      // Calcular sequências (simplificado - seria melhor com datas ordenadas)
-      days.forEach(day => {
-        if (day.trades > 0) {
-          const tipoAtual = day.pnl > 0 ? 'positivo' : 'negativo';
+      Object.values(monthData).forEach(dayData => {
+        if (dayData.trades > 0) {
+          totalPnl += dayData.pnl;
+          totalTrades += dayData.trades;
+          diasOperados++;
           
-          if (tipoAtual === ultimoTipoSequencia) {
-            sequenciaTemporaria++;
-          } else {
-            if (ultimoTipoSequencia === 'positivo') {
-              maiorSequenciaPositiva = Math.max(maiorSequenciaPositiva, sequenciaTemporaria);
-            } else if (ultimoTipoSequencia === 'negativo') {
-              maiorSequenciaNegativa = Math.max(maiorSequenciaNegativa, sequenciaTemporaria);
-            }
-            sequenciaTemporaria = 1;
-            ultimoTipoSequencia = tipoAtual;
+          if (dayData.pnl > 0) {
+            totalLucroBruto += dayData.pnl;
+            diasPositivos++;
+            maxWin = Math.max(maxWin, dayData.pnl);
+            
+            currentWinStreak++;
+            currentLossStreak = 0;
+            maxWinStreak = Math.max(maxWinStreak, currentWinStreak);
+          } else if (dayData.pnl < 0) {
+            totalPrejuizoBruto += Math.abs(dayData.pnl);
+            diasNegativos++;
+            maxLoss = Math.min(maxLoss, dayData.pnl);
+            
+            currentLossStreak++;
+            currentWinStreak = 0;
+            maxLossStreak = Math.max(maxLossStreak, currentLossStreak);
           }
         }
       });
     });
-    
-    // Finalizar última sequência
-    if (ultimoTipoSequencia === 'positivo') {
-      maiorSequenciaPositiva = Math.max(maiorSequenciaPositiva, sequenciaTemporaria);
-    } else if (ultimoTipoSequencia === 'negativo') {
-      maiorSequenciaNegativa = Math.max(maiorSequenciaNegativa, sequenciaTemporaria);
-    }
-    
-    const fatorLucro = totalPrejuizoBruto > 0 ? totalLucroBruto / totalPrejuizoBruto : 0;
-    const mediaPnlDia = diasOperados > 0 ? totalPnl / diasOperados : 0;
-    const taxaAcerto = diasOperados > 0 ? (diasPositivos / diasOperados) * 100 : 0;
-    const ganhoMedioDiario = diasPositivos > 0 ? totalLucroBruto / diasPositivos : 0;
-    const perdaMediaDiaria = diasNegativos > 0 ? totalPrejuizoBruto / diasNegativos : 0;
-    const payoffDiario = perdaMediaDiaria > 0 ? ganhoMedioDiario / perdaMediaDiaria : 0;
+
+    // Handle edge cases for max values
+    if (maxWin === -Infinity) maxWin = 0;
+    if (maxLoss === Infinity) maxLoss = 0;
+
+    const winRate = diasOperados > 0 ? (diasPositivos / diasOperados) * 100 : 0;
+    const averageWin = diasPositivos > 0 ? (totalLucroBruto / diasPositivos) : 0;
+    const averageLoss = diasNegativos > 0 ? (totalPrejuizoBruto / diasNegativos) : 0;
+    const profitFactor = totalPrejuizoBruto > 0 ? (totalLucroBruto / totalPrejuizoBruto) : (totalLucroBruto > 0 ? 999 : 0);
+    const payoff = averageLoss > 0 ? (averageWin / averageLoss) : (averageWin > 0 ? 999 : 0);
     
     return {
       totalPnl,
-      diasOperados,
+      totalDaysTraded: diasOperados,
       totalTrades,
-      totalLucroBruto,
-      totalPrejuizoBruto,
-      fatorLucro,
-      mediaPnlDia,
-      diasPositivos,
-      diasNegativos,
-      taxaAcerto,
-      melhorDia,
-      piorDia,
-      ganhoMedioDiario,
-      perdaMediaDiaria,
-      payoffDiario,
-      maiorSequenciaPositiva,
-      maiorSequenciaNegativa
+      grossProfit: totalLucroBruto,
+      grossLoss: totalPrejuizoBruto,
+      profitFactor,
+      winRate,
+      averageWin,
+      averageLoss,
+      maxWin,
+      maxLoss,
+      consecutiveWins: maxWinStreak,
+      consecutiveLosses: maxLossStreak,
+      payoff
+    };
+  };
+
+  // Helper function to provide default stats
+  const getDefaultStats = () => ({
+    totalPnl: 0,
+    totalDaysTraded: 0,
+    totalTrades: 0,
+    grossProfit: 0,
+    grossLoss: 0,
+    profitFactor: 0,
+    winRate: 0,
+    averageWin: 0,
+    averageLoss: 0,
+    maxWin: 0,
+    maxLoss: 0,
+    consecutiveWins: 0,
+    consecutiveLosses: 0,
+    payoff: 0
+  });
+
+  // Calculate all-time stats
+  const calculateAllTimeStats = () => {
+    let totalPnl = 0;
+    let totalDaysTraded = 0;
+    let totalTrades = 0;
+    let grossProfit = 0;
+    let grossLoss = 0;
+    let winningDays = 0;
+    let losingDays = 0;
+    let currentWinStreak = 0;
+    let currentLossStreak = 0;
+    let maxWinStreak = 0;
+    let maxLossStreak = 0;
+    let maxWin = -Infinity;
+    let maxLoss = Infinity;
+    let bestMonth = { month: '', year: 0, pnl: -Infinity };
+
+    Object.entries(calendarData).forEach(([year, yearData]) => {
+      Object.entries(yearData).forEach(([month, monthData]) => {
+        let monthPnl = 0;
+        
+        Object.values(monthData).forEach(dayData => {
+          if (dayData.trades > 0) {
+            totalPnl += dayData.pnl;
+            totalTrades += dayData.trades;
+            totalDaysTraded++;
+            monthPnl += dayData.pnl;
+            
+            if (dayData.pnl > 0) {
+              grossProfit += dayData.pnl;
+              winningDays++;
+              maxWin = Math.max(maxWin, dayData.pnl);
+              
+              currentWinStreak++;
+              currentLossStreak = 0;
+              maxWinStreak = Math.max(maxWinStreak, currentWinStreak);
+            } else if (dayData.pnl < 0) {
+              grossLoss += Math.abs(dayData.pnl);
+              losingDays++;
+              maxLoss = Math.min(maxLoss, dayData.pnl);
+              
+              currentLossStreak++;
+              currentWinStreak = 0;
+              maxLossStreak = Math.max(maxLossStreak, currentLossStreak);
+            }
+          }
+        });
+        
+        if (monthPnl > bestMonth.pnl) {
+          bestMonth = { month, year: parseInt(year), pnl: monthPnl };
+        }
+      });
+    });
+
+    // Handle edge cases for max values
+    if (maxWin === -Infinity) maxWin = 0;
+    if (maxLoss === Infinity) maxLoss = 0;
+
+    const winRate = totalDaysTraded > 0 ? (winningDays / totalDaysTraded) * 100 : 0;
+    const averageWin = winningDays > 0 ? (grossProfit / winningDays) : 0;
+    const averageLoss = losingDays > 0 ? (grossLoss / losingDays) : 0;
+    const profitFactor = grossLoss > 0 ? (grossProfit / grossLoss) : (grossProfit > 0 ? 999 : 0);
+    const payoff = averageLoss > 0 ? (averageWin / averageLoss) : (averageWin > 0 ? 999 : 0);
+
+    return {
+      totalPnl,
+      totalDaysTraded,
+      totalTrades,
+      grossProfit,
+      grossLoss,
+      profitFactor,
+      winRate,
+      averageWin,
+      averageLoss,
+      maxWin,
+      maxLoss,
+      consecutiveWins: maxWinStreak,
+      consecutiveLosses: maxLossStreak,
+      payoff,
+      bestMonth
     };
   };
 
@@ -694,15 +786,15 @@ export function QuantDiaryPage() {
             </div>
             <div className="text-center">
               <p className="text-sm text-gray-400">Dias Operados</p>
-              <p className="text-xl font-bold text-blue-400">{currentYearStats.diasOperados}</p>
+              <p className="text-xl font-bold text-blue-400">{currentYearStats.totalDaysTraded}</p>
             </div>
             <div className="text-center">
               <p className="text-sm text-gray-400">Fator de Lucro</p>
-              <p className="text-xl font-bold text-purple-400">{currentYearStats.fatorLucro.toFixed(2)}</p>
+              <p className="text-xl font-bold text-purple-400">{currentYearStats.profitFactor.toFixed(2)}</p>
             </div>
             <div className="text-center">
               <p className="text-sm text-gray-400">Média P&L/Dia</p>
-              <p className="text-xl font-bold text-yellow-400">R$ {currentYearStats.mediaPnlDia.toFixed(2)}</p>
+              <p className="text-xl font-bold text-yellow-400">R$ {(currentYearStats.totalPnl / (currentYearStats.totalDaysTraded || 1)).toFixed(2)}</p>
             </div>
           </div>
         </div>
