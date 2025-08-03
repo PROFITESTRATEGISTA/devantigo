@@ -516,8 +516,8 @@ export function QuantDiaryPage() {
     if (calendarViewMode === 'monthly') return;
     
     setSelectedDay(day);
-    const dayData = calendarData[currentYear]?.[currentMonth]?.[day];
     // Se o dia tem dados, abre o painel diretamente
+    const dayData = calendarData[currentYear]?.[currentMonth]?.[day];
     if (dayData && (dayData.pnl !== 0 || dayData.trades > 0 || dayData.comment)) {
       setShowActionModal(true);
     } else {
@@ -1652,7 +1652,7 @@ export function QuantDiaryPage() {
               <h2 className="text-xl font-bold text-gray-100">
                 Dia {selectedDay} de {currentMonth.charAt(0).toUpperCase() + currentMonth.slice(1)}
               </h2>
-              <p className="mt-2 text-gray-400">
+              <p className="text-gray-400 mt-2">
                 O que você gostaria de fazer?
               </p>
             </div>
