@@ -1683,7 +1683,6 @@ export function QuantDiaryPage() {
               <button
                 onClick={() => {
                   setShowActionModal(false);
-                  setSelectedDay(selectedDay);
                   setShowDayPanel(true);
                 }}
                 className="w-full flex items-center p-4 bg-purple-600 hover:bg-purple-700 rounded-lg transition-colors text-left"
