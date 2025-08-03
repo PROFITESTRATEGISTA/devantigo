@@ -8,7 +8,7 @@ import {
 } from 'lucide-react';
 import { Navbar } from '../components/Navbar';
 import { useAuthStore } from '../stores/authStore';
-import { useLanguageStore } from '../stores/languageStore';
+import { useI18n } from '../lib/i18n';
 
 interface Challenge {
   id: string;
@@ -28,7 +28,7 @@ interface Challenge {
 export function ChallengesPage() {
   const navigate = useNavigate();
   const { profile } = useAuthStore();
-  const { t, language } = useLanguageStore();
+  const { t, locale } = useI18n();
   const [activeTab, setActiveTab] = useState<'daily' | 'weekly' | 'monthly' | 'achievements'>('daily');
   const [challenges, setChallenges] = useState<Challenge[]>([]);
   const [totalEarned, setTotalEarned] = useState(0);
@@ -43,8 +43,8 @@ export function ChallengesPage() {
       // Daily Challenges
       {
         id: 'daily-login',
-        title: 'Login Diário',
-        description: 'Faça login na plataforma hoje',
+        title: t('challenges.daily.login.title'),
+        description: t('challenges.daily.login.description'),
         reward: 10,
         type: 'daily',
         difficulty: 'easy',
@@ -52,13 +52,13 @@ export function ChallengesPage() {
         maxProgress: 1,
         completed: true,
         icon: <Calendar className="w-5 h-5" />,
-        category: 'Atividade',
+        category: t('challenges.category.activity'),
         expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString()
       },
       {
         id: 'daily-edit-robot',
-        title: 'Editar Robô',
-        description: 'Edite qualquer robô por pelo menos 5 minutos',
+        title: t('challenges.daily.editRobot.title'),
+        description: t('challenges.daily.editRobot.description'),
         reward: 25,
         type: 'daily',
         difficulty: 'easy',
@@ -66,13 +66,13 @@ export function ChallengesPage() {
         maxProgress: 1,
         completed: false,
         icon: <Code2 className="w-5 h-5" />,
-        category: 'Desenvolvimento',
+        category: t('challenges.category.development'),
         expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString()
       },
       {
         id: 'daily-analysis',
-        title: 'Análise de Backtest',
-        description: 'Faça uma análise de backtest com IA',
+        title: t('challenges.daily.analysis.title'),
+        description: t('challenges.daily.analysis.description'),
         reward: 50,
         type: 'daily',
         difficulty: 'medium',
@@ -80,14 +80,14 @@ export function ChallengesPage() {
         maxProgress: 1,
         completed: false,
         icon: <BarChart2 className="w-5 h-5" />,
-        category: 'Análise',
+        category: t('challenges.category.analysis'),
         expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString()
       },
       // Weekly Challenges
       {
         id: 'weekly-create-robot',
-        title: 'Criar Novo Robô',
-        description: 'Crie um novo robô de trading esta semana',
+        title: t('challenges.weekly.createRobot.title'),
+        description: t('challenges.weekly.createRobot.description'),
         reward: 500,
         type: 'weekly',
         difficulty: 'medium',
@@ -95,13 +95,13 @@ export function ChallengesPage() {
         maxProgress: 1,
         completed: true,
         icon: <Code2 className="w-5 h-5" />,
-        category: 'Criação',
+        category: t('challenges.category.creation'),
         expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString()
       },
       {
         id: 'weekly-share-strategy',
-        title: 'Compartilhar Estratégia',
-        description: 'Compartilhe um robô com outro usuário',
+        title: t('challenges.weekly.shareStrategy.title'),
+        description: t('challenges.weekly.shareStrategy.description'),
         reward: 200,
         type: 'weekly',
         difficulty: 'easy',
@@ -109,13 +109,13 @@ export function ChallengesPage() {
         maxProgress: 1,
         completed: false,
         icon: <Share2 className="w-5 h-5" />,
-        category: 'Social',
+        category: t('challenges.category.social'),
         expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString()
       },
       {
         id: 'weekly-optimize-strategy',
-        title: 'Otimizar Estratégia',
-        description: 'Use IA para otimizar uma estratégia existente',
+        title: t('challenges.weekly.optimizeStrategy.title'),
+        description: t('challenges.weekly.optimizeStrategy.description'),
         reward: 300,
         type: 'weekly',
         difficulty: 'medium',
@@ -123,14 +123,14 @@ export function ChallengesPage() {
         maxProgress: 3,
         completed: false,
         icon: <TrendingUp className="w-5 h-5" />,
-        category: 'Otimização',
+        category: t('challenges.category.optimization'),
         expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString()
       },
       // Monthly Challenges
       {
         id: 'monthly-competition',
-        title: 'Competição de Performance',
-        description: 'Participe da competição mensal de estratégias',
+        title: t('challenges.monthly.competition.title'),
+        description: t('challenges.monthly.competition.description'),
         reward: 2000,
         type: 'monthly',
         difficulty: 'hard',
@@ -138,13 +138,13 @@ export function ChallengesPage() {
         maxProgress: 1,
         completed: false,
         icon: <Trophy className="w-5 h-5" />,
-        category: 'Competição',
+        category: t('challenges.category.competition'),
         expiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString()
       },
       {
         id: 'monthly-tutorial',
-        title: 'Criar Tutorial',
-        description: 'Contribua com um tutorial para a comunidade',
+        title: t('challenges.monthly.tutorial.title'),
+        description: t('challenges.monthly.tutorial.description'),
         reward: 1000,
         type: 'monthly',
         difficulty: 'hard',
@@ -152,14 +152,14 @@ export function ChallengesPage() {
         maxProgress: 1,
         completed: false,
         icon: <Users className="w-5 h-5" />,
-        category: 'Comunidade',
+        category: t('challenges.category.community'),
         expiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString()
       },
       // Achievements
       {
         id: 'achievement-first-robot',
-        title: 'Primeiro Robô',
-        description: 'Crie seu primeiro robô de trading',
+        title: t('challenges.achievement.firstRobot.title'),
+        description: t('challenges.achievement.firstRobot.description'),
         reward: 500,
         type: 'achievement',
         difficulty: 'easy',
@@ -167,12 +167,12 @@ export function ChallengesPage() {
         maxProgress: 1,
         completed: true,
         icon: <Star className="w-5 h-5" />,
-        category: 'Marco'
+        category: t('challenges.category.milestone')
       },
       {
         id: 'achievement-robot-master',
-        title: 'Mestre dos Robôs',
-        description: 'Crie 10 robôs diferentes',
+        title: t('challenges.achievement.robotMaster.title'),
+        description: t('challenges.achievement.robotMaster.description'),
         reward: 1500,
         type: 'achievement',
         difficulty: 'hard',
@@ -180,12 +180,12 @@ export function ChallengesPage() {
         maxProgress: 10,
         completed: false,
         icon: <Crown className="w-5 h-5" />,
-        category: 'Marco'
+        category: t('challenges.category.milestone')
       },
       {
         id: 'achievement-streak-master',
-        title: 'Sequência Perfeita',
-        description: 'Mantenha uma sequência de 30 dias de login',
+        title: t('challenges.achievement.streakMaster.title'),
+        description: t('challenges.achievement.streakMaster.description'),
         reward: 1000,
         type: 'achievement',
         difficulty: 'medium',
@@ -193,7 +193,7 @@ export function ChallengesPage() {
         maxProgress: 30,
         completed: false,
         icon: <Flame className="w-5 h-5" />,
-        category: 'Dedicação'
+        category: t('challenges.category.dedication')
       }
     ];
 
@@ -242,18 +242,18 @@ export function ChallengesPage() {
     const expires = new Date(expiresAt);
     const diff = expires.getTime() - now.getTime();
     
-    if (diff <= 0) return 'Expirado';
+    if (diff <= 0) return t('challenges.expired');
     
     const hours = Math.floor(diff / (1000 * 60 * 60));
     const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
     
     if (hours > 24) {
       const days = Math.floor(hours / 24);
-      return `${days}d restantes`;
+      return t('challenges.daysRemaining', { days });
     } else if (hours > 0) {
-      return `${hours}h ${minutes}m`;
+      return t('challenges.hoursMinutesRemaining', { hours, minutes });
     } else {
-      return `${minutes}m restantes`;
+      return t('challenges.minutesRemaining', { minutes });
     }
   };
 
@@ -277,7 +277,7 @@ export function ChallengesPage() {
         <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
         </svg>
-        +${challenge.reward} tokens ganhos!
+        ${t('challenges.tokensEarned', { amount: challenge.reward })}
       `;
       document.body.appendChild(successMessage);
 
@@ -304,27 +304,27 @@ export function ChallengesPage() {
             <button
               onClick={() => navigate(-1)}
               className="p-2 hover:bg-gray-800 rounded-full transition-colors"
-              title="Voltar"
+              title={t('action.back')}
             >
               <ArrowLeft className="w-6 h-6" />
             </button>
             <div>
-              <h1 className="text-3xl font-bold mb-2 flex items-center">
+              <h1 className="text-2xl lg:text-3xl font-bold mb-2 flex items-center">
                 <Trophy className="w-8 h-8 text-yellow-500 mr-3" />
-                Ganhe Tokens
+                {t('challenges.title')}
               </h1>
               <p className="text-gray-400">
-                Complete desafios e ganhe tokens para usar recursos de IA
+                {t('challenges.subtitle')}
               </p>
             </div>
           </div>
           
           <div className="text-right">
-            <p className="text-sm text-gray-400">Sequência atual</p>
+            <p className="text-sm text-gray-400">{t('challenges.currentStreak')}</p>
             <div className="flex items-center">
               <Flame className="w-5 h-5 text-orange-500 mr-1" />
               <span className="text-2xl font-bold text-orange-400">{streak}</span>
-              <span className="text-gray-400 ml-1">dias</span>
+              <span className="text-gray-400 ml-1">{t('challenges.days')}</span>
             </div>
           </div>
         </div>
@@ -333,48 +333,48 @@ export function ChallengesPage() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
           <div className="bg-gray-800 rounded-lg p-6">
             <div className="flex items-center justify-between mb-2">
-              <h3 className="text-lg font-medium">Tokens Ganhos</h3>
+              <h3 className="text-lg font-medium">{t('challenges.tokensEarned')}</h3>
               <Zap className="w-5 h-5 text-yellow-500" />
             </div>
             <p className="text-3xl font-bold text-yellow-400">{totalEarned.toLocaleString()}</p>
-            <p className="text-sm text-gray-400">Este mês</p>
+            <p className="text-sm text-gray-400">{t('challenges.thisMonth')}</p>
           </div>
 
           <div className="bg-gray-800 rounded-lg p-6">
             <div className="flex items-center justify-between mb-2">
-              <h3 className="text-lg font-medium">Desafios Concluídos</h3>
+              <h3 className="text-lg font-medium">{t('challenges.completed')}</h3>
               <Target className="w-5 h-5 text-green-500" />
             </div>
             <p className="text-3xl font-bold text-green-400">{completedChallenges}</p>
-            <p className="text-sm text-gray-400">de {totalChallenges} disponíveis</p>
+            <p className="text-sm text-gray-400">{t('challenges.ofTotal', { completed: completedChallenges, total: totalChallenges })}</p>
           </div>
 
           <div className="bg-gray-800 rounded-lg p-6">
             <div className="flex items-center justify-between mb-2">
-              <h3 className="text-lg font-medium">Taxa de Conclusão</h3>
+              <h3 className="text-lg font-medium">{t('challenges.completionRate')}</h3>
               <Award className="w-5 h-5 text-blue-500" />
             </div>
             <p className="text-3xl font-bold text-blue-400">{completionRate.toFixed(0)}%</p>
-            <p className="text-sm text-gray-400">Neste período</p>
+            <p className="text-sm text-gray-400">{t('challenges.thisPeriod')}</p>
           </div>
 
           <div className="bg-gray-800 rounded-lg p-6">
             <div className="flex items-center justify-between mb-2">
-              <h3 className="text-lg font-medium">Próximo Bônus</h3>
+              <h3 className="text-lg font-medium">{t('challenges.nextBonus')}</h3>
               <Gift className="w-5 h-5 text-purple-500" />
             </div>
             <p className="text-3xl font-bold text-purple-400">1000</p>
-            <p className="text-sm text-gray-400">Em 3 dias (sequência 10)</p>
+            <p className="text-sm text-gray-400">{t('challenges.nextBonusDescription')}</p>
           </div>
         </div>
 
         {/* Tabs */}
         <div className="bg-gray-800 rounded-lg p-1 mb-8 flex">
           {[
-            { id: 'daily', label: 'Diários', icon: <Calendar className="w-4 h-4" /> },
-            { id: 'weekly', label: 'Semanais', icon: <Clock className="w-4 h-4" /> },
-            { id: 'monthly', label: 'Mensais', icon: <Trophy className="w-4 h-4" /> },
-            { id: 'achievements', label: 'Conquistas', icon: <Crown className="w-4 h-4" /> }
+            { id: 'daily', label: t('challenges.tabs.daily'), icon: <Calendar className="w-4 h-4" /> },
+            { id: 'weekly', label: t('challenges.tabs.weekly'), icon: <Clock className="w-4 h-4" /> },
+            { id: 'monthly', label: t('challenges.tabs.monthly'), icon: <Trophy className="w-4 h-4" /> },
+            { id: 'achievements', label: t('challenges.tabs.achievements'), icon: <Crown className="w-4 h-4" /> }
           ].map((tab) => (
             <button
               key={tab.id}
@@ -418,8 +418,7 @@ export function ChallengesPage() {
                     <div className="flex items-center space-x-3 mb-2">
                       <h3 className="text-lg font-semibold">{challenge.title}</h3>
                       <span className={`px-2 py-1 rounded-full text-xs font-medium ${getDifficultyColor(challenge.difficulty)}`}>
-                        {challenge.difficulty === 'easy' ? 'Fácil' : 
-                         challenge.difficulty === 'medium' ? 'Médio' : 'Difícil'}
+                        {t(`challenges.difficulty.${challenge.difficulty}`)}
                       </span>
                       <span className={`px-2 py-1 rounded-full text-xs font-medium ${getTypeColor(challenge.type)}`}>
                         {challenge.category}
@@ -432,7 +431,7 @@ export function ChallengesPage() {
                     {challenge.maxProgress > 1 && (
                       <div className="mb-3">
                         <div className="flex justify-between text-sm mb-1">
-                          <span className="text-gray-400">Progresso</span>
+                          <span className="text-gray-400">{t('challenges.progress')}</span>
                           <span className="text-gray-400">{challenge.progress}/{challenge.maxProgress}</span>
                         </div>
                         <div className="w-full bg-gray-700 rounded-full h-2">
@@ -464,13 +463,13 @@ export function ChallengesPage() {
                         +{challenge.reward.toLocaleString()}
                       </span>
                     </div>
-                    <p className="text-xs text-gray-400">tokens</p>
+                    <p className="text-xs text-gray-400">{t('tokens.balance')}</p>
                   </div>
                   
                   {challenge.completed ? (
                     <div className="flex items-center text-green-400">
                       <Check className="w-5 h-5 mr-1" />
-                      <span className="font-medium">Concluído</span>
+                      <span className="font-medium">{t('challenges.completed')}</span>
                     </div>
                   ) : challenge.progress >= challenge.maxProgress ? (
                     <button
@@ -478,7 +477,7 @@ export function ChallengesPage() {
                       className="px-4 py-2 bg-green-600 hover:bg-green-700 rounded-md font-medium flex items-center"
                     >
                       <Gift className="w-4 h-4 mr-2" />
-                      Resgatar
+                      {t('challenges.claim')}
                     </button>
                   ) : (
                     <button
@@ -494,7 +493,7 @@ export function ChallengesPage() {
                       }}
                       className="px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-md font-medium flex items-center"
                     >
-                      Começar
+                      {t('challenges.start')}
                       <ChevronRight className="w-4 h-4 ml-1" />
                     </button>
                   )}
@@ -509,10 +508,10 @@ export function ChallengesPage() {
           <div className="text-center py-12">
             <Trophy className="w-16 h-16 text-gray-600 mx-auto mb-4" />
             <h3 className="text-xl font-semibold text-gray-400 mb-2">
-              Nenhum desafio disponível
+              {t('challenges.noChallenges')}
             </h3>
             <p className="text-gray-500">
-              Novos desafios serão adicionados em breve!
+              {t('challenges.newChallengesSoon')}
             </p>
           </div>
         )}
@@ -521,42 +520,42 @@ export function ChallengesPage() {
         <div className="mt-12 bg-gradient-to-r from-blue-900 to-indigo-900 rounded-lg p-6">
           <h2 className="text-2xl font-bold mb-4 flex items-center">
             <Lightbulb className="w-6 h-6 text-yellow-500 mr-2" />
-            Dicas para Ganhar Mais Tokens
+            {t('challenges.tips.title')}
           </h2>
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
-              <h3 className="text-lg font-semibold mb-3">Estratégias Diárias</h3>
+              <h3 className="text-lg font-semibold mb-3">{t('challenges.tips.dailyStrategies')}</h3>
               <ul className="space-y-2 text-blue-100">
                 <li className="flex items-start">
                   <Check className="w-4 h-4 text-green-400 mr-2 mt-0.5 flex-shrink-0" />
-                  <span>Faça login todos os dias para manter sua sequência</span>
+                  <span>{t('challenges.tips.dailyLogin')}</span>
                 </li>
                 <li className="flex items-start">
                   <Check className="w-4 h-4 text-green-400 mr-2 mt-0.5 flex-shrink-0" />
-                  <span>Edite seus robôs regularmente para melhorar estratégias</span>
+                  <span>{t('challenges.tips.editRobots')}</span>
                 </li>
                 <li className="flex items-start">
                   <Check className="w-4 h-4 text-green-400 mr-2 mt-0.5 flex-shrink-0" />
-                  <span>Use análises de IA para otimizar performance</span>
+                  <span>{t('challenges.tips.useAI')}</span>
                 </li>
               </ul>
             </div>
             
             <div>
-              <h3 className="text-lg font-semibold mb-3">Bônus Especiais</h3>
+              <h3 className="text-lg font-semibold mb-3">{t('challenges.tips.specialBonuses')}</h3>
               <ul className="space-y-2 text-blue-100">
                 <li className="flex items-start">
                   <Star className="w-4 h-4 text-yellow-400 mr-2 mt-0.5 flex-shrink-0" />
-                  <span>Sequência de 10 dias: +1000 tokens bônus</span>
+                  <span>{t('challenges.tips.streakBonus')}</span>
                 </li>
                 <li className="flex items-start">
                   <Star className="w-4 h-4 text-yellow-400 mr-2 mt-0.5 flex-shrink-0" />
-                  <span>Primeiro lugar na competição: +5000 tokens</span>
+                  <span>{t('challenges.tips.competitionBonus')}</span>
                 </li>
                 <li className="flex items-start">
                   <Star className="w-4 h-4 text-yellow-400 mr-2 mt-0.5 flex-shrink-0" />
-                  <span>Compartilhar estratégia popular: +500 tokens</span>
+                  <span>{t('challenges.tips.shareBonus')}</span>
                 </li>
               </ul>
             </div>
