@@ -423,9 +423,13 @@ export function PublicPlansPage() {
       <div className="py-16 bg-gray-900">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold mb-4">Níveis do Plano Pro</h2>
+            <h2 className="text-3xl font-bold mb-4">
+              {language === 'en' ? 'Pro Plan Levels' : 'Níveis do Plano Pro'}
+            </h2>
             <p className="text-xl text-gray-400 max-w-3xl mx-auto">
-              Compare os diferentes níveis do plano Pro
+              {language === 'en' 
+                ? 'Compare the different Pro plan levels'
+                : 'Compare os diferentes níveis do plano Pro'}
             </p>
           </div>
           
@@ -433,30 +437,30 @@ export function PublicPlansPage() {
             <div className="bg-gray-800 p-4 rounded-lg">
               <h4 className="font-medium mb-2">Pro 1 - R$ 259,80/mês</h4>
               <ul className="text-sm text-gray-300 space-y-1">
-                <li>• Até 25 robôs</li>
-                <li>• 20.000 tokens</li>
-                <li>• IA para gerar robôs</li>
+                <li>• {language === 'en' ? 'Up to 25 robots' : 'Até 25 robôs'}</li>
+                <li>• {language === 'en' ? '20,000 tokens' : '20.000 tokens'}</li>
+                <li>• {language === 'en' ? 'AI to generate robots' : 'IA para gerar robôs'}</li>
               </ul>
             </div>
             <div className="bg-gray-800 p-4 rounded-lg ring-2 ring-green-500">
               <div className="flex items-center justify-between mb-2">
                 <h4 className="font-medium">Pro 2 - R$ 499,80/mês</h4>
                 <span className="text-xs bg-green-600 px-2 py-1 rounded-full">
-                  Recomendado
+                  {language === 'en' ? 'Recommended' : 'Recomendado'}
                 </span>
               </div>
               <ul className="text-sm text-gray-300 space-y-1">
-                <li>• Até 100 robôs</li>
-                <li>• 50.000 tokens</li>
-                <li>• Suporte dedicado</li>
+                <li>• {language === 'en' ? 'Up to 100 robots' : 'Até 100 robôs'}</li>
+                <li>• {language === 'en' ? '50,000 tokens' : '50.000 tokens'}</li>
+                <li>• {language === 'en' ? 'Dedicated support' : 'Suporte dedicado'}</li>
               </ul>
             </div>
             <div className="bg-gray-800 p-4 rounded-lg">
               <h4 className="font-medium mb-2">Pro 3 - R$ 999,80/mês</h4>
               <ul className="text-sm text-gray-300 space-y-1">
-                <li>• Até 500 robôs</li>
-                <li>• 100.000 tokens</li>
-                <li>• Todos os recursos premium</li>
+                <li>• {language === 'en' ? 'Up to 500 robots' : 'Até 500 robôs'}</li>
+                <li>• {language === 'en' ? '100,000 tokens' : '100.000 tokens'}</li>
+                <li>• {language === 'en' ? 'All premium features' : 'Todos os recursos premium'}</li>
               </ul>
             </div>
           </div>
