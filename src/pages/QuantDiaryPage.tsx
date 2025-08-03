@@ -285,12 +285,11 @@ export function QuantDiaryPage() {
         drawdownPeriod: null,
         recoveryFactor: 0,
         sharpeRatio: 0,
-    // Collect all days with P&L data and sort chronologically
-    const allDays: Array<{ date: string; pnl: number; runningTotal: number }> = [];
-    }
+    // Get all days and sort by date
+    const sortedDays = [...calendarData]
+      .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
 
-    let runningPnL = userPatrimony; // Start with user's initial capital
-    let peak = userPatrimony;
+    if (sortedDays.length === 0) {
     let maxDrawdown = 0;
     let maxDrawdownAmount = 0;
     let drawdownStart: string | null = null;
@@ -495,8 +494,8 @@ export function QuantDiaryPage() {
 
   const weeklyStats = calculateWeeklyStats();
 
-  const handleDayClick = (day: number) => {
     const dailyReturns: number[] = [];
+    let previousCapital = userPatrimony;
     
     // Calculate running totals for each day
     allDays.forEach((day, index) => {
@@ -519,7 +518,7 @@ export function QuantDiaryPage() {
       }
     });
     if (calendarViewMode === 'monthly') return;
-    // Calculate drawdown: (peak - current) / patrimony
+    sortedDays.forEach((day) => {
     allDays.forEach((day) => {
       const currentCapital = day.runningTotal;
     setShowActionModal(true);
@@ -531,7 +530,7 @@ export function QuantDiaryPage() {
     
       // Calculate current drawdown using the formula: (peak - current) / patrimony
       const currentDrawdownAmount = peak - currentCapital;
-      const currentDrawdownPercent = userPatrimony > 0 ? (currentDrawdownAmount / userPatrimony) * 100 : 0;
+      const currentDrawdownPercent = peak > 0 ? (currentDrawdownAmount / userPatrimony) * 100 : 0;
   };
       // Track maximum drawdown 
       if (currentDrawdownAmount > maxDrawdownAmount) {
@@ -539,20 +538,12 @@ export function QuantDiaryPage() {
 
     setCalendarData(prev => ({
       ...prev,
-        // Set drawdown start if this is a new drawdown period
-        ...prev[currentYear],
-        [currentMonth]: {
-          ...prev[currentYear]?.[currentMonth],
-          [selectedDay]: { ...editingDay }
-        }
+      if (previousCapital > 0 && day.pnl !== 0) {
+        const dailyReturn = day.pnl / previousCapital;
+        dailyReturns.push(dailyReturn);
       }
     }));
-
-    setShowDayModal(false);
-      // Track when a new drawdown period starts
-      if (currentDrawdownAmount > 0 && !currentDrawdownStart) {
-  };
-
+      previousCapital = runningCapital;
     });
 
     setShowDayModal(false);
