@@ -1,6 +1,3 @@
-Looking at this React component file, I can see it's missing several closing brackets. Let me fix the syntax errors by adding the missing closing brackets:
-
-```typescript
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { 
@@ -519,7 +516,8 @@ export function QuantDiaryPage() {
     if (calendarViewMode === 'monthly') return;
     
     setSelectedDay(day);
-    setShowActionModal(true);
+    // Se o dia tem dados, abre o painel diretamente
+    if (dayData && (dayData.pnl !== 0 || dayData.trades > 0 || dayData.comments)) {
   };
 
   const handleActionSelect = (action: 'analysis' | 'comment') => {
@@ -551,20 +549,33 @@ export function QuantDiaryPage() {
     setActionType(null);
   };
 
-  const handleDeleteDay = () => {
-    if (!selectedDay) return;
-
-    setCalendarData(prev => {
-      const newData = { ...prev };
-      if (newData[currentYear]?.[currentMonth]?.[selectedDay]) {
-        delete newData[currentYear][currentMonth][selectedDay];
-      }
-      return newData;
-    });
-
-    setShowDayModal(false);
-    setSelectedDay(null);
-    setActionType(null);
+  const handleDeleteDay = (dateKey: string) => {
+    if (window.confirm('Tem certeza que deseja excluir todos os dados deste dia? Esta ação não pode ser desfeita.')) {
+      setDiaryData(prev => {
+        const newData = { ...prev };
+        delete newData[dateKey];
+        return newData;
+      });
+      
+      setShowDayModal(false);
+      
+      // Show success message
+      const successMessage = document.createElement('div');
+      successMessage.className = 'fixed top-4 right-4 bg-green-500 text-white px-4 py-2 rounded-md z-50 flex items-center';
+      successMessage.innerHTML = `
+        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+        </svg>
+        Dia excluído com sucesso!
+      `;
+      document.body.appendChild(successMessage);
+      
+      setTimeout(() => {
+        if (document.body.contains(successMessage)) {
+          document.body.removeChild(successMessage);
+        }
+      }, 3000);
+    }
   };
 
   const handleSaveComments = () => {
@@ -588,6 +599,7 @@ export function QuantDiaryPage() {
         setShowDayPanel(true);
         break;
       case 'add-analysis':
+      // Se não tem dados, mostra modal de opções para adicionar
         setShowAddModal(true);
         break;
     }
@@ -600,14 +612,6 @@ export function QuantDiaryPage() {
       month: 'long',
       year: 'numeric'
     });
-  };
-
-  const hasDayData = (dateString: string) => {
-    return mockData[dateString] && mockData[dateString].pnl !== 0;
-  };
-
-  const getDayData = (dateString: string) => {
-    return mockData[dateString] || { pnl: 0, totalTrades: 0, comment: '' };
   };
 
   const renderCalendar = () => {
@@ -1656,50 +1660,115 @@ export function QuantDiaryPage() {
               <h2 className="text-xl font-bold text-gray-100">
                 Dia {selectedDay} de {currentMonth.charAt(0).toUpperCase() + currentMonth.slice(1)}
               </h2>
-              <p className="mt-2 text-gray-400">
+              <p className="text-gray-400 mt-2">
                 {hasDayData(selectedDate) ? 'Gerenciar este dia:' : 'O que você gostaria de fazer?'}
               </p>
-              
-              {/* Resumo do dia se tiver dados */}
-              {hasDayData(selectedDate) && (
-                <div className="mt-4 p-3 bg-gray-700 rounded-lg">
+            </div>
+
+            {/* Se tem dados, mostra opções de gerenciamento */}
+            {hasDayData(selectedDate) ? (
+              <div className="space-y-3">
+                {/* Resumo do dia */}
+                <div className="bg-gray-700 rounded-lg p-3 mb-4">
                   <div className="flex justify-between items-center">
                     <span className="text-sm text-gray-400">P&L do Dia:</span>
-                    <span className={`font-bold ${getDayData(selectedDate).pnl >= 0 ? 'text-green-400' : 'text-red-400'}`}>
-                      R$ {getDayData(selectedDate).pnl.toFixed(2)}
+                    <span className={`font-bold ${
+                      (diaryData[selectedDate]?.pnl || 0) >= 0 ? 'text-green-400' : 'text-red-400'
+                    }`}>
+                      R$ {(diaryData[selectedDate]?.pnl || 0).toFixed(2)}
                     </span>
                   </div>
                   <div className="flex justify-between items-center mt-1">
                     <span className="text-sm text-gray-400">Trades:</span>
-                    <span className="text-blue-400">{getDayData(selectedDate).totalTrades}</span>
+                    <span className="font-bold text-blue-400">{diaryData[selectedDate]?.trades || 0}</span>
                   </div>
                 </div>
-              )}
-            </div>
 
-            <div className="space-y-3">
-              <button
-                onClick={() => handleActionSelect('analysis')}
-                className="w-full p-4 bg-blue-600 hover:bg-blue-700 rounded-lg text-white flex items-center"
-              >
-                <FileText className="w-5 h-5 mr-3" />
-                <div className="text-left">
-                  <div className="font-medium">Adicionar Análise</div>
-                  <div className="text-sm text-blue-200">Registrar P&L e trades do dia</div>
-                </div>
-              </button>
-              
-              <button
-                onClick={() => handleActionSelect('comment')}
-                className="w-full p-4 bg-green-600 hover:bg-green-700 rounded-lg text-white flex items-center"
-              >
-                <MessageSquare className="w-5 h-5 mr-3" />
-                <div className="text-left">
-                  <div className="font-medium">Adicionar Comentários</div>
-                  <div className="text-sm text-green-200">Registrar observações sobre o dia</div>
-                </div>
-              </button>
-            </div>
+                <button
+                  onClick={() => {
+                    setShowDayModal(false);
+                    setShowDayControlPanel(true);
+                  }}
+                  className="w-full flex items-center justify-center space-x-3 p-4 bg-blue-600 hover:bg-blue-700 rounded-lg text-white transition-colors"
+                >
+                  <BarChart2 className="w-5 h-5" />
+                  <div className="text-left">
+                    <div className="font-medium">Ver Painel do Dia</div>
+                    <div className="text-sm text-blue-200">Controle completo do dia</div>
+                  </div>
+                </button>
+
+                <button
+                  onClick={() => {
+                    setShowDayModal(false);
+                    setShowCommentModal(true);
+                  }}
+                  className="w-full flex items-center justify-center space-x-3 p-4 bg-green-600 hover:bg-green-700 rounded-lg text-white transition-colors"
+                >
+                  <Edit className="w-5 h-5" />
+                  <div className="text-left">
+                    <div className="font-medium">Alterar Análise</div>
+                    <div className="text-sm text-green-200">Modificar dados existentes</div>
+                  </div>
+                </button>
+
+                <button
+                  onClick={() => handleDeleteDay(selectedDate)}
+                  className="w-full flex items-center justify-center space-x-3 p-4 bg-red-600 hover:bg-red-700 rounded-lg text-white transition-colors"
+                >
+                  <Trash2 className="w-5 h-5" />
+                  <div className="text-left">
+                    <div className="font-medium">Excluir Dia</div>
+                    <div className="text-sm text-red-200">Remover todos os dados</div>
+                  </div>
+                </button>
+              </div>
+            ) : (
+              /* Se não tem dados, mostra opções de adicionar */
+              <div className="space-y-3">
+                <button
+                  onClick={() => {
+                    setShowDayModal(false);
+                    setShowAnalysisModal(true);
+                  }}
+                  className="w-full flex items-center justify-center space-x-3 p-4 bg-blue-600 hover:bg-blue-700 rounded-lg text-white transition-colors"
+                >
+                  <FileSpreadsheet className="w-5 h-5" />
+                  <div className="text-left">
+                    <div className="font-medium">Adicionar Análise Salva</div>
+                    <div className="text-sm text-blue-200">Vincular uma análise de backtest ao dia</div>
+                  </div>
+                </button>
+
+                <button
+                  onClick={() => {
+                    setShowDayModal(false);
+                    setShowCommentModal(true);
+                  }}
+                  className="w-full flex items-center justify-center space-x-3 p-4 bg-green-600 hover:bg-green-700 rounded-lg text-white transition-colors"
+                >
+                  <MessageSquare className="w-5 h-5" />
+                  <div className="text-left">
+                    <div className="font-medium">Adicionar Comentários</div>
+                    <div className="text-sm text-green-200">Registrar observações sobre o dia</div>
+                  </div>
+                </button>
+
+                <button
+                  onClick={() => {
+                    setShowDayModal(false);
+                    setShowTradeModal(true);
+                  }}
+                  className="w-full flex items-center justify-center space-x-3 p-4 bg-purple-600 hover:bg-purple-700 rounded-lg text-white transition-colors"
+                >
+                  <Plus className="w-5 h-5" />
+                  <div className="text-left">
+                    <div className="font-medium">Adicionar Trade Manual</div>
+                    <div className="text-sm text-purple-200">Registrar operação manualmente</div>
+                  </div>
+                </button>
+              </div>
+            )}
           </div>
         </div>
       )}
@@ -2143,4 +2212,3 @@ export function QuantDiaryPage() {
     </div>
   );
 }
-```
