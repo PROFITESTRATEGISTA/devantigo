@@ -59,8 +59,8 @@ export function ChallengesPage() {
       // Standard Achievements
       {
         id: 'achievement-first-robot',
-        title: 'Primeiro Robô',
-        description: 'Crie seu primeiro robô de trading',
+        title: t('challenges.achievement.firstRobot.title'),
+        description: t('challenges.achievement.firstRobot.description'),
         reward: 500,
         type: 'achievement',
         difficulty: 'easy',
@@ -68,12 +68,12 @@ export function ChallengesPage() {
         maxProgress: 1,
         completed: true,
         icon: <Star className="w-5 h-5" />,
-        category: 'Marco'
+        category: t('challenges.category.milestone')
       },
       {
         id: 'achievement-robot-master',
-        title: 'Mestre dos Robôs',
-        description: 'Crie 10 robôs diferentes',
+        title: t('challenges.achievement.robotMaster.title'),
+        description: t('challenges.achievement.robotMaster.description'),
         reward: 1500,
         type: 'achievement',
         difficulty: 'hard',
@@ -81,12 +81,12 @@ export function ChallengesPage() {
         maxProgress: 10,
         completed: false,
         icon: <Crown className="w-5 h-5" />,
-        category: 'Marco'
+        category: t('challenges.category.milestone')
       },
       {
         id: 'achievement-streak-master',
-        title: 'Sequência Perfeita',
-        description: 'Mantenha uma sequência de 30 dias de login',
+        title: t('challenges.achievement.streakMaster.title'),
+        description: t('challenges.achievement.streakMaster.description'),
         reward: 1000,
         type: 'achievement',
         difficulty: 'medium',
@@ -94,12 +94,12 @@ export function ChallengesPage() {
         maxProgress: 30,
         completed: false,
         icon: <Flame className="w-5 h-5" />,
-        category: 'Dedicação'
+        category: t('challenges.category.dedication')
       },
       {
         id: 'achievement-ai-expert',
-        title: 'Especialista em IA',
-        description: 'Use IA para criar 5 robôs diferentes',
+        title: t('challenges.achievement.aiExpert.title'),
+        description: t('challenges.achievement.aiExpert.description'),
         reward: 800,
         type: 'achievement',
         difficulty: 'medium',
@@ -107,12 +107,12 @@ export function ChallengesPage() {
         maxProgress: 5,
         completed: false,
         icon: <Code2 className="w-5 h-5" />,
-        category: 'IA'
+        category: t('challenges.category.ai')
       },
       {
         id: 'achievement-analyst',
-        title: 'Analista Profissional',
-        description: 'Complete 20 análises de backtest',
+        title: t('challenges.achievement.analyst.title'),
+        description: t('challenges.achievement.analyst.description'),
         reward: 200,
         type: 'achievement',
         difficulty: 'medium',
@@ -120,13 +120,13 @@ export function ChallengesPage() {
         maxProgress: 20,
         completed: false,
         icon: <BarChart2 className="w-5 h-5" />,
-        category: 'Análise'
+        category: t('challenges.category.analysis')
       },
       // Monthly Challenges
       {
         id: 'monthly-competition',
-        title: 'Competição de Performance',
-        description: 'Participe da competição mensal de estratégias',
+        title: t('challenges.monthly.competition.title'),
+        description: t('challenges.monthly.competition.description'),
         reward: 2000,
         type: 'monthly',
         difficulty: 'hard',
@@ -134,13 +134,13 @@ export function ChallengesPage() {
         maxProgress: 1,
         completed: false,
         icon: <Trophy className="w-5 h-5" />,
-        category: 'Competição',
+        category: t('challenges.category.competition'),
         expiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString()
       },
       {
         id: 'monthly-tutorial',
-        title: 'Criar Tutorial',
-        description: 'Contribua com um tutorial para a comunidade',
+        title: t('challenges.monthly.tutorial.title'),
+        description: t('challenges.monthly.tutorial.description'),
         reward: 1000,
         type: 'monthly',
         difficulty: 'hard',
@@ -148,13 +148,13 @@ export function ChallengesPage() {
         maxProgress: 1,
         completed: false,
         icon: <Users className="w-5 h-5" />,
-        category: 'Comunidade',
+        category: t('challenges.category.community'),
         expiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString()
       },
       {
         id: 'monthly-portfolio',
-        title: 'Mestre do Portfólio',
-        description: 'Monte 3 portfólios diversificados usando IA',
+        title: t('challenges.monthly.portfolio.title'),
+        description: t('challenges.monthly.portfolio.description'),
         reward: 1000,
         type: 'monthly',
         difficulty: 'medium',
@@ -162,7 +162,7 @@ export function ChallengesPage() {
         maxProgress: 3,
         completed: false,
         icon: <Target className="w-5 h-5" />,
-        category: 'Portfólio',
+        category: t('challenges.category.portfolio'),
         expiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString()
       }
     ];
@@ -180,10 +180,13 @@ export function ChallengesPage() {
   const getDifficultyColor = (difficulty: string) => {
     switch (difficulty) {
       case 'easy':
+      case 'fácil':
         return 'bg-green-500 bg-opacity-20 text-green-400';
       case 'medium':
+      case 'médio':
         return 'bg-yellow-500 bg-opacity-20 text-yellow-400';
       case 'hard':
+      case 'difícil':
         return 'bg-red-500 bg-opacity-20 text-red-400';
       default:
         return 'bg-gray-500 bg-opacity-20 text-gray-400';
@@ -386,7 +389,7 @@ export function ChallengesPage() {
                     <div className="flex items-center space-x-3 mb-2">
                       <h3 className="text-lg font-semibold">{challenge.title}</h3>
                       <span className={`px-2 py-1 rounded-full text-xs font-medium ${getDifficultyColor(challenge.difficulty)}`}>
-                        {challenge.difficulty === 'easy' ? 'Fácil' : challenge.difficulty === 'medium' ? 'Médio' : 'Difícil'}
+                        {t(`challenges.difficulty.${challenge.difficulty}`)}
                       </span>
                       <span className={`px-2 py-1 rounded-full text-xs font-medium ${getTypeColor(challenge.type)}`}>
                         {challenge.category}
@@ -399,7 +402,7 @@ export function ChallengesPage() {
                     {challenge.maxProgress > 1 && (
                       <div className="mb-3">
                         <div className="flex justify-between text-sm mb-1">
-                          <span className="text-gray-400">Progresso</span>
+                          <span className="text-gray-400">{t('challenges.progress')}</span>
                           <span className="text-gray-400">{challenge.progress}/{challenge.maxProgress}</span>
                         </div>
                         <div className="w-full bg-gray-700 rounded-full h-2">
@@ -437,7 +440,7 @@ export function ChallengesPage() {
                   {challenge.completed ? (
                     <div className="flex items-center text-green-400">
                       <Check className="w-5 h-5 mr-1" />
-                      <span className="font-medium">Concluído</span>
+                      <span className="font-medium">{language === 'en' ? 'Completed' : 'Concluído'}</span>
                     </div>
                   ) : challenge.progress >= challenge.maxProgress ? (
                     <button
@@ -445,7 +448,7 @@ export function ChallengesPage() {
                       className="px-4 py-2 bg-green-600 hover:bg-green-700 rounded-md font-medium flex items-center"
                     >
                       <Gift className="w-4 h-4 mr-2" />
-                      Resgatar
+                      {t('challenges.claim')}
                     </button>
                   ) : (
                     <button
@@ -461,7 +464,7 @@ export function ChallengesPage() {
                       }}
                       className="px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-md font-medium flex items-center"
                     >
-                      Começar
+                      {t('challenges.start')}
                       <ChevronRight className="w-4 h-4 ml-1" />
                     </button>
                   )}
@@ -475,10 +478,10 @@ export function ChallengesPage() {
         {challenges.length === 0 && (
           <div className="text-center py-12">
             <h3 className="text-xl font-semibold text-gray-400 mb-2">
-              Nenhum desafio disponível
+              {t('challenges.noChallenges')}
             </h3>
             <p className="text-gray-500">
-              Novos desafios serão adicionados em breve!
+              {t('challenges.newChallengesSoon')}
             </p>
           </div>
         )}
