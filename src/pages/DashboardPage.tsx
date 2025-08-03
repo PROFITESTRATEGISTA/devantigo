@@ -79,7 +79,7 @@ export const DashboardPage = () => {
       case 'ranking':
         return (
           <RankingSection 
-            analyses={mockRankingAnalyses}
+            analyses={[]}
             onNavigate={handleNavigate}
           />
         );

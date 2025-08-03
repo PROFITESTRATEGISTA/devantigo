@@ -26,6 +26,9 @@ export function RankingSection({ analyses, onNavigate }: RankingSectionProps) {
   const [sortOrder, setSortOrder] = React.useState<'desc' | 'asc'>('desc');
   const [timeFilter, setTimeFilter] = React.useState<'all' | 'week' | 'month' | 'year'>('all');
 
+  // If no analyses provided, show empty state
+  const hasAnalyses = analyses && analyses.length > 0;
+
   const getRankIcon = (rank: number) => {
     switch (rank) {
       case 1:
@@ -197,7 +200,7 @@ export function RankingSection({ analyses, onNavigate }: RankingSectionProps) {
       </div>
       
       <div className="space-y-4">
-        {filteredAndSortedAnalyses.map((analysis) => (
+        {hasAnalyses ? filteredAndSortedAnalyses.map((analysis) => (
           <div key={analysis.id} className="bg-gray-800 rounded-lg p-6 border border-gray-700 hover:border-blue-500 transition-all duration-300">
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-4">
@@ -236,15 +239,23 @@ export function RankingSection({ analyses, onNavigate }: RankingSectionProps) {
               </div>
             </div>
           </div>
-        ))}
-        
-        {filteredAndSortedAnalyses.length === 0 && (
+        )) : (
           <div className="text-center py-12">
             <TrendingUp className="w-16 h-16 text-gray-600 mx-auto mb-4" />
-            <h3 className="text-xl font-semibold text-gray-400 mb-2">{t('ranking.noStrategies')}</h3>
+            <h3 className="text-xl font-semibold text-gray-400 mb-2">
+              {language === 'en' ? 'No strategies in ranking yet' : 'Nenhuma estratégia no ranking ainda'}
+            </h3>
             <p className="text-gray-500">
-              {t('ranking.subtitle')}
+              {language === 'en' 
+                ? 'Complete a backtest analysis to join the community ranking'
+                : 'Complete uma análise de backtest para entrar no ranking da comunidade'}
             </p>
+            <button
+              onClick={() => onNavigate('/backtest-analysis')}
+              className="mt-4 px-6 py-3 bg-blue-600 hover:bg-blue-700 rounded-md text-white"
+            >
+              {language === 'en' ? 'Create First Analysis' : 'Criar Primeira Análise'}
+            </button>
           </div>
         )}
       </div>
