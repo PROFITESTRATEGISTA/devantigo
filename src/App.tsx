@@ -15,7 +15,6 @@ import { BacktestAnalysisPage } from './pages/BacktestAnalysisPage';
 import { StrategyAnalysisPage } from './pages/StrategyAnalysisPage';
 import { PublicPlansPage } from './pages/PublicPlansPage';
 import { FAQPage } from './pages/FAQPage';
-import { FAQPage } from './pages/FAQPage';
 
 export default function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
