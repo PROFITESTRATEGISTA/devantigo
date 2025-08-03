@@ -8,7 +8,7 @@ interface NavigationPanelProps {
 }
 
 export function NavigationPanel({ activeSection, onSectionChange }: NavigationPanelProps) {
-  const { t } = useLanguageStore();
+  const { t, language } = useLanguageStore();
 
   const sections = [
     {
