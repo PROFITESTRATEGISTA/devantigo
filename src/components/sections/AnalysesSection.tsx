@@ -1,5 +1,5 @@
 import React from 'react';
-import { BarChart2, Calendar, TrendingUp, FileText, Share2 } from 'lucide-react';
+import { BarChart2, Calendar, TrendingUp, FileText } from 'lucide-react';
 
 interface Analysis {
   id: string;
@@ -63,23 +63,12 @@ export function AnalysesSection({ analyses, onNavigate }: AnalysesSectionProps) 
                 </p>
               </div>
             </div>
-            <button
-              onClick={() => onNavigate('/backtest-analysis')}
-              className="w-full py-2 bg-gray-700 hover:bg-gray-600 rounded-lg text-white transition-colors mb-2"
-            >
-              Ver Detalhes
-            </button>
             
             <button
-              onClick={() => {
-                // Handle sharing to ranking
-                const message = `Compartilhando análise "${analysis.name}" no ranking da comunidade!`;
-                alert(message);
-              }}
-              className="w-full py-2 bg-blue-600 hover:bg-blue-700 rounded-lg text-white transition-colors flex items-center justify-center"
+              onClick={() => onNavigate('/backtest-analysis')}
+              className="w-full py-2 bg-gray-700 hover:bg-gray-600 rounded-lg text-white transition-colors"
             >
-              <Share2 className="w-4 h-4 mr-2" />
-              Compartilhar no Ranking
+              Ver Detalhes
             </button>
           </div>
         ))}
