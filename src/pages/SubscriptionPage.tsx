@@ -1,6 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, Crown, Check, Star, Shield, Zap, Apple as WhatsApp } from 'lucide-react';
+import { ArrowLeft, Crown, Check, Star, Shield, Zap, MessageSquare, Building } from 'lucide-react';
 import { useAuthStore } from '../stores/authStore';
 import { TokenDisplay } from '../components/TokenDisplay';
 import { Navbar } from '../components/Navbar';
@@ -33,12 +33,12 @@ export function SubscriptionPage() {
       name: 'Free Forever',
       price: 'R$ 0,00',
       features: [
-        'Até 3 robôs de trading',
-        '3 robôs gratuitos inclusos',
-        '1.000 tokens mensais',
-        'Análise simples de backtest',
-        'Community access',
-        'CSVs para análise'
+        language === 'en' ? 'Up to 3 trading robots' : 'Até 3 robôs de trading',
+        language === 'en' ? '3 free robots included' : '3 robôs gratuitos inclusos',
+        language === 'en' ? '1,000 monthly tokens' : '1.000 tokens mensais',
+        language === 'en' ? 'Simple backtest analysis' : 'Análise simples de backtest',
+        language === 'en' ? 'Community access' : 'Acesso à comunidade',
+        language === 'en' ? 'CSVs for analysis' : 'CSVs para análise'
       ]
     },
     {
@@ -46,56 +46,58 @@ export function SubscriptionPage() {
       name: 'Pro 1',
       price: 'R$ 259,80/month',
       features: [
-        'Até 25 robôs de trading',
-        'IA para gerar robôs',
-        '20.000 tokens mensais',
-        'Análise completa de backtest',
-        'Montagem de portfólios automática',
-        'Community access'
-      ]
+        language === 'en' ? 'Up to 25 trading robots' : 'Até 25 robôs de trading',
+        language === 'en' ? 'AI to generate robots' : 'IA para gerar robôs',
+        language === 'en' ? '20,000 monthly tokens' : '20.000 tokens mensais',
+        language === 'en' ? 'Complete backtest analysis' : 'Análise completa de backtest',
+        language === 'en' ? 'Automatic portfolio assembly' : 'Montagem de portfólios automática',
+        language === 'en' ? 'Community access' : 'Acesso à comunidade'
+      ],
+      isPopular: true
     },
     {
       id: 'pro2',
       name: 'Pro 2',
       price: 'R$ 499,80/month',
       features: [
-        'Até 100 robôs de trading',
-        'IA para gerar robôs',
-        '50.000 tokens mensais',
-        'Análise avançada de backtest',
-        'Montagem de portfólios automática',
-        'Suporte dedicado'
+        language === 'en' ? 'Up to 100 trading robots' : 'Até 100 robôs de trading',
+        language === 'en' ? 'AI to generate robots' : 'IA para gerar robôs',
+        language === 'en' ? '50,000 monthly tokens' : '50.000 tokens mensais',
+        language === 'en' ? 'Advanced backtest analysis' : 'Análise avançada de backtest',
+        language === 'en' ? 'Automatic portfolio assembly' : 'Montagem de portfólios automática',
+        language === 'en' ? 'Dedicated support' : 'Suporte dedicado'
       ],
-      isPopular: true
+      isRecommended: true
     },
     {
       id: 'pro3',
       name: 'Pro 3',
       price: 'R$ 999,80/month',
       features: [
-        'Até 500 robôs de trading',
-        'IA para gerar robôs',
-        '100.000 tokens mensais',
-        'Análise avançada de backtest',
-        'Montagem de portfólios automática',
-        'Suporte dedicado'
+        language === 'en' ? 'Up to 500 trading robots' : 'Até 500 robôs de trading',
+        language === 'en' ? 'AI to generate robots' : 'IA para gerar robôs',
+        language === 'en' ? '100,000 monthly tokens' : '100.000 tokens mensais',
+        language === 'en' ? 'Advanced backtest analysis' : 'Análise avançada de backtest',
+        language === 'en' ? 'Automatic portfolio assembly' : 'Montagem de portfólios automática',
+        language === 'en' ? 'Dedicated support' : 'Suporte dedicado'
       ]
     },
     {
-      id: 'pro4',
-      name: 'Pro 4',
-      price: 'R$ 1.999,80/month',
+      id: 'business',
+      name: language === 'en' ? 'Business Plan' : 'Plano Business',
+      price: language === 'en' ? 'R$ 1,999.80/month' : 'R$ 1.999,80/mês',
       features: [
-        'Robôs ilimitados',
-        'IA para gerar robôs',
-        'Análise avançada de backtest',
-        'Montagem de portfólios automática',
-        'Dedicated support',
-        '100,000 tokens/month',
-        'API access',
-        'Custom indicators',
-        'White-label options'
-      ]
+        language === 'en' ? 'Unlimited robots' : 'Robôs ilimitados',
+        language === 'en' ? 'AI to generate robots' : 'IA para gerar robôs',
+        language === 'en' ? 'Advanced backtest analysis' : 'Análise avançada de backtest',
+        language === 'en' ? 'Automatic portfolio assembly' : 'Montagem de portfólios automática',
+        language === 'en' ? 'Dedicated support' : 'Suporte dedicado',
+        language === 'en' ? '100,000 tokens/month' : '100.000 tokens/mês',
+        language === 'en' ? 'API access' : 'Acesso à API',
+        language === 'en' ? 'Custom indicators' : 'Indicadores personalizados',
+        language === 'en' ? 'White-label options' : 'Opções white-label'
+      ],
+      isBusiness: true
     }
   ];
 
@@ -118,20 +120,35 @@ export function SubscriptionPage() {
 
   const handleUpgradeClick = (planId: string) => {
     // Determine which plan to upgrade to
-    let message = "Olá vim do DevHub Trader e quero mais informações e ajuda para criar robôs";
+    let message = language === 'en' 
+      ? "Hello, I came from DevHub Trader and want more information and help to create robots"
+      : "Olá vim do DevHub Trader e quero mais informações e ajuda para criar robôs";
     
     switch(planId) {
-      case 'starter':
-        message = `Olá vim do DevHub Trader e quero mais informações e ajuda para fazer upgrade para o plano Starter (R$ 259,80/mês).`;
-        break;
-      case 'pro':
-        message = `Olá vim do DevHub Trader e quero mais informações e ajuda para fazer upgrade para o plano Pro (R$ 499,80/mês).`;
+      case 'pro1':
+        message = language === 'en'
+          ? `Hello, I came from DevHub Trader and want more information and help to contract the Pro 1 plan (R$ 259.80/month).`
+          : `Olá vim do DevHub Trader e quero mais informações e ajuda para contratar o plano Pro 1 (R$ 259,80/mês).`;
         break;
       case 'pro2':
-        message = `Olá vim do DevHub Trader e quero mais informações e ajuda para fazer upgrade para o plano Pro 2 (R$ 999,80/mês).`;
+        message = language === 'en'
+          ? `Hello, I came from DevHub Trader and want more information and help to contract the Pro 2 plan (R$ 499.80/month).`
+          : `Olá vim do DevHub Trader e quero mais informações e ajuda para contratar o plano Pro 2 (R$ 499,80/mês).`;
+        break;
+      case 'pro3':
+        message = language === 'en'
+          ? `Hello, I came from DevHub Trader and want more information and help to contract the Pro 3 plan (R$ 999.80/month).`
+          : `Olá vim do DevHub Trader e quero mais informações e ajuda para contratar o plano Pro 3 (R$ 999,80/mês).`;
+        break;
+      case 'business':
+        message = language === 'en'
+          ? `Hello, I came from DevHub Trader and want more information and help to contract the Business plan (R$ 1,999.80/month).`
+          : `Olá vim do DevHub Trader e quero mais informações e ajuda para contratar o plano Business (R$ 1.999,80/mês).`;
         break;
       default:
-        message = `Olá vim do DevHub Trader e quero mais informações e ajuda para fazer upgrade do meu plano atual (${currentPlan.name}).`;
+        message = language === 'en'
+          ? `Hello, I came from DevHub Trader and want more information and help to upgrade my current plan (${currentPlan.name}).`
+          : `Olá vim do DevHub Trader e quero mais informações e ajuda para fazer upgrade do meu plano atual (${currentPlan.name}).`;
     }
     
     // Encode the message for WhatsApp
@@ -143,7 +160,9 @@ export function SubscriptionPage() {
 
   const handleDowngradeClick = () => {
     // Create downgrade message
-    const message = `Olá vim do DevHub Trader e quero mais informações e ajuda para fazer downgrade do meu plano atual (${currentPlan.name}).`;
+    const message = language === 'en'
+      ? `Hello, I came from DevHub Trader and want more information and help to downgrade my current plan (${currentPlan.name}).`
+      : `Olá vim do DevHub Trader e quero mais informações e ajuda para fazer downgrade do meu plano atual (${currentPlan.name}).`;
     
     // Encode the message for WhatsApp
     const encodedMessage = encodeURIComponent(message);
@@ -209,27 +228,31 @@ export function SubscriptionPage() {
               onClick={handleDowngradeClick}
               className="px-4 py-2 bg-gray-700 hover:bg-gray-600 rounded-md flex items-center"
             >
-              <WhatsApp className="w-4 h-4 mr-2" />
+              <MessageSquare className="w-4 h-4 mr-2" />
               {language === 'en' ? 'Downgrade Plan' : 'Fazer Downgrade'}
             </button>
             <button 
               onClick={() => handleUpgradeClick('')}
               className="px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-md flex items-center"
             >
-              <WhatsApp className="w-4 h-4 mr-2" />
+              <MessageSquare className="w-4 h-4 mr-2" />
               {t('subscription.upgrade')}
             </button>
           </div>
         </div>
 
         {/* Available Plans */}
-        <h2 className="text-xl font-semibold mb-6">{language === 'en' ? 'Available Plans' : 'Planos Disponíveis'}</h2>
+        <h2 className="text-xl font-semibold mb-6">
+          {language === 'en' ? 'Available Plans' : 'Planos Disponíveis'}
+        </h2>
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
           {plans.map((plan) => (
             <div 
               key={plan.id}
               className={`bg-gray-800 rounded-lg p-6 relative ${
-                plan.isPopular ? 'ring-2 ring-blue-500' : ''
+                plan.isPopular ? 'ring-2 ring-blue-500' : 
+                plan.isRecommended ? 'ring-2 ring-green-500' :
+                plan.isBusiness ? 'ring-2 ring-purple-500' : ''
               }`}
             >
               {plan.isPopular && (
@@ -237,11 +260,23 @@ export function SubscriptionPage() {
                   {language === 'en' ? 'Most Popular' : 'Mais Popular'}
                 </div>
               )}
+              {plan.isRecommended && (
+                <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-1 bg-green-600 rounded-full text-sm font-medium">
+                  {language === 'en' ? 'Recommended' : 'Recomendado'}
+                </div>
+              )}
+              {plan.isBusiness && (
+                <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-1 bg-purple-600 rounded-full text-sm font-medium">
+                  {language === 'en' ? 'For Companies' : 'Para Empresas'}
+                </div>
+              )}
 
               <div className="flex items-center justify-between mb-4">
                 <h3 className="text-lg font-semibold">{plan.name}</h3>
-                {plan.id === 'pro' && <Star className="w-5 h-5 text-yellow-500" />}
-                {plan.id === 'pro2' && <Shield className="w-5 h-5 text-purple-500" />}
+                {plan.id === 'pro1' && <Star className="w-5 h-5 text-blue-500" />}
+                {plan.id === 'pro2' && <Shield className="w-5 h-5 text-green-500" />}
+                {plan.id === 'pro3' && <Crown className="w-5 h-5 text-yellow-500" />}
+                {plan.id === 'business' && <Building className="w-5 h-5 text-purple-500" />}
               </div>
 
               <p className="text-2xl font-bold mb-4">{plan.price}</p>
@@ -260,15 +295,17 @@ export function SubscriptionPage() {
                 className={`w-full py-2 rounded-md flex items-center justify-center ${
                   currentPlan.name === plan.name
                     ? 'bg-green-600 hover:bg-green-700'
-                    : plan.isPopular
+                    : plan.isPopular || plan.isRecommended
                       ? 'bg-blue-600 hover:bg-blue-700'
+                    : plan.isBusiness
+                      ? 'bg-purple-600 hover:bg-purple-700'
                       : 'bg-gray-700 hover:bg-gray-600'
                 }`}
               >
                 {currentPlan.name === plan.name ? (language === 'en' ? 'Current Plan' : 'Plano Atual') : (
                   <>
-                    <WhatsApp className="w-4 h-4 mr-2" />
-                    {language === 'en' ? 'Upgrade' : 'Fazer Upgrade'}
+                    <MessageSquare className="w-4 h-4 mr-2" />
+                    {language === 'en' ? 'Contract' : 'Contratar'}
                   </>
                 )}
               </button>
@@ -299,7 +336,7 @@ export function SubscriptionPage() {
                 onClick={handleBuyTokens}
                 className="px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-md flex items-center"
               >
-                <WhatsApp className="w-4 h-4 mr-2" />
+                <MessageSquare className="w-4 h-4 mr-2" />
                 {t('tokens.buy')}
               </button>
             </div>
