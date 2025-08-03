@@ -59,8 +59,13 @@ export function QuantDiarySection() {
   const { language } = useLanguageStore();
   const { profile } = useAuthStore();
   const [selectedDate, setSelectedDate] = useState(new Date());
-  const [currentWeek, setCurrentWeek] = useState(new Date());
-  const [currentMonth, setCurrentMonth] = useState(new Date());
+  const [currentWeek, setCurrentWeek] = useState(() => {
+    const today = new Date();
+    const startOfWeek = new Date(today);
+    startOfWeek.setDate(today.getDate() - today.getDay() + 1); // Monday
+    return startOfWeek;
+  });
+  const [currentMonth, setCurrentMonth] = useState(() => new Date());
   const [diaryEntries, setDiaryEntries] = useState<DiaryEntry[]>([]);
   const [selectedEntry, setSelectedEntry] = useState<DiaryEntry | null>(null);
   const [showNewEntryModal, setShowNewEntryModal] = useState(false);
