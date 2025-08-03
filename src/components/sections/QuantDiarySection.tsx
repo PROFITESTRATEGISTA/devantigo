@@ -562,9 +562,17 @@ export function QuantDiarySection() {
                           newEntry.mood === mood.value
                             ? 'border-blue-500 bg-blue-900 bg-opacity-30'
                             : 'border-gray-600 hover:border-gray-500'
-                       className="w-full py-1.5 px-2 bg-blue-600 hover:bg-blue-700 rounded text-xs text-white flex items-center justify-center transition-colors"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        openModal(day, 'comment');
+                      }}
+                      className="w-full py-1.5 px-2 bg-blue-600 hover:bg-blue-700 rounded text-xs text-white flex items-center justify-center transition-colors"
                       >
-                       className="w-full py-1.5 px-2 bg-green-600 hover:bg-green-700 rounded text-xs text-white flex items-center justify-center transition-colors"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        openModal(day, 'analysis');
+                      }}
+                      className="w-full py-1.5 px-2 bg-green-600 hover:bg-green-700 rounded text-xs text-white flex items-center justify-center transition-colors"
                           <div className="text-2xl mb-1">{mood.emoji}</div>
                           <div className="text-sm">{mood.label}</div>
                         </div>
