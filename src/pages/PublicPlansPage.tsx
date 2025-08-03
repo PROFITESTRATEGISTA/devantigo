@@ -709,29 +709,31 @@ export function PublicPlansPage() {
       <div className="py-16 bg-gradient-to-r from-blue-900 to-indigo-900">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h2 className="text-3xl font-bold mb-4">
-            Pronto para Transformar seu Trading?
+            {language === 'en' ? 'Ready to Transform Your Trading?' : 'Pronto para Transformar seu Trading?'}
           </h2>
           <p className="text-xl text-blue-100 mb-8 max-w-3xl mx-auto">
-            Junte-se a milhares de traders que já estão usando o DevHub Trader para criar, analisar e otimizar suas estratégias de trading.
+            {language === 'en'
+              ? 'Join thousands of traders who are already using DevHub Trader to create, analyze and optimize their trading strategies.'
+              : 'Junte-se a milhares de traders que já estão usando o DevHub Trader para criar, analisar e otimizar suas estratégias de trading.'}
           </p>
           <div className="flex flex-wrap justify-center gap-4">
             <button
               onClick={handleSignUp}
               className="px-8 py-4 bg-white text-blue-900 rounded-md font-bold text-lg hover:bg-gray-100 transition-colors"
             >
-              Comece Agora
+              {language === 'en' ? 'Start Now' : 'Comece Agora'}
             </button>
             <button
               onClick={() => navigate('/faq')}
               className="px-8 py-4 bg-gray-700 hover:bg-gray-600 text-white rounded-md font-bold text-lg transition-colors"
             >
-              Ver FAQ Completo
+              {language === 'en' ? 'View Complete FAQ' : 'Ver FAQ Completo'}
             </button>
             <button
               onClick={handleContactSupport}
               className="px-8 py-4 bg-blue-700 hover:bg-blue-800 text-white rounded-md font-bold text-lg transition-colors"
             >
-              Falar com Especialista
+              {language === 'en' ? 'Talk to Specialist' : 'Falar com Especialista'}
             </button>
           </div>
         </div>
