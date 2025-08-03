@@ -1,5 +1,6 @@
 import React from 'react';
 import { BarChart2, Calendar, TrendingUp, FileText, Trophy } from 'lucide-react';
+import { useLanguageStore } from '../../stores/languageStore';
 
 interface Analysis {
   id: string;
@@ -16,15 +17,17 @@ interface AnalysesSectionProps {
 }
 
 export function AnalysesSection({ analyses, onNavigate }: AnalysesSectionProps) {
+  const { t } = useLanguageStore();
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h2 className="text-2xl font-bold text-white">Análises Recentes</h2>
+        <h2 className="text-2xl font-bold text-white">{t('dashboard.analyses')}</h2>
         <button
           onClick={() => onNavigate('/backtest-analysis')}
           className="px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-md text-white"
         >
-          Nova Análise
+          {t('analysis.backtest')}
         </button>
       </div>
       
@@ -69,7 +72,7 @@ export function AnalysesSection({ analyses, onNavigate }: AnalysesSectionProps) 
                 onClick={() => onNavigate('/backtest-analysis')}
                 className="w-full py-2 bg-gray-700 hover:bg-gray-600 rounded-lg text-white transition-colors"
               >
-                Ver Análise
+                {t('robot.view')}
               </button>
               
               <button
@@ -81,7 +84,7 @@ export function AnalysesSection({ analyses, onNavigate }: AnalysesSectionProps) 
                 className="w-full py-2 bg-blue-600 hover:bg-blue-700 rounded-lg text-white transition-colors flex items-center justify-center"
               >
                 <Trophy className="w-4 h-4 mr-2" />
-                Adicionar ao Ranking
+                {t('dashboard.ranking')}
               </button>
             </div>
           </div>

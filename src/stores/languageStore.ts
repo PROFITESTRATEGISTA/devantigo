@@ -321,7 +321,7 @@ const translations: Record<Language, Record<string, string>> = {
 };
 
 export const useLanguageStore = create<LanguageState>((set, get) => ({
-  language: 'pt', // Default language
+  language: 'en', // Default language
   
   setLanguage: (language: Language) => {
     set({ language });
