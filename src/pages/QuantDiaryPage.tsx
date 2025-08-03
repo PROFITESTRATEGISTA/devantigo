@@ -1679,6 +1679,21 @@ export function QuantDiaryPage() {
                   <div className="text-sm opacity-75">Registrar observações sobre o dia</div>
                 </div>
               </button>
+
+              <button
+                onClick={() => {
+                  setShowActionModal(false);
+                  setSelectedDay(selectedDay);
+                  setShowDayPanel(true);
+                }}
+                className="w-full flex items-center p-4 bg-purple-600 hover:bg-purple-700 rounded-lg transition-colors text-left"
+              >
+                <Calendar className="w-5 h-5 mr-3" />
+                <div>
+                  <p className="font-medium">Ver Dia</p>
+                  <p className="text-sm text-gray-400">Visualizar painel completo do dia</p>
+                </div>
+              </button>
             </div>
           </div>
         </div>
