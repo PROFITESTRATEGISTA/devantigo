@@ -36,28 +36,34 @@ export function QuantDiarySection() {
   // Comentários predefinidos organizados por categoria
   const predefinedComments = {
     positive: [
-      'Excelente execução da estratégia',
-      'Disciplina mantida durante todo o dia',
-      'Sinais claros e bem executados',
-      'Gerenciamento de risco eficaz',
-      'Lucro dentro do esperado',
-      'Paciência recompensada'
+      'Estratégia executada conforme planejado',
+      'Disciplina mantida nas entradas e saídas',
+      'Sinais claros e bem interpretados',
+      'Gerenciamento de risco respeitado',
+      'Análise pré-mercado eficaz',
+      'Paciência aguardando setups ideais'
     ],
     negative: [
-      'Overtrading prejudicou os resultados',
-      'Sinais confusos no mercado',
-      'Saí muito cedo dos trades',
-      'Não respeitei o stop loss',
-      'Mercado lateral difícil',
-      'Emocional atrapalhou as decisões'
+      'Overtrading - entrei em setups ruins',
+      'Não respeitei o stop loss definido',
+      'Saí muito cedo por medo/ansiedade',
+      'Entrei sem confirmação adequada',
+      'Aumentei posição em trade perdedor',
+      'Emocional influenciou decisões técnicas',
+      'Não segui o plano de trading',
+      'Forcei trades em mercado lateral',
+      'Ignorei sinais de reversão',
+      'Gerenciamento de risco inadequado'
     ],
     neutral: [
-      'Dia de observação e aprendizado',
-      'Mercado sem oportunidades claras',
-      'Foco em preservar capital',
-      'Aguardando melhores setups',
-      'Revisão de estratégias',
-      'Análise de performance'
+      'Mercado sem setups claros',
+      'Foco em preservação de capital',
+      'Aguardando condições ideais',
+      'Revisão e ajuste de estratégias',
+      'Análise de performance semanal',
+      'Estudo de novos indicadores',
+      'Observação de padrões de mercado',
+      'Preparação para próxima sessão'
     ]
   };
 
@@ -537,44 +543,6 @@ export function QuantDiarySection() {
                   />
                 </div>
 
-                {/* P&L e Trades */}
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-300 mb-1">P&L (R$)</label>
-                    <input
-                      type="number"
-                      step="0.01"
-                      value={newEntry.pnl}
-                      onChange={(e) => setNewEntry(prev => ({ ...prev, pnl: parseFloat(e.target.value) || 0 }))}
-                      className="w-full bg-gray-700 border border-gray-600 rounded-md px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
-                  </div>
-                  
-                  <div>
-                    <label className="block text-sm font-medium text-gray-300 mb-1">
-                      {language === 'en' ? 'Trades' : 'Número de Trades'}
-                    </label>
-                    <input
-                      type="number"
-                      value={newEntry.trades}
-                      onChange={(e) => setNewEntry(prev => ({ ...prev, trades: parseInt(e.target.value) || 0 }))}
-                      className="w-full bg-gray-700 border border-gray-600 rounded-md px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
-                  </div>
-                </div>
-
-                {/* Horário */}
-                <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-1">
-                    {language === 'en' ? 'Time' : 'Horário'}
-                  </label>
-                  <input
-                    type="time"
-                    value={newEntry.time}
-                    onChange={(e) => setNewEntry(prev => ({ ...prev, time: e.target.value }))}
-                    className="w-full bg-gray-700 border border-gray-600 rounded-md px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  />
-                </div>
 
                 {/* Humor */}
                 <div>
@@ -608,15 +576,15 @@ export function QuantDiarySection() {
                 {/* Comentários Predefinidos */}
                 <div>
                   <label className="block text-sm font-medium text-gray-300 mb-2">
-                    {language === 'en' ? 'Quick Comments' : 'Comentários Rápidos'}
+                    {language === 'en' ? 'Daily Analysis & Operational Errors' : 'Análise Diária e Erros Operacionais'}
                   </label>
                   
                   <div className="space-y-3">
                     {Object.entries(predefinedComments).map(([category, comments]) => (
                       <div key={category}>
                         <p className="text-xs text-gray-400 mb-2 capitalize">
-                          {category === 'positive' ? 'Positivos' : 
-                           category === 'negative' ? 'Negativos' : 'Neutros'}
+                          {category === 'positive' ? 'Pontos Positivos' : 
+                           category === 'negative' ? 'Erros e Problemas' : 'Observações Gerais'}
                         </p>
                         <div className="grid grid-cols-1 gap-2">
                           {comments.map(comment => (
@@ -645,12 +613,12 @@ export function QuantDiarySection() {
                 {/* Notas livres */}
                 <div>
                   <label className="block text-sm font-medium text-gray-300 mb-1">
-                    {language === 'en' ? 'Additional Notes' : 'Notas Adicionais'}
+                    {language === 'en' ? 'Detailed Analysis & Lessons Learned' : 'Análise Detalhada e Lições Aprendidas'}
                   </label>
                   <textarea
                     value={newEntry.content}
                     onChange={(e) => setNewEntry(prev => ({ ...prev, content: e.target.value }))}
-                    placeholder="Observações, lições aprendidas, ajustes para próximas operações..."
+                    placeholder="Análise do dia: O que funcionou? Quais erros foram cometidos? Que ajustes são necessários? Lições aprendidas para próximas operações..."
                     rows={4}
                     className="w-full bg-gray-700 border border-gray-600 rounded-md px-3 py-2 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
