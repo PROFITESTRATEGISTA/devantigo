@@ -1,15 +1,16 @@
 import React, { useEffect } from 'react';
-import { Zap } from 'lucide-react';
+import { Zap, Plus } from 'lucide-react';
 import { useAuthStore } from '../stores/authStore';
 import { supabase } from '../lib/supabase';
 import { useLanguageStore } from '../stores/languageStore';
 
 interface TokenDisplayProps {
   showLabel?: boolean;
+  showAddButton?: boolean;
   className?: string;
 }
 
-export function TokenDisplay({ showLabel = true, className = '' }: TokenDisplayProps) {
+export function TokenDisplay({ showLabel = true, showAddButton = true, className = '' }: TokenDisplayProps) {
   const { profile, loadProfile } = useAuthStore();
   const { t } = useLanguageStore();
   const tokenBalance = profile?.token_balance || 0;
@@ -67,22 +68,34 @@ export function TokenDisplay({ showLabel = true, className = '' }: TokenDisplayP
   };
 
   return (
-    <div 
-      className={`flex items-center ${className} cursor-pointer hover:text-blue-300 text-sm lg:text-base`}
-      onClick={handleBuyTokens}
-      title={tokenBalance < 1000 ? "Você precisa de pelo menos 1000 tokens para análises" : "Buy more tokens"}
-    >
-      <Zap className="w-3 h-3 lg:w-4 lg:h-4 text-yellow-500 mr-1" />
-      {showLabel ? (
-        <span className="text-xs lg:text-sm">
-          <span className={`font-medium ${tokenBalance < 1000 ? 'text-red-400' : ''}`}>
+    <div className={`flex items-center ${className}`}>
+      <div 
+        className="flex items-center cursor-pointer hover:text-blue-300 text-sm lg:text-base"
+        onClick={handleBuyTokens}
+        title={tokenBalance < 1000 ? "Você precisa de pelo menos 1000 tokens para análises" : "Buy more tokens"}
+      >
+        <Zap className="w-3 h-3 lg:w-4 lg:h-4 text-yellow-500 mr-1" />
+        {showLabel ? (
+          <span className="text-xs lg:text-sm">
+            <span className={`font-medium ${tokenBalance < 1000 ? 'text-red-400' : ''}`}>
+              {tokenBalance.toLocaleString()}
+            </span> {t('tokens.balance')}
+          </span>
+        ) : (
+          <span className={`font-medium text-xs lg:text-sm ${tokenBalance < 1000 ? 'text-red-400' : ''}`}>
             {tokenBalance.toLocaleString()}
-          </span> {t('tokens.balance')}
-        </span>
-      ) : (
-        <span className={`font-medium text-xs lg:text-sm ${tokenBalance < 1000 ? 'text-red-400' : ''}`}>
-          {tokenBalance.toLocaleString()}
-        </span>
+          </span>
+        )}
+      </div>
+      
+      {showAddButton && (
+        <button
+          onClick={handleBuyTokens}
+          className="ml-2 p-1 bg-green-600 hover:bg-green-700 rounded-full text-white transition-colors"
+          title={t('tokens.buy')}
+        >
+          <Plus className="w-3 h-3 lg:w-4 lg:h-4" />
+        </button>
       )}
     </div>
   );

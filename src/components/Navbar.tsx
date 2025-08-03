@@ -140,7 +140,7 @@ export function Navbar() {
                     <p className="text-sm font-medium truncate">{profile?.name || profile?.email?.split('@')[0] || 'User'}</p>
                     <p className="text-xs text-gray-400 truncate">{profile?.email}</p>
                     <div className="mt-1 flex items-center">
-                      <TokenDisplay showLabel={false} />
+                      <TokenDisplay showLabel={false} showAddButton={false} />
                       <span className="ml-1 text-xs text-gray-400">tokens</span>
                     </div>
                   </div>
