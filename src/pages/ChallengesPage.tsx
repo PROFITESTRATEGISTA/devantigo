@@ -28,11 +28,27 @@ interface Challenge {
 export function ChallengesPage() {
   const navigate = useNavigate();
   const { profile } = useAuthStore();
-  const { t } = useLanguageStore();
+  const { t, language } = useLanguageStore();
   const [activeTab, setActiveTab] = useState<'achievements' | 'monthly'>('achievements');
   const [challenges, setChallenges] = useState<Challenge[]>([]);
   const [totalEarned, setTotalEarned] = useState(0);
   const [streak, setStreak] = useState(7);
+
+  // Force re-render when language changes
+  useEffect(() => {
+    const handleLanguageChange = () => {
+      // Force component re-render
+      setActiveTab(prev => prev);
+    };
+    
+    window.addEventListener('languageChanged', handleLanguageChange);
+    window.addEventListener('storage', handleLanguageChange);
+    
+    return () => {
+      window.removeEventListener('languageChanged', handleLanguageChange);
+      window.removeEventListener('storage', handleLanguageChange);
+    };
+  }, []);
 
   useEffect(() => {
     loadChallenges();
@@ -458,7 +474,7 @@ export function ChallengesPage() {
         {/* Empty State */}
         {challenges.length === 0 && (
           <div className="text-center py-12">
-            <Trophy className="w-16 h-16 text-gray-600 mx-auto mb-4" />
+            <h1 className="text-lg lg:text-xl font-bold mb-2 flex items-center">
             <h3 className="text-xl font-semibold text-gray-400 mb-2">
               Nenhum desafio disponível
             </h3>
@@ -470,44 +486,44 @@ export function ChallengesPage() {
 
         {/* Tips Section */}
         <div className="mt-12 bg-gradient-to-r from-blue-900 to-indigo-900 rounded-lg p-6">
-          <h2 className="text-2xl font-bold mb-4 flex items-center">
+          <h2 className="text-xl font-bold mb-4 flex items-center">
             <Lightbulb className="w-6 h-6 text-yellow-500 mr-2" />
-            Dicas para Ganhar Mais Tokens
+            {t('challenges.tips.title')}
           </h2>
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
-              <h3 className="text-lg font-semibold mb-3">Estratégias Diárias</h3>
+              <h3 className="text-lg font-semibold mb-3">{t('challenges.tips.dailyStrategies')}</h3>
               <ul className="space-y-2 text-blue-100">
                 <li className="flex items-start">
                   <Check className="w-4 h-4 text-green-400 mr-2 mt-0.5 flex-shrink-0" />
-                  <span>Faça login todos os dias para manter sua sequência</span>
+                  <span>{t('challenges.tips.dailyLogin')}</span>
                 </li>
                 <li className="flex items-start">
                   <Check className="w-4 h-4 text-green-400 mr-2 mt-0.5 flex-shrink-0" />
-                  <span>Crie robôs regularmente para ganhar marcos</span>
+                  <span>{t('challenges.tips.editRobots')}</span>
                 </li>
                 <li className="flex items-start">
                   <Check className="w-4 h-4 text-green-400 mr-2 mt-0.5 flex-shrink-0" />
-                  <span>Use análises de IA para otimizar performance</span>
+                  <span>{t('challenges.tips.useAI')}</span>
                 </li>
               </ul>
             </div>
             
             <div>
-              <h3 className="text-lg font-semibold mb-3">Bônus Especiais</h3>
+              <h3 className="text-lg font-semibold mb-3">{t('challenges.tips.specialBonuses')}</h3>
               <ul className="space-y-2 text-blue-100">
                 <li className="flex items-start">
                   <Star className="w-4 h-4 text-yellow-400 mr-2 mt-0.5 flex-shrink-0" />
-                  <span>Sequência de 30 dias: +1000 tokens bônus</span>
+                  <span>{t('challenges.tips.streakBonus')}</span>
                 </li>
                 <li className="flex items-start">
                   <Star className="w-4 h-4 text-yellow-400 mr-2 mt-0.5 flex-shrink-0" />
-                  <span>Primeiro lugar na competição: +5000 tokens</span>
+                  <span>{t('challenges.tips.competitionBonus')}</span>
                 </li>
                 <li className="flex items-start">
                   <Star className="w-4 h-4 text-yellow-400 mr-2 mt-0.5 flex-shrink-0" />
-                  <span>Compartilhar estratégia popular: +500 tokens</span>
+                  <span>{t('challenges.tips.shareBonus')}</span>
                 </li>
               </ul>
             </div>
