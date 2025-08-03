@@ -89,7 +89,7 @@ export function UsersSection({ users }: UsersSectionProps) {
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {filteredUsers.map((user) => (
-              <div key={user.id} className="bg-gray-800/50 backdrop-blur-xl rounded-xl p-6 border border-gray-700/50 hover:border-blue-500/50 transition-all duration-300 text-center">
+              <div key={user.id} className="bg-gray-800 rounded-lg p-6 border border-gray-700 hover:border-blue-500 transition-all duration-300 text-center">
                 <div className="w-16 h-16 bg-gray-700 rounded-full mx-auto mb-4 flex items-center justify-center overflow-hidden">
                   {user.avatar ? (
                     <img 

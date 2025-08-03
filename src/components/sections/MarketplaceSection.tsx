@@ -27,7 +27,7 @@ export function MarketplaceSection({ companies }: MarketplaceSectionProps) {
       
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {companies.map((company) => (
-          <div key={company.id} className="bg-gray-800/50 backdrop-blur-xl rounded-xl p-6 border border-gray-700/50 hover:border-blue-500/50 transition-all duration-300">
+          <div key={company.id} className="bg-gray-800 rounded-lg p-6 border border-gray-700 hover:border-blue-500 transition-all duration-300">
             <div className="flex items-center space-x-3 mb-4">
               <div className="w-12 h-12 bg-gray-700 rounded-lg flex items-center justify-center">
                 <Store className="w-6 h-6 text-blue-400" />

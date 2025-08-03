@@ -43,7 +43,7 @@ export function RankingSection({ analyses, onNavigate }: RankingSectionProps) {
       
       <div className="space-y-4">
         {analyses.map((analysis) => (
-          <div key={analysis.id} className="bg-gray-800/50 backdrop-blur-xl rounded-xl p-6 border border-gray-700/50 hover:border-blue-500/50 transition-all duration-300">
+          <div key={analysis.id} className="bg-gray-800 rounded-lg p-6 border border-gray-700 hover:border-blue-500 transition-all duration-300">
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-4">
                 {getRankIcon(analysis.rank)}

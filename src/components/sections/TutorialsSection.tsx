@@ -40,7 +40,7 @@ export function TutorialsSection({ tutorials }: TutorialsSectionProps) {
       
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {tutorials.map((tutorial) => (
-          <div key={tutorial.id} className="bg-gray-800/50 backdrop-blur-xl rounded-xl overflow-hidden border border-gray-700/50 hover:border-blue-500/50 transition-all duration-300">
+          <div key={tutorial.id} className="bg-gray-800 rounded-lg overflow-hidden border border-gray-700 hover:border-blue-500 transition-all duration-300">
             <div className="aspect-video bg-gray-700 flex items-center justify-center">
               <Play className="w-12 h-12 text-blue-400" />
             </div>

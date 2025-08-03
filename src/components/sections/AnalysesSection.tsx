@@ -30,7 +30,7 @@ export function AnalysesSection({ analyses, onNavigate }: AnalysesSectionProps) 
       
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {analyses.map((analysis) => (
-          <div key={analysis.id} className="bg-gray-800/50 backdrop-blur-xl rounded-xl p-6 border border-gray-700/50 hover:border-blue-500/50 transition-all duration-300">
+          <div key={analysis.id} className="bg-gray-800 rounded-lg p-6 border border-gray-700 hover:border-blue-500 transition-all duration-300">
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center space-x-2">
                 <BarChart2 className="w-5 h-5 text-blue-400" />
@@ -66,7 +66,7 @@ export function AnalysesSection({ analyses, onNavigate }: AnalysesSectionProps) 
             
             <button
               onClick={() => onNavigate('/backtest-analysis')}
-              className="w-full py-2 bg-gray-700/50 hover:bg-gray-600/50 rounded-lg text-white transition-colors"
+              className="w-full py-2 bg-gray-700 hover:bg-gray-600 rounded-lg text-white transition-colors"
             >
               Ver Detalhes
             </button>

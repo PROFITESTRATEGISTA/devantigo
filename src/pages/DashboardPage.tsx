@@ -61,36 +61,18 @@ export const DashboardPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-black text-white relative overflow-hidden">
+    <div className="min-h-screen bg-[#1E1E1E] text-white">
       <Navbar />
       
-      {/* Animated background */}
-      <div className="absolute inset-0 bg-gradient-to-br from-gray-900 via-blue-950 to-black"></div>
-      <div className="absolute inset-0">
-        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-blue-600/5 rounded-full blur-3xl animate-pulse"></div>
-        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-gray-600/5 rounded-full blur-3xl animate-pulse delay-1000"></div>
-      </div>
-
-      <div className="relative z-10">
-        {/* Header */}
-        <div className="border-b border-gray-800/50 bg-gray-900/20 backdrop-blur-xl">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
-            <div className="flex items-center space-x-4">
-              <div className="w-12 h-12 sm:w-16 sm:h-16 bg-gradient-to-br from-blue-500 to-blue-700 rounded-2xl flex items-center justify-center shadow-2xl shadow-blue-500/20">
-                <BarChart2 className="w-6 h-6 sm:w-8 sm:h-8 text-white" />
-              </div>
-              <div>
-                <h1 className="text-2xl sm:text-3xl lg:text-4xl font-black text-white mb-1">
-                  DevHub <span className="text-blue-400">Trader</span>
-                </h1>
-                <p className="text-gray-400 text-sm sm:text-base lg:text-lg">Plataforma avançada de trading algorítmico</p>
-              </div>
-            </div>
-          </div>
+      <div className="max-w-7xl mx-auto px-4 py-8">
+        {/* Page Header */}
+        <div className="mb-8">
+          <h1 className="text-2xl font-bold mb-2">Dashboard</h1>
+          <p className="text-gray-400">Visão geral da sua atividade de trading</p>
         </div>
 
         {/* Navigation */}
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="mb-8">
           <NavigationPanel 
             activeSection={activeSection} 
             onSectionChange={setActiveSection} 
@@ -98,7 +80,7 @@ export const DashboardPage = () => {
         </div>
 
         {/* Main Content */}
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-8">
+        <div>
           {renderActiveSection()}
         </div>
       </div>
