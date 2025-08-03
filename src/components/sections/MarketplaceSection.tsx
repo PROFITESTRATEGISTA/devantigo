@@ -18,9 +18,7 @@ interface MarketplaceSectionProps {
 export function MarketplaceSection({ companies }: MarketplaceSectionProps) {
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <h2 className="text-2xl font-bold text-white">Marketplace de Estratégias</h2>
-      </div>
+      <h2 className="text-2xl font-bold text-white">Marketplace de Estratégias</h2>
       
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {companies.map((company) => (
