@@ -153,29 +153,24 @@ export function QuantDiarySection() {
 
   // Função para calcular o número da semana no mês
   const getWeekOfMonth = (date: Date) => {
-    // Pega o primeiro dia do mês
+    // Pega a primeira segunda-feira do mês ou antes
     const firstDay = new Date(date.getFullYear(), date.getMonth(), 1);
+    const firstDayOfWeek = firstDay.getDay(); // 0 = domingo, 1 = segunda, etc.
     
-    // Calcula quantos dias desde o início do mês
-    const dayOfMonth = date.getDate();
+    // Calcula quantos dias até a primeira segunda-feira
+    const daysToFirstMonday = firstDayOfWeek === 0 ? 1 : (8 - firstDayOfWeek);
+    const firstMonday = new Date(date.getFullYear(), date.getMonth(), daysToFirstMonday);
     
-    // Calcula qual dia da semana é o primeiro dia do mês (0 = domingo, 1 = segunda, etc.)
-    const firstDayWeekday = firstDay.getDay();
+    // Se a data é antes da primeira segunda-feira, é semana 1
+    if (date < firstMonday) {
+      return 1;
+    }
     
-    // Ajusta para que segunda-feira seja 0 (0 = segunda, 1 = terça, etc.)
-    const firstDayMondayBased = firstDayWeekday === 0 ? 6 : firstDayWeekday - 1;
+    // Calcula quantos dias desde a primeira segunda-feira
+    const daysDiff = Math.floor((date.getTime() - firstMonday.getTime()) / (24 * 60 * 60 * 1000));
     
-    // Calcula qual dia da semana é a data atual (segunda = 0, terça = 1, etc.)
-    const currentDayWeekday = date.getDay();
-    const currentDayMondayBased = currentDayWeekday === 0 ? 6 : currentDayWeekday - 1;
-    
-    // Calcula quantos dias desde a primeira segunda-feira do mês
-    const daysSinceFirstMonday = dayOfMonth - 1 + firstDayMondayBased - currentDayMondayBased;
-    
-    // Calcula a semana (começando em 1)
-    const weekNumber = Math.floor(daysSinceFirstMonday / 7) + 1;
-    
-    return Math.max(1, weekNumber);
+    // Calcula a semana (primeira segunda-feira é semana 1, então +1)
+    return Math.floor(daysDiff / 7) + 1;
   };
 
   // Função para calcular o número da semana no ano (ISO 8601)
