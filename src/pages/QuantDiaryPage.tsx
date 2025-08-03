@@ -135,15 +135,20 @@ export function QuantDiaryPage() {
     
     // Drawdown calculation variables
     let runningPnL = 0;
-    let peak = 0;
+    let peakPnL = 0;
     let maxDrawdown = 0;
     let maxDrawdownAmount = 0;
     let drawdownStartDate = '';
     let drawdownEndDate = '';
     let currentDrawdownStart = '';
+    let isInDrawdown = false;
     
-    // Collect all days with data for chronological processing
-    const allDaysWithData: Array<{date: Date, pnl: number}> = [];
+    // Array to store all daily data for chronological processing
+    const allDailyData: Array<{
+      date: string;
+      pnl: number;
+      trades: number;
+    }> = [];
     let lastDayPnL = null;
     
     Object.keys(calendarData).forEach(year => {
@@ -151,8 +156,11 @@ export function QuantDiaryPage() {
         Object.keys(calendarData[year][month]).forEach(day => {
           const dayData = calendarData[year][month][day];
           if (dayData.trades > 0) {
-            const dayDate = new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
-            allDaysWithData.push({ date: dayDate, pnl: dayData.pnl });
+            allDailyData.push({
+              date: `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`,
+              pnl: dayData.pnl,
+              trades: dayData.trades
+            });
             
             totalPnL += dayData.pnl;
             totalTrades += dayData.trades;
@@ -166,7 +174,7 @@ export function QuantDiaryPage() {
               // Check for max daily gain
               if (dayData.pnl > maxDailyGain) {
                 maxDailyGain = dayData.pnl;
-                maxDailyGainDate = dayDate.toLocaleDateString('pt-BR');
+                maxDailyGainDate = `${day}/${month}/${year}`;
               }
               
               // Update streaks
@@ -184,7 +192,7 @@ export function QuantDiaryPage() {
               // Check for max daily loss
               if (Math.abs(dayData.pnl) > Math.abs(maxDailyLoss)) {
                 maxDailyLoss = dayData.pnl;
-                maxDailyLossDate = dayDate.toLocaleDateString('pt-BR');
+                maxDailyLossDate = `${day}/${month}/${year}`;
               }
               
               // Update streaks
@@ -205,36 +213,43 @@ export function QuantDiaryPage() {
       });
     });
     
-    // Sort days chronologically for drawdown calculation
-    allDaysWithData.sort((a, b) => a.date.getTime() - b.date.getTime());
+    // Sort daily data chronologically for drawdown calculation
+    allDailyData.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
     
     // Calculate drawdown chronologically
-    allDaysWithData.forEach(dayData => {
+    allDailyData.forEach(dayData => {
       runningPnL += dayData.pnl;
       
-      // Update peak if we reached a new high
-      if (runningPnL > peak) {
-        peak = runningPnL;
-        // Reset drawdown tracking when we reach a new peak
-        currentDrawdownStart = '';
+      // Update peak if we have a new high
+      if (runningPnL > peakPnL) {
+        peakPnL = runningPnL;
+        
+        // End any current drawdown
+        if (isInDrawdown) {
+          isInDrawdown = false;
+        }
       }
       
       // Calculate current drawdown
-      const currentDrawdown = peak - runningPnL;
+      const currentDrawdown = peakPnL - runningPnL;
       
-      // Track drawdown start
-      if (currentDrawdown > 0 && !currentDrawdownStart) {
-        currentDrawdownStart = dayData.date.toLocaleDateString('pt-BR');
-      }
-      
-      // Update maximum drawdown if current is larger
-      if (currentDrawdown > maxDrawdownAmount) {
-        maxDrawdownAmount = currentDrawdown;
-        drawdownStartDate = currentDrawdownStart;
-        drawdownEndDate = dayData.date.toLocaleDateString('pt-BR');
+      if (currentDrawdown > 0) {
+        // We're in a drawdown
+        if (!isInDrawdown) {
+          // Start of new drawdown
+          isInDrawdown = true;
+          currentDrawdownStart = dayData.date;
+        }
         
-        // Calculate percentage drawdown
-        maxDrawdown = peak > 0 ? (currentDrawdown / peak) * 100 : 0;
+        // Check if this is the maximum drawdown
+        if (currentDrawdown > maxDrawdownAmount) {
+          maxDrawdownAmount = currentDrawdown;
+          drawdownStartDate = currentDrawdownStart;
+          drawdownEndDate = dayData.date;
+          
+          // Calculate percentage drawdown
+          maxDrawdown = peakPnL > 0 ? (currentDrawdown / peakPnL) * 100 : 0;
+        }
       }
     });
     
@@ -260,7 +275,6 @@ export function QuantDiaryPage() {
       maxWinStreak,
       maxLossStreak,
       totalWinningDays,
-      maxLossStreak,
       maxDrawdown,
       maxDrawdownAmount,
       drawdownStartDate,
@@ -895,17 +909,8 @@ export function QuantDiaryPage() {
               <span className="text-sm text-gray-400">Drawdown Máximo</span>
               <AlertTriangle className="w-4 h-4 text-orange-400" />
             </div>
-            <p className="text-2xl font-bold text-orange-400">
-              {allTimeStats.maxDrawdown.toFixed(1)}%
-            </p>
-            <p className="text-xs text-gray-400">
-              R$ {allTimeStats.maxDrawdownAmount.toFixed(2)}
-            </p>
-            {allTimeStats.drawdownStartDate && allTimeStats.drawdownEndDate && (
-              <p className="text-xs text-gray-500 mt-1">
-                {allTimeStats.drawdownStartDate} - {allTimeStats.drawdownEndDate}
-              </p>
-            )}
+            <p className="text-2xl font-bold text-orange-400">{operationalStats.maxDrawdown.value}%</p>
+            <p className="text-xs text-gray-500">{operationalStats.maxDrawdown.label}</p>
           </div>
           
           </div>
