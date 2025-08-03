@@ -111,7 +111,7 @@ export default function App() {
     <>
       <Router>
         <Routes>
-          <Route path="/" element={<Navigate to="/robots" replace />} />
+          <Route path="/" element={<Navigate to="/dashboard" replace />} />
           <Route path="/editor/:robotId" element={<EditorPage />} />
           <Route path="/robots" element={<RobotsPage />} />
           <Route path="/dashboard" element={<DashboardPage />} />
@@ -121,7 +121,7 @@ export default function App() {
           <Route path="/admin" element={<AdminPanel />} />
           <Route path="/backtest-analysis" element={<BacktestAnalysisPage />} />
           <Route path="/strategy-analysis" element={<StrategyAnalysisPage />} />
-          <Route path="*" element={<Navigate to="/robots" replace />} />
+          <Route path="*" element={<Navigate to="/dashboard" replace />} />
         </Routes>
       </Router>
       <FloatingWhatsAppButton />
