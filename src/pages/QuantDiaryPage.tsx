@@ -275,7 +275,6 @@ export function QuantDiaryPage() {
       maxWinStreak,
       maxLossStreak,
       totalWinningDays,
-      maxLossStreak,
       maxDrawdown,
       maxDrawdownAmount,
       drawdownStartDate,
@@ -1558,12 +1557,8 @@ export function QuantDiaryPage() {
                   >
                     <Save className="w-4 h-4 mr-2" />
                     Salvar
-                <p className="text-2xl font-bold text-orange-400">
-                  {allTimeStats.maxDrawdown.toFixed(1)}%
-                </p>
-                <p className="text-xs text-gray-400">
-                  R$ {allTimeStats.maxDrawdownAmount.toFixed(2)}
-                </p>
+                  </button>
+                </div>
               </div>
             </div>
           </div>
