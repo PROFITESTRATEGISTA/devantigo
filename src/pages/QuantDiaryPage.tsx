@@ -1646,123 +1646,33 @@ export function QuantDiaryPage() {
                 Dia {selectedDay} de {currentMonth.charAt(0).toUpperCase() + currentMonth.slice(1)}
               </h2>
               <p className="mt-2 text-gray-400">
-                {hasDayData(selectedDate) ? 'Gerenciar este dia:' : 'O que você gostaria de fazer?'}
+                O que você gostaria de fazer?
               </p>
+            </div>
+
+            <div className="space-y-3">
+              <button
+                onClick={() => handleActionSelect('analysis')}
+                className="w-full p-4 bg-blue-600 hover:bg-blue-700 rounded-lg text-white flex items-center justify-center space-x-3"
+              >
+                <FileText className="w-6 h-6" />
+                <div className="text-left">
+                  <div className="font-medium">Adicionar Análise Salva</div>
+                  <div className="text-sm opacity-75">Vincular uma análise de backtest ao dia</div>
+                </div>
+              </button>
               
-              {/* Resumo do dia se tiver dados */}
-              {hasDayData(selectedDate) && (
-                <div className="mt-4 p-3 bg-gray-700 rounded-lg">
-                  <div className="flex justify-between items-center">
-                    <span className="text-sm text-gray-400">P&L do Dia:</span>
-                    <span className={`font-bold ${getDayData(selectedDate).pnl >= 0 ? 'text-green-400' : 'text-red-400'}`}>
-                      R$ {getDayData(selectedDate).pnl.toFixed(2)}
-                    </span>
-                  </div>
-                  <div className="flex justify-between items-center mt-1">
-                    <span className="text-sm text-gray-400">Trades:</span>
-            {hasDayData(selectedDate) ? (
-              // Opções para dia COM dados
-              <div className="space-y-3">
-                <button
-                  onClick={() => {
-                    setSelectedDayData(getDayData(selectedDate));
-                    setShowDayOptionsModal(false);
-                    setShowDayPanel(true);
-                  }}
-                  className="w-full p-4 bg-blue-600 hover:bg-blue-700 rounded-lg text-left flex items-center"
-                >
-                  <BarChart2 className="w-6 h-6 mr-3" />
-                  <div>
-                    <h3 className="font-medium">Ver Painel do Dia</h3>
-                    <p className="text-sm text-blue-200">Abrir controle completo do dia</p>
-                  </div>
-                </button>
-                
-                <button
-                  onClick={() => {
-                    setShowDayOptionsModal(false);
-                    setShowTradeModal(true);
-                  }}
-                  className="w-full p-4 bg-green-600 hover:bg-green-700 rounded-lg text-left flex items-center"
-                >
-                  <Plus className="w-6 h-6 mr-3" />
-                  <div>
-                    <h3 className="font-medium">Adicionar Trade</h3>
-                    <p className="text-sm text-green-200">Registrar nova operação</p>
-                  </div>
-                </button>
-                
-                <button
-                  onClick={() => {
-                    setShowDayOptionsModal(false);
-                    setShowCommentsModal(true);
-                  }}
-                  className="w-full p-4 bg-purple-600 hover:bg-purple-700 rounded-lg text-left flex items-center"
-                >
-                  <MessageSquare className="w-6 h-6 mr-3" />
-                  <div>
-                    <h3 className="font-medium">Adicionar Comentário</h3>
-                    <p className="text-sm text-purple-200">Registrar observações extras</p>
-                  </div>
-                </button>
-                
-                <button
-                  onClick={() => handleDeleteDay()}
-                  className="w-full p-4 bg-red-600 hover:bg-red-700 rounded-lg text-left flex items-center"
-                >
-                  <Trash2 className="w-6 h-6 mr-3" />
-                  <div>
-                    <h3 className="font-medium">Excluir Dia</h3>
-                    <p className="text-sm text-red-200">Remover todos os dados do dia</p>
-                  </div>
-                </button>
-              </div>
-            ) : (
-              // Opções para dia SEM dados
-              <div className="space-y-3">
-                <button
-                  onClick={() => {
-                    setShowDayOptionsModal(false);
-                    setShowAnalysisModal(true);
-                  }}
-                  className="w-full p-4 bg-blue-600 hover:bg-blue-700 rounded-lg text-left flex items-center"
-                >
-                  <FileSpreadsheet className="w-6 h-6 mr-3" />
-                  <div>
-                    <h3 className="font-medium">Adicionar Análise Salva</h3>
-                    <p className="text-sm text-blue-200">Vincular uma análise de backtest ao dia</p>
-                  </div>
-                </button>
-                
-                <button
-                  onClick={() => {
-                    setShowDayOptionsModal(false);
-                    setShowCommentsModal(true);
-                  }}
-                  className="w-full p-4 bg-green-600 hover:bg-green-700 rounded-lg text-left flex items-center"
-                >
-                  <MessageSquare className="w-6 h-6 mr-3" />
-                  <div>
-                    <h3 className="font-medium">Adicionar Comentários</h3>
-                    <p className="text-sm text-green-200">Registrar observações sobre o dia</p>
-                  </div>
-                </button>
-                
-                <button
-                  onClick={() => {
-                    setShowDayOptionsModal(false);
-                    setShowTradeModal(true);
-                  }}
-                  className="w-full p-4 bg-purple-600 hover:bg-purple-700 rounded-lg text-left flex items-center"
-                >
-                  <TrendingUp className="w-6 h-6 mr-3" />
-                  <div>
-                    <h3 className="font-medium">Registrar Trade Manual</h3>
-                    <p className="text-sm text-purple-200">Adicionar operação diretamente</p>
-                  </div>
-                </button>
-              </div>
-            )}
+              <button
+                onClick={() => handleActionSelect('comment')}
+                className="w-full p-4 bg-green-600 hover:bg-green-700 rounded-lg text-white flex items-center justify-center space-x-3"
+              >
+                <MessageSquare className="w-6 h-6" />
+                <div className="text-left">
+                  <div className="font-medium">Adicionar Comentários</div>
+                  <div className="text-sm opacity-75">Registrar observações sobre o dia</div>
+                </div>
+              </button>
+            </div>
           </div>
         </div>
       )}
