@@ -7,6 +7,7 @@ import {
   BookOpen, 
   ShoppingCart, 
   Users, 
+import { Navbar } from '../components/Navbar';
   Upload, 
   Bot, 
   TrendingUp, 
@@ -592,6 +593,7 @@ end;`
 
   return (
     <div className="min-h-screen bg-gray-900 text-white p-4">
+      <Navbar />
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="mb-8">
