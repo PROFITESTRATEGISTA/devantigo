@@ -493,6 +493,13 @@ ${entry.predefinedComments.length > 0
   };
 
   const handleSaveEntry = async () => {
+    // Implementation for saving entry
+  };
+
+  const handleAddEntry = (date: Date) => {
+    setSelectedDate(date);
+    setShowNewEntryModal(true);
+  };
 
   return (
     <div className="space-y-6">
@@ -886,7 +893,7 @@ ${entry.predefinedComments.length > 0
                 >
                   <div className="text-sm font-medium">{date.getDate()}</div>
                   
-                  {entry ? (
+                  {!entry ? (
                     <div className="space-y-1">
                       <button
                         onClick={() => handleAddEntry(date)}
@@ -1314,7 +1321,6 @@ ${entry.predefinedComments.length > 0
           </button>
         </div>
       )}
-    </div>
     </div>
   );
 }
