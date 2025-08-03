@@ -16,32 +16,42 @@ export function Footer() {
           
           {/* Links */}
           <div className="flex items-center space-x-6 text-sm">
-            <a 
-              href="/faq" 
+            <button
+              onClick={() => window.location.href = '/robots'}
+              className="text-gray-400 hover:text-white transition-colors"
+            >
+              Meus Robôs
+            </button>
+            <button
+              onClick={() => window.location.href = '/backtest-analysis'}
+              className="text-gray-400 hover:text-white transition-colors"
+            >
+              Minhas Análises
+            </button>
+            <button
+              onClick={() => window.location.href = '/faq'}
               className="text-gray-400 hover:text-white transition-colors"
             >
               FAQ
-            </a>
-            <a 
-              href="/plans" 
+            </button>
+            <button
+              onClick={() => window.location.href = '/plans'}
               className="text-gray-400 hover:text-white transition-colors"
             >
               Planos
-            </a>
-            <a 
-              href="mailto:suporte@devhubtrader.com.br" 
+            </button>
+            <button
+              onClick={() => window.location.href = '/profile'}
               className="text-gray-400 hover:text-white transition-colors"
             >
-              Suporte
-            </a>
-            <a 
-              href="https://wa.me/5511975333355" 
-              target="_blank" 
-              rel="noopener noreferrer"
+              Perfil
+            </button>
+            <button
+              onClick={() => window.location.href = '/subscription'}
               className="text-gray-400 hover:text-white transition-colors"
             >
-              WhatsApp
-            </a>
+              Assinatura
+            </button>
           </div>
           
           {/* Copyright */}

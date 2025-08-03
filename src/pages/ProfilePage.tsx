@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { User, Mail, Camera, X, ArrowLeft, Bell, Crown, Zap, Phone, Users } from 'lucide-react';
+import { User, Mail, Camera, X, ArrowLeft, Bell, Crown, Zap, Phone, Users, Plus } from 'lucide-react';
 import { useAuthStore } from '../stores/authStore';
 import { supabase } from '../lib/supabase';
 import { useNavigate } from 'react-router-dom';
