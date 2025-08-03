@@ -16,6 +16,7 @@ import { StrategyAnalysisPage } from './pages/StrategyAnalysisPage';
 import { PublicPlansPage } from './pages/PublicPlansPage';
 import { FAQPage } from './pages/FAQPage';
 import { LoggedInFAQPage } from './pages/LoggedInFAQPage';
+import { Footer } from './components/Footer';
 
 export default function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -104,6 +105,7 @@ export default function App() {
           </Routes>
         </Router>
         <FloatingWhatsAppButton />
+        <Footer />
       </>
     );
   }
@@ -127,6 +129,7 @@ export default function App() {
         </Routes>
       </Router>
       <FloatingWhatsAppButton />
+      <Footer />
     </>
   );
 }
