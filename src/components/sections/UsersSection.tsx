@@ -104,9 +104,9 @@ export function UsersSection({ users }: UsersSectionProps) {
                 <div className="flex items-center justify-center mb-4">
                   <div className="bg-gradient-to-r from-blue-500 to-purple-500 text-white px-2 py-1 rounded-md flex items-center">
                     <span className="text-sm font-black mr-1">Q</span>
-                    <div className="flex flex-col items-start">
+                    <div className="flex flex-col items-center">
                       <span className="text-xs text-white leading-none">QUANT SCORE</span>
-                      <span className="text-lg font-bold text-white">{user.rating.toFixed(0)}</span>
+                      <span className="text-xl font-bold text-white">{user.rating.toFixed(0)}</span>
                     </div>
                   </div>
                 </div>
@@ -122,25 +122,6 @@ export function UsersSection({ users }: UsersSectionProps) {
                     <MessageSquare className="w-4 h-4 mr-2" />
                     {t('users.connect')}
                   </button>
-                  
-                  <div className="flex space-x-2">
-                    <button 
-                      onClick={() => handleShareAnalysis(user)}
-                      className="flex-1 py-1.5 bg-green-600 hover:bg-green-700 rounded-md text-white text-sm transition-colors flex items-center justify-center"
-                      title={t('users.shareAnalysis')}
-                    >
-                      <BarChart2 className="w-3 h-3 mr-1" />
-                      {t('analyses.title').split(' ')[0]}
-                    </button>
-                    <button 
-                      onClick={() => handleShareRobot(user)}
-                      className="flex-1 py-1.5 bg-purple-600 hover:bg-purple-700 rounded-md text-white text-sm transition-colors flex items-center justify-center"
-                      title={t('users.shareRobot')}
-                    >
-                      <Bot className="w-3 h-3 mr-1" />
-                      {t('nav.robots').split(' ')[1] || 'Robot'}
-                    </button>
-                  </div>
                 </div>
               </div>
             ))}
