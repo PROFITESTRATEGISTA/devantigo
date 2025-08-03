@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { 
   ArrowLeft, Calendar, BarChart2, TrendingUp, DollarSign, Hash, Percent, Clock, Target,
-  Plus, Edit, Save, X, MessageSquare, AlertTriangle
+  Plus, Edit, Save, X, MessageSquare, AlertTriangle, FileText, PlusCircle, Eye, Edit3
 } from 'lucide-react';
 import { Navbar } from '../components/Navbar';
 
@@ -11,6 +11,7 @@ interface DayData {
   trades: number;
   comment?: string;
   strategies?: string[];
+  analysisId?: string;
 }
 
 interface CalendarData {
@@ -22,13 +23,15 @@ interface CalendarData {
 export function QuantDiaryPage() {
   const navigate = useNavigate();
   const [viewMode, setViewMode] = useState('calendar');
-  const [isEditMode, setIsEditMode] = useState(true);
+  const [calendarViewMode, setCalendarViewMode] = useState<'daily' | 'monthly'>('daily');
   const [showAllTime, setShowAllTime] = useState(false);
   const [currentMonth, setCurrentMonth] = useState('agosto');
   const [currentYear, setCurrentYear] = useState(2025);
   const [showDayModal, setShowDayModal] = useState(false);
+  const [showActionModal, setShowActionModal] = useState(false);
   const [selectedDay, setSelectedDay] = useState<number | null>(null);
   const [editingDay, setEditingDay] = useState<DayData>({ pnl: 0, trades: 0, comment: '' });
+  const [actionType, setActionType] = useState<'analysis' | 'comment' | null>(null);
   const [calendarData, setCalendarData] = useState<CalendarData>({
     agosto: {
       5: { pnl: 450.75, trades: 8, comment: 'Ótimo dia! Estratégia de scalping funcionou muito bem.' },
@@ -54,7 +57,7 @@ export function QuantDiaryPage() {
     { month: 'maio', trades: 47, dias: 22, pnl: 2950.75 },
     { month: 'junho', trades: 39, dias: 21, pnl: 2340.50 },
     { month: 'julho', trades: 44, dias: 22, pnl: 2680.25 },
-    { month: 'agosto', trades: 0, dias: 0, pnl: 0.00 }
+    { month: 'agosto', trades: 25, dias: 4, pnl: 1175.50 }
   ];
 
   // Estatísticas gerais
@@ -90,12 +93,31 @@ export function QuantDiaryPage() {
     return new Date(year, monthIndex, 1).getDay();
   };
 
+  // Função para calcular P&L semanal
+  const getWeeklyPnL = (weekStart: number, weekEnd: number) => {
+    let weeklyPnL = 0;
+    for (let day = weekStart; day <= weekEnd; day++) {
+      const dayData = calendarData[currentMonth]?.[day];
+      if (dayData) {
+        weeklyPnL += dayData.pnl;
+      }
+    }
+    return weeklyPnL;
+  };
+
   const handleDayClick = (day: number) => {
-    // Só permite edição se estiver no modo de edição
-    if (!isEditMode) return;
+    // No modo mensal, não permite interação
+    if (calendarViewMode === 'monthly') return;
     
     setSelectedDay(day);
-    const dayData = calendarData[currentMonth]?.[day] || { pnl: 0, trades: 0, comment: '' };
+    setShowActionModal(true);
+  };
+
+  const handleActionSelect = (action: 'analysis' | 'comment') => {
+    setActionType(action);
+    setShowActionModal(false);
+    
+    const dayData = calendarData[currentMonth]?.[selectedDay!] || { pnl: 0, trades: 0, comment: '' };
     setEditingDay({ ...dayData });
     setShowDayModal(true);
   };
@@ -113,6 +135,7 @@ export function QuantDiaryPage() {
 
     setShowDayModal(false);
     setSelectedDay(null);
+    setActionType(null);
   };
 
   const handleDeleteDay = () => {
@@ -128,18 +151,20 @@ export function QuantDiaryPage() {
 
     setShowDayModal(false);
     setSelectedDay(null);
+    setActionType(null);
   };
 
   const renderCalendar = () => {
     const daysInMonth = getDaysInMonth(currentMonth, currentYear);
     const firstDayOfWeek = getFirstDayOfMonth(currentMonth, currentYear);
     
-    // Criar array com células vazias para os dias antes do primeiro dia do mês
-    const calendarCells = [];
+    // Criar array com células do calendário organizadas por semanas
+    const weeks = [];
+    let currentWeek = [];
     
-    // Adicionar células vazias para os dias da semana anterior
+    // Adicionar células vazias para os dias antes do primeiro dia do mês
     for (let i = 0; i < firstDayOfWeek; i++) {
-      calendarCells.push(
+      currentWeek.push(
         <div key={`empty-${i}`} className="aspect-square"></div>
       );
     }
@@ -149,18 +174,22 @@ export function QuantDiaryPage() {
       const dayData = calendarData[currentMonth]?.[day] || { pnl: 0, trades: 0 };
       const hasData = dayData.trades > 0;
       const isPositive = dayData.pnl > 0;
+      const isClickable = calendarViewMode === 'daily';
       
-      calendarCells.push(
+      currentWeek.push(
         <button
           key={day}
           onClick={() => handleDayClick(day)}
-          className={`aspect-square p-2 rounded-lg border text-center transition-all hover:scale-105 ${
+          disabled={!isClickable}
+          className={`aspect-square p-2 rounded-lg border text-center transition-all ${
+            isClickable ? 'hover:scale-105 cursor-pointer' : 'cursor-default'
+          } ${
             hasData
               ? isPositive
                 ? 'bg-green-900 border-green-700 text-green-300 hover:bg-green-800'
                 : 'bg-red-900 border-red-700 text-red-300 hover:bg-red-800'
               : 'bg-gray-700 border-gray-600 text-gray-400 hover:bg-gray-600'
-          }`}
+          } ${!isClickable ? 'opacity-75' : ''}`}
         >
           <div className="text-sm font-medium">{day}</div>
           {hasData && (
@@ -175,6 +204,40 @@ export function QuantDiaryPage() {
           )}
         </button>
       );
+      
+      // Se chegou ao sábado (7 dias na semana) ou é o último dia do mês
+      if (currentWeek.length === 7 || day === daysInMonth) {
+        // Completar a semana com células vazias se necessário
+        while (currentWeek.length < 7) {
+          currentWeek.push(
+            <div key={`empty-end-${currentWeek.length}`} className="aspect-square"></div>
+          );
+        }
+        
+        // Calcular P&L semanal
+        const weekStart = day - (currentWeek.length - 1 - firstDayOfWeek);
+        const weekEnd = day;
+        const weeklyPnL = getWeeklyPnL(Math.max(1, weekStart), Math.min(daysInMonth, weekEnd));
+        
+        // Adicionar a linha da semana com o total semanal
+        weeks.push(
+          <div key={`week-${weeks.length}`} className="grid grid-cols-8 gap-2 mb-2">
+            {currentWeek}
+            <div className="aspect-square flex items-center justify-center bg-gray-900 rounded-lg border border-gray-600">
+              <div className="text-center">
+                <div className="text-xs text-gray-400 mb-1">Semana</div>
+                <div className={`text-sm font-bold ${
+                  weeklyPnL > 0 ? 'text-green-400' : weeklyPnL < 0 ? 'text-red-400' : 'text-gray-400'
+                }`}>
+                  {weeklyPnL > 0 ? '+' : ''}R$ {weeklyPnL.toFixed(0)}
+                </div>
+              </div>
+            </div>
+          </div>
+        );
+        
+        currentWeek = [];
+      }
     }
 
     return (
@@ -185,19 +248,19 @@ export function QuantDiaryPage() {
             Calendário de Trading - {currentMonth.charAt(0).toUpperCase() + currentMonth.slice(1)} {currentYear}
           </h3>
           <div className="flex items-center space-x-4">
-            {/* Switch para modo de edição */}
+            {/* Switch para visão diária/mensal */}
             <div className="flex items-center space-x-2">
-              <span className="text-sm text-gray-400">Visualização</span>
+              <span className="text-sm text-gray-400">Diária</span>
               <label className="relative inline-flex items-center cursor-pointer">
                 <input 
                   type="checkbox" 
-                  checked={isEditMode} 
-                  onChange={() => setIsEditMode(!isEditMode)} 
+                  checked={calendarViewMode === 'monthly'} 
+                  onChange={() => setCalendarViewMode(calendarViewMode === 'daily' ? 'monthly' : 'daily')} 
                   className="sr-only peer"
                 />
                 <div className="w-11 h-6 bg-gray-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
               </label>
-              <span className="text-sm text-gray-400">Edição</span>
+              <span className="text-sm text-gray-400">Mensal</span>
             </div>
             
             <button
@@ -230,24 +293,28 @@ export function QuantDiaryPage() {
           </div>
         </div>
 
-        {/* Grid do calendário */}
-        <div className="grid grid-cols-7 gap-2 mb-4">
+        {/* Cabeçalho do calendário com soma semanal */}
+        <div className="grid grid-cols-8 gap-2 mb-4">
           {['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'].map(day => (
             <div key={day} className="text-center text-sm font-medium text-gray-400 p-2">
               {day}
             </div>
           ))}
+          <div className="text-center text-sm font-medium text-blue-400 p-2">
+            Semana
+          </div>
         </div>
 
-        <div className="grid grid-cols-7 gap-2">
-          {calendarCells}
+        {/* Grid do calendário com totais semanais */}
+        <div className="space-y-2">
+          {weeks}
         </div>
 
         <div className="mt-4 flex items-center justify-center space-x-6">
           <div className="flex items-center">
             <div className="w-3 h-3 bg-blue-500 rounded-full mr-2"></div>
             <span className="text-sm text-gray-400">
-              {isEditMode ? 'Modo Edição (clique para editar)' : 'Modo Visualização (somente leitura)'}
+              {calendarViewMode === 'daily' ? 'Visão Diária (clique para editar)' : 'Visão Mensal (somente leitura)'}
             </span>
           </div>
           <div className="flex items-center">
@@ -502,6 +569,56 @@ export function QuantDiaryPage() {
         </div>
       </div>
 
+      {/* Modal de seleção de ação */}
+      {showActionModal && selectedDay && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+          <div className="bg-gray-800 rounded-lg max-w-sm w-full p-6 relative">
+            <button 
+              onClick={() => setShowActionModal(false)}
+              className="absolute top-4 right-4 text-gray-400 hover:text-white"
+            >
+              <X className="w-5 h-5" />
+            </button>
+            
+            <div className="text-center mb-6">
+              <div className="flex items-center justify-center mb-4">
+                <Calendar className="w-12 h-12 text-blue-500" />
+              </div>
+              <h2 className="text-xl font-bold text-gray-100">
+                Dia {selectedDay} de {currentMonth.charAt(0).toUpperCase() + currentMonth.slice(1)}
+              </h2>
+              <p className="mt-2 text-gray-400">
+                O que você gostaria de fazer?
+              </p>
+            </div>
+
+            <div className="space-y-3">
+              <button
+                onClick={() => handleActionSelect('analysis')}
+                className="w-full p-4 bg-blue-600 hover:bg-blue-700 rounded-lg text-white flex items-center justify-center space-x-3"
+              >
+                <FileText className="w-6 h-6" />
+                <div className="text-left">
+                  <div className="font-medium">Adicionar Análise Salva</div>
+                  <div className="text-sm opacity-75">Vincular uma análise de backtest ao dia</div>
+                </div>
+              </button>
+              
+              <button
+                onClick={() => handleActionSelect('comment')}
+                className="w-full p-4 bg-green-600 hover:bg-green-700 rounded-lg text-white flex items-center justify-center space-x-3"
+              >
+                <MessageSquare className="w-6 h-6" />
+                <div className="text-left">
+                  <div className="font-medium">Adicionar Comentários</div>
+                  <div className="text-sm opacity-75">Registrar observações sobre o dia</div>
+                </div>
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Modal para editar dia */}
       {showDayModal && selectedDay && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
@@ -515,56 +632,80 @@ export function QuantDiaryPage() {
             
             <div className="text-center mb-6">
               <div className="flex items-center justify-center mb-4">
-                <Calendar className="w-12 h-12 text-blue-500" />
+                {actionType === 'analysis' ? (
+                  <FileText className="w-12 h-12 text-blue-500" />
+                ) : (
+                  <MessageSquare className="w-12 h-12 text-green-500" />
+                )}
               </div>
               <h2 className="text-2xl font-bold text-gray-100">
-                {selectedDay} de {currentMonth.charAt(0).toUpperCase() + currentMonth.slice(1)}
+                {actionType === 'analysis' ? 'Adicionar Análise' : 'Adicionar Comentários'}
               </h2>
               <p className="mt-2 text-gray-400">
-                Adicione ou edite os dados do dia
+                {selectedDay} de {currentMonth.charAt(0).toUpperCase() + currentMonth.slice(1)}
               </p>
             </div>
 
             <div className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-300 mb-1">
-                  P&L do Dia (R$)
-                </label>
-                <input
-                  type="number"
-                  step="0.01"
-                  value={editingDay.pnl}
-                  onChange={(e) => setEditingDay(prev => ({ ...prev, pnl: parseFloat(e.target.value) || 0 }))}
-                  className="w-full bg-gray-700 border border-gray-600 rounded-md px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  placeholder="0.00"
-                />
-              </div>
+              {actionType === 'analysis' ? (
+                <>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-300 mb-1">
+                      P&L do Dia (R$)
+                    </label>
+                    <input
+                      type="number"
+                      step="0.01"
+                      value={editingDay.pnl}
+                      onChange={(e) => setEditingDay(prev => ({ ...prev, pnl: parseFloat(e.target.value) || 0 }))}
+                      className="w-full bg-gray-700 border border-gray-600 rounded-md px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      placeholder="0.00"
+                    />
+                  </div>
 
-              <div>
-                <label className="block text-sm font-medium text-gray-300 mb-1">
-                  Número de Trades
-                </label>
-                <input
-                  type="number"
-                  value={editingDay.trades}
-                  onChange={(e) => setEditingDay(prev => ({ ...prev, trades: parseInt(e.target.value) || 0 }))}
-                  className="w-full bg-gray-700 border border-gray-600 rounded-md px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  placeholder="0"
-                />
-              </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-300 mb-1">
+                      Número de Trades
+                    </label>
+                    <input
+                      type="number"
+                      value={editingDay.trades}
+                      onChange={(e) => setEditingDay(prev => ({ ...prev, trades: parseInt(e.target.value) || 0 }))}
+                      className="w-full bg-gray-700 border border-gray-600 rounded-md px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      placeholder="0"
+                    />
+                  </div>
 
-              <div>
-                <label className="block text-sm font-medium text-gray-300 mb-1">
-                  Comentários e Observações
-                </label>
-                <textarea
-                  value={editingDay.comment || ''}
-                  onChange={(e) => setEditingDay(prev => ({ ...prev, comment: e.target.value }))}
-                  className="w-full bg-gray-700 border border-gray-600 rounded-md px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  rows={4}
-                  placeholder="Descreva como foi o dia, estratégias utilizadas, condições de mercado, lições aprendidas..."
-                />
-              </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-300 mb-1">
+                      Análise Vinculada
+                    </label>
+                    <select
+                      value={editingDay.analysisId || ''}
+                      onChange={(e) => setEditingDay(prev => ({ ...prev, analysisId: e.target.value }))}
+                      className="w-full bg-gray-700 border border-gray-600 rounded-md px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    >
+                      <option value="">Selecionar análise...</option>
+                      <option value="analysis-1">Estratégia Scalping WINFUT</option>
+                      <option value="analysis-2">Grid Trading PETR4</option>
+                      <option value="analysis-3">Trend Following VALE3</option>
+                    </select>
+                  </div>
+                </>
+              ) : (
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-1">
+                    Comentários e Observações
+                  </label>
+                  <textarea
+                    value={editingDay.comment || ''}
+                    onChange={(e) => setEditingDay(prev => ({ ...prev, comment: e.target.value }))}
+                    className="w-full bg-gray-700 border border-gray-600 rounded-md px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    rows={6}
+                    placeholder="Descreva como foi o dia, estratégias utilizadas, condições de mercado, lições aprendidas, emoções durante o trading..."
+                  />
+                </div>
+              )}
 
               <div className="flex justify-between space-x-3 pt-4">
                 <button
