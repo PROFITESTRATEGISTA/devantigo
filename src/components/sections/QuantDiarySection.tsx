@@ -230,8 +230,7 @@ export function QuantDiarySection() {
   const getWeekDays = () => {
     const days = [];
     
-    // Semana SEMPRE começa no domingo
-    // currentWeekStart já é um domingo
+    // Semana SEMPRE começa no domingo (igual ao calendário)
     for (let i = 0; i < 7; i++) {
       const date = new Date(currentWeekStart);
       date.setDate(currentWeekStart.getDate() + i);
@@ -314,7 +313,7 @@ export function QuantDiarySection() {
   };
 
   const getDayName = (date: Date) => {
-    const days = ['dom.', 'seg.', 'ter.', 'qua.', 'qui.', 'sex.', 'sáb.'];
+    const days = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
     return days[date.getDay()];
   };
 
