@@ -82,42 +82,8 @@ export function QuantDiarySection() {
 
   // Mock data for demonstration
   useEffect(() => {
-    const mockEntries: DiaryEntry[] = [
-      {
-        id: '1',
-        date: '2025-01-06',
-        title: 'Sessão Matinal WINFUT',
-        content: 'Operação em tendência de alta. Entrada no rompimento da máxima anterior.',
-        pnl: 450.75,
-        trades: 3,
-        mood: 'positive',
-        time: '09:30',
-        predefinedComments: ['Excelente execução da estratégia', 'Disciplina mantida durante todo o dia']
-      },
-      {
-        id: '2',
-        date: '2025-01-07',
-        title: 'Scalping PETR4',
-        content: 'Mercado lateral, várias operações pequenas.',
-        pnl: -125.50,
-        trades: 8,
-        mood: 'negative',
-        time: '14:15',
-        predefinedComments: ['Overtrading prejudicou os resultados', 'Mercado lateral difícil']
-      },
-      {
-        id: '3',
-        date: '2025-01-08',
-        title: 'Análise e Observação',
-        content: 'Dia focado em análise de mercado sem operações.',
-        pnl: 0,
-        trades: 0,
-        mood: 'neutral',
-        time: '16:00',
-        predefinedComments: ['Dia de observação e aprendizado', 'Foco em preservar capital']
-      }
-    ];
-    setEntries(mockEntries);
+    // Initialize with empty entries - user will add their own data
+    setEntries([]);
   }, []);
 
 
