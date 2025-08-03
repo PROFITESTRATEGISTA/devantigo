@@ -23,13 +23,11 @@ export function QuantDiarySection() {
   const [showModal, setShowModal] = useState(false);
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [modalType, setModalType] = useState<'comment' | 'analysis'>('comment');
+  const [showSelectionModal, setShowSelectionModal] = useState(false);
   const [newEntry, setNewEntry] = useState({
     title: '',
     content: '',
-    pnl: 0,
-    trades: 0,
     mood: 'neutral' as 'positive' | 'negative' | 'neutral',
-    time: '',
     predefinedComments: [] as string[]
   });
 
@@ -256,22 +254,28 @@ export function QuantDiarySection() {
       setNewEntry({
         title: existingEntry.title || '',
         content: existingEntry.content || '',
-        pnl: existingEntry.pnl || 0,
-        trades: existingEntry.trades || 0,
         mood: existingEntry.mood || 'neutral',
-        time: existingEntry.time || '',
         predefinedComments: existingEntry.predefinedComments || []
       });
     } else {
       setNewEntry({
         title: '',
         content: '',
-        pnl: 0,
-        trades: 0,
         mood: 'neutral',
-        time: '',
         predefinedComments: []
       });
+    }
+  };
+
+  const openSelectionModal = (date: Date) => {
+    setSelectedDate(date);
+    setShowSelectionModal(true);
+  };
+
+  const handleSelectionChoice = (type: 'comment' | 'analysis') => {
+    setShowSelectionModal(false);
+    if (selectedDate) {
+      openModal(selectedDate, type);
     }
   };
 
@@ -284,10 +288,7 @@ export function QuantDiarySection() {
       date: dateStr,
       title: newEntry.title,
       content: newEntry.content,
-      pnl: newEntry.pnl,
-      trades: newEntry.trades,
       mood: newEntry.mood,
-      time: newEntry.time,
       predefinedComments: newEntry.predefinedComments
     };
     
@@ -434,8 +435,9 @@ export function QuantDiarySection() {
                   ? 'border-transparent bg-transparent cursor-default' // Dias vazios
                   : isToday 
                     ? 'border-blue-500 bg-blue-900 bg-opacity-20' 
-                    : 'border-gray-700 bg-gray-800 hover:border-blue-500'
+                    : 'border-gray-700 bg-gray-800 hover:border-blue-500 cursor-pointer'
               }`}
+              onClick={() => day && openSelectionModal(day)}
             >
               {day && (
                 <>
@@ -449,16 +451,289 @@ export function QuantDiarySection() {
                   </div>
               
                   {entry && (
-                    <div className="space-y-1 mb-3">
-                      <div className={`text-xs font-medium ${
-                        entry.pnl > 0 ? 'text-green-400' : 'text-red-400'
-                      }`}>
-                        R$ {entry.pnl.toFixed(0)}
-                      </div>
-                  
+                    <div className="space-y-2 mb-3">
+                      {entry.pnl !== undefined && (
+                        <div className={`text-sm font-bold text-center ${
+                          entry.pnl > 0 ? 'text-green-400' : entry.pnl < 0 ? 'text-red-400' : 'text-gray-400'
+                        }`}>
+                          {entry.pnl > 0 ? '+' : ''}R$ {entry.pnl.toFixed(0)}
+                        </div>
+                      )}
+                      
                       {entry.trades !== undefined && entry.trades > 0 && (
-                        <div className="text-xs text-blue-400">
+                        <div className="text-xs text-blue-400 text-center">
                           {entry.trades} trades
+                        </div>
+                      )}
+                      
+                      <div className="text-center">
+                        <span className="text-lg">{getMoodEmoji(entry.mood || 'neutral')}</span>
+                      </div>
+                    </div>
+                  )}
+                  
+                  {!entry && (
+                    <div className="flex-1 flex items-center justify-center">
+                      <p className="text-xs text-gray-500 text-center">
+                        Clique para adicionar dados
+                      </p>
+                    </div>
+                  )}
+                </>
+              )}
+            </div>
+          );
+        })}
+      </div>
+
+      {/* Selection Modal */}
+      {showSelectionModal && selectedDate && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+          <div className="bg-gray-800 rounded-lg max-w-md w-full p-6 relative">
+            <button 
+              onClick={() => setShowSelectionModal(false)}
+              className="absolute top-4 right-4 text-gray-400 hover:text-white"
+            >
+              ×
+            </button>
+            
+            <div className="text-center mb-6">
+              <Calendar className="w-12 h-12 text-blue-500 mx-auto mb-4" />
+              <h2 className="text-xl font-bold text-gray-100">
+                {language === 'en' ? 'What would you like to add?' : 'O que você gostaria de adicionar?'}
+              </h2>
+              <p className="mt-2 text-gray-400">
+                {selectedDate.toLocaleDateString('pt-BR', { 
+                  weekday: 'long', 
+                  year: 'numeric', 
+                  month: 'long', 
+                  day: 'numeric' 
+                })}
+              </p>
+            </div>
+
+            <div className="space-y-3">
+              <button
+                onClick={() => handleSelectionChoice('comment')}
+                className="w-full p-4 bg-blue-600 hover:bg-blue-700 rounded-lg text-white transition-colors flex items-center"
+              >
+                <MessageSquare className="w-5 h-5 mr-3" />
+                <div className="text-left">
+                  <div className="font-medium">
+                    {language === 'en' ? 'Add Comments' : 'Adicionar Comentários'}
+                  </div>
+                  <div className="text-sm text-blue-200">
+                    {language === 'en' ? 'Daily analysis and operational errors' : 'Análise diária e erros operacionais'}
+                  </div>
+                </div>
+              </button>
+              
+              <button
+                onClick={() => handleSelectionChoice('analysis')}
+                className="w-full p-4 bg-green-600 hover:bg-green-700 rounded-lg text-white transition-colors flex items-center"
+              >
+                <BarChart2 className="w-5 h-5 mr-3" />
+                <div className="text-left">
+                  <div className="font-medium">
+                    {language === 'en' ? 'Import Analysis' : 'Importar Análise'}
+                  </div>
+                  <div className="text-sm text-green-200">
+                    {language === 'en' ? 'Link saved backtest analysis' : 'Vincular análise de backtest salva'}
+                  </div>
+                </div>
+              </button>
+              
+              {getEntryForDate(selectedDate) && (
+                <button
+                  onClick={() => handleSelectionChoice('comment')}
+                  className="w-full p-4 bg-yellow-600 hover:bg-yellow-700 rounded-lg text-white transition-colors flex items-center"
+                >
+                  <Edit2 className="w-5 h-5 mr-3" />
+                  <div className="text-left">
+                    <div className="font-medium">
+                      {language === 'en' ? 'Edit Entry' : 'Editar Entrada'}
+                    </div>
+                    <div className="text-sm text-yellow-200">
+                      {language === 'en' ? 'Modify existing data' : 'Modificar dados existentes'}
+                    </div>
+                  </div>
+                </button>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Main Modal */}
+      {showModal && selectedDate && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+          <div className="bg-gray-800 rounded-lg max-w-2xl w-full p-6 relative max-h-[90vh] overflow-y-auto">
+            <button 
+              onClick={() => setShowModal(false)}
+              className="absolute top-4 right-4 text-gray-400 hover:text-white"
+            >
+              ×
+            </button>
+            
+            <div className="text-center mb-6">
+              <h2 className="text-2xl font-bold text-gray-100">
+                {modalType === 'comment' 
+                  ? (language === 'en' ? 'Add Comments' : 'Adicionar Comentários')
+                  : (language === 'en' ? 'Import Analysis' : 'Importar Análise')}
+              </h2>
+              <p className="mt-2 text-gray-400">
+                {selectedDate && selectedDate.toLocaleDateString('pt-BR', { 
+                  weekday: 'long', 
+                  year: 'numeric', 
+                  month: 'long', 
+                  day: 'numeric' 
+                }) + ` - Semana ${getWeekOfMonth(selectedDate)} do mês (Semana ${getWeekOfYear(selectedDate)} do ano)`}
+              </p>
+            </div>
+
+            {modalType === 'comment' ? (
+              <div className="space-y-4">
+                {/* Título da sessão */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-1">
+                    {language === 'en' ? 'Session Title' : 'Título da Sessão'}
+                  </label>
+                  <input
+                    type="text"
+                    value={newEntry.title}
+                    onChange={(e) => setNewEntry(prev => ({ ...prev, title: e.target.value }))}
+                    placeholder="Ex: Scalping WINFUT, Swing PETR4..."
+                    className="w-full bg-gray-700 border border-gray-600 rounded-md px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                </div>
+
+                {/* Humor */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">
+                    {language === 'en' ? 'Mood' : 'Humor do Dia'}
+                  </label>
+                  <div className="flex space-x-4">
+                    {[
+                      { value: 'positive', emoji: '📈', label: language === 'en' ? 'Positive' : 'Positivo' },
+                      { value: 'neutral', emoji: '➡️', label: language === 'en' ? 'Neutral' : 'Neutro' },
+                      { value: 'negative', emoji: '📉', label: language === 'en' ? 'Negative' : 'Negativo' }
+                    ].map(mood => (
+                      <button
+                        key={mood.value}
+                        onClick={() => setNewEntry(prev => ({ ...prev, mood: mood.value as any }))}
+                        className={`flex-1 p-3 rounded-lg border-2 transition-colors ${
+                          newEntry.mood === mood.value
+                            ? 'border-blue-500 bg-blue-900 bg-opacity-30'
+                            : 'border-gray-600 hover:border-gray-500'
+                      }`}>
+                        <div className="text-center">
+                          <div className="text-2xl mb-1">{mood.emoji}</div>
+                          <div className="text-sm">{mood.label}</div>
+                        </div>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Comentários Predefinidos */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">
+                    {language === 'en' ? 'Daily Analysis & Operational Errors' : 'Análise Diária e Erros Operacionais'}
+                  </label>
+                  
+                  <div className="space-y-3">
+                    {Object.entries(predefinedComments).map(([category, comments]) => (
+                      <div key={category}>
+                        <p className="text-xs text-gray-400 mb-2 capitalize">
+                          {category === 'positive' ? 'Pontos Positivos' : 
+                           category === 'negative' ? 'Erros e Problemas' : 'Observações Gerais'}
+                        </p>
+                        <div className="grid grid-cols-1 gap-2">
+                          {comments.map(comment => (
+                            <button
+                              key={comment}
+                              onClick={() => togglePredefinedComment(comment)}
+                              className={`p-2 rounded-md text-left text-sm transition-colors ${
+                                newEntry.predefinedComments.includes(comment)
+                                  ? category === 'positive' 
+                                    ? 'bg-green-900 bg-opacity-30 border border-green-600 text-green-300'
+                                    : category === 'negative'
+                                    ? 'bg-red-900 bg-opacity-30 border border-red-600 text-red-300'
+                                    : 'bg-blue-900 bg-opacity-30 border border-blue-600 text-blue-300'
+                                  : 'bg-gray-700 border border-gray-600 text-gray-300 hover:bg-gray-600'
+                              }`}
+                            >
+                              {comment}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Notas livres */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-1">
+                    {language === 'en' ? 'Detailed Analysis & Lessons Learned' : 'Análise Detalhada e Lições Aprendidas'}
+                  </label>
+                  <textarea
+                    value={newEntry.content}
+                    onChange={(e) => setNewEntry(prev => ({ ...prev, content: e.target.value }))}
+                    placeholder="Análise do dia: O que funcionou? Quais erros foram cometidos? Que ajustes são necessários? Lições aprendidas para próximas operações..."
+                    rows={4}
+                    className="w-full bg-gray-700 border border-gray-600 rounded-md px-3 py-2 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                </div>
+
+                {/* Botões do modal */}
+                <div className="flex justify-end space-x-3 pt-4">
+                  <button
+                    onClick={() => setShowModal(false)}
+                    className="px-4 py-2 bg-gray-700 hover:bg-gray-600 rounded-md text-white"
+                  >
+                    {language === 'en' ? 'Cancel' : 'Cancelar'}
+                  </button>
+                  <button
+                    onClick={saveEntry}
+                    className="px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-md text-white"
+                  >
+                    {language === 'en' ? 'Save' : 'Salvar'}
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <div className="space-y-4">
+                <div className="text-center py-8">
+                  <BarChart2 className="w-16 h-16 text-blue-400 mx-auto mb-4" />
+                  <h3 className="text-lg font-semibold mb-2">
+                    {language === 'en' ? 'Import Saved Analysis' : 'Importar Análise Salva'}
+                  </h3>
+                  <p className="text-gray-400 mb-6">
+                    {language === 'en' 
+                      ? 'Select a saved backtest analysis to associate with this day'
+                      : 'Selecione uma análise de backtest salva para associar a este dia'}
+                  </p>
+                  
+                  <button
+                    onClick={() => {
+                      // Navegar para página de análise de backtest
+                      window.location.href = '/backtest-analysis';
+                    }}
+                    className="px-6 py-3 bg-green-600 hover:bg-green-700 rounded-md text-white flex items-center mx-auto"
+                  >
+                    <BarChart2 className="w-5 h-5 mr-2" />
+                    {language === 'en' ? 'Go to Backtest Analysis' : 'Ir para Análise de Backtest'}
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
                         </div>
                       )}
                   
