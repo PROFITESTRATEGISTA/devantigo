@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { 
   ArrowLeft, Calendar, BarChart2, TrendingUp, DollarSign, Hash, Percent, Clock, Target,
-  Plus, Edit, Save, X, MessageSquare, AlertTriangle, FileText, PlusCircle, Eye, Edit3, TrendingDown
+  Plus, Edit, Save, X, MessageSquare, AlertTriangle, FileText, PlusCircle, Eye, Edit3, TrendingDown, Check, Edit2
 } from 'lucide-react';
 import { Navbar } from '../components/Navbar';
 
@@ -33,6 +33,9 @@ export function QuantDiaryPage() {
   const [editingDay, setEditingDay] = useState<DayData>({ pnl: 0, trades: 0, comment: '' });
   const [actionType, setActionType] = useState<'analysis' | 'comment' | null>(null);
   const [chartType, setChartType] = useState<'daily' | 'monthly'>('daily');
+  const [userPatrimony, setUserPatrimony] = useState<number>(10000); // Patrimônio inicial padrão
+  const [isEditingPatrimony, setIsEditingPatrimony] = useState(false);
+  const [patrimonyInput, setPatrimonyInput] = useState('10000');
   
   // Dados por ano - agora organizados por ano
   const [calendarData, setCalendarData] = useState<{[year: number]: CalendarData}>({
@@ -1343,6 +1346,75 @@ export function QuantDiaryPage() {
             <div>
               <h1 className="text-2xl font-bold">Diário Quant</h1>
               <p className="text-gray-400">Seu diário de trading e insights</p>
+            </div>
+          </div>
+          
+          {/* Patrimônio Input */}
+          <div className="flex items-center space-x-4">
+            <div className="flex items-center space-x-2">
+              <span className="text-sm text-gray-400">
+                Capital Inicial:
+              </span>
+              {isEditingPatrimony ? (
+                <div className="flex items-center space-x-2">
+                  <input
+                    type="number"
+                    value={patrimonyInput}
+                    onChange={(e) => setPatrimonyInput(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter') {
+                        const newValue = parseFloat(patrimonyInput);
+                        if (!isNaN(newValue) && newValue > 0) {
+                          setUserPatrimony(newValue);
+                          setIsEditingPatrimony(false);
+                        }
+                      } else if (e.key === 'Escape') {
+                        setPatrimonyInput(userPatrimony.toString());
+                        setIsEditingPatrimony(false);
+                      }
+                    }}
+                    className="w-24 px-2 py-1 bg-gray-800 border border-gray-600 rounded text-white text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    autoFocus
+                  />
+                  <button
+                    onClick={() => {
+                      const newValue = parseFloat(patrimonyInput);
+                      if (!isNaN(newValue) && newValue > 0) {
+                        setUserPatrimony(newValue);
+                        setIsEditingPatrimony(false);
+                      }
+                    }}
+                    className="p-1 text-green-400 hover:text-green-300"
+                    title="Salvar"
+                  >
+                    <Check className="w-4 h-4" />
+                  </button>
+                  <button
+                    onClick={() => {
+                      setPatrimonyInput(userPatrimony.toString());
+                      setIsEditingPatrimony(false);
+                    }}
+                    className="p-1 text-gray-400 hover:text-white"
+                    title="Cancelar"
+                  >
+                    <X className="w-4 h-4" />
+                  </button>
+                </div>
+              ) : (
+                <button
+                  onClick={() => {
+                    setPatrimonyInput(userPatrimony.toString());
+                    setIsEditingPatrimony(true);
+                  }}
+                  className="flex items-center space-x-1 px-3 py-1 bg-gray-800 hover:bg-gray-700 rounded-md text-sm"
+                >
+                  <DollarSign className="w-4 h-4 text-green-400" />
+                  <span className="font-medium">
+                    R$ {userPatrimony.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+                  </span>
+                  <Edit2 className="w-3 h-3 text-gray-400" />
+                </button>
+              )}
             </div>
           </div>
 
