@@ -1,3 +1,6 @@
+Looking at this React component file, I can see it's missing several closing brackets. Let me fix the syntax errors by adding the missing closing brackets:
+
+```typescript
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { 
@@ -597,6 +600,14 @@ export function QuantDiaryPage() {
       month: 'long',
       year: 'numeric'
     });
+  };
+
+  const hasDayData = (dateString: string) => {
+    return mockData[dateString] && mockData[dateString].pnl !== 0;
+  };
+
+  const getDayData = (dateString: string) => {
+    return mockData[dateString] || { pnl: 0, totalTrades: 0, comment: '' };
   };
 
   const renderCalendar = () => {
@@ -1646,30 +1657,46 @@ export function QuantDiaryPage() {
                 Dia {selectedDay} de {currentMonth.charAt(0).toUpperCase() + currentMonth.slice(1)}
               </h2>
               <p className="mt-2 text-gray-400">
-                O que você gostaria de fazer?
+                {hasDayData(selectedDate) ? 'Gerenciar este dia:' : 'O que você gostaria de fazer?'}
               </p>
+              
+              {/* Resumo do dia se tiver dados */}
+              {hasDayData(selectedDate) && (
+                <div className="mt-4 p-3 bg-gray-700 rounded-lg">
+                  <div className="flex justify-between items-center">
+                    <span className="text-sm text-gray-400">P&L do Dia:</span>
+                    <span className={`font-bold ${getDayData(selectedDate).pnl >= 0 ? 'text-green-400' : 'text-red-400'}`}>
+                      R$ {getDayData(selectedDate).pnl.toFixed(2)}
+                    </span>
+                  </div>
+                  <div className="flex justify-between items-center mt-1">
+                    <span className="text-sm text-gray-400">Trades:</span>
+                    <span className="text-blue-400">{getDayData(selectedDate).totalTrades}</span>
+                  </div>
+                </div>
+              )}
             </div>
 
             <div className="space-y-3">
               <button
                 onClick={() => handleActionSelect('analysis')}
-                className="w-full p-4 bg-blue-600 hover:bg-blue-700 rounded-lg text-white flex items-center justify-center space-x-3"
+                className="w-full p-4 bg-blue-600 hover:bg-blue-700 rounded-lg text-white flex items-center"
               >
-                <FileText className="w-6 h-6" />
+                <FileText className="w-5 h-5 mr-3" />
                 <div className="text-left">
-                  <div className="font-medium">Adicionar Análise Salva</div>
-                  <div className="text-sm opacity-75">Vincular uma análise de backtest ao dia</div>
+                  <div className="font-medium">Adicionar Análise</div>
+                  <div className="text-sm text-blue-200">Registrar P&L e trades do dia</div>
                 </div>
               </button>
               
               <button
                 onClick={() => handleActionSelect('comment')}
-                className="w-full p-4 bg-green-600 hover:bg-green-700 rounded-lg text-white flex items-center justify-center space-x-3"
+                className="w-full p-4 bg-green-600 hover:bg-green-700 rounded-lg text-white flex items-center"
               >
-                <MessageSquare className="w-6 h-6" />
+                <MessageSquare className="w-5 h-5 mr-3" />
                 <div className="text-left">
                   <div className="font-medium">Adicionar Comentários</div>
-                  <div className="text-sm opacity-75">Registrar observações sobre o dia</div>
+                  <div className="text-sm text-green-200">Registrar observações sobre o dia</div>
                 </div>
               </button>
             </div>
@@ -1795,15 +1822,14 @@ export function QuantDiaryPage() {
                       
                       // Show success message
                       const successMessage = document.createElement('div');
-                      successMessage.className = 'fixed top-4 right-4 bg-green-600 text-white px-4 py-2 rounded-lg shadow-lg z-50 flex items-center';
+                      successMessage.className = 'fixed top-4 right-4 bg-green-500 text-white px-4 py-2 rounded-md z-50 flex items-center';
                       successMessage.innerHTML = `
                         <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
                         </svg>
-                        Dados do dia excluídos com sucesso
+                        Dia excluído com sucesso!
                       `;
                       document.body.appendChild(successMessage);
-                      
                       setTimeout(() => {
                         if (document.body.contains(successMessage)) {
                           document.body.removeChild(successMessage);
@@ -2117,3 +2143,4 @@ export function QuantDiaryPage() {
     </div>
   );
 }
+```
