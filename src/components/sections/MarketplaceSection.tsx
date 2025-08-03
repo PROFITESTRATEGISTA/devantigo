@@ -9,6 +9,7 @@ interface MarketplaceCompany {
   strategies: number;
   price: string;
   logo: string;
+  website?: string;
 }
 
 interface MarketplaceSectionProps {
@@ -54,9 +55,6 @@ export function MarketplaceSection({ companies }: MarketplaceSectionProps) {
               </div>
             </div>
             
-            <button className="w-full py-2 bg-blue-600 hover:bg-blue-700 rounded-lg text-white transition-colors">
-              Ver Estratégias
-            </button>
           </div>
         ))}
       </div>

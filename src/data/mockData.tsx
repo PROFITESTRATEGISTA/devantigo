@@ -95,30 +95,33 @@ export const mockTutorials = [
 export const mockMarketplace = [
   {
     id: '1',
-    name: 'Profit Estratégias',
-    description: 'Especialistas em estratégias para plataforma Profit',
+    name: 'Estrategista Solutions',
+    description: 'Robôs personalizados e estratégias sob medida para seu perfil de trading',
     rating: 4.8,
     strategies: 25,
     price: 'R$ 299',
-    logo: ''
+    logo: '',
+    website: 'https://estrategistasolutions.com.br'
   },
   {
     id: '2',
-    name: 'MetaTrader Solutions',
-    description: 'Robôs otimizados para MetaTrader 4 e 5',
+    name: 'Nota Broker',
+    description: 'Contabilidade especializada para traders e gestão fiscal completa',
     rating: 4.6,
-    strategies: 18,
+    strategies: 12,
     price: 'R$ 199',
-    logo: ''
+    logo: '',
+    website: 'https://notabroker.com.br'
   },
   {
     id: '3',
-    name: 'Quant Strategies',
-    description: 'Estratégias quantitativas de alta performance',
+    name: 'Quant Broker',
+    description: 'Portfólios de IA automáticos e estratégias quantitativas avançadas',
     rating: 4.9,
-    strategies: 12,
+    strategies: 35,
     price: 'R$ 499',
-    logo: ''
+    logo: '',
+    website: 'https://quantbroker.com.br'
   }
 ];
 
