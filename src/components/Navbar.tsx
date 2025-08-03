@@ -144,6 +144,15 @@ export function Navbar() {
                     <User className="w-3 h-3 lg:w-4 lg:h-4 text-gray-400" />
                   )}
                 </div>
+                
+                {/* Quant Score */}
+                <div className="hidden md:flex bg-gradient-to-r from-blue-500 to-purple-500 text-white px-2 py-1 rounded-md items-center">
+                  <span className="text-xs font-black mr-1">Q</span>
+                  <div className="flex flex-col items-center">
+                    <span className="text-xs text-white leading-none">QUANT SCORE</span>
+                    <span className="text-lg font-bold text-white">87</span>
+                  </div>
+                </div>
               </button>
               
               {showUserMenu && (
