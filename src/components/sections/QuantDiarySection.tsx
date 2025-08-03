@@ -153,24 +153,20 @@ export function QuantDiarySection() {
 
   // Função para calcular o número da semana no mês
   const getWeekOfMonth = (date: Date) => {
-    // Pega a primeira segunda-feira do mês ou antes
-    const firstDay = new Date(date.getFullYear(), date.getMonth(), 1);
-    const firstDayOfWeek = firstDay.getDay(); // 0 = domingo, 1 = segunda, etc.
+    const firstDayOfMonth = new Date(date.getFullYear(), date.getMonth(), 1);
+    const dayOfWeek = firstDayOfMonth.getDay();
+    const mondayOffset = dayOfWeek === 0 ? -6 : 1 - dayOfWeek;
+    const firstMondayOfMonth = new Date(firstDayOfMonth);
+    firstMondayOfMonth.setDate(firstDayOfMonth.getDate() + mondayOffset);
     
-    // Calcula quantos dias até a primeira segunda-feira
-    const daysToFirstMonday = firstDayOfWeek === 0 ? 1 : (8 - firstDayOfWeek);
-    const firstMonday = new Date(date.getFullYear(), date.getMonth(), daysToFirstMonday);
-    
-    // Se a data é antes da primeira segunda-feira, é semana 1
-    if (date < firstMonday) {
+    // Se a data é antes da primeira segunda-feira do mês, é semana 1
+    if (date < firstMondayOfMonth) {
       return 1;
     }
     
-    // Calcula quantos dias desde a primeira segunda-feira
-    const daysDiff = Math.floor((date.getTime() - firstMonday.getTime()) / (24 * 60 * 60 * 1000));
-    
-    // Calcula a semana (primeira segunda-feira é semana 1, então +1)
-    return Math.floor(daysDiff / 7) + 1;
+    // Calcular quantas semanas desde a primeira segunda-feira
+    const daysDiff = Math.floor((date.getTime() - firstMondayOfMonth.getTime()) / (24 * 60 * 60 * 1000));
+    return Math.floor(daysDiff / 7) + 2; // +2 porque a primeira segunda-feira já é semana 2
   };
 
   // Função para calcular o número da semana no ano (ISO 8601)
@@ -209,15 +205,6 @@ export function QuantDiarySection() {
     for (let i = 0; i < daysToShow; i++) {
       const day = new Date(startOfWeek);
       day.setDate(startOfWeek.getDate() + i);
-      
-      // Se fins de semana estão desabilitados, pular sábado e domingo
-      if (!showWeekends) {
-        const dayOfWeek = day.getDay();
-        if (dayOfWeek === 0 || dayOfWeek === 6) {
-          continue;
-        }
-      }
-      
       days.push(day);
     }
     
