@@ -22,6 +22,7 @@ interface CalendarData {
 export function QuantDiaryPage() {
   const navigate = useNavigate();
   const [viewMode, setViewMode] = useState('calendar');
+  const [isEditMode, setIsEditMode] = useState(true);
   const [showAllTime, setShowAllTime] = useState(false);
   const [currentMonth, setCurrentMonth] = useState('agosto');
   const [currentYear, setCurrentYear] = useState(2025);
@@ -90,6 +91,9 @@ export function QuantDiaryPage() {
   };
 
   const handleDayClick = (day: number) => {
+    // Só permite edição se estiver no modo de edição
+    if (!isEditMode) return;
+    
     setSelectedDay(day);
     const dayData = calendarData[currentMonth]?.[day] || { pnl: 0, trades: 0, comment: '' };
     setEditingDay({ ...dayData });
@@ -181,6 +185,21 @@ export function QuantDiaryPage() {
             Calendário de Trading - {currentMonth.charAt(0).toUpperCase() + currentMonth.slice(1)} {currentYear}
           </h3>
           <div className="flex items-center space-x-4">
+            {/* Switch para modo de edição */}
+            <div className="flex items-center space-x-2">
+              <span className="text-sm text-gray-400">Visualização</span>
+              <label className="relative inline-flex items-center cursor-pointer">
+                <input 
+                  type="checkbox" 
+                  checked={isEditMode} 
+                  onChange={() => setIsEditMode(!isEditMode)} 
+                  className="sr-only peer"
+                />
+                <div className="w-11 h-6 bg-gray-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+              </label>
+              <span className="text-sm text-gray-400">Edição</span>
+            </div>
+            
             <button
               onClick={() => {
                 const months = ['janeiro', 'fevereiro', 'março', 'abril', 'maio', 'junho', 'julho', 'agosto', 'setembro', 'outubro', 'novembro', 'dezembro'];
@@ -225,6 +244,12 @@ export function QuantDiaryPage() {
         </div>
 
         <div className="mt-4 flex items-center justify-center space-x-6">
+          <div className="flex items-center">
+            <div className="w-3 h-3 bg-blue-500 rounded-full mr-2"></div>
+            <span className="text-sm text-gray-400">
+              {isEditMode ? 'Modo Edição (clique para editar)' : 'Modo Visualização (somente leitura)'}
+            </span>
+          </div>
           <div className="flex items-center">
             <div className="w-3 h-3 bg-green-500 rounded-full mr-2"></div>
             <span className="text-sm text-gray-400">Dias Lucrativos</span>
