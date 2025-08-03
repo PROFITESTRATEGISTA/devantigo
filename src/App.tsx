@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'; 
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { useAuthStore } from './stores/authStore';
+import { useLanguageStore } from './stores/languageStore';
 import { initializeSupabase } from './lib/supabase';
 import { HomePage } from './pages/HomePage';
 import { EditorPage } from './pages/EditorPage';
@@ -24,6 +25,23 @@ export default function App() {
   const [initError, setInitError] = useState<string | null>(null);
   
   const { session, loadProfile } = useAuthStore();
+  const { language } = useLanguageStore();
+  
+  // Force re-render when language changes
+  useEffect(() => {
+    const handleLanguageChange = () => {
+      // Force re-render by updating a state
+      setIsLoggedIn(prev => prev);
+    };
+    
+    window.addEventListener('languageChanged', handleLanguageChange);
+    window.addEventListener('storage', handleLanguageChange);
+    
+    return () => {
+      window.removeEventListener('languageChanged', handleLanguageChange);
+      window.removeEventListener('storage', handleLanguageChange);
+    };
+  }, []);
 
   // Initialize Supabase when component mounts
   useEffect(() => {

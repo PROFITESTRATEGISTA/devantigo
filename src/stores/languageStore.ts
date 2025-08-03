@@ -101,6 +101,32 @@ const translations: Record<Language, Record<string, string>> = {
     'faq.email': 'Send Email',
     'faq.backToDashboard': 'Back to Dashboard',
     
+    // FAQ Categories
+    'faq.category.robots': 'Robot Creation and Management',
+    'faq.category.ai': 'AI Assistant',
+    'faq.category.analysis': 'Backtest Analysis',
+    'faq.category.tokens': 'Tokens and Plans',
+    'faq.category.collaboration': 'Collaboration and Sharing',
+    'faq.category.technical': 'Technical Support',
+    
+    // FAQ Questions and Answers
+    'faq.robots.q1': 'How to create my first robot?',
+    'faq.robots.a1': 'Click "Create Robot" on the robots page, enter a name and start editing. You can use the AI assistant to generate code automatically or program manually in the editor.',
+    'faq.robots.q2': 'How many robots can I create?',
+    'faq.robots.a2': 'It depends on your plan: Free (5 robots), Pro 1 (25 robots), Pro 2 (100 robots), Pro 3 (500 robots). You can see your current limit in the robots panel.',
+    'faq.robots.q3': 'How to share a robot with other users?',
+    'faq.robots.a3': 'In the robot editor, click "Share" and choose between generating a public link or inviting specific users by email. You can set view or edit permissions.',
+    
+    'faq.ai.q1': 'How to use AI to create robots?',
+    'faq.ai.a1': 'In the assistant chat, describe your strategy in natural language. For example: "Create a robot that buys when RSI < 30 and sells when RSI > 70". The AI will generate the code automatically.',
+    'faq.ai.q2': 'How much does it cost to use AI?',
+    'faq.ai.a2': 'Each AI interaction consumes tokens: robot creation (500 tokens), backtest analysis (1000 tokens), strategy optimization (300 tokens). Check your balance in the header.',
+    
+    'faq.analysis.q1': 'How to upload backtest data?',
+    'faq.analysis.a1': 'Go to "Backtest Analysis", drag your CSV file or click to select. The file should contain columns: Date, Entry Price, Exit Price, Result, Direction.',
+    'faq.analysis.q2': 'What metrics are calculated?',
+    'faq.analysis.a2': 'We calculate Profit Factor, Win Rate, Payoff, Max Drawdown, Sharpe Ratio, Recovery Factor, and analysis by day of week and month.',
+    
     // Misc
     'loading': 'Loading...',
     'error': 'An error occurred',
@@ -201,6 +227,32 @@ const translations: Record<Language, Record<string, string>> = {
     'faq.email': 'Enviar Email',
     'faq.backToDashboard': 'Voltar ao Dashboard',
     
+    // FAQ Categories
+    'faq.category.robots': 'Criação e Gerenciamento de Robôs',
+    'faq.category.ai': 'Assistente de IA',
+    'faq.category.analysis': 'Análise de Backtest',
+    'faq.category.tokens': 'Tokens e Planos',
+    'faq.category.collaboration': 'Colaboração e Compartilhamento',
+    'faq.category.technical': 'Suporte Técnico',
+    
+    // FAQ Questions and Answers
+    'faq.robots.q1': 'Como criar meu primeiro robô?',
+    'faq.robots.a1': 'Clique em "Criar Robô" na página de robôs, digite um nome e comece a editar. Você pode usar o assistente de IA para gerar código automaticamente ou programar manualmente no editor.',
+    'faq.robots.q2': 'Quantos robôs posso criar?',
+    'faq.robots.a2': 'Depende do seu plano: Free (5 robôs), Pro 1 (25 robôs), Pro 2 (100 robôs), Pro 3 (500 robôs). Você pode ver seu limite atual no painel de robôs.',
+    'faq.robots.q3': 'Como compartilhar um robô com outros usuários?',
+    'faq.robots.a3': 'No editor do robô, clique em "Compartilhar" e escolha entre gerar um link público ou convidar usuários específicos por email. Você pode definir permissões de visualização ou edição.',
+    
+    'faq.ai.q1': 'Como usar a IA para criar robôs?',
+    'faq.ai.a1': 'No chat do assistente, descreva sua estratégia em linguagem natural. Por exemplo: "Crie um robô que compra quando RSI < 30 e vende quando RSI > 70". A IA gerará o código automaticamente.',
+    'faq.ai.q2': 'Quanto custa usar a IA?',
+    'faq.ai.a2': 'Cada interação com a IA consome tokens: criação de robô (500 tokens), análise de backtest (1000 tokens), otimização de estratégia (300 tokens). Consulte seu saldo no header.',
+    
+    'faq.analysis.q1': 'Como fazer upload de dados de backtest?',
+    'faq.analysis.a1': 'Vá para "Backtest Analysis", arraste seu arquivo CSV ou clique para selecionar. O arquivo deve conter colunas: Data, Preço Entrada, Preço Saída, Resultado, Direção.',
+    'faq.analysis.q2': 'Que métricas são calculadas?',
+    'faq.analysis.a2': 'Calculamos Profit Factor, Win Rate, Payoff, Max Drawdown, Sharpe Ratio, Recovery Factor, e análises por dia da semana e mês.',
+    
     // Misc
     'loading': 'Carregando...',
     'error': 'Ocorreu um erro',
@@ -219,11 +271,14 @@ export const useLanguageStore = create<LanguageState>((set, get) => ({
     set({ language });
     // Save to localStorage for persistence
     localStorage.setItem('preferredLanguage', language);
+    
+    // Trigger a custom event to notify all components
+    window.dispatchEvent(new CustomEvent('languageChanged', { detail: language }));
   },
   
   t: (key: string) => {
     const { language } = get();
-    return translations[language][key] || key;
+    return translations[language][key] || translations['en'][key] || key;
   }
 }));
 

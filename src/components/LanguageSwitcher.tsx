@@ -10,13 +10,21 @@ export function LanguageSwitcher({ className = '' }: LanguageSwitcherProps) {
   const { language, setLanguage } = useLanguageStore();
 
   const toggleLanguage = () => {
-    setLanguage(language === 'en' ? 'pt' : 'en');
+    const newLanguage = language === 'en' ? 'pt' : 'en';
+    setLanguage(newLanguage);
+    
+    // Force re-render of all components by triggering a storage event
+    window.dispatchEvent(new StorageEvent('storage', {
+      key: 'preferredLanguage',
+      newValue: newLanguage,
+      oldValue: language
+    }));
   };
 
   return (
     <button
       onClick={toggleLanguage}
-      className={`flex items-center space-x-1 px-2 lg:px-3 py-1.5 bg-gray-800 hover:bg-gray-700 rounded-md text-xs lg:text-sm text-gray-300 ${className}`}
+      className={`flex items-center space-x-1 px-2 lg:px-3 py-1.5 bg-gray-800 hover:bg-gray-700 rounded-md text-xs lg:text-sm text-gray-300 transition-colors ${className}`}
       title={language === 'en' ? 'Switch to Portuguese' : 'Mudar para Inglês'}
     >
       <Globe className="w-3 h-3 lg:w-4 lg:h-4" />

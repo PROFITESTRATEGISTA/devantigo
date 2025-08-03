@@ -16,143 +16,50 @@ export function LoggedInFAQPage() {
   const faqCategories = [
     {
       id: 'robots',
-      title: 'Criação e Gerenciamento de Robôs',
+      title: t('faq.category.robots'),
       icon: <Code2 className="w-6 h-6 text-blue-500" />,
       questions: [
         {
-          question: 'Como criar meu primeiro robô?',
-          answer: 'Clique em "Criar Robô" na página de robôs, digite um nome e comece a editar. Você pode usar o assistente de IA para gerar código automaticamente ou programar manualmente no editor.'
+          question: t('faq.robots.q1'),
+          answer: t('faq.robots.a1')
         },
         {
-          question: 'Quantos robôs posso criar?',
-          answer: 'Depende do seu plano: Free (5 robôs), Pro 1 (25 robôs), Pro 2 (100 robôs), Pro 3 (500 robôs). Você pode ver seu limite atual no painel de robôs.'
+          question: t('faq.robots.q2'),
+          answer: t('faq.robots.a2')
         },
         {
-          question: 'Como compartilhar um robô com outros usuários?',
-          answer: 'No editor do robô, clique em "Compartilhar" e escolha entre gerar um link público ou convidar usuários específicos por email. Você pode definir permissões de visualização ou edição.'
-        },
-        {
-          question: 'Como criar versões do meu robô?',
-          answer: 'No editor, clique em "Nova Versão" ou use Ctrl+Alt+S. Dê um nome descritivo, adicione uma descrição e tags para organizar suas versões.'
-        },
-        {
-          question: 'Posso recuperar uma versão deletada?',
-          answer: 'Não, versões deletadas não podem ser recuperadas. Recomendamos fazer backup do código importante antes de deletar versões.'
+          question: t('faq.robots.q3'),
+          answer: t('faq.robots.a3')
         }
       ]
     },
     {
       id: 'ai',
-      title: 'Assistente de IA',
+      title: t('faq.category.ai'),
       icon: <Zap className="w-6 h-6 text-yellow-500" />,
       questions: [
         {
-          question: 'Como usar a IA para criar robôs?',
-          answer: 'No chat do assistente, descreva sua estratégia em linguagem natural. Por exemplo: "Crie um robô que compra quando RSI < 30 e vende quando RSI > 70". A IA gerará o código automaticamente.'
+          question: t('faq.ai.q1'),
+          answer: t('faq.ai.a1')
         },
         {
-          question: 'Quanto custa usar a IA?',
-          answer: 'Cada interação com a IA consome tokens: criação de robô (500 tokens), análise de backtest (1000 tokens), otimização de estratégia (300 tokens). Consulte seu saldo no header.'
-        },
-        {
-          question: 'A IA pode modificar robôs existentes?',
-          answer: 'Sim! Selecione um robô no editor e peça para a IA fazer modificações específicas, como "adicionar stop loss" ou "otimizar parâmetros do RSI".'
-        },
-        {
-          question: 'Que linguagens a IA suporta?',
-          answer: 'A IA pode gerar código em NTSL (Profit), MQL4/MQL5 (MetaTrader), Pine Script (TradingView) e Python para backtesting.'
+          question: t('faq.ai.q2'),
+          answer: t('faq.ai.a2')
         }
       ]
     },
     {
       id: 'analysis',
-      title: 'Análise de Backtest',
+      title: t('faq.category.analysis'),
       icon: <BarChart2 className="w-6 h-6 text-green-500" />,
       questions: [
         {
-          question: 'Como fazer upload de dados de backtest?',
-          answer: 'Vá para "Backtest Analysis", arraste seu arquivo CSV ou clique para selecionar. O arquivo deve conter colunas: Data, Preço Entrada, Preço Saída, Resultado, Direção.'
+          question: t('faq.analysis.q1'),
+          answer: t('faq.analysis.a1')
         },
         {
-          question: 'Que métricas são calculadas?',
-          answer: 'Calculamos Profit Factor, Win Rate, Payoff, Max Drawdown, Sharpe Ratio, Recovery Factor, e análises por dia da semana e mês.'
-        },
-        {
-          question: 'Como interpretar o Profit Factor?',
-          answer: 'Profit Factor = Lucro Bruto / Perda Bruta. Valores > 1.5 são excelentes, > 1.0 são aceitáveis, < 1.0 indicam estratégia perdedora.'
-        },
-        {
-          question: 'Posso adicionar minha análise ao ranking?',
-          answer: 'Sim! Após a análise, clique em "Adicionar ao Ranking" para compartilhar seus resultados com a comunidade e competir com outras estratégias.'
-        }
-      ]
-    },
-    {
-      id: 'tokens',
-      title: 'Tokens e Planos',
-      icon: <Crown className="w-6 h-6 text-yellow-500" />,
-      questions: [
-        {
-          question: 'Como ganhar tokens gratuitos?',
-          answer: 'Complete desafios: criar primeiro robô (+500), primeira análise (+200), compartilhar estratégia (+100), login diário (+10), participar de competições (até 1000).'
-        },
-        {
-          question: 'Como comprar mais tokens?',
-          answer: 'Clique no contador de tokens no header ou vá para "Assinatura". Pacotes disponíveis: 2.500 tokens (R$ 70), 7.500 tokens (R$ 150), 25.000 tokens (R$ 300).'
-        },
-        {
-          question: 'Os tokens expiram?',
-          answer: 'Tokens mensais do plano são renovados a cada ciclo. Tokens comprados separadamente e ganhos em desafios nunca expiram.'
-        },
-        {
-          question: 'Como fazer upgrade do plano?',
-          answer: 'Vá para "Assinatura" e escolha um plano superior. O upgrade é aplicado imediatamente com acesso a mais robôs e tokens.'
-        }
-      ]
-    },
-    {
-      id: 'collaboration',
-      title: 'Colaboração e Compartilhamento',
-      icon: <Users className="w-6 h-6 text-blue-500" />,
-      questions: [
-        {
-          question: 'Como colaborar em tempo real?',
-          answer: 'Compartilhe seu robô com permissão de "Editar". Outros usuários poderão editar simultaneamente, com sincronização automática das alterações.'
-        },
-        {
-          question: 'Como aceitar convites de colaboração?',
-          answer: 'Vá para "Perfil" e veja a seção "Convites Pendentes". Clique em "Aceitar" para ter acesso ao robô compartilhado.'
-        },
-        {
-          question: 'Posso revogar acesso compartilhado?',
-          answer: 'Sim! No modal de compartilhamento do robô, você verá todos os convites ativos e pode revogá-los a qualquer momento.'
-        },
-        {
-          question: 'Como funciona o controle de versões?',
-          answer: 'Cada robô mantém um histórico de versões. Você pode criar, renomear, deletar versões e alternar entre elas no editor.'
-        }
-      ]
-    },
-    {
-      id: 'technical',
-      title: 'Suporte Técnico',
-      icon: <Shield className="w-6 h-6 text-red-500" />,
-      questions: [
-        {
-          question: 'Meu robô não está salvando. O que fazer?',
-          answer: 'Verifique sua conexão com a internet. Se o problema persistir, tente recarregar a página ou entre em contato pelo WhatsApp.'
-        },
-        {
-          question: 'Como exportar meus robôs?',
-          answer: 'No editor, clique no menu "Exportar" e escolha "Copiar para Área de Transferência" ou "Download como Arquivo".'
-        },
-        {
-          question: 'Posso usar os robôs em qualquer plataforma?',
-          answer: 'Sim! Os robôs são compatíveis com Profit (NTSL), MetaTrader 4/5, TradingView e outras plataformas. O código é exportável no formato adequado.'
-        },
-        {
-          question: 'Como reportar bugs ou problemas?',
-          answer: 'Entre em contato via WhatsApp ou email. Descreva o problema detalhadamente e, se possível, inclua capturas de tela.'
+          question: t('faq.analysis.q2'),
+          answer: t('faq.analysis.a2')
         }
       ]
     }
@@ -229,7 +136,9 @@ export function LoggedInFAQPage() {
           <div className="flex flex-wrap justify-center gap-4">
             <button
               onClick={() => {
-                const message = "Olá! Tenho uma dúvida sobre a plataforma DevHub Trader que não encontrei no FAQ.";
+                const message = t('language') === 'en' 
+                  ? "Hello! I have a question about the DevHub Trader platform that I didn't find in the FAQ."
+                  : "Olá! Tenho uma dúvida sobre a plataforma DevHub Trader que não encontrei no FAQ.";
                 const encodedMessage = encodeURIComponent(message);
                 window.open(`https://wa.me/5511975333355?text=${encodedMessage}`, '_blank');
               }}

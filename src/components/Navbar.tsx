@@ -17,7 +17,24 @@ export function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [showUserMenu, setShowUserMenu] = useState(false);
   const { signOut, profile } = useAuthStore();
-  const { t } = useLanguageStore();
+  const { t, language } = useLanguageStore();
+  
+  // Force re-render when language changes
+  React.useEffect(() => {
+    const handleLanguageChange = () => {
+      // Force component re-render
+      setIsMenuOpen(false);
+      setShowUserMenu(false);
+    };
+    
+    window.addEventListener('languageChanged', handleLanguageChange);
+    window.addEventListener('storage', handleLanguageChange);
+    
+    return () => {
+      window.removeEventListener('languageChanged', handleLanguageChange);
+      window.removeEventListener('storage', handleLanguageChange);
+    };
+  }, []);
 
   // Check if user is authorized for admin panel
   const authorizedEmails = ['pedropardal04@gmail.com', 'profitestrategista@gmail.com'];
