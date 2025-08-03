@@ -474,7 +474,6 @@ export function ChallengesPage() {
         {/* Empty State */}
         {challenges.length === 0 && (
           <div className="text-center py-12">
-            <h1 className="text-lg lg:text-xl font-bold mb-2 flex items-center">
             <h3 className="text-xl font-semibold text-gray-400 mb-2">
               Nenhum desafio disponível
             </h3>
