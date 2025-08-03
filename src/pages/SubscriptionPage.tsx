@@ -4,6 +4,7 @@ import { ArrowLeft, Crown, Check, Star, Shield, Zap, Apple as WhatsApp } from 'l
 import { useAuthStore } from '../stores/authStore';
 import { TokenDisplay } from '../components/TokenDisplay';
 import { Navbar } from '../components/Navbar';
+import { useLanguageStore } from '../stores/languageStore';
 
 interface Plan {
   id: string;
@@ -16,6 +17,7 @@ interface Plan {
 export function SubscriptionPage() {
   const navigate = useNavigate();
   const { profile } = useAuthStore();
+  const { t, language } = useLanguageStore();
 
   // Get subscription data from profile
   const currentPlan = {
@@ -173,31 +175,31 @@ export function SubscriptionPage() {
           <div className="flex items-center justify-between mb-6">
             <div className="flex items-center space-x-3">
               <Crown className="w-6 h-6 text-yellow-500" />
-              <h2 className="text-xl font-semibold">Current Plan</h2>
+              <h2 className="text-xl font-semibold">{t('subscription.current')}</h2>
             </div>
             <span className="px-3 py-1 bg-green-600 bg-opacity-20 text-green-400 rounded-full text-sm">
-              {currentPlan.status === 'active' ? 'Active' : 'Inactive'}
+              {currentPlan.status === 'active' ? t('subscription.status') : 'Inactive'}
             </span>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
             <div>
-              <p className="text-sm text-gray-400 mb-1">Plan</p>
+              <p className="text-sm text-gray-400 mb-1">{language === 'en' ? 'Plan' : 'Plano'}</p>
               <p className="text-lg font-medium">{currentPlan.name}</p>
             </div>
             <div>
-              <p className="text-sm text-gray-400 mb-1">Status</p>
+              <p className="text-sm text-gray-400 mb-1">{t('subscription.status')}</p>
               <p className="text-lg font-medium">{currentPlan.status}</p>
             </div>
             <div>
-              <p className="text-sm text-gray-400 mb-1">Next Renewal</p>
+              <p className="text-sm text-gray-400 mb-1">{t('subscription.renewal')}</p>
               <p className="text-lg font-medium">{new Date(currentPlan.renewalDate).toLocaleDateString()}</p>
             </div>
             <div>
-              <p className="text-sm text-gray-400 mb-1">Token Balance</p>
+              <p className="text-sm text-gray-400 mb-1">{t('subscription.tokenBalance')}</p>
               <p className="text-lg font-medium flex items-center">
                 <TokenDisplay showLabel={false} />
-                <span className="ml-1">tokens</span>
+                <span className="ml-1">{t('tokens.balance')}</span>
               </p>
             </div>
           </div>
@@ -208,20 +210,20 @@ export function SubscriptionPage() {
               className="px-4 py-2 bg-gray-700 hover:bg-gray-600 rounded-md flex items-center"
             >
               <WhatsApp className="w-4 h-4 mr-2" />
-              Downgrade Plan
+              {language === 'en' ? 'Downgrade Plan' : 'Fazer Downgrade'}
             </button>
             <button 
               onClick={() => handleUpgradeClick('')}
               className="px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-md flex items-center"
             >
               <WhatsApp className="w-4 h-4 mr-2" />
-              Upgrade Plan
+              {t('subscription.upgrade')}
             </button>
           </div>
         </div>
 
         {/* Available Plans */}
-        <h2 className="text-xl font-semibold mb-6">Available Plans</h2>
+        <h2 className="text-xl font-semibold mb-6">{language === 'en' ? 'Available Plans' : 'Planos Disponíveis'}</h2>
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
           {plans.map((plan) => (
             <div 
@@ -232,7 +234,7 @@ export function SubscriptionPage() {
             >
               {plan.isPopular && (
                 <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-1 bg-blue-600 rounded-full text-sm font-medium">
-                  Most Popular
+                  {language === 'en' ? 'Most Popular' : 'Mais Popular'}
                 </div>
               )}
 
@@ -263,10 +265,10 @@ export function SubscriptionPage() {
                       : 'bg-gray-700 hover:bg-gray-600'
                 }`}
               >
-                {currentPlan.name === plan.name ? 'Current Plan' : (
+                {currentPlan.name === plan.name ? (language === 'en' ? 'Current Plan' : 'Plano Atual') : (
                   <>
                     <WhatsApp className="w-4 h-4 mr-2" />
-                    Upgrade
+                    {language === 'en' ? 'Upgrade' : 'Fazer Upgrade'}
                   </>
                 )}
               </button>
@@ -279,26 +281,26 @@ export function SubscriptionPage() {
           <div className="flex items-center justify-between mb-6">
             <div className="flex items-center space-x-3">
               <Zap className="w-6 h-6 text-yellow-500" />
-              <h2 className="text-xl font-semibold">Token Reload</h2>
+              <h2 className="text-xl font-semibold">{language === 'en' ? 'Token Reload' : 'Recarga de Tokens'}</h2>
             </div>
           </div>
 
           <div className="flex flex-col md:flex-row items-center justify-between">
             <div className="mb-4 md:mb-0">
-              <p className="text-lg mb-2">Need more tokens?</p>
-              <p className="text-gray-400">Purchase additional tokens to continue using AI features</p>
+              <p className="text-lg mb-2">{language === 'en' ? 'Need more tokens?' : 'Precisa de mais tokens?'}</p>
+              <p className="text-gray-400">{language === 'en' ? 'Purchase additional tokens to continue using AI features' : 'Compre tokens adicionais para continuar usando recursos de IA'}</p>
             </div>
             <div className="flex items-center space-x-4">
               <div className="text-center">
                 <p className="text-2xl font-bold">R$ 299,80</p>
-                <p className="text-sm text-gray-400">per reload</p>
+                <p className="text-sm text-gray-400">{language === 'en' ? 'per reload' : 'por recarga'}</p>
               </div>
               <button 
                 onClick={handleBuyTokens}
                 className="px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-md flex items-center"
               >
                 <WhatsApp className="w-4 h-4 mr-2" />
-                Buy Tokens
+                {t('tokens.buy')}
               </button>
             </div>
           </div>
@@ -309,14 +311,14 @@ export function SubscriptionPage() {
           <div className="flex items-center justify-between mb-6">
             <div className="flex items-center space-x-3">
               <Zap className="w-6 h-6 text-yellow-500" />
-              <h2 className="text-xl font-semibold">Token Usage</h2>
+              <h2 className="text-xl font-semibold">{language === 'en' ? 'Token Usage' : 'Uso de Tokens'}</h2>
             </div>
           </div>
 
           <div className="space-y-4">
             <div>
               <div className="flex justify-between mb-2">
-                <span className="text-gray-400">Monthly Allocation</span>
+                <span className="text-gray-400">{language === 'en' ? 'Monthly Allocation' : 'Alocação Mensal'}</span>
                 <span className="font-medium">{tokenAllocation.toLocaleString()} tokens</span>
               </div>
               <div className="w-full bg-gray-700 rounded-full h-2">
@@ -329,16 +331,16 @@ export function SubscriptionPage() {
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div className="bg-gray-700 rounded-lg p-4">
-                <p className="text-sm text-gray-400 mb-1">Available</p>
+                <p className="text-sm text-gray-400 mb-1">{language === 'en' ? 'Available' : 'Disponível'}</p>
                 <p className="text-xl font-medium">{currentPlan.tokenBalance.toLocaleString()}</p>
               </div>
               <div className="bg-gray-700 rounded-lg p-4">
-                <p className="text-sm text-gray-400 mb-1">Used This Month</p>
+                <p className="text-sm text-gray-400 mb-1">{language === 'en' ? 'Used This Month' : 'Usado Este Mês'}</p>
                 <p className="text-xl font-medium">{Math.max(0, tokenAllocation - currentPlan.tokenBalance).toLocaleString()}</p>
               </div>
               <div className="bg-gray-700 rounded-lg p-4">
-                <p className="text-sm text-gray-400 mb-1">Resets In</p>
-                <p className="text-xl font-medium">23 days</p>
+                <p className="text-sm text-gray-400 mb-1">{language === 'en' ? 'Resets In' : 'Renova Em'}</p>
+                <p className="text-xl font-medium">{language === 'en' ? '23 days' : '23 dias'}</p>
               </div>
             </div>
           </div>
