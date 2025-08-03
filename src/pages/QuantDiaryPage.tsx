@@ -73,6 +73,33 @@ export function QuantDiaryPage() {
     mediaPnlDia: 120.61
   };
 
+  // Função para calcular métricas semanais
+  const calculateWeeklyStats = () => {
+    const weeklyData = calculateWeeklyMetrics();
+    const weeklyPnLs = weeklyData.map(week => week.pnl).filter(pnl => pnl !== 0);
+    
+    if (weeklyPnLs.length === 0) {
+      return {
+        ganhoMedioSemanal: 0,
+        perdaMediaSemanal: 0,
+        ganhoMaximoSemanal: 0,
+        perdaMaximaSemanal: 0
+      };
+    }
+    
+    const ganhosSemanais = weeklyPnLs.filter(pnl => pnl > 0);
+    const perdasSemanais = weeklyPnLs.filter(pnl => pnl < 0);
+    
+    return {
+      ganhoMedioSemanal: ganhosSemanais.length > 0 ? ganhosSemanais.reduce((a, b) => a + b, 0) / ganhosSemanais.length : 0,
+      perdaMediaSemanal: perdasSemanais.length > 0 ? perdasSemanais.reduce((a, b) => a + b, 0) / perdasSemanais.length : 0,
+      ganhoMaximoSemanal: ganhosSemanais.length > 0 ? Math.max(...ganhosSemanais) : 0,
+      perdaMaximaSemanal: perdasSemanais.length > 0 ? Math.min(...perdasSemanais) : 0
+    };
+  };
+
+  const weeklyStats = calculateWeeklyStats();
+
   // Função para obter o número de dias no mês
   const getDaysInMonth = (month: string, year: number) => {
     const monthIndex = [
@@ -609,6 +636,57 @@ export function QuantDiaryPage() {
           </div>
           <p className="text-2xl font-bold text-green-400">7 dias</p>
           <p className="text-xs text-gray-500">Máximo</p>
+        </div>
+      </div>
+      
+      {/* Métricas Semanais */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+        {/* Ganho Médio Semanal */}
+        <div className="bg-gray-700 rounded-lg p-4">
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-sm text-gray-400">Ganho Médio Semanal</span>
+            <TrendingUp className="w-4 h-4 text-green-400" />
+          </div>
+          <p className="text-2xl font-bold text-green-400">
+            R$ {weeklyStats.ganhoMedioSemanal.toFixed(2)}
+          </p>
+          <p className="text-xs text-gray-500">Por semana lucrativa</p>
+        </div>
+        
+        {/* Perda Média Semanal */}
+        <div className="bg-gray-700 rounded-lg p-4">
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-sm text-gray-400">Perda Média Semanal</span>
+            <TrendingDown className="w-4 h-4 text-red-400" />
+          </div>
+          <p className="text-2xl font-bold text-red-400">
+            R$ {weeklyStats.perdaMediaSemanal.toFixed(2)}
+          </p>
+          <p className="text-xs text-gray-500">Por semana negativa</p>
+        </div>
+        
+        {/* Ganho Máximo Semanal */}
+        <div className="bg-gray-700 rounded-lg p-4">
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-sm text-gray-400">Ganho Máximo Semanal</span>
+            <TrendingUp className="w-4 h-4 text-green-400" />
+          </div>
+          <p className="text-2xl font-bold text-green-400">
+            R$ {weeklyStats.ganhoMaximoSemanal.toFixed(2)}
+          </p>
+          <p className="text-xs text-gray-500">Melhor semana</p>
+        </div>
+        
+        {/* Perda Máxima Semanal */}
+        <div className="bg-gray-700 rounded-lg p-4">
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-sm text-gray-400">Perda Máxima Semanal</span>
+            <TrendingDown className="w-4 h-4 text-red-400" />
+          </div>
+          <p className="text-2xl font-bold text-red-400">
+            R$ {weeklyStats.perdaMaximaSemanal.toFixed(2)}
+          </p>
+          <p className="text-xs text-gray-500">Pior semana</p>
         </div>
       </div>
       
