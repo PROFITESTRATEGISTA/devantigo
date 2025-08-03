@@ -1577,6 +1577,7 @@ export function QuantDiaryPage() {
               </p>
             </div>
 
+            <>
             <div className="space-y-4">
               {actionType === 'analysis' ? (
                 <>
@@ -1637,6 +1638,7 @@ export function QuantDiaryPage() {
                 </div>
               )}
 
+            </>
             </>
               <div className="flex justify-between space-x-3 pt-4">
                 <button
