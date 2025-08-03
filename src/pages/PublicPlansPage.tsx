@@ -7,82 +7,44 @@ import {
 
 export function PublicPlansPage() {
   const navigate = useNavigate();
+  const [selectedProLevel, setSelectedProLevel] = useState<'pro1' | 'pro2' | 'pro3'>('pro1');
 
-  const plans = [
-    {
-      id: 'free-forever',
-      name: 'Free Forever',
-      price: 'R$ 0,00',
-      description: 'Ideal para iniciantes explorarem a plataforma com recursos básicos',
-      features: [
-        'Até 3 robôs de trading',
-        '3 robôs gratuitos para primeiros passos',
-        '1.000 tokens mensais',
-        'CSVs para análise básica',
-        'Análise simples (limitada)',
-        'Acesso à comunidade',
-        'Documentação básica',
-        'Suporte por comunidade',
-        'Grupo WhatsApp'
-      ],
-      popular: false,
-      cta: 'Começar Grátis'
-    },
-    {
-      id: 'pro1',
+  // Pro plan levels with details
+  const proLevels = {
+    pro1: {
       name: 'Pro 1',
       price: 'R$ 259,80/mês',
-      description: 'Para traders que querem gerar robôs com IA',
+      robots: 25,
+      tokens: 20000,
       features: [
-        'Até 25 robôs de trading',
-        'IA para gerar robôs de trading',
-        '20.000 tokens mensais',
-        'Análise de backtest completa',
-        'Montagem de portfólios automática',
-        'Acesso à comunidade',
-        'Suporte por comunidade',
-        'Grupo WhatsApp'
-      ],
-      popular: true,
-      cta: 'Escolher Plano'
+        'Até 25 robôs',
+        '20.000 tokens',
+        'IA para gerar robôs'
+      ]
     },
-    {
-      id: 'pro2',
+    pro2: {
       name: 'Pro 2',
       price: 'R$ 499,80/mês',
-      description: 'Para traders sérios com recursos avançados',
+      robots: 100,
+      tokens: 50000,
       features: [
-        'Até 100 robôs de trading',
-        'IA para gerar robôs de trading',
-        '50.000 tokens mensais',
-        'Análise de backtest avançada',
-        'Montagem de portfólios automática',
-        'Suporte dedicado',
-        'Grupo WhatsApp'
-      ],
-      popular: false,
-      recommended: true,
-      cta: 'Escolher Plano'
+        'Até 100 robôs',
+        '50.000 tokens',
+        'Suporte dedicado'
+      ]
     },
-    {
-      id: 'pro3',
+    pro3: {
       name: 'Pro 3',
       price: 'R$ 999,80/mês',
-      description: 'Para traders profissionais com recursos premium',
+      robots: 500,
+      tokens: 100000,
       features: [
-        'Até 500 robôs de trading',
-        'IA para gerar robôs de trading',
-        '100.000 tokens mensais',
-        'Análise de backtest avançada',
-        'Montagem de portfólios automática',
-        'Suporte dedicado',
-        'Acesso a todos os recursos',
-        'Grupo WhatsApp'
-      ],
-      popular: false,
-      cta: 'Escolher Plano'
+        'Até 500 robôs',
+        '100.000 tokens',
+        'Todos os recursos premium'
+      ]
     }
-  ];
+  };
 
   const tokenPackages = [
     {
@@ -109,6 +71,34 @@ export function PublicPlansPage() {
   const handleContactSupport = () => {
     const message = "Olá vim do DevHub Trader e quero mais informações sobre os planos";
     const encodedMessage = encodeURIComponent(message);
+    window.open(`https://wa.me/5511975333355?text=${encodedMessage}`, '_blank');
+  };
+
+  const handleUpgradeClick = (planId: string) => {
+    // Determine which plan to upgrade to
+    let message = "Olá vim do DevHub Trader e quero mais informações e ajuda para criar robôs";
+    
+    switch(planId) {
+      case 'pro1':
+        message = `Olá vim do DevHub Trader e quero mais informações e ajuda para contratar o plano Pro 1 (R$ 259,80/mês).`;
+        break;
+      case 'pro2':
+        message = `Olá vim do DevHub Trader e quero mais informações e ajuda para contratar o plano Pro 2 (R$ 499,80/mês).`;
+        break;
+      case 'pro3':
+        message = `Olá vim do DevHub Trader e quero mais informações e ajuda para contratar o plano Pro 3 (R$ 999,80/mês).`;
+        break;
+      case 'business':
+        message = `Olá vim do DevHub Trader e quero mais informações sobre o plano Business com preços personalizados, robôs e tokens customizados para minha empresa.`;
+        break;
+      default:
+        message = "Olá vim do DevHub Trader e quero mais informações sobre os planos";
+    }
+    
+    // Encode the message for WhatsApp
+    const encodedMessage = encodeURIComponent(message);
+    
+    // Open WhatsApp with the pre-filled message
     window.open(`https://wa.me/5511975333355?text=${encodedMessage}`, '_blank');
   };
 
@@ -182,58 +172,215 @@ export function PublicPlansPage() {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {plans.map((plan) => (
-              <div 
-                key={plan.id}
-                className={`bg-gray-800 rounded-lg overflow-hidden ${
-                  plan.popular ? 'ring-2 ring-blue-500 transform scale-105 z-10' : 
-                  plan.recommended ? 'ring-2 ring-green-500' : ''
-                }`}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {/* Free Plan */}
+            <div className="bg-gray-800 rounded-lg p-6 relative">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-xl font-semibold">Free Forever</h3>
+                <Users className="w-6 h-6 text-green-500" />
+              </div>
+              <p className="text-3xl font-bold mb-4">R$ 0,00</p>
+              <p className="text-gray-400 mb-6">
+                Perfeito para começar
+              </p>
+              
+              <ul className="space-y-3 mb-6">
+                <li className="flex items-center text-gray-300">
+                  <Check className="w-4 h-4 text-green-500 mr-2 flex-shrink-0" />
+                  <span>Até 3 robôs de trading</span>
+                </li>
+                <li className="flex items-center text-gray-300">
+                  <Check className="w-4 h-4 text-green-500 mr-2 flex-shrink-0" />
+                  <span>1.000 tokens mensais</span>
+                </li>
+                <li className="flex items-center text-gray-300">
+                  <Check className="w-4 h-4 text-green-500 mr-2 flex-shrink-0" />
+                  <span>Análise básica de backtest</span>
+                </li>
+                <li className="flex items-center text-gray-300">
+                  <Check className="w-4 h-4 text-green-500 mr-2 flex-shrink-0" />
+                  <span>Acesso à comunidade</span>
+                </li>
+              </ul>
+
+              <button 
+                onClick={handleSignUp}
+                className="w-full py-3 bg-green-600 hover:bg-green-700 rounded-md text-white"
               >
-                {plan.popular && (
-                  <div className="bg-blue-600 text-center py-2">
-                    <p className="text-sm font-medium">Mais Vendido</p>
-                  </div>
-                )}
-                {plan.recommended && (
-                  <div className="bg-green-600 text-center py-2">
-                    <p className="text-sm font-medium">Recomendado</p>
-                  </div>
-                )}
-                <div className="p-6">
-                  <div className="flex items-center justify-between mb-4">
-                    <h3 className="text-xl font-bold">{plan.name}</h3>
-                    {plan.id === 'pro2' && <Crown className="w-5 h-5 text-yellow-500" />}
-                    {plan.id === 'pro3' && <Shield className="w-5 h-5 text-purple-500" />}
-                    {plan.id === 'free-forever' && <Users className="w-5 h-5 text-green-500" />}
-                    {plan.id === 'pro1' && <Zap className="w-5 h-5 text-blue-500" />}
-                  </div>
-                  <p className="text-2xl font-bold mb-2">{plan.price}</p>
-                  <p className="text-gray-400 mb-6 text-sm">{plan.description}</p>
-                  
-                  <ul className="space-y-3 mb-6">
-                    {plan.features.map((feature, index) => (
-                      <li key={index} className="flex items-start">
-                        <Check className="w-5 h-5 text-green-500 mr-2 flex-shrink-0" />
-                        <span>{feature}</span>
-                      </li>
-                    ))}
-                  </ul>
-                  
-                  <button
-                    onClick={plan.id === 'free-forever' ? handleSignUp : handleContactSupport}
-                    className={`w-full py-2 rounded-md ${
-                      plan.popular || plan.recommended
-                        ? 'bg-blue-600 hover:bg-blue-700'
-                        : 'bg-gray-700 hover:bg-gray-600'
-                    }`}
-                  >
-                    {plan.cta}
-                  </button>
+                Começar Grátis
+              </button>
+            </div>
+
+            {/* Pro Plan */}
+            <div className="bg-gray-800 rounded-lg p-6 relative ring-2 ring-blue-500">
+              <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-1 bg-blue-600 rounded-full text-sm font-medium">
+                Mais Popular
+              </div>
+              
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-xl font-semibold">Pro</h3>
+                <Star className="w-6 h-6 text-blue-500" />
+              </div>
+              
+              {/* Dynamic Price Display */}
+              <p className="text-3xl font-bold mb-4">{proLevels[selectedProLevel].price}</p>
+              
+              {/* Pro Level Selector */}
+              <div className="mb-4">
+                <p className="text-sm text-gray-400 mb-2">
+                  Escolha seu nível:
+                </p>
+                <div className="space-y-2">
+                  {Object.entries(proLevels).map(([key, level]) => (
+                    <button
+                      key={key}
+                      onClick={() => setSelectedProLevel(key as 'pro1' | 'pro2' | 'pro3')}
+                      className={`w-full flex items-center justify-between p-3 rounded-lg transition-all ${
+                        selectedProLevel === key
+                          ? 'bg-blue-600 text-white ring-2 ring-blue-400'
+                          : 'bg-gray-700 hover:bg-gray-600 text-gray-300'
+                      }`}
+                    >
+                      <div className="text-left">
+                        <span className="font-medium">{level.name}</span>
+                        <p className="text-xs opacity-75">
+                          {level.robots} robôs • {level.tokens.toLocaleString()} tokens
+                        </p>
+                      </div>
+                      <span className="text-lg font-bold">{level.price}</span>
+                    </button>
+                  ))}
                 </div>
               </div>
-            ))}
+              
+              <p className="text-gray-400 mb-6">
+                Criação de robôs com IA e recursos avançados
+              </p>
+              
+              <ul className="space-y-3 mb-6">
+                {proLevels[selectedProLevel].features.map((feature, index) => (
+                  <li key={index} className="flex items-center text-gray-300">
+                    <Check className="w-4 h-4 text-green-500 mr-2 flex-shrink-0" />
+                    <span>{feature}</span>
+                  </li>
+                ))}
+                <li className="flex items-center text-gray-300">
+                  <Check className="w-4 h-4 text-green-500 mr-2 flex-shrink-0" />
+                  <span>Análise avançada de backtest</span>
+                </li>
+                <li className="flex items-center text-gray-300">
+                  <Check className="w-4 h-4 text-green-500 mr-2 flex-shrink-0" />
+                  <span>Automação de portfólios</span>
+                </li>
+              </ul>
+
+              <button 
+                onClick={() => handleUpgradeClick(selectedProLevel)}
+                className="w-full py-3 bg-blue-600 hover:bg-blue-700 rounded-md text-white"
+              >
+                Escolher {proLevels[selectedProLevel].name}
+              </button>
+            </div>
+
+            {/* Business Plan */}
+            <div className="bg-gray-800 rounded-lg p-6 relative ring-2 ring-purple-500">
+              <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-1 bg-purple-600 rounded-full text-sm font-medium">
+                Para Empresas
+              </div>
+              
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-xl font-semibold">Business</h3>
+                <Building className="w-6 h-6 text-purple-500" />
+              </div>
+              <p className="text-2xl font-bold mb-4 text-purple-400">
+                Preço Personalizado
+              </p>
+              <p className="text-gray-400 mb-6">
+                Soluções sob medida para suas necessidades empresariais
+              </p>
+              
+              <ul className="space-y-3 mb-6">
+                <li className="flex items-center text-gray-300">
+                  <Check className="w-4 h-4 text-green-500 mr-2 flex-shrink-0" />
+                  <span>Robôs personalizados para seu negócio</span>
+                </li>
+                <li className="flex items-center text-gray-300">
+                  <Check className="w-4 h-4 text-green-500 mr-2 flex-shrink-0" />
+                  <span>Pacotes de tokens personalizados</span>
+                </li>
+                <li className="flex items-center text-gray-300">
+                  <Check className="w-4 h-4 text-green-500 mr-2 flex-shrink-0" />
+                  <span>Gerente de conta dedicado</span>
+                </li>
+                <li className="flex items-center text-gray-300">
+                  <Check className="w-4 h-4 text-green-500 mr-2 flex-shrink-0" />
+                  <span>Suporte prioritário 24/7</span>
+                </li>
+                <li className="flex items-center text-gray-300">
+                  <Check className="w-4 h-4 text-green-500 mr-2 flex-shrink-0" />
+                  <span>Soluções white-label</span>
+                </li>
+                <li className="flex items-center text-gray-300">
+                  <Check className="w-4 h-4 text-green-500 mr-2 flex-shrink-0" />
+                  <span>Integrações personalizadas</span>
+                </li>
+                <li className="flex items-center text-gray-300">
+                  <Check className="w-4 h-4 text-green-500 mr-2 flex-shrink-0" />
+                  <span>Treinamento e onboarding</span>
+                </li>
+              </ul>
+
+              <button 
+                onClick={() => handleUpgradeClick('business')}
+                className="w-full py-3 bg-purple-600 hover:bg-purple-700 rounded-md text-white"
+              >
+                Entrar em Contato com Equipe
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Pro Plan Details Modal Trigger */}
+      <div className="py-16 bg-gray-900">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl font-bold mb-4">Níveis do Plano Pro</h2>
+            <p className="text-xl text-gray-400 max-w-3xl mx-auto">
+              Compare os diferentes níveis do plano Pro
+            </p>
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="bg-gray-800 p-4 rounded-lg">
+              <h4 className="font-medium mb-2">Pro 1 - R$ 259,80/mês</h4>
+              <ul className="text-sm text-gray-300 space-y-1">
+                <li>• Até 25 robôs</li>
+                <li>• 20.000 tokens</li>
+                <li>• IA para gerar robôs</li>
+              </ul>
+            </div>
+            <div className="bg-gray-800 p-4 rounded-lg ring-2 ring-green-500">
+              <div className="flex items-center justify-between mb-2">
+                <h4 className="font-medium">Pro 2 - R$ 499,80/mês</h4>
+                <span className="text-xs bg-green-600 px-2 py-1 rounded-full">
+                  Recomendado
+                </span>
+              </div>
+              <ul className="text-sm text-gray-300 space-y-1">
+                <li>• Até 100 robôs</li>
+                <li>• 50.000 tokens</li>
+                <li>• Suporte dedicado</li>
+              </ul>
+            </div>
+            <div className="bg-gray-800 p-4 rounded-lg">
+              <h4 className="font-medium mb-2">Pro 3 - R$ 999,80/mês</h4>
+              <ul className="text-sm text-gray-300 space-y-1">
+                <li>• Até 500 robôs</li>
+                <li>• 100.000 tokens</li>
+                <li>• Todos os recursos premium</li>
+              </ul>
+            </div>
           </div>
         </div>
       </div>
