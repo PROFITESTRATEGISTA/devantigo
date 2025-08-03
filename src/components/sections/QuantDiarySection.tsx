@@ -20,6 +20,7 @@ export function QuantDiarySection() {
   const { profile } = useAuthStore();
   const [currentDate, setCurrentDate] = useState(new Date());
   const [entries, setEntries] = useState<DiaryEntry[]>([]);
+  const [viewMode, setViewMode] = useState<'calendar' | 'graph'>('calendar');
   const [showModal, setShowModal] = useState(false);
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [modalType, setModalType] = useState<'comment' | 'analysis'>('comment');
@@ -314,6 +315,92 @@ export function QuantDiarySection() {
 
   const stats = getStats();
 
+  // Função para renderizar gráfico de P&L
+  const renderGraphView = () => {
+    const monthStart = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
+    const monthEnd = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0);
+    const monthEntries = entries.filter(entry => {
+      const entryDate = new Date(entry.date);
+      return entryDate >= monthStart && entryDate <= monthEnd;
+    });
+
+    // Criar dados para o gráfico (simulado)
+    const graphData = [];
+    let cumulativePnL = 0;
+    
+    for (let day = 1; day <= monthEnd.getDate(); day++) {
+      const date = new Date(currentDate.getFullYear(), currentDate.getMonth(), day);
+      const entry = getEntryForDate(date);
+      if (entry && entry.pnl !== undefined) {
+        cumulativePnL += entry.pnl;
+      }
+      graphData.push({
+        day,
+        pnl: entry?.pnl || 0,
+        cumulativePnL,
+        trades: entry?.trades || 0
+      });
+    }
+
+    return (
+      <div className="bg-gray-800 rounded-lg p-6">
+        <h3 className="text-lg font-medium mb-4 flex items-center">
+          <BarChart2 className="w-5 h-5 text-blue-400 mr-2" />
+          {language === 'en' ? 'P&L Chart' : 'Gráfico de P&L'}
+        </h3>
+        
+        {/* Gráfico simulado */}
+        <div className="h-64 bg-gray-900 rounded-lg p-4 flex items-end justify-between">
+          {graphData.slice(0, 31).map((data, index) => {
+            const maxPnL = Math.max(...graphData.map(d => Math.abs(d.pnl)));
+            const height = maxPnL > 0 ? Math.abs(data.pnl) / maxPnL * 200 : 0;
+            
+            return (
+              <div key={index} className="flex flex-col items-center group relative">
+                <div
+                  className={`w-6 rounded-t ${
+                    data.pnl > 0 ? 'bg-green-500' : data.pnl < 0 ? 'bg-red-500' : 'bg-gray-600'
+                  } transition-all duration-200 hover:opacity-80`}
+                  style={{ height: `${height}px` }}
+                />
+                <span className="text-xs text-gray-400 mt-1">{data.day}</span>
+                
+                {/* Tooltip */}
+                <div className="absolute bottom-full mb-2 hidden group-hover:block bg-gray-700 text-white text-xs rounded px-2 py-1 whitespace-nowrap">
+                  <div>Dia {data.day}</div>
+                  <div>P&L: R$ {data.pnl.toFixed(2)}</div>
+                  <div>Trades: {data.trades}</div>
+                  <div>Acumulado: R$ {data.cumulativePnL.toFixed(2)}</div>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+        
+        {/* Legenda */}
+        <div className="flex justify-center space-x-6 mt-4">
+          <div className="flex items-center">
+            <div className="w-3 h-3 bg-green-500 rounded mr-2"></div>
+            <span className="text-sm text-gray-400">
+              {language === 'en' ? 'Profit' : 'Lucro'}
+            </span>
+          </div>
+          <div className="flex items-center">
+            <div className="w-3 h-3 bg-red-500 rounded mr-2"></div>
+            <span className="text-sm text-gray-400">
+              {language === 'en' ? 'Loss' : 'Perda'}
+            </span>
+          </div>
+          <div className="flex items-center">
+            <div className="w-3 h-3 bg-gray-600 rounded mr-2"></div>
+            <span className="text-sm text-gray-400">
+              {language === 'en' ? 'No Trading' : 'Sem Operações'}
+            </span>
+          </div>
+        </div>
+      </div>
+    );
+  };
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -321,38 +408,161 @@ export function QuantDiarySection() {
         <h2 className="text-2xl font-bold text-white">
           {language === 'en' ? 'Quant Diary' : 'Diário Quant'}
         </h2>
+        
+        {/* View Mode Switch */}
+        <div className="flex items-center space-x-3">
+          <span className="text-sm text-gray-400">
+            {language === 'en' ? 'View:' : 'Visualização:'}
+          </span>
+          <div className="bg-gray-800 rounded-lg p-1 flex">
+            <button
+              onClick={() => setViewMode('calendar')}
+              className={`px-3 py-2 rounded-md text-sm font-medium transition-colors flex items-center ${
+                viewMode === 'calendar'
+                  ? 'bg-blue-600 text-white'
+                  : 'text-gray-400 hover:text-white hover:bg-gray-700'
+              }`}
+            >
+              <Calendar className="w-4 h-4 mr-2" />
+              {language === 'en' ? 'Calendar' : 'Calendário'}
+            </button>
+            <button
+              onClick={() => setViewMode('graph')}
+              className={`px-3 py-2 rounded-md text-sm font-medium transition-colors flex items-center ${
+                viewMode === 'graph'
+                  ? 'bg-blue-600 text-white'
+                  : 'text-gray-400 hover:text-white hover:bg-gray-700'
+              }`}
+            >
+              <BarChart2 className="w-4 h-4 mr-2" />
+              {language === 'en' ? 'Graph' : 'Gráfico'}
+            </button>
+          </div>
+        </div>
       </div>
 
-      {/* Stats */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <div className="bg-gray-800 rounded-lg p-4">
-          <p className="text-sm text-gray-400">
-            {language === 'en' ? 'Month P&L' : 'P&L Mês'}
-          </p>
-          <p className={`text-2xl font-bold ${stats.totalPnL >= 0 ? 'text-green-400' : 'text-red-400'}`}>
-            R$ {stats.totalPnL.toFixed(2)}
-          </p>
+      {/* Enhanced Stats Panel */}
+      <div className="bg-gray-800 rounded-lg p-6">
+        <div className="flex items-center justify-between mb-4">
+          <h3 className="text-lg font-medium flex items-center">
+            <TrendingUp className="w-5 h-5 text-blue-400 mr-2" />
+            {language === 'en' ? 'Performance Statistics' : 'Estatísticas de Performance'}
+          </h3>
+          <span className="text-sm text-gray-400">
+            {getMonthName(currentDate)} {currentDate.getFullYear()}
+          </span>
         </div>
         
-        <div className="bg-gray-800 rounded-lg p-4">
-          <p className="text-sm text-gray-400">
-            {language === 'en' ? 'Total Trades' : 'Total Trades'}
-          </p>
-          <p className="text-2xl font-bold text-blue-400">{stats.totalTrades}</p>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
+          <div className="bg-gray-700 rounded-lg p-4">
+            <div className="flex items-center justify-between mb-2">
+              <p className="text-sm text-gray-400">
+                {language === 'en' ? 'Month P&L' : 'P&L do Mês'}
+              </p>
+              {stats.totalPnL >= 0 ? (
+                <TrendingUp className="w-4 h-4 text-green-400" />
+              ) : (
+                <TrendingDown className="w-4 h-4 text-red-400" />
+              )}
+            </div>
+            <p className={`text-2xl font-bold ${stats.totalPnL >= 0 ? 'text-green-400' : 'text-red-400'}`}>
+              {stats.totalPnL >= 0 ? '+' : ''}R$ {stats.totalPnL.toFixed(2)}
+            </p>
+          </div>
+          
+          <div className="bg-gray-700 rounded-lg p-4">
+            <div className="flex items-center justify-between mb-2">
+              <p className="text-sm text-gray-400">
+                {language === 'en' ? 'Total Trades' : 'Total de Trades'}
+              </p>
+              <Hash className="w-4 h-4 text-blue-400" />
+            </div>
+            <p className="text-2xl font-bold text-blue-400">{stats.totalTrades}</p>
+            <p className="text-xs text-gray-500 mt-1">
+              {stats.totalDays > 0 ? `${(stats.totalTrades / stats.totalDays).toFixed(1)} por dia` : '0 por dia'}
+            </p>
+          </div>
+          
+          <div className="bg-gray-700 rounded-lg p-4">
+            <div className="flex items-center justify-between mb-2">
+              <p className="text-sm text-gray-400">
+                {language === 'en' ? 'Win Rate' : 'Taxa de Acerto'}
+              </p>
+              <div className={`w-4 h-4 rounded-full ${
+                stats.winRate >= 60 ? 'bg-green-400' : 
+                stats.winRate >= 40 ? 'bg-yellow-400' : 'bg-red-400'
+              }`} />
+            </div>
+            <p className={`text-2xl font-bold ${
+              stats.winRate >= 60 ? 'text-green-400' : 
+              stats.winRate >= 40 ? 'text-yellow-400' : 'text-red-400'
+            }`}>
+              {stats.winRate.toFixed(1)}%
+            </p>
+            <p className="text-xs text-gray-500 mt-1">
+              {stats.totalDays} {language === 'en' ? 'trading days' : 'dias operados'}
+            </p>
+          </div>
+          
+          <div className="bg-gray-700 rounded-lg p-4">
+            <div className="flex items-center justify-between mb-2">
+              <p className="text-sm text-gray-400">
+                {language === 'en' ? 'Avg P&L/Day' : 'P&L Médio/Dia'}
+              </p>
+              <Clock className="w-4 h-4 text-purple-400" />
+            </div>
+            <p className={`text-2xl font-bold ${
+              stats.totalDays > 0 && stats.totalPnL / stats.totalDays >= 0 ? 'text-green-400' : 'text-red-400'
+            }`}>
+              R$ {stats.totalDays > 0 ? (stats.totalPnL / stats.totalDays).toFixed(2) : '0.00'}
+            </p>
+            <p className="text-xs text-gray-500 mt-1">
+              {language === 'en' ? 'per trading day' : 'por dia operado'}
+            </p>
+          </div>
         </div>
         
-        <div className="bg-gray-800 rounded-lg p-4">
-          <p className="text-sm text-gray-400">
-            {language === 'en' ? 'Win Rate' : 'Taxa Acerto'}
-          </p>
-          <p className="text-2xl font-bold text-yellow-400">{stats.winRate.toFixed(1)}%</p>
-        </div>
-        
-        <div className="bg-gray-800 rounded-lg p-4">
-          <p className="text-sm text-gray-400">
-            {language === 'en' ? 'Trading Days' : 'Dias Operados'}
-          </p>
-          <p className="text-2xl font-bold text-purple-400">{stats.totalDays}</p>
+        {/* Additional Stats Row */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <div className="bg-gray-700 rounded-lg p-3">
+            <p className="text-xs text-gray-400 mb-1">
+              {language === 'en' ? 'Best Day' : 'Melhor Dia'}
+            </p>
+            <p className="text-lg font-bold text-green-400">
+              {entries.length > 0 
+                ? `R$ ${Math.max(...entries.map(e => e.pnl || 0)).toFixed(2)}`
+                : 'R$ 0.00'}
+            </p>
+          </div>
+          
+          <div className="bg-gray-700 rounded-lg p-3">
+            <p className="text-xs text-gray-400 mb-1">
+              {language === 'en' ? 'Worst Day' : 'Pior Dia'}
+            </p>
+            <p className="text-lg font-bold text-red-400">
+              {entries.length > 0 
+                ? `R$ ${Math.min(...entries.map(e => e.pnl || 0)).toFixed(2)}`
+                : 'R$ 0.00'}
+            </p>
+          </div>
+          
+          <div className="bg-gray-700 rounded-lg p-3">
+            <p className="text-xs text-gray-400 mb-1">
+              {language === 'en' ? 'Profitable Days' : 'Dias Lucrativos'}
+            </p>
+            <p className="text-lg font-bold text-blue-400">
+              {entries.filter(e => (e.pnl || 0) > 0).length}
+            </p>
+          </div>
+          
+          <div className="bg-gray-700 rounded-lg p-3">
+            <p className="text-xs text-gray-400 mb-1">
+              {language === 'en' ? 'Loss Days' : 'Dias de Perda'}
+            </p>
+            <p className="text-lg font-bold text-orange-400">
+              {entries.filter(e => (e.pnl || 0) < 0).length}
+            </p>
+          </div>
         </div>
       </div>
 
@@ -379,78 +589,82 @@ export function QuantDiarySection() {
         </button>
       </div>
 
-      {/* Calendar View */}
-      <div className="grid grid-cols-7 gap-2">
-        {/* Header dos dias da semana */}
-        {['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'].map(day => (
-          <div key={day} className="p-3 text-center text-sm font-medium text-gray-400 bg-gray-800 rounded-lg">
-            {day}
-          </div>
-        ))}
-        
-        {/* Dias do calendário */}
-        {getCalendarLayout().map((day, index) => {
-          const entry = day ? getEntryForDate(day) : null;
-          const isToday = day ? formatDate(day) === formatDate(new Date()) : false;
+      {/* Content based on view mode */}
+      {viewMode === 'calendar' ? (
+        /* Calendar View */
+        <div className="grid grid-cols-7 gap-2">
+          {/* Header dos dias da semana */}
+          {['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'].map(day => (
+            <div key={day} className="p-3 text-center text-sm font-medium text-gray-400 bg-gray-800 rounded-lg">
+              {day}
+            </div>
+          ))}
           
-          return (
-            <div
-              key={index}
-              className={`min-h-32 p-3 rounded-lg border transition-all duration-300 ${
-                !day 
-                  ? 'border-transparent bg-transparent cursor-default' // Dias vazios
-                  : isToday 
-                    ? 'border-blue-500 bg-blue-900 bg-opacity-20' 
-                    : 'border-gray-700 bg-gray-800 hover:border-blue-500 cursor-pointer'
-              }`}
-              onClick={() => day && openSelectionModal(day)}
-            >
-              {day && (
-                <>
-                  <div className="text-center mb-2">
-                    <span className="text-lg font-bold text-white">
-                      {day.getDate()}
-                    </span>
-                    <div className="text-xs text-gray-400">
-                      Sem {getWeekOfMonth(day)} (S{getWeekOfYear(day)})
-                    </div>
-                  </div>
-              
-                  {entry && (
-                    <div className="space-y-2 mb-3">
-                      {entry.pnl !== undefined && (
-                        <div className={`text-sm font-bold text-center ${
-                          entry.pnl > 0 ? 'text-green-400' : entry.pnl < 0 ? 'text-red-400' : 'text-gray-400'
-                        }`}>
-                          {entry.pnl > 0 ? '+' : ''}R$ {entry.pnl.toFixed(0)}
-                        </div>
-                      )}
-                      
-                      {entry.trades !== undefined && entry.trades > 0 && (
-                        <div className="text-xs text-blue-400 text-center">
-                          {entry.trades} trades
-                        </div>
-                      )}
-                      
-                      <div className="text-center">
-                        <span className="text-lg">{getMoodEmoji(entry.mood || 'neutral')}</span>
+          {/* Dias do calendário */}
+          {getCalendarLayout().map((day, index) => {
+            const entry = day ? getEntryForDate(day) : null;
+            const isToday = day ? formatDate(day) === formatDate(new Date()) : false;
+            
+            return (
+              <div
+                key={index}
+                className={`min-h-32 p-3 rounded-lg border transition-all duration-300 ${
+                  !day 
+                    ? 'border-transparent bg-transparent cursor-default'
+                    : isToday 
+                      ? 'border-blue-500 bg-blue-900 bg-opacity-20 cursor-pointer hover:bg-blue-900 hover:bg-opacity-30' 
+                      : 'border-gray-700 bg-gray-800 hover:border-blue-500 cursor-pointer hover:bg-gray-700'
+                }`}
+                onClick={() => day && openSelectionModal(day)}
+              >
+                {day && (
+                  <>
+                    <div className="text-center mb-2">
+                      <span className="text-lg font-bold text-white">
+                        {day.getDate()}
+                      </span>
+                      <div className="text-xs text-gray-400">
+                        Sem {getWeekOfMonth(day)} (S{getWeekOfYear(day)})
                       </div>
                     </div>
-                  )}
-                  
-                  {!entry && (
-                    <div className="flex-1 flex items-center justify-center">
-                      <p className="text-xs text-gray-500 text-center">
-                        Clique para adicionar dados
-                      </p>
-                    </div>
-                  )}
-                </>
-              )}
-            </div>
-          );
-        })}
-      </div>
+                
+                    {entry ? (
+                      <div className="space-y-2">
+                        {entry.pnl !== undefined && (
+                          <div className={`text-sm font-bold text-center ${
+                            entry.pnl > 0 ? 'text-green-400' : entry.pnl < 0 ? 'text-red-400' : 'text-gray-400'
+                          }`}>
+                            {entry.pnl > 0 ? '+' : ''}R$ {entry.pnl.toFixed(0)}
+                          </div>
+                        )}
+                        
+                        {entry.trades !== undefined && entry.trades > 0 && (
+                          <div className="text-xs text-blue-400 text-center">
+                            {entry.trades} trades
+                          </div>
+                        )}
+                        
+                        <div className="text-center">
+                          <span className="text-lg">{getMoodEmoji(entry.mood || 'neutral')}</span>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="flex-1 flex items-center justify-center">
+                        <p className="text-xs text-gray-500 text-center">
+                          Clique para adicionar dados
+                        </p>
+                      </div>
+                    )}
+                  </>
+                )}
+              </div>
+            );
+          })}
+        </div>
+      ) : (
+        /* Graph View */
+        renderGraphView()
+      )}
 
       {/* Selection Modal */}
       {showSelectionModal && selectedDate && (
