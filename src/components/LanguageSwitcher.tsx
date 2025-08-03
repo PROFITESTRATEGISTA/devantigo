@@ -1,5 +1,4 @@
 import React from 'react';
-import { Globe } from 'lucide-react';
 import { useLanguageStore } from '../stores/languageStore';
 
 interface LanguageSwitcherProps {
@@ -8,6 +7,28 @@ interface LanguageSwitcherProps {
 
 export function LanguageSwitcher({ className = '' }: LanguageSwitcherProps) {
   const { language, setLanguage } = useLanguageStore();
+
+  // Flag components as SVG
+  const USFlag = () => (
+    <svg className="w-4 h-4" viewBox="0 0 24 16" fill="none">
+      <rect width="24" height="16" fill="#B22234"/>
+      <rect width="24" height="1.23" y="1.23" fill="white"/>
+      <rect width="24" height="1.23" y="3.69" fill="white"/>
+      <rect width="24" height="1.23" y="6.15" fill="white"/>
+      <rect width="24" height="1.23" y="8.62" fill="white"/>
+      <rect width="24" height="1.23" y="11.08" fill="white"/>
+      <rect width="24" height="1.23" y="13.54" fill="white"/>
+      <rect width="9.6" height="8.62" fill="#3C3B6E"/>
+    </svg>
+  );
+
+  const BrazilFlag = () => (
+    <svg className="w-4 h-4" viewBox="0 0 24 16" fill="none">
+      <rect width="24" height="16" fill="#009739"/>
+      <polygon points="12,2 22,8 12,14 2,8" fill="#FEDD00"/>
+      <circle cx="12" cy="8" r="3" fill="#012169"/>
+    </svg>
+  );
 
   const toggleLanguage = () => {
     const newLanguage = language === 'en' ? 'pt' : 'en';
@@ -27,7 +48,7 @@ export function LanguageSwitcher({ className = '' }: LanguageSwitcherProps) {
       className={`flex items-center space-x-1 px-2 lg:px-3 py-1.5 bg-gray-800 hover:bg-gray-700 rounded-md text-xs lg:text-sm text-gray-300 transition-colors ${className}`}
       title={language === 'en' ? 'Switch to Portuguese' : 'Mudar para Inglês'}
     >
-      <Globe className="w-3 h-3 lg:w-4 lg:h-4" />
+      {language === 'en' ? <BrazilFlag /> : <USFlag />}
       <span>{language === 'en' ? 'PT' : 'EN'}</span>
     </button>
   );
