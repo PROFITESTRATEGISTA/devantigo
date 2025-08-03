@@ -20,7 +20,11 @@ export function QuantDiarySection() {
   const { profile } = useAuthStore();
   const [currentDate, setCurrentDate] = useState(new Date());
   const [currentWeekStart, setCurrentWeekStart] = useState(() => {
+    // Limitar a 2025
     const today = new Date();
+    if (today.getFullYear() < 2025) {
+      today.setFullYear(2025, 0, 1); // 1º de janeiro de 2025
+    }
     const dayOfWeek = today.getDay();
     const mondayOffset = dayOfWeek === 0 ? -6 : 1 - dayOfWeek;
     const monday = new Date(today);
@@ -128,7 +132,11 @@ export function QuantDiarySection() {
   }, []);
 
   const navigateWeek = (direction: 'prev' | 'next') => {
-    const year = currentDate.getFullYear();
+    // Limitar navegação a 2025
+    let year = currentDate.getFullYear();
+    if (year < 2025) {
+      year = 2025;
+    }
     const month = currentDate.getMonth();
     const currentWeekOfMonth = getWeekOfMonth(currentWeekStart);
     
@@ -164,7 +172,18 @@ export function QuantDiarySection() {
 
   const navigateMonth = (direction: 'prev' | 'next') => {
     const newDate = new Date(currentDate);
-    newDate.setMonth(currentDate.getMonth() + (direction === 'next' ? 1 : -1));
+    const newMonth = currentDate.getMonth() + (direction === 'next' ? 1 : -1);
+    const newYear = newMonth < 0 ? currentDate.getFullYear() - 1 : 
+                   newMonth > 11 ? currentDate.getFullYear() + 1 : 
+                   currentDate.getFullYear();
+    
+    // Limitar a 2025 ou superior
+    if (newYear < 2025) {
+      return; // Não permitir navegar para antes de 2025
+    }
+    
+    newDate.setFullYear(newYear);
+    newDate.setMonth(newMonth < 0 ? 11 : newMonth > 11 ? 0 : newMonth);
     setCurrentDate(newDate);
     
     if (viewType === 'weekly') {
@@ -184,21 +203,25 @@ export function QuantDiarySection() {
     return Math.ceil(dayOfMonth / 7);
   };
 
-  // Função para calcular o número da semana no ano (ISO 8601)
+  // Função para calcular o número da semana no ano (cumulativo desde 1º janeiro)
   const getWeekOfYear = (date: Date) => {
-    // Semana 1 do ano sempre começa em 1º de janeiro
+    // Semana 1 = 1º de janeiro, contagem cumulativa
     const firstDayOfYear = new Date(date.getFullYear(), 0, 1);
-    const dayOfYear = Math.floor((date.getTime() - firstDayOfYear.getTime()) / (24 * 60 * 60 * 1000)) + 1;
+    const dayOfYear = Math.floor((date.getTime() - firstDayOfYear.getTime()) / (24 * 60 * 60 * 1000));
     
-    // Calcular qual semana baseado no dia do ano
-    return Math.ceil(dayOfYear / 7);
+    // Semana 1 começa no dia 1 (índice 0), cada 7 dias = nova semana
+    return Math.floor(dayOfYear / 7) + 1;
   };
 
   const getWeekDays = () => {
     const days = [];
     
     // Calcular o início da semana baseado no mês atual
-    const year = currentDate.getFullYear();
+    let year = currentDate.getFullYear();
+    // Garantir que estamos em 2025 ou superior
+    if (year < 2025) {
+      year = 2025;
+    }
     const month = currentDate.getMonth();
     const weekOfMonth = getWeekOfMonth(currentWeekStart);
     
@@ -223,7 +246,11 @@ export function QuantDiarySection() {
   };
 
   const getCalendarDays = () => {
-    const year = currentDate.getFullYear();
+    let year = currentDate.getFullYear();
+    // Garantir que estamos em 2025 ou superior
+    if (year < 2025) {
+      year = 2025;
+    }
     const month = currentDate.getMonth();
     
     const firstDay = new Date(year, month, 1);
