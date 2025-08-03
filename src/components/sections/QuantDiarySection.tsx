@@ -132,42 +132,45 @@ export function QuantDiarySection() {
   }, []);
 
   const navigateWeek = (direction: 'prev' | 'next') => {
-    // Limitar navegação a 2025
-    let year = currentDate.getFullYear();
-    if (year < 2025) {
-      year = 2025;
-    }
-    const month = currentDate.getMonth();
-    const currentWeekOfMonth = getWeekOfMonth(currentWeekStart);
+    const currentWeekOfYear = getWeekOfYear(currentWeekStart);
     
-    let newWeekOfMonth = currentWeekOfMonth + (direction === 'next' ? 1 : -1);
-    let newYear = year;
-    let newMonth = month;
-    
-    // Se passou do limite de semanas do mês, ir para o próximo/anterior mês
-    if (newWeekOfMonth > 5) {
-      newWeekOfMonth = 1;
-      newMonth++;
-      if (newMonth > 11) {
-        newMonth = 0;
-        newYear++;
+    if (direction === 'next') {
+      // Próxima semana: sempre +1
+      const nextWeekOfYear = currentWeekOfYear + 1;
+      
+      // Calcular a data da próxima semana (sempre 7 dias depois)
+      const nextWeekStart = new Date(currentWeekStart);
+      nextWeekStart.setDate(currentWeekStart.getDate() + 7);
+      
+      // Garantir que não saia de 2025
+      if (nextWeekStart.getFullYear() > 2025) {
+        return; // Não permitir ir além de 2025
       }
-    } else if (newWeekOfMonth < 1) {
-      newWeekOfMonth = 5; // Ir para a última semana do mês anterior
-      newMonth--;
-      if (newMonth < 0) {
-        newMonth = 11;
-        newYear--;
+      
+      setCurrentWeekStart(nextWeekStart);
+      setCurrentDate(new Date(nextWeekStart.getFullYear(), nextWeekStart.getMonth(), 15));
+      
+    } else {
+      // Semana anterior: sempre -1, mas nunca menor que 1
+      const prevWeekOfYear = Math.max(1, currentWeekOfYear - 1);
+      
+      // Se já estamos na semana 1, não permitir voltar
+      if (currentWeekOfYear <= 1) {
+        return;
       }
+      
+      // Calcular a data da semana anterior (sempre 7 dias antes)
+      const prevWeekStart = new Date(currentWeekStart);
+      prevWeekStart.setDate(currentWeekStart.getDate() - 7);
+      
+      // Garantir que não saia de 2025
+      if (prevWeekStart.getFullYear() < 2025) {
+        return; // Não permitir ir antes de 2025
+      }
+      
+      setCurrentWeekStart(prevWeekStart);
+      setCurrentDate(new Date(prevWeekStart.getFullYear(), prevWeekStart.getMonth(), 15));
     }
-    
-    // Calcular o novo início da semana
-    const firstDayOfWeek = ((newWeekOfMonth - 1) * 7) + 1;
-    const newWeekStart = new Date(newYear, newMonth, firstDayOfWeek);
-    const newCurrentDate = new Date(newYear, newMonth, 15); // Meio do mês
-    
-    setCurrentWeekStart(newWeekStart);
-    setCurrentDate(newCurrentDate);
   };
 
   const navigateMonth = (direction: 'prev' | 'next') => {
@@ -195,49 +198,36 @@ export function QuantDiarySection() {
 
   // Função para calcular o número da semana no mês
   const getWeekOfMonth = (date: Date) => {
-    // Semana 1 sempre começa no dia 1 do mês
-    const firstDayOfMonth = new Date(date.getFullYear(), date.getMonth(), 1);
     const dayOfMonth = date.getDate();
-    
-    // Calcular qual semana baseado no dia do mês
     return Math.ceil(dayOfMonth / 7);
   };
 
   // Função para calcular o número da semana no ano (cumulativo desde 1º janeiro)
   const getWeekOfYear = (date: Date) => {
-    // Semana 1 = 1º de janeiro, contagem cumulativa
+    // Garantir que estamos em 2025
+    const year = Math.max(2025, date.getFullYear());
     const firstDayOfYear = new Date(date.getFullYear(), 0, 1);
-    const dayOfYear = Math.floor((date.getTime() - firstDayOfYear.getTime()) / (24 * 60 * 60 * 1000));
+    const dayOfYear = Math.floor((date.getTime() - firstDayOfYear.getTime()) / (24 * 60 * 60 * 1000)) + 1;
     
-    // Semana 1 começa no dia 1 (índice 0), cada 7 dias = nova semana
-    return Math.floor(dayOfYear / 7) + 1;
+    // Contagem cumulativa: semana 1 = dias 1-7, semana 2 = dias 8-14, etc.
+    return Math.ceil(dayOfYear / 7);
   };
 
   const getWeekDays = () => {
     const days = [];
     
-    // Calcular o início da semana baseado no mês atual
-    let year = currentDate.getFullYear();
-    // Garantir que estamos em 2025 ou superior
-    if (year < 2025) {
-      year = 2025;
-    }
-    const month = currentDate.getMonth();
-    const weekOfMonth = getWeekOfMonth(currentWeekStart);
+    // Usar currentWeekStart como base e gerar 7 dias consecutivos
+    const startOfWeek = new Date(currentWeekStart);
     
-    // Calcular o primeiro dia da semana no mês
-    const firstDayOfWeek = ((weekOfMonth - 1) * 7) + 1;
-    const startOfWeek = new Date(year, month, firstDayOfWeek);
-    
-    // Gerar dias da semana (7 dias ou 5 se fins de semana desabilitados)
+    // Gerar dias da semana
     const daysToShow = showWeekends ? 7 : 5;
     
     for (let i = 0; i < daysToShow; i++) {
       const day = new Date(startOfWeek);
       day.setDate(startOfWeek.getDate() + i);
       
-      // Só adicionar se o dia pertence ao mês atual
-      if (day.getMonth() === month) {
+      // Garantir que não saia de 2025
+      if (day.getFullYear() >= 2025) {
         days.push(day);
       }
     }
