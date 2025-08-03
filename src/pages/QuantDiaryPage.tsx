@@ -73,33 +73,6 @@ export function QuantDiaryPage() {
     mediaPnlDia: 120.61
   };
 
-  // Função para calcular métricas semanais
-  const calculateWeeklyStats = () => {
-    const weeklyData = calculateWeeklyMetrics();
-    const weeklyPnLs = weeklyData.map(week => week.pnl).filter(pnl => pnl !== 0);
-    
-    if (weeklyPnLs.length === 0) {
-      return {
-        ganhoMedioSemanal: 0,
-        perdaMediaSemanal: 0,
-        ganhoMaximoSemanal: 0,
-        perdaMaximaSemanal: 0
-      };
-    }
-    
-    const ganhosSemanais = weeklyPnLs.filter(pnl => pnl > 0);
-    const perdasSemanais = weeklyPnLs.filter(pnl => pnl < 0);
-    
-    return {
-      ganhoMedioSemanal: ganhosSemanais.length > 0 ? ganhosSemanais.reduce((a, b) => a + b, 0) / ganhosSemanais.length : 0,
-      perdaMediaSemanal: perdasSemanais.length > 0 ? perdasSemanais.reduce((a, b) => a + b, 0) / perdasSemanais.length : 0,
-      ganhoMaximoSemanal: ganhosSemanais.length > 0 ? Math.max(...ganhosSemanais) : 0,
-      perdaMaximaSemanal: perdasSemanais.length > 0 ? Math.min(...perdasSemanais) : 0
-    };
-  };
-
-  const weeklyStats = calculateWeeklyStats();
-
   // Função para obter o número de dias no mês
   const getDaysInMonth = (month: string, year: number) => {
     const monthIndex = [
@@ -176,6 +149,33 @@ export function QuantDiaryPage() {
     
     return weeks;
   };
+
+  // Função para calcular métricas semanais
+  const calculateWeeklyStats = () => {
+    const weeklyData = calculateWeeklyMetrics();
+    const weeklyPnLs = weeklyData.map(week => week.pnl).filter(pnl => pnl !== 0);
+    
+    if (weeklyPnLs.length === 0) {
+      return {
+        ganhoMedioSemanal: 0,
+        perdaMediaSemanal: 0,
+        ganhoMaximoSemanal: 0,
+        perdaMaximaSemanal: 0
+      };
+    }
+    
+    const ganhosSemanais = weeklyPnLs.filter(pnl => pnl > 0);
+    const perdasSemanais = weeklyPnLs.filter(pnl => pnl < 0);
+    
+    return {
+      ganhoMedioSemanal: ganhosSemanais.length > 0 ? ganhosSemanais.reduce((a, b) => a + b, 0) / ganhosSemanais.length : 0,
+      perdaMediaSemanal: perdasSemanais.length > 0 ? perdasSemanais.reduce((a, b) => a + b, 0) / perdasSemanais.length : 0,
+      ganhoMaximoSemanal: ganhosSemanais.length > 0 ? Math.max(...ganhosSemanais) : 0,
+      perdaMaximaSemanal: perdasSemanais.length > 0 ? Math.min(...perdasSemanais) : 0
+    };
+  };
+
+  const weeklyStats = calculateWeeklyStats();
 
   const handleDayClick = (day: number) => {
     // No modo mensal, não permite interação
