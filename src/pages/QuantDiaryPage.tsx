@@ -528,20 +528,45 @@ export function QuantDiaryPage() {
     setActionType(null);
   };
 
-  const handleDeleteDay = () => {
+  const handleDeleteDay = async () => {
     if (!selectedDay) return;
+    
+    const confirmDelete = window.confirm('Tem certeza que deseja excluir todos os dados deste dia? Esta ação não pode ser desfeita.');
+    if (!confirmDelete) return;
+    
+    try {
+      // Remove dados do dia
+      setCalendarData(prev => {
+        const newData = { ...prev };
+        if (newData[currentYear]?.[currentMonth]?.[selectedDay]) {
+          delete newData[currentYear][currentMonth][selectedDay];
+        }
+        return newData;
+      });
 
-    setCalendarData(prev => {
-      const newData = { ...prev };
-      if (newData[currentYear]?.[currentMonth]?.[selectedDay]) {
-        delete newData[currentYear][currentMonth][selectedDay];
-      }
-      return newData;
-    });
-
-    setShowDayModal(false);
-    setSelectedDay(null);
-    setActionType(null);
+      setShowDayModal(false);
+      setSelectedDay(null);
+      setActionType(null);
+      
+      // Mostrar mensagem de sucesso
+      const successMessage = document.createElement('div');
+      successMessage.className = 'fixed top-4 right-4 bg-green-500 text-white px-4 py-2 rounded-md z-50 flex items-center';
+      successMessage.innerHTML = `
+        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+        </svg>
+        Dia excluído com sucesso!
+      `;
+      document.body.appendChild(successMessage);
+      setTimeout(() => {
+        if (document.body.contains(successMessage)) {
+          document.body.removeChild(successMessage);
+        }
+      }, 3000);
+    } catch (error) {
+      console.error('Erro ao excluir dia:', error);
+      alert('Erro ao excluir dia. Tente novamente.');
+    }
   };
 
   const renderCalendar = () => {
