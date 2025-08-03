@@ -36,90 +36,6 @@ export function QuantDiaryPage() {
   const [userPatrimony, setUserPatrimony] = useState<number>(10000); // Patrimônio inicial padrão
   const [isEditingPatrimony, setIsEditingPatrimony] = useState(false);
   const [patrimonyInput, setPatrimonyInput] = useState('10000');
-  
-  // Função para calcular drawdown baseado no patrimônio
-  const calculateDrawdownMetrics = () => {
-    // Dados mockados para demonstração
-    const dailyPnL = [
-      { date: '2024-01-01', pnl: 150 },
-      { date: '2024-01-02', pnl: -80 },
-      { date: '2024-01-03', pnl: 200 },
-      { date: '2024-01-04', pnl: -300 },
-      { date: '2024-01-05', pnl: 100 },
-      { date: '2024-01-08', pnl: -150 },
-      { date: '2024-01-09', pnl: 250 },
-      { date: '2024-01-10', pnl: -200 }
-    ];
-    
-    let runningCapital = userPatrimony;
-    let peak = userPatrimony;
-    let maxDrawdownValue = 0;
-    let maxDrawdownPercent = 0;
-    let currentDrawdown = 0;
-    
-    // Calcular running capital e drawdown
-    dailyPnL.forEach(day => {
-      runningCapital += day.pnl;
-      
-      // Atualizar pico se necessário
-      if (runningCapital > peak) {
-        peak = runningCapital;
-      }
-      
-      // Calcular drawdown atual
-      currentDrawdown = peak - runningCapital;
-      
-      // Atualizar drawdown máximo se necessário
-      if (currentDrawdown > maxDrawdownValue) {
-        maxDrawdownValue = currentDrawdown;
-      }
-    });
-    
-    // Calcular drawdown percentual baseado no patrimônio inicial
-    maxDrawdownPercent = (maxDrawdownValue / userPatrimony) * 100;
-    
-    // Calcular métricas avançadas
-    const totalPnL = dailyPnL.reduce((sum, day) => sum + day.pnl, 0);
-    const finalCapital = userPatrimony + totalPnL;
-    const totalReturn = (finalCapital - userPatrimony) / userPatrimony;
-    
-    // Calcular retornos diários
-    const dailyReturns = [];
-    let capital = userPatrimony;
-    
-    dailyPnL.forEach(day => {
-      const dailyReturn = day.pnl / capital;
-      dailyReturns.push(dailyReturn);
-      capital += day.pnl;
-    });
-    
-    // Calcular Sharpe Ratio
-    const avgDailyReturn = dailyReturns.reduce((sum, ret) => sum + ret, 0) / dailyReturns.length;
-    const variance = dailyReturns.reduce((sum, ret) => sum + Math.pow(ret - avgDailyReturn, 2), 0) / dailyReturns.length;
-    const volatility = Math.sqrt(variance);
-    
-    const annualizedReturn = avgDailyReturn * 252 * 100; // em %
-    const annualizedVolatility = volatility * Math.sqrt(252) * 100; // em %
-    const sharpeRatio = annualizedVolatility > 0 ? annualizedReturn / annualizedVolatility : 0;
-    
-    // Fator de Recuperação
-    const recoveryFactor = maxDrawdownValue > 0 ? totalPnL / maxDrawdownValue : 0;
-    
-    // Índice de Calmar
-    const calmarRatio = maxDrawdownPercent > 0 ? annualizedReturn / maxDrawdownPercent : 0;
-    
-    return {
-      drawdownPercent: maxDrawdownPercent,
-      drawdownValue: maxDrawdownValue,
-      sharpeRatio,
-      recoveryFactor,
-      calmarRatio,
-      annualizedReturn,
-      annualizedVolatility
-    };
-  };
-  
-  const drawdownMetrics = calculateDrawdownMetrics();
   const [showAdvancedMetrics, setShowAdvancedMetrics] = useState(true);
   
   // Dados por ano - agora organizados por ano
@@ -235,9 +151,9 @@ export function QuantDiaryPage() {
     let lastDayPnL = null;
     
     Object.keys(calendarData).forEach(year => {
-      Object.keys(calendarData[year]).forEach(month => {
-        Object.keys(calendarData[year][month]).forEach(day => {
-          const dayData = calendarData[year][month][day];
+      Object.keys(calendarData[parseInt(year)]).forEach(month => {
+        Object.keys(calendarData[parseInt(year)][month]).forEach(day => {
+          const dayData = calendarData[parseInt(year)][month][parseInt(day)];
           if (dayData.trades > 0) {
             const dayDate = new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
             allDaysWithData.push({ date: dayDate, pnl: dayData.pnl });
@@ -348,7 +264,7 @@ export function QuantDiaryPage() {
       maxWinStreak,
       maxLossStreak,
       totalWinningDays,
-      maxLossStreak,
+      totalLosingDays,
       maxDrawdown,
       maxDrawdownAmount,
       drawdownStartDate,
@@ -358,54 +274,89 @@ export function QuantDiaryPage() {
 
   // Calculate drawdown based on user's initial capital (patrimony)
   const calculateDrawdownMetrics = () => {
-    const daysWithTrades = Object.entries(calendarData)
-      .filter(([_, dayData]) => dayData.trades > 0)
-      .sort(([a], [b]) => new Date(a).getTime() - new Date(b).getTime());
+    // Collect all days with P&L data and sort chronologically
+    const allDays: Array<{ date: string; pnl: number; runningTotal: number }> = [];
+    
+    Object.keys(calendarData).forEach(year => {
+      Object.keys(calendarData[parseInt(year)]).forEach(month => {
+        Object.keys(calendarData[parseInt(year)][month]).forEach(day => {
+          const dayData = calendarData[parseInt(year)][month][parseInt(day)];
+          if (dayData.trades > 0) {
+            allDays.push({
+              date: `${year}-${month}-${day}`,
+              pnl: dayData.pnl,
+              runningTotal: 0 // Will be calculated below
+            });
+          }
+        });
+      });
+    });
 
-    if (daysWithTrades.length === 0) {
+    if (allDays.length === 0) {
       return { 
         maxDrawdownPercent: 0, 
         maxDrawdownAmount: 0, 
         drawdownPeriod: null,
         recoveryFactor: 0,
         sharpeRatio: 0,
-    // Get all days and sort by date
-    const sortedDays = [...calendarData]
-      .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+        calmarRatio: 0
+      };
+    }
 
-    if (sortedDays.length === 0) {
+    // Sort chronologically
+    allDays.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+
+    let runningPnL = userPatrimony; // Start with user's initial capital
+    let peak = userPatrimony;
     let maxDrawdown = 0;
     let maxDrawdownAmount = 0;
     let drawdownStart: string | null = null;
     let drawdownEnd: string | null = null;
-    let dailyReturns: number[] = [];
+    const dailyReturns: number[] = [];
     let previousValue = userPatrimony;
 
-    daysWithTrades.forEach(([date, dayData]) => {
-      runningPnL += dayData.pnl; // Add daily P&L to running total
+    // Calculate running totals for each day
+    allDays.forEach((day, index) => {
+      runningPnL += day.pnl;
+      day.runningTotal = runningPnL;
       
-      // Calculate daily return percentage
-      const dailyReturn = previousValue > 0 ? (dayData.pnl / previousValue) : 0;
-      dailyReturns.push(dailyReturn);
-      previousValue = runningPnL;
+      // Calculate daily return as percentage of previous day's capital
+      if (index > 0) {
+        const previousCapital = allDays[index - 1].runningTotal;
+        if (previousCapital > 0) {
+          const dailyReturn = day.pnl / previousCapital;
+          dailyReturns.push(dailyReturn);
+        }
+      } else {
+        // First day return
+        if (userPatrimony > 0) {
+          const dailyReturn = day.pnl / userPatrimony;
+          dailyReturns.push(dailyReturn);
+        }
+      }
+    });
+
+    // Calculate drawdown: (peak - current) / patrimony
+    allDays.forEach((day) => {
+      const currentCapital = day.runningTotal;
       
-      // Update peak if we have a new high
-      if (runningPnL > peak) {
-        peak = runningPnL;
+      // Update peak if current capital is higher
+      if (currentCapital > peak) {
+        peak = currentCapital;
       }
       
-      // Calculate current drawdown
-      const currentDrawdown = peak - runningPnL;
-      const currentDrawdownPercent = peak > 0 ? (currentDrawdown / peak) * 100 : 0;
+      // Calculate current drawdown using the formula: (peak - current) / patrimony
+      const currentDrawdownAmount = peak - currentCapital;
+      const currentDrawdownPercent = userPatrimony > 0 ? (currentDrawdownAmount / userPatrimony) * 100 : 0;
       
-      // Update maximum drawdown
-      if (currentDrawdown > maxDrawdownAmount) {
-        maxDrawdownAmount = currentDrawdown;
+      // Track maximum drawdown 
+      if (currentDrawdownAmount > maxDrawdownAmount) {
+        maxDrawdownAmount = currentDrawdownAmount;
         maxDrawdown = currentDrawdownPercent;
-        drawdownStart = date;
-        drawdownEnd = date;
-      } else if (currentDrawdown === maxDrawdownAmount && drawdownStart) {
-        drawdownEnd = date;
+        drawdownStart = day.date;
+        drawdownEnd = day.date;
+      } else if (currentDrawdownAmount === maxDrawdownAmount && drawdownStart) {
+        drawdownEnd = day.date;
       }
     });
 
@@ -509,8 +460,7 @@ export function QuantDiaryPage() {
         
         const weekMetrics = getWeeklyPnL(currentWeekDays);
         weeks.push({
-              pnl: dayData.pnl,
-              runningTotal: 0 // Will be calculated below
+          days: currentWeekDays,
           pnl: weekMetrics.pnl,
           trades: weekMetrics.trades
         });
@@ -527,17 +477,8 @@ export function QuantDiaryPage() {
     const weeklyData = calculateWeeklyMetrics();
     const weeklyPnLs = weeklyData.map(week => week.pnl).filter(pnl => pnl !== 0);
     
-    if (allDays.length === 0) {
-      return {
-        ganhoMedioSemanal: 0,
-        perdaMediaSemanal: 0,
-        ganhoMaximoSemanal: 0,
-        perdaMaximaSemanal: 0
-      };
-    }
-    
-    // Calculate running totals starting from user's initial capital
-    let runningTotal = userPatrimony;
+    const ganhosSemanais = weeklyPnLs.filter(pnl => pnl > 0);
+    const perdasSemanais = weeklyPnLs.filter(pnl => pnl < 0);
     
     return {
       ganhoMedioSemanal: ganhosSemanais.length > 0 ? ganhosSemanais.reduce((a, b) => a + b, 0) / ganhosSemanais.length : 0,
@@ -578,56 +519,49 @@ export function QuantDiaryPage() {
 
   const weeklyStats = calculateWeeklyStats();
 
-    const dailyReturns: number[] = [];
-    let previousCapital = userPatrimony;
-    
-    // Calculate running totals for each day
-    allDays.forEach((day, index) => {
-      runningTotal += day.pnl;
-      day.runningTotal = runningTotal;
-      
-      // Calculate daily return as percentage of previous day's capital
-      if (index > 0) {
-        const previousCapital = allDays[index - 1].runningTotal;
-        if (previousCapital > 0) {
-          const dailyReturn = day.pnl / previousCapital;
-          dailyReturns.push(dailyReturn);
-        }
-      } else {
-        // First day return
-        if (userPatrimony > 0) {
-          const dailyReturn = day.pnl / userPatrimony;
-          dailyReturns.push(dailyReturn);
-        }
-      }
-    });
+  const handleDayClick = (day: number) => {
     if (calendarViewMode === 'monthly') return;
-    sortedDays.forEach((day) => {
-    allDays.forEach((day) => {
-      const currentCapital = day.runningTotal;
+    
+    setSelectedDay(day);
+    const existingData = calendarData[currentYear]?.[currentMonth]?.[day] || { pnl: 0, trades: 0, comment: '' };
+    setEditingDay(existingData);
     setShowActionModal(true);
-      // Update peak if current capital is higher
-      if (currentCapital > peak) {
-        peak = currentCapital;
+  };
+
+  const handleActionSelect = (action: 'analysis' | 'comment') => {
     setActionType(action);
     setShowActionModal(false);
-    
-      // Calculate current drawdown using the formula: (peak - current) / patrimony
-      const currentDrawdownAmount = peak - currentCapital;
-      const currentDrawdownPercent = peak > 0 ? (currentDrawdownAmount / userPatrimony) * 100 : 0;
+    setShowDayModal(true);
   };
-      // Track maximum drawdown 
-      if (currentDrawdownAmount > maxDrawdownAmount) {
-        maxDrawdownAmount = currentDrawdownAmount;
+
+  const handleSaveDay = () => {
+    if (!selectedDay) return;
 
     setCalendarData(prev => ({
       ...prev,
-      if (previousCapital > 0 && day.pnl !== 0) {
-        const dailyReturn = day.pnl / previousCapital;
-        dailyReturns.push(dailyReturn);
+      [currentYear]: {
+        ...prev[currentYear],
+        [currentMonth]: {
+          ...prev[currentYear]?.[currentMonth],
+          [selectedDay]: { ...editingDay }
+        }
       }
     }));
-      previousCapital = runningCapital;
+
+    setShowDayModal(false);
+    setSelectedDay(null);
+    setActionType(null);
+  };
+
+  const handleDeleteDay = () => {
+    if (!selectedDay) return;
+
+    setCalendarData(prev => {
+      const newData = { ...prev };
+      if (newData[currentYear]?.[currentMonth]?.[selectedDay]) {
+        delete newData[currentYear][currentMonth][selectedDay];
+      }
+      return newData;
     });
 
     setShowDayModal(false);
