@@ -527,9 +527,13 @@ export function PublicPlansPage() {
       <div className="py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold mb-4">O Que Você Pode Fazer</h2>
+            <h2 className="text-3xl font-bold mb-4">
+              {language === 'en' ? 'What You Can Do' : 'O Que Você Pode Fazer'}
+            </h2>
             <p className="text-xl text-gray-400 max-w-3xl mx-auto">
-              Conheça os recursos disponíveis em nossa plataforma
+              {language === 'en' 
+                ? 'Discover the features available on our platform'
+                : 'Conheça os recursos disponíveis em nossa plataforma'}
             </p>
           </div>
 
@@ -539,10 +543,14 @@ export function PublicPlansPage() {
                 <div className="bg-blue-600 rounded-full p-3 mr-4">
                   <Code2 className="w-6 h-6" />
                 </div>
-                <h3 className="text-xl font-semibold">IA para Gerar Robôs</h3>
+                <h3 className="text-xl font-semibold">
+                  {language === 'en' ? 'AI to Generate Robots' : 'IA para Gerar Robôs'}
+                </h3>
               </div>
               <p className="text-gray-300">
-                Crie robôs de trading automaticamente com IA. Descreva sua estratégia e receba código pronto para usar. (Disponível a partir do Pro 1)
+                {language === 'en'
+                  ? 'Create trading robots automatically with AI. Describe your strategy and receive ready-to-use code. (Available from Pro 1)'
+                  : 'Crie robôs de trading automaticamente com IA. Descreva sua estratégia e receba código pronto para usar. (Disponível a partir do Pro 1)'}
               </p>
             </div>
             
@@ -551,10 +559,14 @@ export function PublicPlansPage() {
                 <div className="bg-green-600 rounded-full p-3 mr-4">
                   <BarChart2 className="w-6 h-6" />
                 </div>
-                <h3 className="text-xl font-semibold">Análise de Backtest</h3>
+                <h3 className="text-xl font-semibold">
+                  {language === 'en' ? 'Backtest Analysis' : 'Análise de Backtest'}
+                </h3>
               </div>
               <p className="text-gray-300">
-                Analise seus resultados de backtest com IA. Versão Free tem análise simples, planos Pro têm análise completa com insights avançados.
+                {language === 'en'
+                  ? 'Analyze your backtest results with AI. Free version has simple analysis, Pro plans have complete analysis with advanced insights.'
+                  : 'Analise seus resultados de backtest com IA. Versão Free tem análise simples, planos Pro têm análise completa com insights avançados.'}
               </p>
             </div>
             
@@ -563,10 +575,14 @@ export function PublicPlansPage() {
                 <div className="bg-purple-600 rounded-full p-3 mr-4">
                   <Sparkles className="w-6 h-6" />
                 </div>
-                <h3 className="text-xl font-semibold">Montagem de Portfólios</h3>
+                <h3 className="text-xl font-semibold">
+                  {language === 'en' ? 'Portfolio Assembly' : 'Montagem de Portfólios'}
+                </h3>
               </div>
               <p className="text-gray-300">
-                IA automática para montar portfólios diversificados com suas estratégias, otimizando risco e retorno. (Planos Pro)
+                {language === 'en'
+                  ? 'Automatic AI to build diversified portfolios with your strategies, optimizing risk and return. (Pro Plans)'
+                  : 'IA automática para montar portfólios diversificados com suas estratégias, otimizando risco e retorno. (Planos Pro)'}
               </p>
             </div>
             
@@ -575,10 +591,14 @@ export function PublicPlansPage() {
                 <div className="bg-yellow-600 rounded-full p-3 mr-4">
                   <Users className="w-6 h-6" />
                 </div>
-                <h3 className="text-xl font-semibold">Colaboração em Tempo Real</h3>
+                <h3 className="text-xl font-semibold">
+                  {language === 'en' ? 'Real-time Collaboration' : 'Colaboração em Tempo Real'}
+                </h3>
               </div>
               <p className="text-gray-300">
-                Colabore com sua equipe em tempo real no desenvolvimento de robôs, com controle de versão integrado.
+                {language === 'en'
+                  ? 'Collaborate with your team in real-time on robot development, with integrated version control.'
+                  : 'Colabore com sua equipe em tempo real no desenvolvimento de robôs, com controle de versão integrado.'}
               </p>
             </div>
             
@@ -587,10 +607,14 @@ export function PublicPlansPage() {
                 <div className="bg-red-600 rounded-full p-3 mr-4">
                   <MessageSquare className="w-6 h-6" />
                 </div>
-                <h3 className="text-xl font-semibold">Suporte Especializado</h3>
+                <h3 className="text-xl font-semibold">
+                  {language === 'en' ? 'Specialized Support' : 'Suporte Especializado'}
+                </h3>
               </div>
               <p className="text-gray-300">
-                Receba suporte de especialistas em trading e desenvolvimento para tirar suas dúvidas e resolver problemas.
+                {language === 'en'
+                  ? 'Receive support from trading and development specialists to answer your questions and solve problems.'
+                  : 'Receba suporte de especialistas em trading e desenvolvimento para tirar suas dúvidas e resolver problemas.'}
               </p>
             </div>
             
@@ -599,10 +623,14 @@ export function PublicPlansPage() {
                 <div className="bg-yellow-600 rounded-full p-3 mr-4">
                   <Zap className="w-6 h-6" />
                 </div>
-                <h3 className="text-xl font-semibold">Ganhe Tokens</h3>
+                <h3 className="text-xl font-semibold">
+                  {language === 'en' ? 'Earn Tokens' : 'Ganhe Tokens'}
+                </h3>
               </div>
               <p className="text-gray-300">
-                Complete desafios da plataforma e ganhe tokens gratuitos. Participe de competições, compartilhe estratégias e contribua com a comunidade.
+                {language === 'en'
+                  ? 'Complete platform challenges and earn free tokens. Participate in competitions, share strategies and contribute to the community.'
+                  : 'Complete desafios da plataforma e ganhe tokens gratuitos. Participe de competições, compartilhe estratégias e contribua com a comunidade.'}
               </p>
             </div>
             
@@ -611,10 +639,14 @@ export function PublicPlansPage() {
                 <div className="bg-indigo-600 rounded-full p-3 mr-4">
                   <Crown className="w-6 h-6" />
                 </div>
-                <h3 className="text-xl font-semibold">Recursos Premium</h3>
+                <h3 className="text-xl font-semibold">
+                  {language === 'en' ? 'Premium Features' : 'Recursos Premium'}
+                </h3>
               </div>
               <p className="text-gray-300">
-                Acesse recursos exclusivos como indicadores personalizados, análise de mercado e estratégias avançadas.
+                {language === 'en'
+                  ? 'Access exclusive features like custom indicators, market analysis and advanced strategies.'
+                  : 'Acesse recursos exclusivos como indicadores personalizados, análise de mercado e estratégias avançadas.'}
               </p>
             </div>
           </div>
