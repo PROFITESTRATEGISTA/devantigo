@@ -152,7 +152,7 @@ export function PublicPlansPage() {
                 onClick={() => navigate('/faq')}
                 className="text-gray-300 hover:text-white text-sm font-medium"
               >
-                FAQ
+                {language === 'en' ? 'FAQ' : 'FAQ'}
               </button>
               <button 
                 onClick={() => navigate('/plans')}
@@ -164,13 +164,13 @@ export function PublicPlansPage() {
                 onClick={() => navigate('/?login=true')}
                 className="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium"
               >
-                Entrar
+                {language === 'en' ? 'Login' : 'Entrar'}
               </button>
               <button 
                 onClick={() => navigate('/?signup=true')}
                 className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm font-medium flex items-center"
               >
-                Cadastrar <ArrowRight className="w-4 h-4 ml-2" />
+                {language === 'en' ? 'Sign Up' : 'Cadastrar'} <ArrowRight className="w-4 h-4 ml-2" />
               </button>
             </div>
             
@@ -201,13 +201,13 @@ export function PublicPlansPage() {
                 onClick={() => navigate('/faq')}
                 className="text-gray-300 hover:text-white text-sm font-medium"
               >
-                FAQ
+                {language === 'en' ? 'FAQ' : 'FAQ'}
               </button>
               <button 
                 onClick={() => navigate('/plans')}
                 className="text-gray-300 hover:text-white text-sm font-medium"
               >
-                Planos
+                {language === 'en' ? 'Plans' : 'Planos'}
               </button>
             </div>
           </div>
