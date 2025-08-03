@@ -190,48 +190,48 @@ export function QuantDiarySection() {
   const getWeekOfYear = (date: Date) => {
     if (date.getFullYear() !== 2025) return 1;
     
-    // Encontrar a primeira segunda-feira de 2025
+    // Encontrar o primeiro domingo de 2025
     const jan1 = new Date(2025, 0, 1); // 1º de janeiro de 2025 (quarta-feira)
     const jan1DayOfWeek = jan1.getDay(); // 3 (quarta-feira)
-    const daysToFirstMonday = jan1DayOfWeek === 0 ? 1 : 8 - jan1DayOfWeek; // Se domingo, próxima segunda é +1, senão 8-dayOfWeek
+    const daysToFirstSunday = jan1DayOfWeek === 0 ? 0 : 7 - jan1DayOfWeek; // Se domingo, é 0, senão 7-dayOfWeek
     
-    const firstMonday = new Date(2025, 0, 1 + daysToFirstMonday); // 6 de janeiro de 2025 (primeira segunda)
+    const firstSunday = new Date(2025, 0, 1 + daysToFirstSunday); // 5 de janeiro de 2025 (primeiro domingo)
     
-    // Se a data é antes da primeira segunda-feira, é semana 1 (parcial)
-    if (date < firstMonday) {
+    // Se a data é antes do primeiro domingo, é semana 1 (parcial)
+    if (date < firstSunday) {
       return 1;
     }
     
-    // Calcular quantas semanas completas se passaram desde a primeira segunda
-    const daysDiff = Math.floor((date.getTime() - firstMonday.getTime()) / (24 * 60 * 60 * 1000));
+    // Calcular quantas semanas completas se passaram desde o primeiro domingo
+    const daysDiff = Math.floor((date.getTime() - firstSunday.getTime()) / (24 * 60 * 60 * 1000));
     return Math.floor(daysDiff / 7) + 2; // +2 porque começamos na semana 2 (semana 1 é parcial)
   };
   
   // Função para calcular o número da semana no mês (baseado no CSV)
   const getWeekOfMonth = (date: Date) => {
-    // Encontrar a primeira segunda-feira do mês
+    // Encontrar o primeiro domingo do mês
     const firstDayOfMonth = new Date(date.getFullYear(), date.getMonth(), 1);
     const firstDayOfWeek = firstDayOfMonth.getDay(); // 0 = domingo, 1 = segunda, etc.
     
-    // Calcular quantos dias até a primeira segunda-feira
-    const daysToFirstMonday = firstDayOfWeek === 0 ? 1 : firstDayOfWeek === 1 ? 0 : 8 - firstDayOfWeek;
-    const firstMonday = new Date(date.getFullYear(), date.getMonth(), 1 + daysToFirstMonday);
+    // Calcular quantos dias até o primeiro domingo
+    const daysToFirstSunday = firstDayOfWeek === 0 ? 0 : 7 - firstDayOfWeek;
+    const firstSunday = new Date(date.getFullYear(), date.getMonth(), 1 + daysToFirstSunday);
     
-    // Se a data é antes da primeira segunda-feira, é semana 1 (parcial)
-    if (date < firstMonday) {
+    // Se a data é antes do primeiro domingo, é semana 1 (parcial)
+    if (date < firstSunday) {
       return 1;
     }
     
-    // Calcular quantas semanas completas se passaram desde a primeira segunda
-    const daysDiff = Math.floor((date.getTime() - firstMonday.getTime()) / (24 * 60 * 60 * 1000));
+    // Calcular quantas semanas completas se passaram desde o primeiro domingo
+    const daysDiff = Math.floor((date.getTime() - firstSunday.getTime()) / (24 * 60 * 60 * 1000));
     return Math.floor(daysDiff / 7) + 2; // +2 porque começamos na semana 2
   };
 
   const getWeekDays = () => {
     const days = [];
     
-    // Semana SEMPRE começa na segunda-feira
-    // currentWeekStart já é uma segunda-feira
+    // Semana SEMPRE começa no domingo
+    // currentWeekStart já é um domingo
     for (let i = 0; i < 7; i++) {
       const date = new Date(currentWeekStart);
       date.setDate(currentWeekStart.getDate() + i);
@@ -243,8 +243,8 @@ export function QuantDiarySection() {
       
       // Filtrar fins de semana se necessário
       if (!showWeekends) {
-        const dayOfWeek = date.getDay();
-        if (dayOfWeek === 0 || dayOfWeek === 6) { // 0 = domingo, 6 = sábado
+        const dayOfWeek = date.getDay(); // 0 = domingo, 1 = segunda, ..., 6 = sábado
+        if (dayOfWeek === 0 || dayOfWeek === 6) { // domingo ou sábado
           continue;
         }
       }
@@ -280,9 +280,9 @@ export function QuantDiarySection() {
     const firstDay = new Date(year, month, 1);
     const lastDay = new Date(year, month + 1, 0);
     
-    // Calcular quantos dias vazios no início (para alinhar com os dias da semana)
+    // Calcular quantos dias vazios no início (domingo = 0, segunda = 1, etc.)
     const dayOfWeek = firstDay.getDay();
-    const emptyDaysAtStart = dayOfWeek === 0 ? 6 : dayOfWeek - 1; // Domingo = 6 dias vazios, Segunda = 0
+    const emptyDaysAtStart = dayOfWeek; // Domingo = 0 dias vazios, Segunda = 1, etc.
     
     const layout = [];
     
@@ -683,7 +683,7 @@ export function QuantDiarySection() {
       ) : (
         <div className="grid grid-cols-7 gap-1">
           {/* Header dos dias da semana */}
-          {['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb', 'Dom'].map(day => (
+          {['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'].map(day => (
             <div key={day} className="p-2 text-center text-sm font-medium text-gray-400">
               {day}
             </div>
