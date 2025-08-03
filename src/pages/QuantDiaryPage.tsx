@@ -520,14 +520,44 @@ export function QuantDiaryPage() {
           ⚙️ Análise Operacional
         </h4>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        {/* Maior Perda Diária */}
+        {/* Sharpe Ratio */}
         <div className="bg-gray-700 rounded-lg p-4">
           <div className="flex items-center justify-between mb-2">
-            <span className="text-sm text-gray-400">Maior Perda Diária</span>
-            <TrendingDown className="w-4 h-4 text-red-400" />
+            <span className="text-sm text-gray-400">Sharpe Ratio</span>
+            <BarChart2 className="w-4 h-4 text-blue-400" />
           </div>
-          <p className="text-2xl font-bold text-red-400">R$ -480</p>
-          <p className="text-xs text-gray-500">15 de março</p>
+          <p className="text-2xl font-bold text-blue-400">1.85</p>
+          <p className="text-xs text-gray-500">Excelente</p>
+        </div>
+        
+        {/* Fator de Lucro */}
+        <div className="bg-gray-700 rounded-lg p-4">
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-sm text-gray-400">Fator de Lucro</span>
+            <TrendingUp className="w-4 h-4 text-green-400" />
+          </div>
+          <p className="text-2xl font-bold text-green-400">2.45</p>
+          <p className="text-xs text-gray-500">Muito bom</p>
+        </div>
+        
+        {/* Total Trades */}
+        <div className="bg-gray-700 rounded-lg p-4">
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-sm text-gray-400">Total Trades</span>
+            <Hash className="w-4 h-4 text-purple-400" />
+          </div>
+          <p className="text-2xl font-bold text-purple-400">306</p>
+          <p className="text-xs text-gray-500">151 dias operados</p>
+        </div>
+        
+        {/* Fator de Recuperação */}
+        <div className="bg-gray-700 rounded-lg p-4">
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-sm text-gray-400">Fator Recuperação</span>
+            <Target className="w-4 h-4 text-blue-400" />
+          </div>
+          <p className="text-2xl font-bold text-blue-400">3.2</p>
+          <p className="text-xs text-gray-500">Excelente</p>
         </div>
         
         {/* Drawdown Máximo */}
@@ -568,16 +598,6 @@ export function QuantDiaryPage() {
           📊 Análise Diária
         </h4>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        {/* Perda Média Diária */}
-        <div className="bg-gray-700 rounded-lg p-4">
-          <div className="flex items-center justify-between mb-2">
-            <span className="text-sm text-gray-400">Perda Média Diária</span>
-            <DollarSign className="w-4 h-4 text-red-400" />
-          </div>
-          <p className="text-2xl font-bold text-red-400">R$ -95.25</p>
-          <p className="text-xs text-gray-500">Por dia negativo</p>
-        </div>
-        
         {/* Ganho Médio Diário */}
         <div className="bg-gray-700 rounded-lg p-4">
           <div className="flex items-center justify-between mb-2">
@@ -588,6 +608,16 @@ export function QuantDiaryPage() {
           <p className="text-xs text-gray-500">Por dia lucrativo</p>
         </div>
         
+        {/* Perda Média Diária */}
+        <div className="bg-gray-700 rounded-lg p-4">
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-sm text-gray-400">Perda Média Diária</span>
+            <DollarSign className="w-4 h-4 text-red-400" />
+          </div>
+          <p className="text-2xl font-bold text-red-400">R$ -95.25</p>
+          <p className="text-xs text-gray-500">Por dia negativo</p>
+        </div>
+        
         {/* Maior Ganho Diário */}
         <div className="bg-gray-700 rounded-lg p-4">
           <div className="flex items-center justify-between mb-2">
@@ -596,6 +626,16 @@ export function QuantDiaryPage() {
           </div>
           <p className="text-2xl font-bold text-green-400">R$ 1.850</p>
           <p className="text-xs text-gray-500">18 de julho</p>
+        </div>
+        
+        {/* Maior Perda Diária */}
+        <div className="bg-gray-700 rounded-lg p-4">
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-sm text-gray-400">Maior Perda Diária</span>
+            <TrendingDown className="w-4 h-4 text-red-400" />
+          </div>
+          <p className="text-2xl font-bold text-red-400">R$ -480</p>
+          <p className="text-xs text-gray-500">15 de março</p>
         </div>
         
         {/* Payoff Diário */}
