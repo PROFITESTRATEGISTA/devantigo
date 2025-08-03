@@ -32,6 +32,7 @@ export function QuantDiaryPage() {
   const [selectedDay, setSelectedDay] = useState<number | null>(null);
   const [editingDay, setEditingDay] = useState<DayData>({ pnl: 0, trades: 0, comment: '' });
   const [actionType, setActionType] = useState<'analysis' | 'comment' | null>(null);
+  const [chartType, setChartType] = useState<'daily' | 'monthly'>('daily');
   
   // Dados por ano - agora organizados por ano
   const [calendarData, setCalendarData] = useState<{[year: number]: CalendarData}>({
@@ -925,15 +926,34 @@ export function QuantDiaryPage() {
     <div className="bg-gray-800 rounded-lg p-6">
       <h3 className="text-xl font-semibold mb-6 flex items-center">
         <TrendingUp className="w-5 h-5 text-green-400 mr-2" />
-        Evolução do P&L Acumulado
+        Gráficos de Performance
       </h3>
       
-      <div className="h-80 bg-gray-900 rounded-lg flex items-center justify-center">
-        <div className="text-center">
-          <BarChart2 className="w-16 h-16 text-gray-600 mx-auto mb-4" />
-          <p className="text-gray-400">Gráfico será exibido quando houver dados</p>
-        </div>
+      {/* Tabs para alternar entre gráficos */}
+      <div className="flex items-center mb-6 bg-gray-700 rounded-lg p-1">
+        <button
+          onClick={() => setChartType('daily')}
+          className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-colors ${
+            chartType === 'daily'
+              ? 'bg-blue-600 text-white'
+              : 'text-gray-400 hover:text-white'
+          }`}
+        >
+          Gráfico Diário
+        </button>
+        <button
+          onClick={() => setChartType('monthly')}
+          className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-colors ${
+            chartType === 'monthly'
+              ? 'bg-blue-600 text-white'
+              : 'text-gray-400 hover:text-white'
+          }`}
+        >
+          Gráfico Mensal
+        </button>
       </div>
+      
+      {chartType === 'daily' ? renderDailyChart() : renderMonthlyChart()}
 
       <div className="mt-4 flex items-center justify-center space-x-6">
         <div className="flex items-center">
@@ -944,9 +964,212 @@ export function QuantDiaryPage() {
           <div className="w-3 h-3 bg-red-500 rounded-full mr-2"></div>
           <span className="text-sm text-gray-400">P&L Negativo</span>
         </div>
+        <div className="flex items-center">
+          <div className="w-3 h-3 bg-blue-500 rounded-full mr-2"></div>
+          <span className="text-sm text-gray-400">P&L Acumulado</span>
+        </div>
       </div>
     </div>
   );
+
+  // Função para renderizar gráfico diário
+  const renderDailyChart = () => {
+    const monthData = calendarData[currentYear]?.[currentMonth] || {};
+    const days = Object.keys(monthData).map(Number).sort((a, b) => a - b);
+    
+    if (days.length === 0) {
+      return (
+        <div className="h-80 bg-gray-900 rounded-lg flex items-center justify-center">
+          <div className="text-center">
+            <BarChart2 className="w-16 h-16 text-gray-600 mx-auto mb-4" />
+            <p className="text-gray-400">Nenhum dado disponível para {currentMonth} {currentYear}</p>
+          </div>
+        </div>
+      );
+    }
+    
+    let accumulatedPnL = 0;
+    const maxPnL = Math.max(...days.map(day => monthData[day].pnl));
+    const minPnL = Math.min(...days.map(day => monthData[day].pnl));
+    const range = Math.max(Math.abs(maxPnL), Math.abs(minPnL));
+    
+    return (
+      <div className="h-80 bg-gray-900 rounded-lg p-4">
+        <div className="h-full relative">
+          {/* Linha zero */}
+          <div className="absolute w-full border-t border-gray-600 opacity-50" style={{ top: '50%' }}></div>
+          
+          {/* Barras do gráfico */}
+          <div className="flex items-end justify-center h-full space-x-1">
+            {days.map((day, index) => {
+              const dayData = monthData[day];
+              const pnl = dayData.pnl;
+              accumulatedPnL += pnl;
+              
+              const barHeight = range > 0 ? Math.abs(pnl / range) * 40 : 0;
+              const isPositive = pnl >= 0;
+              
+              return (
+                <div key={day} className="flex flex-col items-center group relative">
+                  {/* Tooltip */}
+                  <div className="absolute bottom-full mb-2 hidden group-hover:block bg-gray-700 text-white text-xs rounded px-2 py-1 whitespace-nowrap z-10">
+                    <div>Dia {day}</div>
+                    <div>P&L: R$ {pnl.toFixed(2)}</div>
+                    <div>Trades: {dayData.trades}</div>
+                    <div>Acumulado: R$ {accumulatedPnL.toFixed(2)}</div>
+                  </div>
+                  
+                  {/* Barra */}
+                  <div className="flex flex-col items-center h-full justify-center">
+                    {isPositive ? (
+                      <div 
+                        className="bg-green-500 w-4 rounded-t"
+                        style={{ height: `${barHeight}%`, minHeight: pnl > 0 ? '2px' : '0' }}
+                      ></div>
+                    ) : (
+                      <div 
+                        className="bg-red-500 w-4 rounded-b"
+                        style={{ height: `${barHeight}%`, minHeight: pnl < 0 ? '2px' : '0' }}
+                      ></div>
+                    )}
+                  </div>
+                  
+                  {/* Label do dia */}
+                  <span className="text-xs text-gray-400 mt-1">{day}</span>
+                </div>
+              );
+            })}
+          </div>
+          
+          {/* Linha do P&L acumulado */}
+          <svg className="absolute inset-0 w-full h-full pointer-events-none">
+            <polyline
+              fill="none"
+              stroke="#3B82F6"
+              strokeWidth="2"
+              points={days.map((day, index) => {
+                const x = (index / (days.length - 1)) * 100;
+                const daysPnL = days.slice(0, index + 1).reduce((sum, d) => sum + monthData[d].pnl, 0);
+                const y = 50 - (daysPnL / (range * 2)) * 40;
+                return `${x}%,${y}%`;
+              }).join(' ')}
+            />
+          </svg>
+        </div>
+      </div>
+    );
+  };
+  
+  // Função para renderizar gráfico mensal
+  const renderMonthlyChart = () => {
+    const yearData = calendarData[currentYear] || {};
+    const months = [
+      'janeiro', 'fevereiro', 'março', 'abril', 'maio', 'junho',
+      'julho', 'agosto', 'setembro', 'outubro', 'novembro', 'dezembro'
+    ];
+    
+    const monthsWithData = months.filter(month => {
+      const monthData = yearData[month];
+      return monthData && Object.keys(monthData).length > 0;
+    });
+    
+    if (monthsWithData.length === 0) {
+      return (
+        <div className="h-80 bg-gray-900 rounded-lg flex items-center justify-center">
+          <div className="text-center">
+            <BarChart2 className="w-16 h-16 text-gray-600 mx-auto mb-4" />
+            <p className="text-gray-400">Nenhum dado disponível para {currentYear}</p>
+          </div>
+        </div>
+      );
+    }
+    
+    const monthlyPnLs = monthsWithData.map(month => {
+      const monthData = yearData[month] || {};
+      return Object.values(monthData).reduce((sum: number, day: any) => sum + day.pnl, 0);
+    });
+    
+    const maxPnL = Math.max(...monthlyPnLs);
+    const minPnL = Math.min(...monthlyPnLs);
+    const range = Math.max(Math.abs(maxPnL), Math.abs(minPnL));
+    
+    let accumulatedPnL = 0;
+    
+    return (
+      <div className="h-80 bg-gray-900 rounded-lg p-4">
+        <div className="h-full relative">
+          {/* Linha zero */}
+          <div className="absolute w-full border-t border-gray-600 opacity-50" style={{ top: '50%' }}></div>
+          
+          {/* Barras do gráfico */}
+          <div className="flex items-end justify-center h-full space-x-2">
+            {monthsWithData.map((month, index) => {
+              const monthData = yearData[month] || {};
+              const monthPnL = Object.values(monthData).reduce((sum: number, day: any) => sum + day.pnl, 0);
+              const monthTrades = Object.values(monthData).reduce((sum: number, day: any) => sum + day.trades, 0);
+              const monthDays = Object.values(monthData).filter((day: any) => day.trades > 0).length;
+              
+              accumulatedPnL += monthPnL;
+              
+              const barHeight = range > 0 ? Math.abs(monthPnL / range) * 40 : 0;
+              const isPositive = monthPnL >= 0;
+              
+              return (
+                <div key={month} className="flex flex-col items-center group relative">
+                  {/* Tooltip */}
+                  <div className="absolute bottom-full mb-2 hidden group-hover:block bg-gray-700 text-white text-xs rounded px-2 py-1 whitespace-nowrap z-10">
+                    <div className="capitalize">{month} {currentYear}</div>
+                    <div>P&L: R$ {monthPnL.toFixed(2)}</div>
+                    <div>Trades: {monthTrades}</div>
+                    <div>Dias: {monthDays}</div>
+                    <div>Acumulado: R$ {accumulatedPnL.toFixed(2)}</div>
+                  </div>
+                  
+                  {/* Barra */}
+                  <div className="flex flex-col items-center h-full justify-center">
+                    {isPositive ? (
+                      <div 
+                        className="bg-green-500 w-6 rounded-t"
+                        style={{ height: `${barHeight}%`, minHeight: monthPnL > 0 ? '2px' : '0' }}
+                      ></div>
+                    ) : (
+                      <div 
+                        className="bg-red-500 w-6 rounded-b"
+                        style={{ height: `${barHeight}%`, minHeight: monthPnL < 0 ? '2px' : '0' }}
+                      ></div>
+                    )}
+                  </div>
+                  
+                  {/* Label do mês */}
+                  <span className="text-xs text-gray-400 mt-1 capitalize">
+                    {month.substring(0, 3)}
+                  </span>
+                </div>
+              );
+            })}
+          </div>
+          
+          {/* Linha do P&L acumulado */}
+          <svg className="absolute inset-0 w-full h-full pointer-events-none">
+            <polyline
+              fill="none"
+              stroke="#3B82F6"
+              strokeWidth="2"
+              points={monthsWithData.map((month, index) => {
+                const x = (index / (monthsWithData.length - 1)) * 100;
+                const monthsPnL = monthsWithData.slice(0, index + 1).reduce((sum, m) => {
+                  const mData = yearData[m] || {};
+                  return sum + Object.values(mData).reduce((s: number, day: any) => s + day.pnl, 0);
+                }, 0);
+                const y = 50 - (monthsPnL / (range * 2)) * 40;
+                return `${x}%,${Math.max(5, Math.min(95, y))}%`;
+              }).join(' ')}
+            />
+          </svg>
+        </div>
+      </div>
+    );
+  };
 
   return (
     <div className="min-h-screen bg-[#1E1E1E] text-white">
