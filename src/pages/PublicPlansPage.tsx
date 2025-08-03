@@ -244,9 +244,9 @@ export function PublicPlansPage() {
       <div className="py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold mb-4">Nossos Planos</h2>
+            <h2 className="text-3xl font-bold mb-4">{language === 'en' ? 'Our Plans' : 'Nossos Planos'}</h2>
             <p className="text-xl text-gray-400 max-w-3xl mx-auto">
-              Escolha o plano que melhor se adapta às suas necessidades de trading
+              {language === 'en' ? 'Choose the plan that best fits your trading needs' : 'Escolha o plano que melhor se adapta às suas necessidades de trading'}
             </p>
           </div>
 
@@ -259,25 +259,25 @@ export function PublicPlansPage() {
               </div>
               <p className="text-3xl font-bold mb-4">R$ 0,00</p>
               <p className="text-gray-400 mb-6">
-                Perfeito para começar
+                {language === 'en' ? 'Perfect to get started' : 'Perfeito para começar'}
               </p>
               
               <ul className="space-y-3 mb-6">
                 <li className="flex items-center text-gray-300">
                   <Check className="w-4 h-4 text-green-500 mr-2 flex-shrink-0" />
-                  <span>Até 3 robôs de trading</span>
+                  <span>{language === 'en' ? 'Up to 3 trading robots' : 'Até 3 robôs de trading'}</span>
                 </li>
                 <li className="flex items-center text-gray-300">
                   <Check className="w-4 h-4 text-green-500 mr-2 flex-shrink-0" />
-                  <span>1.000 tokens mensais</span>
+                  <span>{language === 'en' ? '1,000 monthly tokens' : '1.000 tokens mensais'}</span>
                 </li>
                 <li className="flex items-center text-gray-300">
                   <Check className="w-4 h-4 text-green-500 mr-2 flex-shrink-0" />
-                  <span>Análise básica de backtest</span>
+                  <span>{language === 'en' ? 'Basic backtest analysis' : 'Análise básica de backtest'}</span>
                 </li>
                 <li className="flex items-center text-gray-300">
                   <Check className="w-4 h-4 text-green-500 mr-2 flex-shrink-0" />
-                  <span>Acesso à comunidade</span>
+                  <span>{language === 'en' ? 'Community access' : 'Acesso à comunidade'}</span>
                 </li>
               </ul>
 
@@ -285,7 +285,7 @@ export function PublicPlansPage() {
                 onClick={handleSignUp}
                 className="w-full py-3 bg-green-600 hover:bg-green-700 rounded-md text-white"
               >
-                Começar Grátis
+                {language === 'en' ? 'Start Free' : 'Começar Grátis'}
               </button>
             </div>
 
@@ -332,7 +332,7 @@ export function PublicPlansPage() {
               </div>
               
               <p className="text-gray-400 mb-6">
-                Criação de robôs com IA e recursos avançados
+                {language === 'en' ? 'AI robot creation and advanced features' : 'Criação de robôs com IA e recursos avançados'}
               </p>
               
               <ul className="space-y-3 mb-6">
@@ -344,11 +344,11 @@ export function PublicPlansPage() {
                 ))}
                 <li className="flex items-center text-gray-300">
                   <Check className="w-4 h-4 text-green-500 mr-2 flex-shrink-0" />
-                  <span>Análise avançada de backtest</span>
+                  <span>{language === 'en' ? 'Advanced backtest analysis' : 'Análise avançada de backtest'}</span>
                 </li>
                 <li className="flex items-center text-gray-300">
                   <Check className="w-4 h-4 text-green-500 mr-2 flex-shrink-0" />
-                  <span>Automação de portfólios</span>
+                  <span>{language === 'en' ? 'Portfolio automation' : 'Automação de portfólios'}</span>
                 </li>
               </ul>
 
@@ -374,37 +374,37 @@ export function PublicPlansPage() {
                 Preço Personalizado
               </p>
               <p className="text-gray-400 mb-6">
-                Soluções sob medida para suas necessidades empresariais
+                {language === 'en' ? 'Tailored solutions for your business needs' : 'Soluções sob medida para suas necessidades empresariais'}
               </p>
               
               <ul className="space-y-3 mb-6">
                 <li className="flex items-center text-gray-300">
                   <Check className="w-4 h-4 text-green-500 mr-2 flex-shrink-0" />
-                  <span>Robôs personalizados para seu negócio</span>
+                  <span>{language === 'en' ? 'Custom robots for your business' : 'Robôs personalizados para seu negócio'}</span>
                 </li>
                 <li className="flex items-center text-gray-300">
                   <Check className="w-4 h-4 text-green-500 mr-2 flex-shrink-0" />
-                  <span>Pacotes de tokens personalizados</span>
+                  <span>{language === 'en' ? 'Custom token packages' : 'Pacotes de tokens personalizados'}</span>
                 </li>
                 <li className="flex items-center text-gray-300">
                   <Check className="w-4 h-4 text-green-500 mr-2 flex-shrink-0" />
-                  <span>Gerente de conta dedicado</span>
+                  <span>{language === 'en' ? 'Dedicated account manager' : 'Gerente de conta dedicado'}</span>
                 </li>
                 <li className="flex items-center text-gray-300">
                   <Check className="w-4 h-4 text-green-500 mr-2 flex-shrink-0" />
-                  <span>Suporte prioritário 24/7</span>
+                  <span>{language === 'en' ? 'Priority 24/7 support' : 'Suporte prioritário 24/7'}</span>
                 </li>
                 <li className="flex items-center text-gray-300">
                   <Check className="w-4 h-4 text-green-500 mr-2 flex-shrink-0" />
-                  <span>Soluções white-label</span>
+                  <span>{language === 'en' ? 'White-label solutions' : 'Soluções white-label'}</span>
                 </li>
                 <li className="flex items-center text-gray-300">
                   <Check className="w-4 h-4 text-green-500 mr-2 flex-shrink-0" />
-                  <span>Integrações personalizadas</span>
+                  <span>{language === 'en' ? 'Custom integrations' : 'Integrações personalizadas'}</span>
                 </li>
                 <li className="flex items-center text-gray-300">
                   <Check className="w-4 h-4 text-green-500 mr-2 flex-shrink-0" />
-                  <span>Treinamento e onboarding</span>
+                  <span>{language === 'en' ? 'Training and onboarding' : 'Treinamento e onboarding'}</span>
                 </li>
               </ul>
 
@@ -412,7 +412,7 @@ export function PublicPlansPage() {
                 onClick={() => handleUpgradeClick('business')}
                 className="w-full py-3 bg-purple-600 hover:bg-purple-700 rounded-md text-white"
               >
-                Entrar em Contato com Equipe
+                {language === 'en' ? 'Contact Our Team' : 'Entrar em Contato com Equipe'}
               </button>
             </div>
           </div>

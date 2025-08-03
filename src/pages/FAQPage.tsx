@@ -27,90 +27,90 @@ export function FAQPage() {
 
   const faqCategories = [
     {
-      title: 'Planos e Preços',
+      title: language === 'en' ? 'Plans and Pricing' : 'Planos e Preços',
       icon: <Crown className="w-6 h-6 text-yellow-500" />,
       questions: [
         {
-          question: 'Qual a diferença entre os planos Pro 1, Pro 2, Pro 3 e Pro 4?',
-          answer: 'Pro 1 (R$ 259,80): Até 25 robôs, IA para gerar robôs, 20.000 tokens. Pro 2 (R$ 499,80): Até 100 robôs, 50.000 tokens, suporte dedicado. Pro 3 (R$ 999,80): Até 500 robôs, 100.000 tokens, todos os recursos premium.'
+          question: language === 'en' ? 'What\'s the difference between Pro 1, Pro 2, Pro 3 and Pro 4 plans?' : 'Qual a diferença entre os planos Pro 1, Pro 2, Pro 3 e Pro 4?',
+          answer: language === 'en' ? 'Pro 1 ($259.80): Up to 25 robots, AI to generate robots, 20,000 tokens. Pro 2 ($499.80): Up to 100 robots, 50,000 tokens, dedicated support. Pro 3 ($999.80): Up to 500 robots, 100,000 tokens, all premium features.' : 'Pro 1 (R$ 259,80): Até 25 robôs, IA para gerar robôs, 20.000 tokens. Pro 2 (R$ 499,80): Até 100 robôs, 50.000 tokens, suporte dedicado. Pro 3 (R$ 999,80): Até 500 robôs, 100.000 tokens, todos os recursos premium.'
         },
         {
-          question: 'O plano Free tem limitações?',
-          answer: 'Sim, o plano Free inclui até 3 robôs de trading, 3 robôs gratuitos pré-configurados, 1.000 tokens mensais, análise simples de backtest (sem IA avançada), e suporte via comunidade e grupo WhatsApp. Não inclui IA para gerar robôs.'
+          question: language === 'en' ? 'Does the Free plan have limitations?' : 'O plano Free tem limitações?',
+          answer: language === 'en' ? 'Yes, the Free plan includes up to 3 trading robots, 3 free pre-configured robots, 1,000 monthly tokens, simple backtest analysis (without advanced AI), and support via community and WhatsApp group. Does not include AI to generate robots.' : 'Sim, o plano Free inclui até 3 robôs de trading, 3 robôs gratuitos pré-configurados, 1.000 tokens mensais, análise simples de backtest (sem IA avançada), e suporte via comunidade e grupo WhatsApp. Não inclui IA para gerar robôs.'
         },
         {
-          question: 'Posso fazer upgrade ou downgrade a qualquer momento?',
-          answer: 'Sim, você pode alterar seu plano a qualquer momento. Upgrades são aplicados imediatamente, downgrades entram em vigor no próximo ciclo de faturamento.'
+          question: language === 'en' ? 'Can I upgrade or downgrade at any time?' : 'Posso fazer upgrade ou downgrade a qualquer momento?',
+          answer: language === 'en' ? 'Yes, you can change your plan at any time. Upgrades are applied immediately, downgrades take effect on the next billing cycle.' : 'Sim, você pode alterar seu plano a qualquer momento. Upgrades são aplicados imediatamente, downgrades entram em vigor no próximo ciclo de faturamento.'
         },
         {
-          question: 'Como funciona o período de teste?',
-          answer: 'Oferecemos 7 dias gratuitos para testar qualquer plano Pro. Durante este período, você tem acesso completo a todos os recursos do plano escolhido.'
+          question: language === 'en' ? 'How does the trial period work?' : 'Como funciona o período de teste?',
+          answer: language === 'en' ? 'We offer 7 free days to test any Pro plan. During this period, you have full access to all features of the chosen plan.' : 'Oferecemos 7 dias gratuitos para testar qualquer plano Pro. Durante este período, você tem acesso completo a todos os recursos do plano escolhido.'
         }
       ]
     },
     {
-      title: 'Tokens e Desafios',
+      title: language === 'en' ? 'Tokens and Challenges' : 'Tokens e Desafios',
       icon: <Zap className="w-6 h-6 text-yellow-500" />,
       questions: [
         {
-          question: 'Como ganhar tokens gratuitos?',
-          answer: 'Complete desafios diários e semanais: criar primeiro robô (+500 tokens), fazer primeira análise (+200 tokens), compartilhar estratégia (+100 tokens), participar de competições (até 1000 tokens), contribuir com tutoriais (+300 tokens).'
+          question: language === 'en' ? 'How to earn free tokens?' : 'Como ganhar tokens gratuitos?',
+          answer: language === 'en' ? 'Complete daily and weekly challenges: create first robot (+500 tokens), make first analysis (+200 tokens), share strategy (+100 tokens), participate in competitions (up to 1000 tokens), contribute tutorials (+300 tokens).' : 'Complete desafios diários e semanais: criar primeiro robô (+500 tokens), fazer primeira análise (+200 tokens), compartilhar estratégia (+100 tokens), participar de competições (até 1000 tokens), contribuir com tutoriais (+300 tokens).'
         },
         {
-          question: 'Quais são os desafios disponíveis?',
-          answer: 'Desafios Diários: Login diário (+10 tokens), análise de backtest (+50 tokens). Desafios Semanais: Criar robô (+500 tokens), otimizar estratégia (+300 tokens). Desafios Mensais: Competição de performance (+2000 tokens), tutorial da comunidade (+1000 tokens).'
+          question: language === 'en' ? 'What challenges are available?' : 'Quais são os desafios disponíveis?',
+          answer: language === 'en' ? 'Daily Challenges: Daily login (+10 tokens), backtest analysis (+50 tokens). Weekly Challenges: Create robot (+500 tokens), optimize strategy (+300 tokens). Monthly Challenges: Performance competition (+2000 tokens), community tutorial (+1000 tokens).' : 'Desafios Diários: Login diário (+10 tokens), análise de backtest (+50 tokens). Desafios Semanais: Criar robô (+500 tokens), otimizar estratégia (+300 tokens). Desafios Mensais: Competição de performance (+2000 tokens), tutorial da comunidade (+1000 tokens).'
         },
         {
-          question: 'Os tokens expiram?',
-          answer: 'Tokens mensais do plano são renovados a cada ciclo. Tokens ganhos em desafios e comprados separadamente nunca expiram. Tokens não utilizados do plano mensal não são acumulados.'
+          question: language === 'en' ? 'Do tokens expire?' : 'Os tokens expiram?',
+          answer: language === 'en' ? 'Monthly plan tokens are renewed each cycle. Tokens earned from challenges and purchased separately never expire. Unused monthly plan tokens are not carried over.' : 'Tokens mensais do plano são renovados a cada ciclo. Tokens ganhos em desafios e comprados separadamente nunca expiram. Tokens não utilizados do plano mensal não são acumulados.'
         },
         {
-          question: 'Quanto custam os tokens extras?',
-          answer: 'Pacotes disponíveis: 2.500 tokens (R$ 70,00), 7.500 tokens (R$ 150,00), 25.000 tokens (R$ 300,00). Tokens extras nunca expiram e podem ser usados a qualquer momento.'
+          question: language === 'en' ? 'How much do extra tokens cost?' : 'Quanto custam os tokens extras?',
+          answer: language === 'en' ? 'Available packages: 2,500 tokens ($70.00), 7,500 tokens ($150.00), 25,000 tokens ($300.00). Extra tokens never expire and can be used anytime.' : 'Pacotes disponíveis: 2.500 tokens (R$ 70,00), 7.500 tokens (R$ 150,00), 25.000 tokens (R$ 300,00). Tokens extras nunca expiram e podem ser usados a qualquer momento.'
         }
       ]
     },
     {
-      title: 'IA e Geração de Robôs',
+      title: language === 'en' ? 'AI and Robot Generation' : 'IA e Geração de Robôs',
       icon: <Code2 className="w-6 h-6 text-blue-500" />,
       questions: [
         {
-          question: 'Como funciona a IA para gerar robôs?',
-          answer: 'Disponível a partir do Pro 1. Você descreve sua estratégia em linguagem natural ("Crie um robô que compra quando RSI < 30") e a IA gera automaticamente o código em NTSL, MQL5 ou outras linguagens. O processo leva 30-60 segundos.'
+          question: language === 'en' ? 'How does AI work to generate robots?' : 'Como funciona a IA para gerar robôs?',
+          answer: language === 'en' ? 'Available from Pro 1. You describe your strategy in natural language ("Create a robot that buys when RSI < 30") and AI automatically generates code in NTSL, MQL5 or other languages. The process takes 30-60 seconds.' : 'Disponível a partir do Pro 1. Você descreve sua estratégia em linguagem natural ("Crie um robô que compra quando RSI < 30") e a IA gera automaticamente o código em NTSL, MQL5 ou outras linguagens. O processo leva 30-60 segundos.'
         },
         {
-          question: 'Posso modificar o código gerado pela IA?',
-          answer: 'Sim! O código gerado é totalmente editável. Você pode modificar parâmetros, adicionar filtros, ajustar lógica de entrada/saída. A IA também pode fazer modificações baseadas em suas solicitações.'
+          question: language === 'en' ? 'Can I modify the code generated by AI?' : 'Posso modificar o código gerado pela IA?',
+          answer: language === 'en' ? 'Yes! The generated code is fully editable. You can modify parameters, add filters, adjust entry/exit logic. AI can also make modifications based on your requests.' : 'Sim! O código gerado é totalmente editável. Você pode modificar parâmetros, adicionar filtros, ajustar lógica de entrada/saída. A IA também pode fazer modificações baseadas em suas solicitações.'
         },
         {
-          question: 'Quais plataformas são suportadas?',
-          answer: 'Geramos código para: Profit (NTSL), MetaTrader 4/5 (MQL4/MQL5), TradingView (Pine Script), Python (para backtesting), e outras plataformas populares. O código é exportável em formato compatível.'
+          question: language === 'en' ? 'Which platforms are supported?' : 'Quais plataformas são suportadas?',
+          answer: language === 'en' ? 'We generate code for: Profit (NTSL), MetaTrader 4/5 (MQL4/MQL5), TradingView (Pine Script), Python (for backtesting), and other popular platforms. Code is exportable in compatible format.' : 'Geramos código para: Profit (NTSL), MetaTrader 4/5 (MQL4/MQL5), TradingView (Pine Script), Python (para backtesting), e outras plataformas populares. O código é exportável em formato compatível.'
         },
         {
-          question: 'A IA pode criar estratégias complexas?',
-          answer: 'Sim! A IA pode criar desde estratégias simples (cruzamento de médias) até complexas (arbitragem, grid trading, machine learning). Quanto mais detalhada sua descrição, melhor o resultado.'
+          question: language === 'en' ? 'Can AI create complex strategies?' : 'A IA pode criar estratégias complexas?',
+          answer: language === 'en' ? 'Yes! AI can create from simple strategies (moving average crossover) to complex ones (arbitrage, grid trading, machine learning). The more detailed your description, the better the result.' : 'Sim! A IA pode criar desde estratégias simples (cruzamento de médias) até complexas (arbitragem, grid trading, machine learning). Quanto mais detalhada sua descrição, melhor o resultado.'
         }
       ]
     },
     {
-      title: 'Análise de Backtest',
+      title: language === 'en' ? 'Backtest Analysis' : 'Análise de Backtest',
       icon: <BarChart2 className="w-6 h-6 text-green-500" />,
       questions: [
         {
-          question: 'Qual a diferença entre análise simples e completa?',
-          answer: 'Análise Simples (Free): Métricas básicas como Profit Factor, Win Rate, Drawdown. Análise Completa (Pro): Insights de IA, sugestões de otimização, análise de correlação, identificação de padrões, recomendações personalizadas.'
+          question: language === 'en' ? 'What\'s the difference between simple and complete analysis?' : 'Qual a diferença entre análise simples e completa?',
+          answer: language === 'en' ? 'Simple Analysis (Free): Basic metrics like Profit Factor, Win Rate, Drawdown. Complete Analysis (Pro): AI insights, optimization suggestions, correlation analysis, pattern identification, personalized recommendations.' : 'Análise Simples (Free): Métricas básicas como Profit Factor, Win Rate, Drawdown. Análise Completa (Pro): Insights de IA, sugestões de otimização, análise de correlação, identificação de padrões, recomendações personalizadas.'
         },
         {
-          question: 'Que formato de arquivo posso usar?',
-          answer: 'Aceitamos arquivos CSV com colunas: Data, Hora, Ativo, Direção (Compra/Venda), Preço Entrada, Preço Saída, Resultado, Volume (opcional). Máximo 10MB por arquivo.'
+          question: language === 'en' ? 'What file format can I use?' : 'Que formato de arquivo posso usar?',
+          answer: language === 'en' ? 'We accept CSV files with columns: Date, Time, Asset, Direction (Buy/Sell), Entry Price, Exit Price, Result, Volume (optional). Maximum 10MB per file.' : 'Aceitamos arquivos CSV com colunas: Data, Hora, Ativo, Direção (Compra/Venda), Preço Entrada, Preço Saída, Resultado, Volume (opcional). Máximo 10MB por arquivo.'
         },
         {
-          question: 'Quanto tempo demora a análise?',
-          answer: 'Análise simples: 10-30 segundos. Análise completa com IA: 1-3 minutos. Análises mais complexas (>1000 trades) podem levar até 5 minutos.'
+          question: language === 'en' ? 'How long does the analysis take?' : 'Quanto tempo demora a análise?',
+          answer: language === 'en' ? 'Simple analysis: 10-30 seconds. Complete analysis with AI: 1-3 minutes. More complex analyses (>1000 trades) can take up to 5 minutes.' : 'Análise simples: 10-30 segundos. Análise completa com IA: 1-3 minutos. Análises mais complexas (>1000 trades) podem levar até 5 minutos.'
         },
         {
-          question: 'Posso analisar múltiplas estratégias?',
-          answer: 'Sim! Você pode fazer upload de múltiplos CSVs e comparar estratégias lado a lado. A IA pode sugerir combinações ótimas para diversificação de portfólio.'
+          question: language === 'en' ? 'Can I analyze multiple strategies?' : 'Posso analisar múltiplas estratégias?',
+          answer: language === 'en' ? 'Yes! You can upload multiple CSVs and compare strategies side by side. AI can suggest optimal combinations for portfolio diversification.' : 'Sim! Você pode fazer upload de múltiplos CSVs e comparar estratégias lado a lado. A IA pode sugerir combinações ótimas para diversificação de portfólio.'
         }
       ]
     },
@@ -313,32 +313,32 @@ export function FAQPage() {
 
           {/* Contact Section */}
           <div className="mt-16 bg-gradient-to-r from-blue-900 to-indigo-900 rounded-lg p-8 text-center">
-            <h2 className="text-2xl font-bold mb-4">Não encontrou sua resposta?</h2>
+            <h2 className="text-3xl font-bold mb-4">{language === 'en' ? 'Didn\'t find your answer?' : 'Não encontrou sua resposta?'}</h2>
             <p className="text-blue-100 mb-6">
-              Nossa equipe está pronta para ajudar você com qualquer dúvida
+              {language === 'en' ? 'Our team is ready to help you with any questions' : 'Nossa equipe está pronta para ajudar você com qualquer dúvida'}
             </p>
             <div className="flex flex-wrap justify-center gap-4">
               <button
                 onClick={() => {
-                  const message = "Olá! Tenho uma dúvida sobre a plataforma DevHub Trader que não encontrei no FAQ.";
+                  const message = language === 'en' ? "Hello! I have a question about the DevHub Trader platform that I didn't find in the FAQ." : "Olá! Tenho uma dúvida sobre a plataforma DevHub Trader que não encontrei no FAQ.";
                   const encodedMessage = encodeURIComponent(message);
                   window.open(`https://wa.me/5511975333355?text=${encodedMessage}`, '_blank');
                 }}
                 className="px-6 py-3 bg-green-600 hover:bg-green-700 text-white rounded-md font-medium"
               >
-                Falar no WhatsApp
+                {language === 'en' ? 'Chat on WhatsApp' : 'Falar no WhatsApp'}
               </button>
               <button
                 onClick={() => window.open('mailto:suporte@devhubtrader.com.br', '_blank')}
                 className="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-md font-medium"
               >
-                Enviar Email
+                {language === 'en' ? 'Send Email' : 'Enviar Email'}
               </button>
               <button
                 onClick={() => navigate('/')}
                 className="px-6 py-3 bg-gray-700 hover:bg-gray-600 text-white rounded-md font-medium"
               >
-                Voltar ao Início
+                {language === 'en' ? 'Back to Home' : 'Voltar ao Início'}
               </button>
             </div>
           </div>
