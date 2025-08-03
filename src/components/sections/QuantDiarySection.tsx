@@ -227,26 +227,25 @@ export function QuantDiarySection() {
   const getWeekDays = () => {
     const days = [];
     
-    // Obter o mês e ano da semana atual
-    const currentMonth = currentWeekStart.getMonth();
-    const currentYear = currentWeekStart.getFullYear();
+    // Calcular quantos dias mostrar
+    const maxDaysToShow = showWeekends ? 7 : 5;
     
-    const daysToShow = showWeekends ? 7 : 5;
-    
-    // Começar a partir do currentWeekStart e adicionar dias sequenciais
-    for (let i = 0; i < daysToShow; i++) {
+    // Começar a partir do currentWeekStart
+    for (let i = 0; i < maxDaysToShow; i++) {
       const day = new Date(currentWeekStart);
       day.setDate(currentWeekStart.getDate() + i);
       
-      // Verificar se ainda está no mesmo mês
-      if (day.getMonth() !== currentMonth || day.getFullYear() !== currentYear) {
-        break; // Parar se mudou de mês
+      // Verificar se ainda está em 2025
+      if (day.getFullYear() !== 2025) {
+        break; // Parar se mudou de ano
       }
       
-      // Verificar se é fim de semana e se deve mostrar
-      const dayOfWeek = day.getDay();
-      if (!showWeekends && (dayOfWeek === 0 || dayOfWeek === 6)) {
-        continue; // Pular fins de semana se não deve mostrar
+      // Se não mostrar fins de semana, pular sábado (6) e domingo (0)
+      if (!showWeekends) {
+        const dayOfWeek = day.getDay();
+        if (dayOfWeek === 0 || dayOfWeek === 6) {
+          continue; // Pular fins de semana
+        }
       }
       
       days.push(day);
