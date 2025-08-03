@@ -1315,5 +1315,6 @@ ${entry.predefinedComments.length > 0
         </div>
       )}
     </div>
+    </div>
   );
 }
