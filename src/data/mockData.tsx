@@ -99,7 +99,6 @@ export const mockMarketplace = [
     description: 'Robôs personalizados e estratégias sob medida para seu perfil de trading',
     rating: 4.8,
     strategies: 25,
-    price: 'R$ 299',
     logo: '',
     website: 'https://estrategistasolutions.com.br'
   },
@@ -109,7 +108,6 @@ export const mockMarketplace = [
     description: 'Contabilidade especializada para traders e gestão fiscal completa',
     rating: 4.6,
     strategies: 12,
-    price: 'R$ 199',
     logo: '',
     website: 'https://notabroker.com.br'
   },
@@ -119,7 +117,6 @@ export const mockMarketplace = [
     description: 'Portfólios de IA automáticos e estratégias quantitativas avançadas',
     rating: 4.9,
     strategies: 35,
-    price: 'R$ 499',
     logo: '',
     website: 'https://quantbroker.com.br'
   }
