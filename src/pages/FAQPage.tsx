@@ -267,16 +267,18 @@ export function FAQPage() {
             <button
               onClick={() => navigate('/plans')}
               className="mr-4 p-2 hover:bg-blue-800 rounded-full transition-colors"
-              title="Voltar para planos"
+              title={language === 'en' ? 'Back to plans' : 'Voltar para planos'}
             >
               <ArrowLeft className="w-6 h-6" />
             </button>
             <div>
               <h1 className="text-4xl font-bold mb-4">
-                Perguntas Frequentes
+                {language === 'en' ? 'Frequently Asked Questions' : 'Perguntas Frequentes'}
               </h1>
               <p className="text-xl text-blue-100 max-w-3xl">
-                Encontre respostas para as dúvidas mais comuns sobre a plataforma DevHub Trader
+                {language === 'en' 
+                  ? 'Find answers to common questions about the DevHub Trader platform'
+                  : 'Encontre respostas para as dúvidas mais comuns sobre a plataforma DevHub Trader'}
               </p>
             </div>
           </div>
