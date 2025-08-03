@@ -1,5 +1,5 @@
 import React from 'react';
-import { BarChart2, Calendar, TrendingUp, FileText } from 'lucide-react';
+import { BarChart2, Calendar, TrendingUp, FileText, Trophy } from 'lucide-react';
 
 interface Analysis {
   id: string;
@@ -64,12 +64,26 @@ export function AnalysesSection({ analyses, onNavigate }: AnalysesSectionProps) 
               </div>
             </div>
             
-            <button
-              onClick={() => onNavigate('/backtest-analysis')}
-              className="w-full py-2 bg-gray-700 hover:bg-gray-600 rounded-lg text-white transition-colors"
-            >
-              Ver Detalhes
-            </button>
+            <div className="space-y-2">
+              <button
+                onClick={() => onNavigate('/backtest-analysis')}
+                className="w-full py-2 bg-gray-700 hover:bg-gray-600 rounded-lg text-white transition-colors"
+              >
+                Ver Análise
+              </button>
+              
+              <button
+                onClick={() => {
+                  // Add to ranking functionality
+                  console.log('Adding to ranking:', analysis.name);
+                  // You can implement the actual ranking logic here
+                }}
+                className="w-full py-2 bg-blue-600 hover:bg-blue-700 rounded-lg text-white transition-colors flex items-center justify-center"
+              >
+                <Trophy className="w-4 h-4 mr-2" />
+                Adicionar ao Ranking
+              </button>
+            </div>
           </div>
         ))}
       </div>
