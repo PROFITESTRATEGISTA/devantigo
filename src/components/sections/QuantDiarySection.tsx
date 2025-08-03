@@ -20,21 +20,18 @@ export function QuantDiarySection() {
   const { profile } = useAuthStore();
   const [currentDate, setCurrentDate] = useState(new Date());
   const [currentWeekStart, setCurrentWeekStart] = useState(() => {
-    // Garantir que sempre comece em 2025
-    const today = new Date();
-    if (today.getFullYear() < 2025) {
-      today.setFullYear(2025, 0, 1); // 1º de janeiro de 2025
-    }
+    // Encontrar a segunda-feira da semana atual
+    const today = new Date(2025, 0, 8); // 8 de janeiro de 2025 (uma quarta-feira)
+    const dayOfWeek = today.getDay(); // 0 = domingo, 1 = segunda, ..., 6 = sábado
     
-    // Calcular a semana baseada no dia do ano
-    const startOfYear = new Date(2025, 0, 1); // 1º de janeiro de 2025
-    const dayOfYear = Math.floor((today.getTime() - startOfYear.getTime()) / (24 * 60 * 60 * 1000)) + 1;
-    const weekOfYear = Math.ceil(dayOfYear / 7);
+    // Calcular quantos dias voltar para chegar na segunda-feira
+    const daysToMonday = dayOfWeek === 0 ? 6 : dayOfWeek - 1; // Se domingo, volta 6 dias
     
-    // Calcular o primeiro dia da semana atual
-    const firstDayOfWeek = new Date(2025, 0, ((weekOfYear - 1) * 7) + 1);
-    firstDayOfWeek.setHours(0, 0, 0, 0);
-    return firstDayOfWeek;
+    const monday = new Date(today);
+    monday.setDate(today.getDate() - daysToMonday);
+    monday.setHours(0, 0, 0, 0);
+    
+    return monday;
   });
   const [viewType, setViewType] = useState<'calendar' | 'weekly'>('weekly');
   const [showWeekends, setShowWeekends] = useState(false);
@@ -136,41 +133,25 @@ export function QuantDiarySection() {
   }, []);
 
   const navigateWeek = (direction: 'prev' | 'next') => {
-    // Calcular semana atual do ano
-    const startOfYear = new Date(2025, 0, 1);
-    const dayOfYear = Math.floor((currentWeekStart.getTime() - startOfYear.getTime()) / (24 * 60 * 60 * 1000)) + 1;
-    const currentWeekOfYear = Math.ceil(dayOfYear / 7);
-    
     if (direction === 'next') {
-      const nextWeekOfYear = currentWeekOfYear + 1;
-      
-      // Verificar se não ultrapassa o ano de 2025
-      if (nextWeekOfYear > 52) {
-        return; // Não permitir ir além da semana 52 de 2025
-      }
-      
-      // Calcular o primeiro dia da próxima semana
-      const nextWeekStart = new Date(2025, 0, ((nextWeekOfYear - 1) * 7) + 1);
+      const nextWeekStart = new Date(currentWeekStart);
+      nextWeekStart.setDate(currentWeekStart.getDate() + 7);
       
       // Verificar se ainda está em 2025
       if (nextWeekStart.getFullYear() <= 2025) {
         setCurrentWeekStart(nextWeekStart);
-        setCurrentDate(new Date(nextWeekStart.getFullYear(), nextWeekStart.getMonth(), 15));
+        setCurrentDate(new Date(nextWeekStart));
       }
       
     } else {
-      const prevWeekOfYear = currentWeekOfYear - 1;
+      const prevWeekStart = new Date(currentWeekStart);
+      prevWeekStart.setDate(currentWeekStart.getDate() - 7);
       
-      // Não permitir voltar antes da semana 1
-      if (prevWeekOfYear < 1) {
-        return; // Não permitir ir antes da semana 1 de 2025
+      // Verificar se ainda está em 2025
+      if (prevWeekStart.getFullYear() >= 2025) {
+        setCurrentWeekStart(prevWeekStart);
+        setCurrentDate(new Date(prevWeekStart));
       }
-      
-      // Calcular o primeiro dia da semana anterior
-      const prevWeekStart = new Date(2025, 0, ((prevWeekOfYear - 1) * 7) + 1);
-      
-      setCurrentWeekStart(prevWeekStart);
-      setCurrentDate(new Date(prevWeekStart.getFullYear(), prevWeekStart.getMonth(), 15));
     }
   };
 
@@ -209,67 +190,61 @@ export function QuantDiarySection() {
   const getWeekOfYear = (date: Date) => {
     if (date.getFullYear() !== 2025) return 1;
     
-    const firstDayOfYear = new Date(2025, 0, 1); // 1º de janeiro de 2025
-    const dayOfYear = Math.floor((date.getTime() - firstDayOfYear.getTime()) / (24 * 60 * 60 * 1000)) + 1;
+    // Encontrar a primeira segunda-feira de 2025
+    const jan1 = new Date(2025, 0, 1); // 1º de janeiro de 2025 (quarta-feira)
+    const jan1DayOfWeek = jan1.getDay(); // 3 (quarta-feira)
+    const daysToFirstMonday = jan1DayOfWeek === 0 ? 1 : 8 - jan1DayOfWeek; // Se domingo, próxima segunda é +1, senão 8-dayOfWeek
     
-    // Matemática simples: cada 7 dias = 1 semana
-    // Semana 1 = dias 1-7, Semana 2 = dias 8-14, etc.
-    return Math.ceil(dayOfYear / 7);
+    const firstMonday = new Date(2025, 0, 1 + daysToFirstMonday); // 6 de janeiro de 2025 (primeira segunda)
+    
+    // Se a data é antes da primeira segunda-feira, é semana 1 (parcial)
+    if (date < firstMonday) {
+      return 1;
+    }
+    
+    // Calcular quantas semanas completas se passaram desde a primeira segunda
+    const daysDiff = Math.floor((date.getTime() - firstMonday.getTime()) / (24 * 60 * 60 * 1000));
+    return Math.floor(daysDiff / 7) + 2; // +2 porque começamos na semana 2 (semana 1 é parcial)
   };
   
   // Função para calcular o número da semana no mês (baseado no CSV)
   const getWeekOfMonth = (date: Date) => {
-    const dayOfMonth = date.getDate();
-    // Semana 1 = dias 1-7, Semana 2 = dias 8-14, etc.
-    return Math.ceil(dayOfMonth / 7);
+    // Encontrar a primeira segunda-feira do mês
+    const firstDayOfMonth = new Date(date.getFullYear(), date.getMonth(), 1);
+    const firstDayOfWeek = firstDayOfMonth.getDay(); // 0 = domingo, 1 = segunda, etc.
+    
+    // Calcular quantos dias até a primeira segunda-feira
+    const daysToFirstMonday = firstDayOfWeek === 0 ? 1 : firstDayOfWeek === 1 ? 0 : 8 - firstDayOfWeek;
+    const firstMonday = new Date(date.getFullYear(), date.getMonth(), 1 + daysToFirstMonday);
+    
+    // Se a data é antes da primeira segunda-feira, é semana 1 (parcial)
+    if (date < firstMonday) {
+      return 1;
+    }
+    
+    // Calcular quantas semanas completas se passaram desde a primeira segunda
+    const daysDiff = Math.floor((date.getTime() - firstMonday.getTime()) / (24 * 60 * 60 * 1000));
+    return Math.floor(daysDiff / 7) + 2; // +2 porque começamos na semana 2
   };
 
   const getWeekDays = () => {
     const days = [];
     
-    // Calcular semana baseada no currentWeekStart
-    const startOfYear = new Date(2025, 0, 1); // 1º de janeiro de 2025
-    const dayOfYear = Math.floor((currentWeekStart.getTime() - startOfYear.getTime()) / (24 * 60 * 60 * 1000)) + 1;
-    const weekOfYear = Math.ceil(dayOfYear / 7);
-    
-    // Calcular o primeiro dia desta semana do ano
-    const firstDayOfWeek = new Date(2025, 0, ((weekOfYear - 1) * 7) + 1);
-    
-    // Se é semana 5 ou mais, verificar se deve incluir dia 1 do próximo mês
-    const weekOfMonth = getWeekOfMonth(firstDayOfWeek);
-    const isWeek5OrMore = weekOfMonth >= 5;
-    
-    // Adicionar dias da semana
+    // Semana SEMPRE começa na segunda-feira
+    // currentWeekStart já é uma segunda-feira
     for (let i = 0; i < 7; i++) {
-      const date = new Date(firstDayOfWeek);
-      date.setDate(firstDayOfWeek.getDate() + i);
+      const date = new Date(currentWeekStart);
+      date.setDate(currentWeekStart.getDate() + i);
       
-      // Parar se mudou de ano
+      // Parar se mudou de ano (não permitir ir além de 2025)
       if (date.getFullYear() !== 2025) {
         break;
-      }
-      
-      // Para semana 5+: incluir até dia 1 do próximo mês (marca d'água)
-      if (isWeek5OrMore) {
-        const currentMonth = firstDayOfWeek.getMonth();
-        const dateMonth = date.getMonth();
-        
-        // Se mudou de mês, só incluir se for dia 1 (marca d'água)
-        if (dateMonth !== currentMonth && date.getDate() !== 1) {
-          break;
-        }
-      } else {
-        // Para outras semanas: não misturar meses
-        const currentMonth = firstDayOfWeek.getMonth();
-        if (date.getMonth() !== currentMonth) {
-          break;
-        }
       }
       
       // Filtrar fins de semana se necessário
       if (!showWeekends) {
         const dayOfWeek = date.getDay();
-        if (dayOfWeek === 0 || dayOfWeek === 6) {
+        if (dayOfWeek === 0 || dayOfWeek === 6) { // 0 = domingo, 6 = sábado
           continue;
         }
       }
