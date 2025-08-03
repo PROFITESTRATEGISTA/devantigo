@@ -31,12 +31,7 @@ export function TutorialsSection({ tutorials }: TutorialsSectionProps) {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <h2 className="text-2xl font-bold text-white">Tutoriais e Guias</h2>
-        <button className="px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-md text-white">
-          Ver Todos
-        </button>
-      </div>
+      <h2 className="text-2xl font-bold text-white">Tutoriais e Guias</h2>
       
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {tutorials.map((tutorial) => (
