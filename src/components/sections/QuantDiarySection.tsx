@@ -962,3 +962,6 @@ export function QuantDiarySection() {
     </div>
   );
 }
+
+
+export { QuantDiarySection }
