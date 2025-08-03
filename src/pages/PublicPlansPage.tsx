@@ -1,8 +1,9 @@
 import React from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { 
   Crown, Zap, Check, ArrowRight, Shield, Users, 
-  Code2, BarChart2, Sparkles, MessageSquare
+  Code2, BarChart2, Sparkles, MessageSquare, Star, Building
 } from 'lucide-react';
 
 export function PublicPlansPage() {
