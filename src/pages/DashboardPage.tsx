@@ -90,7 +90,7 @@ export const DashboardPage = () => {
       case 'users':
         return <UsersSection users={mockUsers} />;
       case 'quant-diary':
-        return <QuantDiarySection />;
+        return <QuantDiarySection onNavigate={handleNavigate} />;
       default:
         return (
           <AnalysesSection 

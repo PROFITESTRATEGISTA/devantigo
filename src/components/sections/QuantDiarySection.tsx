@@ -2,7 +2,11 @@ import React from 'react';
 import { Calendar, TrendingUp, BarChart2, ArrowRight, DollarSign, Hash, Percent, Clock } from 'lucide-react';
 import { useLanguageStore } from '../../stores/languageStore';
 
-export function QuantDiarySection() {
+interface QuantDiarySectionProps {
+  onNavigate: (path: string) => void;
+}
+
+export function QuantDiarySection({ onNavigate }: QuantDiarySectionProps) {
   const { language } = useLanguageStore();
 
   // Estatísticas resumidas para o dashboard
@@ -24,7 +28,7 @@ export function QuantDiarySection() {
           {language === 'en' ? 'Quant Diary' : 'Diário Quant'}
         </h2>
         <button
-          onClick={() => window.location.href = '/quant-diary'}
+          onClick={() => onNavigate('/quant-diary')}
           className="px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-md text-white flex items-center"
         >
           {language === 'en' ? 'Open Diary' : 'Abrir Diário'}
@@ -168,7 +172,7 @@ export function QuantDiarySection() {
             : 'Acompanhe sua performance diária, analise padrões e melhore suas estratégias de trading.'}
         </p>
         <button
-          onClick={() => window.location.href = '/quant-diary'}
+          onClick={() => onNavigate('/quant-diary')}
           className="px-6 py-3 bg-white text-blue-900 rounded-md font-medium hover:bg-gray-100 transition-colors"
         >
           {language === 'en' ? 'Open Full Diary' : 'Abrir Diário Completo'}
