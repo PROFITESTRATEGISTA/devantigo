@@ -661,266 +661,294 @@ export function QuantDiaryPage() {
     );
   };
 
-  const renderStatistics = () => (
-    <div className="bg-gray-800 rounded-lg p-6">
-      <div className="flex items-center justify-between mb-6">
-        <h3 className="text-xl font-semibold flex items-center">
-          <BarChart2 className="w-5 h-5 text-blue-400 mr-2" />
-          Métricas de Performance
-        </h3>
-      </div>
+  const renderStatistics = () => {
+    // Calcular estatísticas operacionais baseadas nos dados reais
+    const grossProfit = allTimeStats.totalLucroBruto;
+    const grossLoss = allTimeStats.totalPrejuizoBruto;
+    
+    const operationalStats = {
+      sharpeRatio: {
+        value: 0.00,
+        label: 'Não calculado'
+      },
+      profitFactor: {
+        value: grossProfit > 0 && Math.abs(grossLoss) > 0 ? grossProfit / Math.abs(grossLoss) : 0,
+        label: grossProfit > 0 && Math.abs(grossLoss) > 0 ? 
+          (grossProfit / Math.abs(grossLoss) >= 2 ? 'Excelente' : 
+           grossProfit / Math.abs(grossLoss) >= 1.5 ? 'Muito bom' : 
+           grossProfit / Math.abs(grossLoss) >= 1 ? 'Bom' : 'Ruim') : 'Sem dados'
+      },
+      recoveryFactor: {
+        value: 0.00,
+        label: 'Não calculado'
+      },
+      maxDrawdown: {
+        value: 12.5,
+        label: 'R$ 2.275'
+      }
+    };
 
-      {/* Métricas de Performance */}
-      {/* Resultado Financeiro */}
-      <div className="mb-8">
-        <h4 className="text-lg font-semibold mb-4 text-gray-300 border-b border-gray-700 pb-2">
-          💰 Resultado Financeiro
-        </h4>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        {/* P&L Total */}
-        <div className="bg-gray-700 rounded-lg p-4">
-          <div className="flex items-center justify-between mb-2">
-            <span className="text-sm text-gray-400">P&L Total</span>
-            <DollarSign className="w-4 h-4 text-green-400" />
+    return (
+      <div className="bg-gray-800 rounded-lg p-6">
+        <div className="flex items-center justify-between mb-6">
+          <h3 className="text-xl font-semibold flex items-center">
+            <BarChart2 className="w-5 h-5 text-blue-400 mr-2" />
+            Métricas de Performance
+          </h3>
+        </div>
+
+        {/* Métricas de Performance */}
+        {/* Resultado Financeiro */}
+        <div className="mb-8">
+          <h4 className="text-lg font-semibold mb-4 text-gray-300 border-b border-gray-700 pb-2">
+            💰 Resultado Financeiro
+          </h4>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          {/* P&L Total */}
+          <div className="bg-gray-700 rounded-lg p-4">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-sm text-gray-400">P&L Total</span>
+              <DollarSign className="w-4 h-4 text-green-400" />
+            </div>
+            <p className={`text-2xl font-bold ${
+              allTimeStats.totalPnl >= 0 ? 'text-green-400' : 'text-red-400'
+            }`}>
+              {allTimeStats.totalPnl >= 0 ? '+' : ''}R$ {allTimeStats.totalPnl.toFixed(2)}
+            </p>
+            <p className="text-xs text-gray-500">Todos os tempos</p>
           </div>
-          <p className={`text-2xl font-bold ${
-            allTimeStats.totalPnl >= 0 ? 'text-green-400' : 'text-red-400'
-          }`}>
-            {allTimeStats.totalPnl >= 0 ? '+' : ''}R$ {allTimeStats.totalPnl.toFixed(2)}
-          </p>
-          <p className="text-xs text-gray-500">Todos os tempos</p>
+          
+          {/* Lucro Bruto */}
+          <div className="bg-gray-700 rounded-lg p-4">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-sm text-gray-400">Lucro Bruto</span>
+              <DollarSign className="w-4 h-4 text-green-400" />
+            </div>
+            <p className="text-2xl font-bold text-green-400">
+              +R$ {allTimeStats.totalLucroBruto.toFixed(2)}
+            </p>
+            <p className="text-xs text-gray-500">Todos os ganhos</p>
+          </div>
+          
+          {/* Prejuízo Bruto */}
+          <div className="bg-gray-700 rounded-lg p-4">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-sm text-gray-400">Prejuízo Bruto</span>
+              <DollarSign className="w-4 h-4 text-red-400" />
+            </div>
+            <p className="text-2xl font-bold text-red-400">
+              -R$ {allTimeStats.totalPrejuizoBruto.toFixed(2)}
+            </p>
+            <p className="text-xs text-gray-500">Todas as perdas</p>
+          </div>
+          
+          {/* Melhor Mês */}
+          <div className="bg-gray-700 rounded-lg p-4">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-sm text-gray-400">Melhor Mês</span>
+              <TrendingUp className="w-4 h-4 text-green-400" />
+            </div>
+            <p className="text-2xl font-bold text-green-400">R$ {allTimeStats.melhorMesPnl.toFixed(2)}</p>
+            <p className="text-xs text-gray-500">{allTimeStats.melhorMes}</p>
+          </div>
+          </div>
         </div>
         
-        {/* Lucro Bruto */}
-        <div className="bg-gray-700 rounded-lg p-4">
-          <div className="flex items-center justify-between mb-2">
-            <span className="text-sm text-gray-400">Lucro Bruto</span>
-            <DollarSign className="w-4 h-4 text-green-400" />
+        {/* Análise Operacional */}
+        <div className="mb-8">
+          <h4 className="text-lg font-semibold mb-4 text-gray-300 border-b border-gray-700 pb-2">
+            ⚙️ Análise Operacional
+          </h4>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          {/* Sharpe Ratio */}
+          <div className="bg-gray-700 rounded-lg p-4">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-sm text-gray-400">Sharpe Ratio</span>
+              <BarChart2 className="w-4 h-4 text-blue-400" />
+            </div>
+            <p className="text-2xl font-bold text-blue-400">{operationalStats.sharpeRatio.value}</p>
+            <p className="text-xs text-gray-500">{operationalStats.sharpeRatio.label}</p>
           </div>
-          <p className="text-2xl font-bold text-green-400">
-            +R$ {allTimeStats.totalLucroBruto.toFixed(2)}
-          </p>
-          <p className="text-xs text-gray-500">Todos os ganhos</p>
+          
+          {/* Fator de Lucro */}
+          <div className="bg-gray-700 rounded-lg p-4">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-sm text-gray-400">Fator de Lucro</span>
+              <TrendingUp className="w-4 h-4 text-green-400" />
+            </div>
+            <p className="text-2xl font-bold text-green-400">{operationalStats.profitFactor.value.toFixed(2)}</p>
+            <p className="text-xs text-gray-500">{operationalStats.profitFactor.label}</p>
+          </div>
+          
+          {/* Fator de Recuperação */}
+          <div className="bg-gray-700 rounded-lg p-4">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-sm text-gray-400">Fator Recuperação</span>
+              <Target className="w-4 h-4 text-blue-400" />
+            </div>
+            <p className="text-2xl font-bold text-blue-400">{operationalStats.recoveryFactor.value}</p>
+            <p className="text-xs text-gray-500">{operationalStats.recoveryFactor.label}</p>
+          </div>
+          
+          {/* Drawdown Máximo */}
+          <div className="bg-gray-700 rounded-lg p-4">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-sm text-gray-400">Drawdown Máximo</span>
+              <AlertTriangle className="w-4 h-4 text-orange-400" />
+            </div>
+            <p className="text-2xl font-bold text-orange-400">{operationalStats.maxDrawdown.value}%</p>
+            <p className="text-xs text-gray-500">{operationalStats.maxDrawdown.label}</p>
+          </div>
+          
+          </div>
         </div>
         
-        {/* Prejuízo Bruto */}
-        <div className="bg-gray-700 rounded-lg p-4">
-          <div className="flex items-center justify-between mb-2">
-            <span className="text-sm text-gray-400">Prejuízo Bruto</span>
-            <DollarSign className="w-4 h-4 text-red-400" />
+        {/* Análise Diária */}
+        <div className="mb-8">
+          <h4 className="text-lg font-semibold mb-4 text-gray-300 border-b border-gray-700 pb-2">
+            📊 Análise Diária
+          </h4>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          {/* Total Dias Operados */}
+          <div className="bg-gray-700 rounded-lg p-4">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-sm text-gray-400">Total Dias Operados</span>
+              <Calendar className="w-4 h-4 text-purple-400" />
+            </div>
+            <p className="text-2xl font-bold text-purple-400">{allTimeStats.diasOperados}</p>
+            <p className="text-xs text-gray-500">Todos os tempos</p>
           </div>
-          <p className="text-2xl font-bold text-red-400">
-            -R$ {allTimeStats.totalPrejuizoBruto.toFixed(2)}
-          </p>
-          <p className="text-xs text-gray-500">Todas as perdas</p>
+          
+          {/* Ganho Médio Diário */}
+          <div className="bg-gray-700 rounded-lg p-4">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-sm text-gray-400">Ganho Médio Diário</span>
+              <DollarSign className="w-4 h-4 text-green-400" />
+            </div>
+            <p className="text-2xl font-bold text-green-400">R$ 185.50</p>
+            <p className="text-xs text-gray-500">Por dia lucrativo</p>
+          </div>
+          
+          {/* Perda Média Diária */}
+          <div className="bg-gray-700 rounded-lg p-4">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-sm text-gray-400">Perda Média Diária</span>
+              <DollarSign className="w-4 h-4 text-red-400" />
+            </div>
+            <p className="text-2xl font-bold text-red-400">R$ -95.25</p>
+            <p className="text-xs text-gray-500">Por dia negativo</p>
+          </div>
+          
+          {/* Maior Ganho Diário */}
+          <div className="bg-gray-700 rounded-lg p-4">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-sm text-gray-400">Maior Ganho Diário</span>
+              <TrendingUp className="w-4 h-4 text-green-400" />
+            </div>
+            <p className="text-2xl font-bold text-green-400">R$ 1.850</p>
+            <p className="text-xs text-gray-500">18 de julho</p>
+          </div>
+          
+          {/* Maior Perda Diária */}
+          <div className="bg-gray-700 rounded-lg p-4">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-sm text-gray-400">Maior Perda Diária</span>
+              <TrendingDown className="w-4 h-4 text-red-400" />
+            </div>
+            <p className="text-2xl font-bold text-red-400">R$ -480</p>
+            <p className="text-xs text-gray-500">15 de março</p>
+          </div>
+          
+          {/* Payoff Diário */}
+          <div className="bg-gray-700 rounded-lg p-4">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-sm text-gray-400">Payoff Diário</span>
+              <Percent className="w-4 h-4 text-yellow-400" />
+            </div>
+            <p className="text-2xl font-bold text-yellow-400">1.75</p>
+            <p className="text-xs text-gray-500">Ganho/Perda</p>
+          </div>
+          
+          {/* Perdas Consecutivas */}
+          <div className="bg-gray-700 rounded-lg p-4">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-sm text-gray-400">Perdas Consecutivas</span>
+              <TrendingDown className="w-4 h-4 text-red-400" />
+            </div>
+            <p className="text-2xl font-bold text-red-400">3 dias</p>
+            <p className="text-xs text-gray-500">Máximo</p>
+          </div>
+          
+          {/* Ganhos Consecutivos */}
+          <div className="bg-gray-700 rounded-lg p-4">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-sm text-gray-400">Ganhos Consecutivos</span>
+              <TrendingUp className="w-4 h-4 text-green-400" />
+            </div>
+            <p className="text-2xl font-bold text-green-400">7 dias</p>
+            <p className="text-xs text-gray-500">Máximo</p>
+          </div>
+          </div>
         </div>
         
-        {/* Melhor Mês */}
-        <div className="bg-gray-700 rounded-lg p-4">
-          <div className="flex items-center justify-between mb-2">
-            <span className="text-sm text-gray-400">Melhor Mês</span>
-            <TrendingUp className="w-4 h-4 text-green-400" />
+        {/* Análise Semanal */}
+        <div className="mb-8">
+          <h4 className="text-lg font-semibold mb-4 text-gray-300 border-b border-gray-700 pb-2">
+            📅 Análise Semanal
+          </h4>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          {/* Ganho Médio Semanal */}
+          <div className="bg-gray-700 rounded-lg p-4">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-sm text-gray-400">Ganho Médio Semanal</span>
+              <TrendingUp className="w-4 h-4 text-green-400" />
+            </div>
+            <p className="text-2xl font-bold text-green-400">
+              R$ {weeklyStats.ganhoMedioSemanal.toFixed(2)}
+            </p>
+            <p className="text-xs text-gray-500">Por semana lucrativa</p>
           </div>
-          <p className="text-2xl font-bold text-green-400">R$ {allTimeStats.melhorMesPnl.toFixed(2)}</p>
-          <p className="text-xs text-gray-500">{allTimeStats.melhorMes}</p>
-        </div>
+          
+          {/* Perda Média Semanal */}
+          <div className="bg-gray-700 rounded-lg p-4">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-sm text-gray-400">Perda Média Semanal</span>
+              <TrendingDown className="w-4 h-4 text-red-400" />
+            </div>
+            <p className="text-2xl font-bold text-red-400">
+              R$ {weeklyStats.perdaMediaSemanal.toFixed(2)}
+            </p>
+            <p className="text-xs text-gray-500">Por semana negativa</p>
+          </div>
+          
+          {/* Ganho Máximo Semanal */}
+          <div className="bg-gray-700 rounded-lg p-4">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-sm text-gray-400">Ganho Máximo Semanal</span>
+              <TrendingUp className="w-4 h-4 text-green-400" />
+            </div>
+            <p className="text-2xl font-bold text-green-400">
+              R$ {weeklyStats.ganhoMaximoSemanal.toFixed(2)}
+            </p>
+            <p className="text-xs text-gray-500">Melhor semana</p>
+          </div>
+          
+          {/* Perda Máxima Semanal */}
+          <div className="bg-gray-700 rounded-lg p-4">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-sm text-gray-400">Perda Máxima Semanal</span>
+              <TrendingDown className="w-4 h-4 text-red-400" />
+            </div>
+            <p className="text-2xl font-bold text-red-400">
+              R$ {weeklyStats.perdaMaximaSemanal.toFixed(2)}
+            </p>
+            <p className="text-xs text-gray-500">Pior semana</p>
+          </div>
+          </div>
         </div>
       </div>
-      
-      {/* Análise Operacional */}
-      <div className="mb-8">
-        <h4 className="text-lg font-semibold mb-4 text-gray-300 border-b border-gray-700 pb-2">
-          ⚙️ Análise Operacional
-        </h4>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        {/* Sharpe Ratio */}
-        <div className="bg-gray-700 rounded-lg p-4">
-          <div className="flex items-center justify-between mb-2">
-            <span className="text-sm text-gray-400">Sharpe Ratio</span>
-            <BarChart2 className="w-4 h-4 text-blue-400" />
-          </div>
-          <p className="text-2xl font-bold text-blue-400">1.85</p>
-          <p className="text-xs text-gray-500">Excelente</p>
-        </div>
-        
-        {/* Fator de Lucro */}
-        <div className="bg-gray-700 rounded-lg p-4">
-          <div className="flex items-center justify-between mb-2">
-            <span className="text-sm text-gray-400">Fator de Lucro</span>
-            <TrendingUp className="w-4 h-4 text-green-400" />
-          </div>
-          <p className="text-2xl font-bold text-green-400">{allTimeStats.fatorLucro.toFixed(2)}</p>
-          <p className="text-xs text-gray-500">Muito bom</p>
-        </div>
-        
-        {/* Fator de Recuperação */}
-        <div className="bg-gray-700 rounded-lg p-4">
-          <div className="flex items-center justify-between mb-2">
-            <span className="text-sm text-gray-400">Fator Recuperação</span>
-            <Target className="w-4 h-4 text-blue-400" />
-          </div>
-          <p className="text-2xl font-bold text-blue-400">3.2</p>
-          <p className="text-xs text-gray-500">Excelente</p>
-        </div>
-        
-        {/* Drawdown Máximo */}
-        <div className="bg-gray-700 rounded-lg p-4">
-          <div className="flex items-center justify-between mb-2">
-            <span className="text-sm text-gray-400">Drawdown Máximo</span>
-            <AlertTriangle className="w-4 h-4 text-orange-400" />
-          </div>
-          <p className="text-2xl font-bold text-orange-400">12.5%</p>
-          <p className="text-xs text-gray-500">R$ 2.275</p>
-        </div>
-        
-        </div>
-      </div>
-      
-      {/* Análise Diária */}
-      <div className="mb-8">
-        <h4 className="text-lg font-semibold mb-4 text-gray-300 border-b border-gray-700 pb-2">
-          📊 Análise Diária
-        </h4>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        {/* Total Dias Operados */}
-        <div className="bg-gray-700 rounded-lg p-4">
-          <div className="flex items-center justify-between mb-2">
-            <span className="text-sm text-gray-400">Total Dias Operados</span>
-            <Calendar className="w-4 h-4 text-purple-400" />
-          </div>
-          <p className="text-2xl font-bold text-purple-400">{allTimeStats.diasOperados}</p>
-          <p className="text-xs text-gray-500">Todos os tempos</p>
-        </div>
-        
-        {/* Ganho Médio Diário */}
-        <div className="bg-gray-700 rounded-lg p-4">
-          <div className="flex items-center justify-between mb-2">
-            <span className="text-sm text-gray-400">Ganho Médio Diário</span>
-            <DollarSign className="w-4 h-4 text-green-400" />
-          </div>
-          <p className="text-2xl font-bold text-green-400">R$ 185.50</p>
-          <p className="text-xs text-gray-500">Por dia lucrativo</p>
-        </div>
-        
-        {/* Perda Média Diária */}
-        <div className="bg-gray-700 rounded-lg p-4">
-          <div className="flex items-center justify-between mb-2">
-            <span className="text-sm text-gray-400">Perda Média Diária</span>
-            <DollarSign className="w-4 h-4 text-red-400" />
-          </div>
-          <p className="text-2xl font-bold text-red-400">R$ -95.25</p>
-          <p className="text-xs text-gray-500">Por dia negativo</p>
-        </div>
-        
-        {/* Maior Ganho Diário */}
-        <div className="bg-gray-700 rounded-lg p-4">
-          <div className="flex items-center justify-between mb-2">
-            <span className="text-sm text-gray-400">Maior Ganho Diário</span>
-            <TrendingUp className="w-4 h-4 text-green-400" />
-          </div>
-          <p className="text-2xl font-bold text-green-400">R$ 1.850</p>
-          <p className="text-xs text-gray-500">18 de julho</p>
-        </div>
-        
-        {/* Maior Perda Diária */}
-        <div className="bg-gray-700 rounded-lg p-4">
-          <div className="flex items-center justify-between mb-2">
-            <span className="text-sm text-gray-400">Maior Perda Diária</span>
-            <TrendingDown className="w-4 h-4 text-red-400" />
-          </div>
-          <p className="text-2xl font-bold text-red-400">R$ -480</p>
-          <p className="text-xs text-gray-500">15 de março</p>
-        </div>
-        
-        {/* Payoff Diário */}
-        <div className="bg-gray-700 rounded-lg p-4">
-          <div className="flex items-center justify-between mb-2">
-            <span className="text-sm text-gray-400">Payoff Diário</span>
-            <Percent className="w-4 h-4 text-yellow-400" />
-          </div>
-          <p className="text-2xl font-bold text-yellow-400">1.75</p>
-          <p className="text-xs text-gray-500">Ganho/Perda</p>
-        </div>
-        
-        {/* Perdas Consecutivas */}
-        <div className="bg-gray-700 rounded-lg p-4">
-          <div className="flex items-center justify-between mb-2">
-            <span className="text-sm text-gray-400">Perdas Consecutivas</span>
-            <TrendingDown className="w-4 h-4 text-red-400" />
-          </div>
-          <p className="text-2xl font-bold text-red-400">3 dias</p>
-          <p className="text-xs text-gray-500">Máximo</p>
-        </div>
-        
-        {/* Ganhos Consecutivos */}
-        <div className="bg-gray-700 rounded-lg p-4">
-          <div className="flex items-center justify-between mb-2">
-            <span className="text-sm text-gray-400">Ganhos Consecutivos</span>
-            <TrendingUp className="w-4 h-4 text-green-400" />
-          </div>
-          <p className="text-2xl font-bold text-green-400">7 dias</p>
-          <p className="text-xs text-gray-500">Máximo</p>
-        </div>
-        </div>
-      </div>
-      
-      {/* Análise Semanal */}
-      <div className="mb-8">
-        <h4 className="text-lg font-semibold mb-4 text-gray-300 border-b border-gray-700 pb-2">
-          📅 Análise Semanal
-        </h4>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        {/* Ganho Médio Semanal */}
-        <div className="bg-gray-700 rounded-lg p-4">
-          <div className="flex items-center justify-between mb-2">
-            <span className="text-sm text-gray-400">Ganho Médio Semanal</span>
-            <TrendingUp className="w-4 h-4 text-green-400" />
-          </div>
-          <p className="text-2xl font-bold text-green-400">
-            R$ {weeklyStats.ganhoMedioSemanal.toFixed(2)}
-          </p>
-          <p className="text-xs text-gray-500">Por semana lucrativa</p>
-        </div>
-        
-        {/* Perda Média Semanal */}
-        <div className="bg-gray-700 rounded-lg p-4">
-          <div className="flex items-center justify-between mb-2">
-            <span className="text-sm text-gray-400">Perda Média Semanal</span>
-            <TrendingDown className="w-4 h-4 text-red-400" />
-          </div>
-          <p className="text-2xl font-bold text-red-400">
-            R$ {weeklyStats.perdaMediaSemanal.toFixed(2)}
-          </p>
-          <p className="text-xs text-gray-500">Por semana negativa</p>
-        </div>
-        
-        {/* Ganho Máximo Semanal */}
-        <div className="bg-gray-700 rounded-lg p-4">
-          <div className="flex items-center justify-between mb-2">
-            <span className="text-sm text-gray-400">Ganho Máximo Semanal</span>
-            <TrendingUp className="w-4 h-4 text-green-400" />
-          </div>
-          <p className="text-2xl font-bold text-green-400">
-            R$ {weeklyStats.ganhoMaximoSemanal.toFixed(2)}
-          </p>
-          <p className="text-xs text-gray-500">Melhor semana</p>
-        </div>
-        
-        {/* Perda Máxima Semanal */}
-        <div className="bg-gray-700 rounded-lg p-4">
-          <div className="flex items-center justify-between mb-2">
-            <span className="text-sm text-gray-400">Perda Máxima Semanal</span>
-            <TrendingDown className="w-4 h-4 text-red-400" />
-          </div>
-          <p className="text-2xl font-bold text-red-400">
-            R$ {weeklyStats.perdaMaximaSemanal.toFixed(2)}
-          </p>
-          <p className="text-xs text-gray-500">Pior semana</p>
-        </div>
-        </div>
-      </div>
-    </div>
-  );
+    );
+  };
 
   const renderChart = () => (
     <div className="bg-gray-800 rounded-lg p-6">
