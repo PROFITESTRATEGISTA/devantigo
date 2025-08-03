@@ -115,68 +115,68 @@ export function FAQPage() {
       ]
     },
     {
-      title: 'Montagem de Portfólios',
+      title: language === 'en' ? 'Portfolio Assembly' : 'Montagem de Portfólios',
       icon: <Shield className="w-6 h-6 text-purple-500" />,
       questions: [
         {
-          question: 'Como funciona a montagem automática de portfólios?',
-          answer: 'A IA analisa suas estratégias e cria portfólios diversificados baseados em correlação, risco, retorno e drawdown. Sugere alocação de capital e rebalanceamento automático.'
+          question: language === 'en' ? 'How does automatic portfolio assembly work?' : 'Como funciona a montagem automática de portfólios?',
+          answer: language === 'en' ? 'AI analyzes your strategies and creates diversified portfolios based on correlation, risk, return and drawdown. Suggests capital allocation and automatic rebalancing.' : 'A IA analisa suas estratégias e cria portfólios diversificados baseados em correlação, risco, retorno e drawdown. Sugere alocação de capital e rebalanceamento automático.'
         },
         {
-          question: 'Posso personalizar os portfólios sugeridos?',
-          answer: 'Sim! Você pode ajustar pesos, adicionar/remover estratégias, definir limites de risco e configurar regras de rebalanceamento. A IA aprende suas preferências ao longo do tempo.'
+          question: language === 'en' ? 'Can I customize the suggested portfolios?' : 'Posso personalizar os portfólios sugeridos?',
+          answer: language === 'en' ? 'Yes! You can adjust weights, add/remove strategies, define risk limits and configure rebalancing rules. AI learns your preferences over time.' : 'Sim! Você pode ajustar pesos, adicionar/remover estratégias, definir limites de risco e configurar regras de rebalanceamento. A IA aprende suas preferências ao longo do tempo.'
         },
         {
-          question: 'Com quantas estratégias posso montar um portfólio?',
-          answer: 'Recomendamos 3-8 estratégias para diversificação ótima. A IA pode trabalhar com 2-20 estratégias, mas mais de 10 pode gerar complexidade desnecessária.'
+          question: language === 'en' ? 'How many strategies can I use to build a portfolio?' : 'Com quantas estratégias posso montar um portfólio?',
+          answer: language === 'en' ? 'We recommend 3-8 strategies for optimal diversification. AI can work with 2-20 strategies, but more than 10 may generate unnecessary complexity.' : 'Recomendamos 3-8 estratégias para diversificação ótima. A IA pode trabalhar com 2-20 estratégias, mas mais de 10 pode gerar complexidade desnecessária.'
         },
         {
-          question: 'O portfólio é rebalanceado automaticamente?',
-          answer: 'Sim, você pode configurar rebalanceamento automático: diário, semanal, mensal ou baseado em performance. A IA monitora correlações e ajusta alocações conforme necessário.'
+          question: language === 'en' ? 'Is the portfolio rebalanced automatically?' : 'O portfólio é rebalanceado automaticamente?',
+          answer: language === 'en' ? 'Yes, you can configure automatic rebalancing: daily, weekly, monthly or performance-based. AI monitors correlations and adjusts allocations as needed.' : 'Sim, você pode configurar rebalanceamento automático: diário, semanal, mensal ou baseado em performance. A IA monitora correlações e ajusta alocações conforme necessário.'
         }
       ]
     },
     {
-      title: 'Suporte e Comunidade',
+      title: language === 'en' ? 'Support and Community' : 'Suporte e Comunidade',
       icon: <Users className="w-6 h-6 text-blue-500" />,
       questions: [
         {
-          question: 'Como funciona o suporte em cada plano?',
-          answer: 'Free e Pro 1: Suporte via comunidade e grupo WhatsApp. Pro 2 e Pro 3: Suporte dedicado com resposta prioritária. Todos os planos têm acesso ao grupo WhatsApp da comunidade.'
+          question: language === 'en' ? 'How does support work in each plan?' : 'Como funciona o suporte em cada plano?',
+          answer: language === 'en' ? 'Free and Pro 1: Support via community and WhatsApp group. Pro 2 and Pro 3: Dedicated support with priority response. All plans have access to the community WhatsApp group.' : 'Free e Pro 1: Suporte via comunidade e grupo WhatsApp. Pro 2 e Pro 3: Suporte dedicado com resposta prioritária. Todos os planos têm acesso ao grupo WhatsApp da comunidade.'
         },
         {
-          question: 'Posso compartilhar meus robôs?',
-          answer: 'Sim! Você pode compartilhar robôs com outros usuários, definir permissões (visualizar/editar), criar links públicos e participar da comunidade. Compartilhamentos geram tokens extras.'
+          question: language === 'en' ? 'Can I share my robots?' : 'Posso compartilhar meus robôs?',
+          answer: language === 'en' ? 'Yes! You can share robots with other users, set permissions (view/edit), create public links and participate in the community. Sharing generates extra tokens.' : 'Sim! Você pode compartilhar robôs com outros usuários, definir permissões (visualizar/editar), criar links públicos e participar da comunidade. Compartilhamentos geram tokens extras.'
         },
         {
-          question: 'Existe marketplace de estratégias?',
-          answer: 'Sim! Usuários podem vender/comprar estratégias verificadas. Vendedores ganham 70% do valor, plataforma fica com 30%. Todas as estratégias passam por verificação de performance.'
+          question: language === 'en' ? 'Is there a strategy marketplace?' : 'Existe marketplace de estratégias?',
+          answer: language === 'en' ? 'Yes! Users can sell/buy verified strategies. Sellers earn 70% of the value, platform keeps 30%. All strategies undergo performance verification.' : 'Sim! Usuários podem vender/comprar estratégias verificadas. Vendedores ganham 70% do valor, plataforma fica com 30%. Todas as estratégias passam por verificação de performance.'
         },
         {
-          question: 'Como reportar bugs ou sugerir melhorias?',
-          answer: 'Use o sistema de feedback integrado na plataforma, envie email para suporte@devhubtrader.com.br ou reporte via comunidade. Bugs confirmados geram tokens de recompensa.'
+          question: language === 'en' ? 'How to report bugs or suggest improvements?' : 'Como reportar bugs ou sugerir melhorias?',
+          answer: language === 'en' ? 'Use the integrated feedback system in the platform, email support@devhubtrader.com.br or report via community. Confirmed bugs generate reward tokens.' : 'Use o sistema de feedback integrado na plataforma, envie email para suporte@devhubtrader.com.br ou reporte via comunidade. Bugs confirmados geram tokens de recompensa.'
         }
       ]
     },
     {
-      title: 'Segurança e Dados',
+      title: language === 'en' ? 'Security and Data' : 'Segurança e Dados',
       icon: <Shield className="w-6 h-6 text-red-500" />,
       questions: [
         {
-          question: 'Meus dados estão seguros?',
-          answer: 'Sim! Usamos criptografia AES-256, servidores seguros, backup automático e conformidade com LGPD. Seus códigos e estratégias são privados por padrão.'
+          question: language === 'en' ? 'Are my data secure?' : 'Meus dados estão seguros?',
+          answer: language === 'en' ? 'Yes! We use AES-256 encryption, secure servers, automatic backup and GDPR compliance. Your codes and strategies are private by default.' : 'Sim! Usamos criptografia AES-256, servidores seguros, backup automático e conformidade com LGPD. Seus códigos e estratégias são privados por padrão.'
         },
         {
-          question: 'Vocês têm acesso aos meus robôs?',
-          answer: 'Não! Seus robôs são privados por padrão. Só temos acesso se você compartilhar publicamente ou solicitar suporte específico. Nunca compartilhamos dados sem permissão.'
+          question: language === 'en' ? 'Do you have access to my robots?' : 'Vocês têm acesso aos meus robôs?',
+          answer: language === 'en' ? 'No! Your robots are private by default. We only have access if you share publicly or request specific support. We never share data without permission.' : 'Não! Seus robôs são privados por padrão. Só temos acesso se você compartilhar publicamente ou solicitar suporte específico. Nunca compartilhamos dados sem permissão.'
         },
         {
-          question: 'Posso exportar meus dados?',
-          answer: 'Sim! Você pode exportar todos os seus robôs, análises e dados a qualquer momento em formato JSON, CSV ou código fonte. Não há lock-in na plataforma.'
+          question: language === 'en' ? 'Can I export my data?' : 'Posso exportar meus dados?',
+          answer: language === 'en' ? 'Yes! You can export all your robots, analyses and data anytime in JSON, CSV or source code format. No platform lock-in.' : 'Sim! Você pode exportar todos os seus robôs, análises e dados a qualquer momento em formato JSON, CSV ou código fonte. Não há lock-in na plataforma.'
         },
         {
-          question: 'O que acontece se eu cancelar?',
-          answer: 'Seus dados permanecem disponíveis por 90 dias após cancelamento. Você pode exportar tudo neste período. Após 90 dias, dados são removidos permanentemente (conforme LGPD).'
+          question: language === 'en' ? 'What happens if I cancel?' : 'O que acontece se eu cancelar?',
+          answer: language === 'en' ? 'Your data remains available for 90 days after cancellation. You can export everything during this period. After 90 days, data is permanently removed (according to GDPR).' : 'Seus dados permanecem disponíveis por 90 dias após cancelamento. Você pode exportar tudo neste período. Após 90 dias, dados são removidos permanentemente (conforme LGPD).'
         }
       ]
     }
