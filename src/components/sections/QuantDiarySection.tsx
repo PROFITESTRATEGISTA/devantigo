@@ -692,8 +692,8 @@ export function QuantDiarySection() {
           {/* Dias do calendário */}
           {getCalendarLayout().map((day, index) => {
             const entry = day ? getEntryForDate(day) : null;
-            const isCurrentMonth = day.getMonth() === currentDate.getMonth();
-            const isToday = formatDate(day) === formatDate(new Date());
+            const isCurrentMonth = day ? day.getMonth() === currentDate.getMonth() : false;
+            const isToday = day ? formatDate(day) === formatDate(new Date()) : false;
             
             return (
               <div
