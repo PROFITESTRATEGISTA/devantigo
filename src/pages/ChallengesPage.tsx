@@ -59,8 +59,8 @@ export function ChallengesPage() {
       // Standard Achievements
       {
         id: 'achievement-first-robot',
-        title: t('challenges.achievement.firstRobot.title'),
-        description: t('challenges.achievement.firstRobot.description'),
+        title: language === 'en' ? 'First Robot' : 'Primeiro Robô',
+        description: language === 'en' ? 'Create your first trading robot' : 'Crie seu primeiro robô de trading',
         reward: 500,
         type: 'achievement',
         difficulty: 'easy',
@@ -72,8 +72,8 @@ export function ChallengesPage() {
       },
       {
         id: 'achievement-robot-master',
-        title: t('challenges.achievement.robotMaster.title'),
-        description: t('challenges.achievement.robotMaster.description'),
+        title: language === 'en' ? 'Robot Master' : 'Mestre dos Robôs',
+        description: language === 'en' ? 'Create 10 different robots' : 'Crie 10 robôs diferentes',
         reward: 1500,
         type: 'achievement',
         difficulty: 'hard',
@@ -85,8 +85,8 @@ export function ChallengesPage() {
       },
       {
         id: 'achievement-streak-master',
-        title: t('challenges.achievement.streakMaster.title'),
-        description: t('challenges.achievement.streakMaster.description'),
+        title: language === 'en' ? 'Perfect Streak' : 'Sequência Perfeita',
+        description: language === 'en' ? 'Maintain a 30-day login streak' : 'Mantenha uma sequência de 30 dias de login',
         reward: 1000,
         type: 'achievement',
         difficulty: 'medium',
@@ -98,8 +98,8 @@ export function ChallengesPage() {
       },
       {
         id: 'achievement-ai-expert',
-        title: t('challenges.achievement.aiExpert.title'),
-        description: t('challenges.achievement.aiExpert.description'),
+        title: language === 'en' ? 'AI Expert' : 'Especialista em IA',
+        description: language === 'en' ? 'Use AI to create 5 different robots' : 'Use IA para criar 5 robôs diferentes',
         reward: 800,
         type: 'achievement',
         difficulty: 'medium',
@@ -111,8 +111,8 @@ export function ChallengesPage() {
       },
       {
         id: 'achievement-analyst',
-        title: t('challenges.achievement.analyst.title'),
-        description: t('challenges.achievement.analyst.description'),
+        title: language === 'en' ? 'Professional Analyst' : 'Analista Profissional',
+        description: language === 'en' ? 'Complete 20 backtest analyses' : 'Complete 20 análises de backtest',
         reward: 200,
         type: 'achievement',
         difficulty: 'medium',
@@ -125,8 +125,8 @@ export function ChallengesPage() {
       // Monthly Challenges
       {
         id: 'monthly-competition',
-        title: t('challenges.monthly.competition.title'),
-        description: t('challenges.monthly.competition.description'),
+        title: language === 'en' ? 'Performance Competition' : 'Competição de Performance',
+        description: language === 'en' ? 'Participate in the monthly strategy competition' : 'Participe da competição mensal de estratégias',
         reward: 2000,
         type: 'monthly',
         difficulty: 'hard',
@@ -139,8 +139,8 @@ export function ChallengesPage() {
       },
       {
         id: 'monthly-tutorial',
-        title: t('challenges.monthly.tutorial.title'),
-        description: t('challenges.monthly.tutorial.description'),
+        title: language === 'en' ? 'Create Tutorial' : 'Criar Tutorial',
+        description: language === 'en' ? 'Contribute a tutorial to the community' : 'Contribua com um tutorial para a comunidade',
         reward: 1000,
         type: 'monthly',
         difficulty: 'hard',
@@ -153,8 +153,8 @@ export function ChallengesPage() {
       },
       {
         id: 'monthly-portfolio',
-        title: t('challenges.monthly.portfolio.title'),
-        description: t('challenges.monthly.portfolio.description'),
+        title: language === 'en' ? 'Portfolio Master' : 'Mestre do Portfólio',
+        description: language === 'en' ? 'Build 3 diversified portfolios using AI' : 'Monte 3 portfólios diversificados usando IA',
         reward: 1000,
         type: 'monthly',
         difficulty: 'medium',
@@ -344,8 +344,8 @@ export function ChallengesPage() {
         {/* Tabs */}
         <div className="bg-gray-800 rounded-lg p-1 mb-8 flex">
           {[
-            { id: 'achievements', label: 'Conquistas', icon: <Crown className="w-4 h-4" /> },
-            { id: 'monthly', label: 'Mensais', icon: <Trophy className="w-4 h-4" /> }
+            { id: 'achievements', label: language === 'en' ? 'Achievements' : 'Conquistas', icon: <Crown className="w-4 h-4" /> },
+            { id: 'monthly', label: language === 'en' ? 'Monthly' : 'Mensais', icon: <Trophy className="w-4 h-4" /> }
           ].map((tab) => (
             <button
               key={tab.id}
@@ -464,7 +464,7 @@ export function ChallengesPage() {
                       }}
                       className="px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-md font-medium flex items-center"
                     >
-                      {t('challenges.start')}
+                      {language === 'en' ? 'Start' : 'Começar'}
                       <ChevronRight className="w-4 h-4 ml-1" />
                     </button>
                   )}
