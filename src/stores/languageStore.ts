@@ -326,6 +326,17 @@ const translations: Record<Language, Record<string, string>> = {
     'users.noUsers': 'No users found',
     'users.noUsersSearch': 'No users match your search',
     
+    // Additional challenge tips
+    'challenges.tips.title': 'Tips to Earn More Tokens',
+    'challenges.tips.dailyStrategies': 'Daily Strategies',
+    'challenges.tips.dailyLogin': 'Login daily to maintain your streak',
+    'challenges.tips.editRobots': 'Create robots regularly to earn milestones',
+    'challenges.tips.useAI': 'Use AI analysis to optimize performance',
+    'challenges.tips.specialBonuses': 'Special Bonuses',
+    'challenges.tips.streakBonus': '30-day streak: +1000 bonus tokens',
+    'challenges.tips.competitionBonus': 'First place in competition: +5000 tokens',
+    'challenges.tips.shareBonus': 'Share popular strategy: +500 tokens',
+    
     // Misc
     'loading': 'Loading...',
     'error': 'An error occurred',
@@ -587,6 +598,16 @@ const translations: Record<Language, Record<string, string>> = {
     'challenges.noChallenges': 'Nenhum desafio disponível',
     'challenges.newChallengesSoon': 'Novos desafios serão adicionados em breve!',
     'challenges.tips.title': 'Dicas para Ganhar Mais Tokens',
+    'challenges.tips.dailyStrategies': 'Estratégias Diárias',
+    'challenges.tips.dailyLogin': 'Faça login todos os dias para manter sua sequência',
+    'challenges.tips.editRobots': 'Crie robôs regularmente para ganhar marcos',
+    'challenges.tips.useAI': 'Use análises de IA para otimizar performance',
+    'challenges.tips.specialBonuses': 'Bônus Especiais',
+    'challenges.tips.streakBonus': 'Sequência de 30 dias: +1000 tokens bônus',
+    'challenges.tips.competitionBonus': 'Primeiro lugar na competição: +5000 tokens',
+    'challenges.tips.shareBonus': 'Compartilhar estratégia popular: +500 tokens',
+    
+    // Additional challenge tips
     'challenges.tips.dailyStrategies': 'Estratégias Diárias',
     'challenges.tips.dailyLogin': 'Faça login todos os dias para manter sua sequência',
     'challenges.tips.editRobots': 'Crie robôs regularmente para ganhar marcos',
