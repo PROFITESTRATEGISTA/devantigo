@@ -92,7 +92,7 @@ export function RankingSection({ analyses, onNavigate }: RankingSectionProps) {
             onClick={() => onNavigate('/backtest-analysis')}
             className="px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-md text-white"
           >
-            {t('ranking.participate')}
+            {language === 'en' ? 'Join Ranking' : 'Entrar no Ranking'}
           </button>
         </div>
       </div>
