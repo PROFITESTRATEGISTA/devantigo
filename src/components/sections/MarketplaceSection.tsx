@@ -55,6 +55,16 @@ export function MarketplaceSection({ companies }: MarketplaceSectionProps) {
               </div>
             </div>
             
+            <button
+              onClick={() => {
+                if (company.website) {
+                  window.open(company.website, '_blank');
+                }
+              }}
+              className="w-full py-2 bg-blue-600 hover:bg-blue-700 rounded-lg text-white transition-colors"
+            >
+              {company.website ? 'Visitar Site' : 'Ver Estratégias'}
+            </button>
           </div>
         ))}
       </div>
