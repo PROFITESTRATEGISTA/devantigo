@@ -1,6 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, HelpCircle, Zap, Code2, BarChart2, Users, Crown, Shield, Gift } from 'lucide-react';
+import { LanguageSwitcher } from '../components/LanguageSwitcher';
 
 export function FAQPage() {
   const navigate = useNavigate();
