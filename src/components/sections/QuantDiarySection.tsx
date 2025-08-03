@@ -3,7 +3,8 @@ import {
   Calendar, TrendingUp, TrendingDown, Target, BarChart2, 
   Plus, Edit3, Trash2, MessageSquare, Bot, ChevronLeft, 
   ChevronRight, Clock, DollarSign, Activity, Zap, Send,
-  RefreshCw, AlertTriangle, Check, X, FileText, Download
+  RefreshCw, AlertTriangle, Check, X, FileText, Download,
+  Grid, List, Eye, EyeOff, Tag, Hash
 } from 'lucide-react';
 import { useLanguageStore } from '../../stores/languageStore';
 import { useAuthStore } from '../../stores/authStore';
@@ -18,6 +19,7 @@ interface DiaryEntry {
   pnl: number;
   trades: number;
   tags: string[];
+  predefinedComments: string[];
   analysis_data?: any;
   ai_insights?: string;
   created_at: string;
@@ -31,10 +33,33 @@ interface TradeComment {
   created_at: string;
 }
 
+// Comentários predefinidos padrão
+const DEFAULT_PREDEFINED_COMMENTS = [
+  'Entrada atrasada',
+  'Excesso de alavancagem',
+  'Overtrading',
+  'Horário errado',
+  'Stop muito curto',
+  'Stop muito largo',
+  'Saída prematura',
+  'Falta de paciência',
+  'FOMO (Fear of Missing Out)',
+  'Revenge trading',
+  'Não seguiu o plano',
+  'Emoções interferiram',
+  'Análise técnica correta',
+  'Boa gestão de risco',
+  'Disciplina mantida',
+  'Setup perfeito',
+  'Timing excelente',
+  'Lucro preservado'
+];
+
 export function QuantDiarySection() {
   const { language } = useLanguageStore();
   const { profile } = useAuthStore();
   const [selectedDate, setSelectedDate] = useState(new Date());
+  const [currentWeek, setCurrentWeek] = useState(new Date());
   const [currentMonth, setCurrentMonth] = useState(new Date());
   const [diaryEntries, setDiaryEntries] = useState<DiaryEntry[]>([]);
   const [selectedEntry, setSelectedEntry] = useState<DiaryEntry | null>(null);
@@ -47,6 +72,13 @@ export function QuantDiarySection() {
   const [tradeComments, setTradeComments] = useState<TradeComment[]>([]);
   const [newComment, setNewComment] = useState('');
   const [selectedTradeIndex, setSelectedTradeIndex] = useState<number | null>(null);
+  
+  // View controls
+  const [viewMode, setViewMode] = useState<'week' | 'calendar'>('week');
+  const [showWeekends, setShowWeekends] = useState(false);
+  const [predefinedComments, setPredefinedComments] = useState<string[]>(DEFAULT_PREDEFINED_COMMENTS);
+  const [showAddCommentModal, setShowAddCommentModal] = useState(false);
+  const [newPredefinedComment, setNewPredefinedComment] = useState('');
 
   // Form states
   const [formData, setFormData] = useState({
@@ -55,14 +87,72 @@ export function QuantDiarySection() {
     mood: 'neutral' as 'bullish' | 'bearish' | 'neutral',
     pnl: 0,
     trades: 0,
-    tags: [] as string[]
+    tags: [] as string[],
+    predefinedComments: [] as string[]
   });
 
   useEffect(() => {
-    loadDiaryEntries();
-  }, [currentMonth]);
+    if (viewMode === 'week') {
+      loadWeekEntries();
+    } else {
+      loadMonthEntries();
+    }
+  }, [currentWeek, currentMonth, viewMode]);
 
-  const loadDiaryEntries = async () => {
+  const loadWeekEntries = async () => {
+    try {
+      setIsLoadingEntries(true);
+      
+      if (!supabase || typeof supabase.from !== 'function') {
+        console.warn('Supabase not available');
+        return;
+      }
+
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+
+      // Get start and end of current week
+      const startOfWeek = new Date(currentWeek);
+      startOfWeek.setDate(currentWeek.getDate() - currentWeek.getDay());
+      const endOfWeek = new Date(startOfWeek);
+      endOfWeek.setDate(startOfWeek.getDate() + 6);
+
+      const { data, error } = await supabase
+        .from('strategy_analyses')
+        .select('*')
+        .eq('user_id', user.id)
+        .gte('created_at', startOfWeek.toISOString())
+        .lte('created_at', endOfWeek.toISOString())
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+
+      // Transform data to diary entries
+      const entries: DiaryEntry[] = (data || []).map(item => ({
+        id: item.id,
+        date: item.created_at.split('T')[0],
+        title: item.analysis_data?.title || `Sessão ${new Date(item.created_at).toLocaleDateString()}`,
+        content: item.analysis_data?.content || 'Entrada do diário',
+        mood: item.analysis_data?.mood || 'neutral',
+        pnl: item.analysis_data?.pnl || 0,
+        trades: item.analysis_data?.trades || 0,
+        tags: item.analysis_data?.tags || [],
+        predefinedComments: item.analysis_data?.predefinedComments || [],
+        analysis_data: item.analysis_data,
+        ai_insights: item.analysis_data?.ai_insights,
+        created_at: item.created_at,
+        updated_at: item.updated_at || item.created_at
+      }));
+
+      setDiaryEntries(entries);
+    } catch (error) {
+      console.error('Error loading week entries:', error);
+    } finally {
+      setIsLoadingEntries(false);
+    }
+  };
+
+  const loadMonthEntries = async () => {
     try {
       setIsLoadingEntries(true);
       
@@ -98,6 +188,7 @@ export function QuantDiarySection() {
         pnl: item.analysis_data?.pnl || 0,
         trades: item.analysis_data?.trades || 0,
         tags: item.analysis_data?.tags || [],
+        predefinedComments: item.analysis_data?.predefinedComments || [],
         analysis_data: item.analysis_data,
         ai_insights: item.analysis_data?.ai_insights,
         created_at: item.created_at,
@@ -106,7 +197,7 @@ export function QuantDiarySection() {
 
       setDiaryEntries(entries);
     } catch (error) {
-      console.error('Error loading diary entries:', error);
+      console.error('Error loading month entries:', error);
     } finally {
       setIsLoadingEntries(false);
     }
@@ -139,7 +230,12 @@ export function QuantDiarySection() {
 
       setShowNewEntryModal(false);
       resetForm();
-      await loadDiaryEntries();
+      
+      if (viewMode === 'week') {
+        await loadWeekEntries();
+      } else {
+        await loadMonthEntries();
+      }
 
       // Show success message
       const successMessage = document.createElement('div');
@@ -193,6 +289,12 @@ ${entry.mood === 'bullish'
   : 'Dia equilibrado. Boa gestão emocional. Continue mantendo a consistência e disciplina.'
 }
 
+### Comentários Predefinidos Identificados
+${entry.predefinedComments.length > 0 
+  ? entry.predefinedComments.map(comment => `- ${comment}`).join('\n')
+  : '- Nenhum padrão específico identificado'
+}
+
 ### Recomendações
 1. **Gestão de Risco**: ${entry.pnl < 0 ? 'Revise o tamanho das posições para o próximo dia' : 'Mantenha o mesmo tamanho de posição que funcionou hoje'}
 2. **Horários**: Analise em quais horários você teve melhor performance hoje
@@ -235,8 +337,51 @@ ${entry.mood === 'bullish'
       mood: 'neutral',
       pnl: 0,
       trades: 0,
-      tags: []
+      tags: [],
+      predefinedComments: []
     });
+  };
+
+  const addPredefinedComment = () => {
+    if (newPredefinedComment.trim() && !predefinedComments.includes(newPredefinedComment.trim())) {
+      setPredefinedComments([...predefinedComments, newPredefinedComment.trim()]);
+      setNewPredefinedComment('');
+      setShowAddCommentModal(false);
+    }
+  };
+
+  const togglePredefinedComment = (comment: string) => {
+    if (formData.predefinedComments.includes(comment)) {
+      setFormData({
+        ...formData,
+        predefinedComments: formData.predefinedComments.filter(c => c !== comment)
+      });
+    } else {
+      setFormData({
+        ...formData,
+        predefinedComments: [...formData.predefinedComments, comment]
+      });
+    }
+  };
+
+  const getWeekDays = () => {
+    const startOfWeek = new Date(currentWeek);
+    startOfWeek.setDate(currentWeek.getDate() - currentWeek.getDay());
+    
+    const days = [];
+    for (let i = 0; i < 7; i++) {
+      const day = new Date(startOfWeek);
+      day.setDate(startOfWeek.getDate() + i);
+      
+      // Skip weekends if showWeekends is false
+      if (!showWeekends && (day.getDay() === 0 || day.getDay() === 6)) {
+        continue;
+      }
+      
+      days.push(day);
+    }
+    
+    return days;
   };
 
   const getDaysInMonth = (date: Date) => {
@@ -294,6 +439,16 @@ ${entry.mood === 'bullish'
     return date < today;
   };
 
+  const navigateWeek = (direction: 'prev' | 'next') => {
+    const newWeek = new Date(currentWeek);
+    if (direction === 'prev') {
+      newWeek.setDate(newWeek.getDate() - 7);
+    } else {
+      newWeek.setDate(newWeek.getDate() + 7);
+    }
+    setCurrentWeek(newWeek);
+  };
+
   const navigateMonth = (direction: 'prev' | 'next') => {
     const newMonth = new Date(currentMonth);
     if (direction === 'prev') {
@@ -309,6 +464,24 @@ ${entry.mood === 'bullish'
   const winningDays = diaryEntries.filter(entry => entry.pnl > 0).length;
   const winRate = diaryEntries.length > 0 ? (winningDays / diaryEntries.length) * 100 : 0;
 
+  // Get week summary for current week
+  const getWeekSummary = () => {
+    const weekDays = getWeekDays();
+    const weekEntries = diaryEntries.filter(entry => {
+      const entryDate = new Date(entry.date);
+      return weekDays.some(day => day.toDateString() === entryDate.toDateString());
+    });
+    
+    const weekPnL = weekEntries.reduce((sum, entry) => sum + entry.pnl, 0);
+    const weekTrades = weekEntries.reduce((sum, entry) => sum + entry.trades, 0);
+    const weekWinningDays = weekEntries.filter(entry => entry.pnl > 0).length;
+    const weekWinRate = weekEntries.length > 0 ? (weekWinningDays / weekEntries.length) * 100 : 0;
+    
+    return { weekPnL, weekTrades, weekWinRate, weekEntries: weekEntries.length };
+  };
+
+  const weekSummary = getWeekSummary();
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -322,16 +495,59 @@ ${entry.mood === 'bullish'
               : 'Acompanhe sua jornada de trading e insights'}
           </p>
         </div>
-        <button
-          onClick={() => {
-            setSelectedDate(new Date());
-            setShowNewEntryModal(true);
-          }}
-          className="px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-md text-white flex items-center"
-        >
-          <Plus className="w-4 h-4 mr-2" />
-          {language === 'en' ? 'New Entry' : 'Nova Entrada'}
-        </button>
+        <div className="flex items-center space-x-3">
+          {/* View Mode Switcher */}
+          <div className="flex items-center bg-gray-800 rounded-lg p-1">
+            <button
+              onClick={() => setViewMode('week')}
+              className={`px-3 py-1.5 rounded-md text-sm flex items-center ${
+                viewMode === 'week' 
+                  ? 'bg-blue-600 text-white' 
+                  : 'text-gray-400 hover:text-white'
+              }`}
+            >
+              <List className="w-4 h-4 mr-1" />
+              {language === 'en' ? 'Week' : 'Semana'}
+            </button>
+            <button
+              onClick={() => setViewMode('calendar')}
+              className={`px-3 py-1.5 rounded-md text-sm flex items-center ${
+                viewMode === 'calendar' 
+                  ? 'bg-blue-600 text-white' 
+                  : 'text-gray-400 hover:text-white'
+              }`}
+            >
+              <Grid className="w-4 h-4 mr-1" />
+              {language === 'en' ? 'Calendar' : 'Calendário'}
+            </button>
+          </div>
+          
+          {/* Weekend Toggle (only for week view) */}
+          {viewMode === 'week' && (
+            <button
+              onClick={() => setShowWeekends(!showWeekends)}
+              className={`px-3 py-1.5 rounded-md text-sm flex items-center ${
+                showWeekends 
+                  ? 'bg-purple-600 text-white' 
+                  : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
+              }`}
+            >
+              {showWeekends ? <Eye className="w-4 h-4 mr-1" /> : <EyeOff className="w-4 h-4 mr-1" />}
+              {language === 'en' ? 'Weekends' : 'Fins de Semana'}
+            </button>
+          )}
+          
+          <button
+            onClick={() => {
+              setSelectedDate(new Date());
+              setShowNewEntryModal(true);
+            }}
+            className="px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-md text-white flex items-center"
+          >
+            <Plus className="w-4 h-4 mr-2" />
+            {language === 'en' ? 'New Entry' : 'Nova Entrada'}
+          </button>
+        </div>
       </div>
 
       {/* Stats Overview */}
@@ -339,15 +555,23 @@ ${entry.mood === 'bullish'
         <div className="bg-gray-800 rounded-lg p-6">
           <div className="flex items-center justify-between mb-2">
             <h3 className="text-lg font-medium">
-              {language === 'en' ? 'Total P&L' : 'P&L Total'}
+              {viewMode === 'week' 
+                ? (language === 'en' ? 'Week P&L' : 'P&L da Semana')
+                : (language === 'en' ? 'Total P&L' : 'P&L Total')
+              }
             </h3>
             <BarChart2 className="w-5 h-5 text-blue-500" />
           </div>
-          <p className={`text-3xl font-bold ${totalPnL >= 0 ? 'text-green-400' : 'text-red-400'}`}>
-            R$ {totalPnL.toFixed(2)}
+          <p className={`text-3xl font-bold ${
+            (viewMode === 'week' ? weekSummary.weekPnL : totalPnL) >= 0 ? 'text-green-400' : 'text-red-400'
+          }`}>
+            R$ {(viewMode === 'week' ? weekSummary.weekPnL : totalPnL).toFixed(2)}
           </p>
           <p className="text-sm text-gray-400">
-            {language === 'en' ? 'This month' : 'Este mês'}
+            {viewMode === 'week' 
+              ? (language === 'en' ? 'This week' : 'Esta semana')
+              : (language === 'en' ? 'This month' : 'Este mês')
+            }
           </p>
         </div>
 
@@ -358,9 +582,14 @@ ${entry.mood === 'bullish'
             </h3>
             <Target className="w-5 h-5 text-green-500" />
           </div>
-          <p className="text-3xl font-bold text-green-400">{winRate.toFixed(1)}%</p>
+          <p className="text-3xl font-bold text-green-400">
+            {(viewMode === 'week' ? weekSummary.weekWinRate : winRate).toFixed(1)}%
+          </p>
           <p className="text-sm text-gray-400">
-            {winningDays} {language === 'en' ? 'winning days' : 'dias vencedores'}
+            {viewMode === 'week' 
+              ? `${weekSummary.weekEntries} ${language === 'en' ? 'entries this week' : 'entradas esta semana'}`
+              : `${winningDays} ${language === 'en' ? 'winning days' : 'dias vencedores'}`
+            }
           </p>
         </div>
 
@@ -371,9 +600,14 @@ ${entry.mood === 'bullish'
             </h3>
             <Activity className="w-5 h-5 text-purple-500" />
           </div>
-          <p className="text-3xl font-bold text-purple-400">{totalTrades}</p>
+          <p className="text-3xl font-bold text-purple-400">
+            {viewMode === 'week' ? weekSummary.weekTrades : totalTrades}
+          </p>
           <p className="text-sm text-gray-400">
-            {language === 'en' ? 'This month' : 'Este mês'}
+            {viewMode === 'week' 
+              ? (language === 'en' ? 'This week' : 'Esta semana')
+              : (language === 'en' ? 'This month' : 'Este mês')
+            }
           </p>
         </div>
 
@@ -384,102 +618,221 @@ ${entry.mood === 'bullish'
             </h3>
             <FileText className="w-5 h-5 text-yellow-500" />
           </div>
-          <p className="text-3xl font-bold text-yellow-400">{diaryEntries.length}</p>
+          <p className="text-3xl font-bold text-yellow-400">
+            {viewMode === 'week' ? weekSummary.weekEntries : diaryEntries.length}
+          </p>
           <p className="text-sm text-gray-400">
-            {language === 'en' ? 'This month' : 'Este mês'}
+            {viewMode === 'week' 
+              ? (language === 'en' ? 'This week' : 'Esta semana')
+              : (language === 'en' ? 'This month' : 'Este mês')
+            }
           </p>
         </div>
       </div>
 
-      {/* Calendar */}
-      <div className="bg-gray-800 rounded-lg p-6">
-        <div className="flex items-center justify-between mb-6">
-          <h3 className="text-xl font-medium">
-            {language === 'en' ? 'Trading Calendar' : 'Calendário de Trading'}
-          </h3>
-          <div className="flex items-center space-x-4">
-            <button
-              onClick={() => navigateMonth('prev')}
-              className="p-2 hover:bg-gray-700 rounded-full"
-            >
-              <ChevronLeft className="w-5 h-5" />
-            </button>
-            <h4 className="text-lg font-medium min-w-[200px] text-center">
-              {currentMonth.toLocaleDateString(language === 'en' ? 'en-US' : 'pt-BR', { 
-                month: 'long', 
-                year: 'numeric' 
-              })}
-            </h4>
-            <button
-              onClick={() => navigateMonth('next')}
-              className="p-2 hover:bg-gray-700 rounded-full"
-            >
-              <ChevronRight className="w-5 h-5" />
-            </button>
+      {/* Week View */}
+      {viewMode === 'week' && (
+        <div className="bg-gray-800 rounded-lg p-6">
+          <div className="flex items-center justify-between mb-6">
+            <h3 className="text-xl font-medium">
+              {language === 'en' ? 'Weekly View' : 'Visão Semanal'}
+            </h3>
+            <div className="flex items-center space-x-4">
+              <button
+                onClick={() => navigateWeek('prev')}
+                className="p-2 hover:bg-gray-700 rounded-full"
+              >
+                <ChevronLeft className="w-5 h-5" />
+              </button>
+              <h4 className="text-lg font-medium min-w-[200px] text-center">
+                {currentWeek.toLocaleDateString(language === 'en' ? 'en-US' : 'pt-BR', { 
+                  month: 'long', 
+                  year: 'numeric' 
+                })}
+              </h4>
+              <button
+                onClick={() => navigateWeek('next')}
+                className="p-2 hover:bg-gray-700 rounded-full"
+              >
+                <ChevronRight className="w-5 h-5" />
+              </button>
+            </div>
+          </div>
+
+          {/* Week Cards */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-7 gap-4">
+            {getWeekDays().map((date, index) => {
+              const entry = getEntryForDate(date);
+              const isSelected = selectedDate.toDateString() === date.toDateString();
+              const isTodayDate = isToday(date);
+              const isPast = isPastDate(date);
+
+              return (
+                <div
+                  key={index}
+                  className={`p-4 rounded-lg border-2 transition-all cursor-pointer ${
+                    isSelected 
+                      ? 'border-blue-500 bg-blue-900 bg-opacity-50' 
+                      : 'border-transparent hover:border-gray-600'
+                  } ${
+                    isTodayDate 
+                      ? 'bg-blue-600 bg-opacity-20' 
+                      : isPast 
+                      ? 'bg-gray-700 bg-opacity-50' 
+                      : 'bg-gray-700'
+                  }`}
+                  onClick={() => {
+                    setSelectedDate(date);
+                    if (entry) {
+                      setSelectedEntry(entry);
+                    }
+                  }}
+                >
+                  <div className="text-center">
+                    <div className="text-sm font-medium text-gray-400">
+                      {date.toLocaleDateString(language === 'en' ? 'en-US' : 'pt-BR', { weekday: 'short' })}
+                    </div>
+                    <div className="text-2xl font-bold mb-2">{date.getDate()}</div>
+                    
+                    {entry && (
+                      <div className="space-y-2">
+                        <div className={`w-full h-2 rounded ${getMoodColor(entry.mood)}`}></div>
+                        <div className="text-sm">
+                          <span className={entry.pnl >= 0 ? 'text-green-400' : 'text-red-400'}>
+                            {entry.pnl >= 0 ? '+' : ''}R$ {entry.pnl.toFixed(0)}
+                          </span>
+                        </div>
+                        <div className="text-xs text-gray-400">
+                          {entry.trades} trades
+                        </div>
+                        {entry.predefinedComments.length > 0 && (
+                          <div className="flex flex-wrap gap-1">
+                            {entry.predefinedComments.slice(0, 2).map((comment, idx) => (
+                              <span key={idx} className="px-1 py-0.5 bg-blue-900 bg-opacity-50 text-blue-300 rounded text-xs">
+                                {comment.length > 8 ? comment.substring(0, 8) + '...' : comment}
+                              </span>
+                            ))}
+                            {entry.predefinedComments.length > 2 && (
+                              <span className="px-1 py-0.5 bg-gray-600 text-gray-300 rounded text-xs">
+                                +{entry.predefinedComments.length - 2}
+                              </span>
+                            )}
+                          </div>
+                        )}
+                      </div>
+                    )}
+                    
+                    {!entry && !isPast && (
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setSelectedDate(date);
+                          setShowNewEntryModal(true);
+                        }}
+                        className="w-full py-1 bg-blue-600 hover:bg-blue-700 rounded text-xs"
+                      >
+                        <Plus className="w-3 h-3 mx-auto" />
+                      </button>
+                    )}
+                  </div>
+                </div>
+              );
+            })}
           </div>
         </div>
+      )}
 
-        {/* Calendar Grid */}
-        <div className="grid grid-cols-7 gap-2">
-          {/* Day headers */}
-          {(language === 'en' 
-            ? ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
-            : ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb']
-          ).map(day => (
-            <div key={day} className="p-2 text-center text-sm font-medium text-gray-400">
-              {day}
-            </div>
-          ))}
-
-          {/* Calendar days */}
-          {getDaysInMonth(currentMonth).map((date, index) => {
-            if (!date) {
-              return <div key={index} className="p-2 h-16"></div>;
-            }
-
-            const entry = getEntryForDate(date);
-            const isSelected = selectedDate.toDateString() === date.toDateString();
-            const isTodayDate = isToday(date);
-            const isPast = isPastDate(date);
-
-            return (
+      {/* Calendar View */}
+      {viewMode === 'calendar' && (
+        <div className="bg-gray-800 rounded-lg p-6">
+          <div className="flex items-center justify-between mb-6">
+            <h3 className="text-xl font-medium">
+              {language === 'en' ? 'Trading Calendar' : 'Calendário de Trading'}
+            </h3>
+            <div className="flex items-center space-x-4">
               <button
-                key={index}
-                onClick={() => {
-                  setSelectedDate(date);
-                  if (entry) {
-                    setSelectedEntry(entry);
-                  }
-                }}
-                className={`p-2 h-16 rounded-lg border-2 transition-all relative ${
-                  isSelected 
-                    ? 'border-blue-500 bg-blue-900 bg-opacity-50' 
-                    : 'border-transparent hover:border-gray-600'
-                } ${
-                  isTodayDate 
-                    ? 'bg-blue-600 bg-opacity-20' 
-                    : isPast 
-                    ? 'bg-gray-700 bg-opacity-50' 
-                    : 'bg-gray-700'
-                }`}
+                onClick={() => navigateMonth('prev')}
+                className="p-2 hover:bg-gray-700 rounded-full"
               >
-                <div className="text-sm font-medium">{date.getDate()}</div>
-                
-                {entry && (
-                  <div className="absolute bottom-1 left-1 right-1">
-                    <div className={`w-full h-1 rounded ${getMoodColor(entry.mood)}`}></div>
-                    <div className="text-xs mt-1">
-                      <span className={entry.pnl >= 0 ? 'text-green-400' : 'text-red-400'}>
-                        {entry.pnl >= 0 ? '+' : ''}R$ {entry.pnl.toFixed(0)}
-                      </span>
-                    </div>
-                  </div>
-                )}
+                <ChevronLeft className="w-5 h-5" />
               </button>
-            );
-          })}
+              <h4 className="text-lg font-medium min-w-[200px] text-center">
+                {currentMonth.toLocaleDateString(language === 'en' ? 'en-US' : 'pt-BR', { 
+                  month: 'long', 
+                  year: 'numeric' 
+                })}
+              </h4>
+              <button
+                onClick={() => navigateMonth('next')}
+                className="p-2 hover:bg-gray-700 rounded-full"
+              >
+                <ChevronRight className="w-5 h-5" />
+              </button>
+            </div>
+          </div>
+
+          {/* Calendar Grid */}
+          <div className="grid grid-cols-7 gap-2">
+            {/* Day headers */}
+            {(language === 'en' 
+              ? ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
+              : ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb']
+            ).map(day => (
+              <div key={day} className="p-2 text-center text-sm font-medium text-gray-400">
+                {day}
+              </div>
+            ))}
+
+            {/* Calendar days */}
+            {getDaysInMonth(currentMonth).map((date, index) => {
+              if (!date) {
+                return <div key={index} className="p-2 h-16"></div>;
+              }
+
+              const entry = getEntryForDate(date);
+              const isSelected = selectedDate.toDateString() === date.toDateString();
+              const isTodayDate = isToday(date);
+              const isPast = isPastDate(date);
+
+              return (
+                <button
+                  key={index}
+                  onClick={() => {
+                    setSelectedDate(date);
+                    if (entry) {
+                      setSelectedEntry(entry);
+                    }
+                  }}
+                  className={`p-2 h-16 rounded-lg border-2 transition-all relative ${
+                    isSelected 
+                      ? 'border-blue-500 bg-blue-900 bg-opacity-50' 
+                      : 'border-transparent hover:border-gray-600'
+                  } ${
+                    isTodayDate 
+                      ? 'bg-blue-600 bg-opacity-20' 
+                      : isPast 
+                      ? 'bg-gray-700 bg-opacity-50' 
+                      : 'bg-gray-700'
+                  }`}
+                >
+                  <div className="text-sm font-medium">{date.getDate()}</div>
+                  
+                  {entry && (
+                    <div className="absolute bottom-1 left-1 right-1">
+                      <div className={`w-full h-1 rounded ${getMoodColor(entry.mood)}`}></div>
+                      <div className="text-xs mt-1">
+                        <span className={entry.pnl >= 0 ? 'text-green-400' : 'text-red-400'}>
+                          {entry.pnl >= 0 ? '+' : ''}R$ {entry.pnl.toFixed(0)}
+                        </span>
+                      </div>
+                    </div>
+                  )}
+                </button>
+              );
+            })}
+          </div>
         </div>
-      </div>
+      )}
 
       {/* Selected Entry Details */}
       {selectedEntry && (
@@ -536,6 +889,24 @@ ${entry.mood === 'bullish'
           <div className="mb-4">
             <p className="text-gray-300 whitespace-pre-line">{selectedEntry.content}</p>
           </div>
+
+          {/* Predefined Comments */}
+          {selectedEntry.predefinedComments.length > 0 && (
+            <div className="mb-4">
+              <p className="text-sm text-gray-400 mb-2">Comentários Identificados:</p>
+              <div className="flex flex-wrap gap-2">
+                {selectedEntry.predefinedComments.map((comment, index) => (
+                  <span 
+                    key={index}
+                    className="px-3 py-1 bg-orange-900 bg-opacity-50 text-orange-300 rounded-full text-sm flex items-center"
+                  >
+                    <Hash className="w-3 h-3 mr-1" />
+                    {comment}
+                  </span>
+                ))}
+              </div>
+            </div>
+          )}
 
           {selectedEntry.tags.length > 0 && (
             <div className="flex flex-wrap gap-2 mb-4">
@@ -646,8 +1017,41 @@ ${entry.mood === 'bullish'
                 </div>
               </div>
 
+              {/* Predefined Comments Section */}
               <div>
-                <label className="block text-sm font-medium text-gray-300 mb-1">
+                <div className="flex items-center justify-between mb-2">
+                  <label className="block text-sm font-medium text-gray-300">
+                    {language === 'en' ? 'Quick Comments' : 'Comentários Rápidos'}
+                  </label>
+                  <button
+                    type="button"
+                    onClick={() => setShowAddCommentModal(true)}
+                    className="text-blue-400 hover:text-blue-300 text-sm flex items-center"
+                  >
+                    <Plus className="w-3 h-3 mr-1" />
+                    {language === 'en' ? 'Add Custom' : 'Adicionar'}
+                  </button>
+                </div>
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-2 max-h-32 overflow-y-auto">
+                  {predefinedComments.map(comment => (
+                    <button
+                      key={comment}
+                      type="button"
+                      onClick={() => togglePredefinedComment(comment)}
+                      className={`px-3 py-2 rounded-md text-sm text-left ${
+                        formData.predefinedComments.includes(comment)
+                          ? 'bg-orange-600 text-white'
+                          : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
+                      }`}
+                    >
+                      {comment}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div>
+                <label htmlFor="version-description" className="block text-sm font-medium text-gray-300 mb-1">
                   {language === 'en' ? 'Content' : 'Conteúdo'}
                 </label>
                 <textarea
@@ -679,6 +1083,53 @@ ${entry.mood === 'bullish'
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* Add Custom Comment Modal */}
+      {showAddCommentModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+          <div className="bg-gray-800 rounded-lg max-w-md w-full p-6 relative">
+            <button 
+              onClick={() => setShowAddCommentModal(false)}
+              className="absolute top-4 right-4 text-gray-400 hover:text-white"
+            >
+              <X className="w-5 h-5" />
+            </button>
+            
+            <div className="text-center mb-6">
+              <h2 className="text-xl font-bold text-gray-100">
+                {language === 'en' ? 'Add Custom Comment' : 'Adicionar Comentário Personalizado'}
+              </h2>
+            </div>
+
+            <div className="space-y-4">
+              <input
+                type="text"
+                value={newPredefinedComment}
+                onChange={(e) => setNewPredefinedComment(e.target.value)}
+                placeholder={language === 'en' ? 'Enter custom comment...' : 'Digite comentário personalizado...'}
+                className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                autoFocus
+              />
+
+              <div className="flex justify-end space-x-3">
+                <button
+                  onClick={() => setShowAddCommentModal(false)}
+                  className="px-4 py-2 bg-gray-700 hover:bg-gray-600 rounded-md text-white"
+                >
+                  {language === 'en' ? 'Cancel' : 'Cancelar'}
+                </button>
+                <button
+                  onClick={addPredefinedComment}
+                  disabled={!newPredefinedComment.trim()}
+                  className="px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-md text-white disabled:opacity-50"
+                >
+                  {language === 'en' ? 'Add' : 'Adicionar'}
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       )}
