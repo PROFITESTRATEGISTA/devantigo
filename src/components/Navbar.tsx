@@ -59,7 +59,7 @@ export function Navbar() {
     { path: '/dashboard', label: 'Dashboard', icon: <BarChart2 className="w-5 h-5" />, external: false },
     { path: '/robots', label: t('nav.robots') || 'Robôs', icon: <Code2 className="w-5 h-5" />, external: false },
     { path: '/backtest-analysis', label: t('analysis.backtest') || 'Backtest', icon: <FileSpreadsheet className="w-5 h-5" />, external: false },
-    { path: '/faq', label: t('nav.faq') || 'FAQ', icon: <HelpCircle className="w-5 h-5" />, external: false },
+    { path: '/quant-diary', label: language === 'en' ? 'Quant Diary' : 'Diário Quant', icon: <BarChart className="w-5 h-5" />, external: false },
   ];
 
   return (
@@ -179,6 +179,16 @@ export function Navbar() {
                   >
                     <User className="w-4 h-4 mr-2" />
                     {t('nav.profile')}
+                  </button>
+                  <button
+                    onClick={() => {
+                      navigate('/faq');
+                      setShowUserMenu(false);
+                    }}
+                    className="w-full text-left px-4 py-2 text-sm text-gray-300 hover:bg-gray-700 flex items-center"
+                  >
+                    <HelpCircle className="w-4 h-4 mr-2" />
+                    {t('nav.faq') || 'FAQ'}
                   </button>
                   <button
                     onClick={() => {
