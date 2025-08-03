@@ -4,7 +4,7 @@ import {
   ArrowLeft, Trophy, Zap, Calendar, Clock, Check, 
   Star, Target, Users, BarChart2, Code2, Share2,
   Gift, Crown, Coins, ChevronRight, RefreshCw,
-  Award, Flame, TrendingUp
+  Award, Flame, TrendingUp, Lightbulb
 } from 'lucide-react';
 import { Navbar } from '../components/Navbar';
 import { useAuthStore } from '../stores/authStore';
