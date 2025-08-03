@@ -8,7 +8,7 @@ import {
 } from 'lucide-react';
 import { Navbar } from '../components/Navbar';
 import { useAuthStore } from '../stores/authStore';
-import { useI18n } from '../lib/i18n';
+import { useLanguageStore } from '../stores/languageStore';
 
 interface Challenge {
   id: string;
@@ -28,8 +28,8 @@ interface Challenge {
 export function ChallengesPage() {
   const navigate = useNavigate();
   const { profile } = useAuthStore();
-  const { t, locale } = useI18n();
-  const [activeTab, setActiveTab] = useState<'daily' | 'weekly' | 'monthly' | 'achievements'>('daily');
+  const { t } = useLanguageStore();
+  const [activeTab, setActiveTab] = useState<'achievements' | 'monthly'>('achievements');
   const [challenges, setChallenges] = useState<Challenge[]>([]);
   const [totalEarned, setTotalEarned] = useState(0);
   const [streak, setStreak] = useState(7);
@@ -40,126 +40,11 @@ export function ChallengesPage() {
 
   const loadChallenges = () => {
     const allChallenges: Challenge[] = [
-      // Daily Challenges
-      {
-        id: 'daily-login',
-        title: t('challenges.daily.login.title'),
-        description: t('challenges.daily.login.description'),
-        reward: 10,
-        type: 'daily',
-        difficulty: 'easy',
-        progress: 1,
-        maxProgress: 1,
-        completed: true,
-        icon: <Calendar className="w-5 h-5" />,
-        category: t('challenges.category.activity'),
-        expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString()
-      },
-      {
-        id: 'daily-edit-robot',
-        title: t('challenges.daily.editRobot.title'),
-        description: t('challenges.daily.editRobot.description'),
-        reward: 25,
-        type: 'daily',
-        difficulty: 'easy',
-        progress: 0,
-        maxProgress: 1,
-        completed: false,
-        icon: <Code2 className="w-5 h-5" />,
-        category: t('challenges.category.development'),
-        expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString()
-      },
-      {
-        id: 'daily-analysis',
-        title: t('challenges.daily.analysis.title'),
-        description: t('challenges.daily.analysis.description'),
-        reward: 50,
-        type: 'daily',
-        difficulty: 'medium',
-        progress: 0,
-        maxProgress: 1,
-        completed: false,
-        icon: <BarChart2 className="w-5 h-5" />,
-        category: t('challenges.category.analysis'),
-        expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString()
-      },
-      // Weekly Challenges
-      {
-        id: 'weekly-create-robot',
-        title: t('challenges.weekly.createRobot.title'),
-        description: t('challenges.weekly.createRobot.description'),
-        reward: 500,
-        type: 'weekly',
-        difficulty: 'medium',
-        progress: 2,
-        maxProgress: 1,
-        completed: true,
-        icon: <Code2 className="w-5 h-5" />,
-        category: t('challenges.category.creation'),
-        expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString()
-      },
-      {
-        id: 'weekly-share-strategy',
-        title: t('challenges.weekly.shareStrategy.title'),
-        description: t('challenges.weekly.shareStrategy.description'),
-        reward: 200,
-        type: 'weekly',
-        difficulty: 'easy',
-        progress: 0,
-        maxProgress: 1,
-        completed: false,
-        icon: <Share2 className="w-5 h-5" />,
-        category: t('challenges.category.social'),
-        expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString()
-      },
-      {
-        id: 'weekly-optimize-strategy',
-        title: t('challenges.weekly.optimizeStrategy.title'),
-        description: t('challenges.weekly.optimizeStrategy.description'),
-        reward: 300,
-        type: 'weekly',
-        difficulty: 'medium',
-        progress: 1,
-        maxProgress: 3,
-        completed: false,
-        icon: <TrendingUp className="w-5 h-5" />,
-        category: t('challenges.category.optimization'),
-        expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString()
-      },
-      // Monthly Challenges
-      {
-        id: 'monthly-competition',
-        title: t('challenges.monthly.competition.title'),
-        description: t('challenges.monthly.competition.description'),
-        reward: 2000,
-        type: 'monthly',
-        difficulty: 'hard',
-        progress: 0,
-        maxProgress: 1,
-        completed: false,
-        icon: <Trophy className="w-5 h-5" />,
-        category: t('challenges.category.competition'),
-        expiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString()
-      },
-      {
-        id: 'monthly-tutorial',
-        title: t('challenges.monthly.tutorial.title'),
-        description: t('challenges.monthly.tutorial.description'),
-        reward: 1000,
-        type: 'monthly',
-        difficulty: 'hard',
-        progress: 0,
-        maxProgress: 1,
-        completed: false,
-        icon: <Users className="w-5 h-5" />,
-        category: t('challenges.category.community'),
-        expiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString()
-      },
-      // Achievements
+      // Standard Achievements
       {
         id: 'achievement-first-robot',
-        title: t('challenges.achievement.firstRobot.title'),
-        description: t('challenges.achievement.firstRobot.description'),
+        title: 'Primeiro Robô',
+        description: 'Crie seu primeiro robô de trading',
         reward: 500,
         type: 'achievement',
         difficulty: 'easy',
@@ -167,12 +52,12 @@ export function ChallengesPage() {
         maxProgress: 1,
         completed: true,
         icon: <Star className="w-5 h-5" />,
-        category: t('challenges.category.milestone')
+        category: 'Marco'
       },
       {
         id: 'achievement-robot-master',
-        title: t('challenges.achievement.robotMaster.title'),
-        description: t('challenges.achievement.robotMaster.description'),
+        title: 'Mestre dos Robôs',
+        description: 'Crie 10 robôs diferentes',
         reward: 1500,
         type: 'achievement',
         difficulty: 'hard',
@@ -180,12 +65,12 @@ export function ChallengesPage() {
         maxProgress: 10,
         completed: false,
         icon: <Crown className="w-5 h-5" />,
-        category: t('challenges.category.milestone')
+        category: 'Marco'
       },
       {
         id: 'achievement-streak-master',
-        title: t('challenges.achievement.streakMaster.title'),
-        description: t('challenges.achievement.streakMaster.description'),
+        title: 'Sequência Perfeita',
+        description: 'Mantenha uma sequência de 30 dias de login',
         reward: 1000,
         type: 'achievement',
         difficulty: 'medium',
@@ -193,7 +78,76 @@ export function ChallengesPage() {
         maxProgress: 30,
         completed: false,
         icon: <Flame className="w-5 h-5" />,
-        category: t('challenges.category.dedication')
+        category: 'Dedicação'
+      },
+      {
+        id: 'achievement-ai-expert',
+        title: 'Especialista em IA',
+        description: 'Use IA para criar 5 robôs diferentes',
+        reward: 800,
+        type: 'achievement',
+        difficulty: 'medium',
+        progress: 1,
+        maxProgress: 5,
+        completed: false,
+        icon: <Code2 className="w-5 h-5" />,
+        category: 'IA'
+      },
+      {
+        id: 'achievement-analyst',
+        title: 'Analista Profissional',
+        description: 'Complete 20 análises de backtest',
+        reward: 200,
+        type: 'achievement',
+        difficulty: 'medium',
+        progress: 5,
+        maxProgress: 20,
+        completed: false,
+        icon: <BarChart2 className="w-5 h-5" />,
+        category: 'Análise'
+      },
+      // Monthly Challenges
+      {
+        id: 'monthly-competition',
+        title: 'Competição de Performance',
+        description: 'Participe da competição mensal de estratégias',
+        reward: 2000,
+        type: 'monthly',
+        difficulty: 'hard',
+        progress: 0,
+        maxProgress: 1,
+        completed: false,
+        icon: <Trophy className="w-5 h-5" />,
+        category: 'Competição',
+        expiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString()
+      },
+      {
+        id: 'monthly-tutorial',
+        title: 'Criar Tutorial',
+        description: 'Contribua com um tutorial para a comunidade',
+        reward: 1000,
+        type: 'monthly',
+        difficulty: 'hard',
+        progress: 0,
+        maxProgress: 1,
+        completed: false,
+        icon: <Users className="w-5 h-5" />,
+        category: 'Comunidade',
+        expiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString()
+      },
+      {
+        id: 'monthly-portfolio',
+        title: 'Mestre do Portfólio',
+        description: 'Monte 3 portfólios diversificados usando IA',
+        reward: 1000,
+        type: 'monthly',
+        difficulty: 'medium',
+        progress: 0,
+        maxProgress: 3,
+        completed: false,
+        icon: <Target className="w-5 h-5" />,
+        category: 'Portfólio',
+        expiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString()
       }
     ];
 
@@ -201,7 +155,7 @@ export function ChallengesPage() {
       if (activeTab === 'achievements') {
         return challenge.type === 'achievement';
       }
-      return challenge.type === activeTab;
+      return challenge.type === 'monthly';
     });
 
     setChallenges(filteredChallenges);
@@ -277,7 +231,7 @@ export function ChallengesPage() {
         <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
         </svg>
-        ${t('challenges.tokensEarned', { amount: challenge.reward })}
+        +${challenge.reward} tokens ganhos!
       `;
       document.body.appendChild(successMessage);
 
@@ -371,10 +325,8 @@ export function ChallengesPage() {
         {/* Tabs */}
         <div className="bg-gray-800 rounded-lg p-1 mb-8 flex">
           {[
-            { id: 'daily', label: t('challenges.tabs.daily'), icon: <Calendar className="w-4 h-4" /> },
-            { id: 'weekly', label: t('challenges.tabs.weekly'), icon: <Clock className="w-4 h-4" /> },
-            { id: 'monthly', label: t('challenges.tabs.monthly'), icon: <Trophy className="w-4 h-4" /> },
-            { id: 'achievements', label: t('challenges.tabs.achievements'), icon: <Crown className="w-4 h-4" /> }
+            { id: 'achievements', label: 'Conquistas', icon: <Crown className="w-4 h-4" /> },
+            { id: 'monthly', label: 'Mensais', icon: <Trophy className="w-4 h-4" /> }
           ].map((tab) => (
             <button
               key={tab.id}
@@ -418,7 +370,7 @@ export function ChallengesPage() {
                     <div className="flex items-center space-x-3 mb-2">
                       <h3 className="text-lg font-semibold">{challenge.title}</h3>
                       <span className={`px-2 py-1 rounded-full text-xs font-medium ${getDifficultyColor(challenge.difficulty)}`}>
-                        {t(`challenges.difficulty.${challenge.difficulty}`)}
+                        {challenge.difficulty === 'easy' ? 'Fácil' : challenge.difficulty === 'medium' ? 'Médio' : 'Difícil'}
                       </span>
                       <span className={`px-2 py-1 rounded-full text-xs font-medium ${getTypeColor(challenge.type)}`}>
                         {challenge.category}
@@ -431,7 +383,7 @@ export function ChallengesPage() {
                     {challenge.maxProgress > 1 && (
                       <div className="mb-3">
                         <div className="flex justify-between text-sm mb-1">
-                          <span className="text-gray-400">{t('challenges.progress')}</span>
+                          <span className="text-gray-400">Progresso</span>
                           <span className="text-gray-400">{challenge.progress}/{challenge.maxProgress}</span>
                         </div>
                         <div className="w-full bg-gray-700 rounded-full h-2">
@@ -469,7 +421,7 @@ export function ChallengesPage() {
                   {challenge.completed ? (
                     <div className="flex items-center text-green-400">
                       <Check className="w-5 h-5 mr-1" />
-                      <span className="font-medium">{t('challenges.completed')}</span>
+                      <span className="font-medium">Concluído</span>
                     </div>
                   ) : challenge.progress >= challenge.maxProgress ? (
                     <button
@@ -477,7 +429,7 @@ export function ChallengesPage() {
                       className="px-4 py-2 bg-green-600 hover:bg-green-700 rounded-md font-medium flex items-center"
                     >
                       <Gift className="w-4 h-4 mr-2" />
-                      {t('challenges.claim')}
+                      Resgatar
                     </button>
                   ) : (
                     <button
@@ -493,7 +445,7 @@ export function ChallengesPage() {
                       }}
                       className="px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-md font-medium flex items-center"
                     >
-                      {t('challenges.start')}
+                      Começar
                       <ChevronRight className="w-4 h-4 ml-1" />
                     </button>
                   )}
@@ -508,10 +460,10 @@ export function ChallengesPage() {
           <div className="text-center py-12">
             <Trophy className="w-16 h-16 text-gray-600 mx-auto mb-4" />
             <h3 className="text-xl font-semibold text-gray-400 mb-2">
-              {t('challenges.noChallenges')}
+              Nenhum desafio disponível
             </h3>
             <p className="text-gray-500">
-              {t('challenges.newChallengesSoon')}
+              Novos desafios serão adicionados em breve!
             </p>
           </div>
         )}
@@ -520,42 +472,42 @@ export function ChallengesPage() {
         <div className="mt-12 bg-gradient-to-r from-blue-900 to-indigo-900 rounded-lg p-6">
           <h2 className="text-2xl font-bold mb-4 flex items-center">
             <Lightbulb className="w-6 h-6 text-yellow-500 mr-2" />
-            {t('challenges.tips.title')}
+            Dicas para Ganhar Mais Tokens
           </h2>
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
-              <h3 className="text-lg font-semibold mb-3">{t('challenges.tips.dailyStrategies')}</h3>
+              <h3 className="text-lg font-semibold mb-3">Estratégias Diárias</h3>
               <ul className="space-y-2 text-blue-100">
                 <li className="flex items-start">
                   <Check className="w-4 h-4 text-green-400 mr-2 mt-0.5 flex-shrink-0" />
-                  <span>{t('challenges.tips.dailyLogin')}</span>
+                  <span>Faça login todos os dias para manter sua sequência</span>
                 </li>
                 <li className="flex items-start">
                   <Check className="w-4 h-4 text-green-400 mr-2 mt-0.5 flex-shrink-0" />
-                  <span>{t('challenges.tips.editRobots')}</span>
+                  <span>Crie robôs regularmente para ganhar marcos</span>
                 </li>
                 <li className="flex items-start">
                   <Check className="w-4 h-4 text-green-400 mr-2 mt-0.5 flex-shrink-0" />
-                  <span>{t('challenges.tips.useAI')}</span>
+                  <span>Use análises de IA para otimizar performance</span>
                 </li>
               </ul>
             </div>
             
             <div>
-              <h3 className="text-lg font-semibold mb-3">{t('challenges.tips.specialBonuses')}</h3>
+              <h3 className="text-lg font-semibold mb-3">Bônus Especiais</h3>
               <ul className="space-y-2 text-blue-100">
                 <li className="flex items-start">
                   <Star className="w-4 h-4 text-yellow-400 mr-2 mt-0.5 flex-shrink-0" />
-                  <span>{t('challenges.tips.streakBonus')}</span>
+                  <span>Sequência de 30 dias: +1000 tokens bônus</span>
                 </li>
                 <li className="flex items-start">
                   <Star className="w-4 h-4 text-yellow-400 mr-2 mt-0.5 flex-shrink-0" />
-                  <span>{t('challenges.tips.competitionBonus')}</span>
+                  <span>Primeiro lugar na competição: +5000 tokens</span>
                 </li>
                 <li className="flex items-start">
                   <Star className="w-4 h-4 text-yellow-400 mr-2 mt-0.5 flex-shrink-0" />
-                  <span>{t('challenges.tips.shareBonus')}</span>
+                  <span>Compartilhar estratégia popular: +500 tokens</span>
                 </li>
               </ul>
             </div>
