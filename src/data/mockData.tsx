@@ -7,6 +7,7 @@ export const mockAnalyses = [
     type: 'Backtest',
     profitFactor: 1.85,
     winRate: 62.5,
+    totalTrades: 247,
     createdAt: '2024-01-15T10:30:00Z'
   },
   {
@@ -15,6 +16,7 @@ export const mockAnalyses = [
     type: 'Análise',
     profitFactor: 1.42,
     winRate: 58.3,
+    totalTrades: 189,
     createdAt: '2024-01-14T14:20:00Z'
   },
   {
@@ -23,6 +25,7 @@ export const mockAnalyses = [
     type: 'Backtest',
     profitFactor: 2.15,
     winRate: 45.8,
+    totalTrades: 156,
     createdAt: '2024-01-13T09:15:00Z'
   }
 ];

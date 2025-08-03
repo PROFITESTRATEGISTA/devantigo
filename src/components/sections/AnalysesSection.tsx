@@ -65,6 +65,12 @@ export function AnalysesSection({ analyses, onNavigate }: AnalysesSectionProps) 
                   {analysis.winRate.toFixed(1)}%
                 </p>
               </div>
+              <div>
+                <p className="text-xs text-gray-400">Total Trades</p>
+                <p className="text-lg font-bold text-blue-400">
+                  {analysis.totalTrades || 0}
+                </p>
+              </div>
             </div>
             
             <div className="space-y-2">
