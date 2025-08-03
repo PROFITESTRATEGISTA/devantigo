@@ -57,8 +57,8 @@ export function Navbar() {
 
   const menuItems = [
     { path: '/dashboard', label: 'Dashboard', icon: <BarChart2 className="w-5 h-5" />, external: false },
-    { path: '/robots', label: t('nav.robots') || 'Meus Robôs', icon: <Code2 className="w-5 h-5" />, external: false },
-    { path: '/backtest-analysis', label: t('analysis.backtest') || 'Backtest Analysis', icon: <FileSpreadsheet className="w-5 h-5" />, external: false },
+    { path: '/robots', label: t('nav.robots') || 'Robôs', icon: <Code2 className="w-5 h-5" />, external: false },
+    { path: '/backtest-analysis', label: t('analysis.backtest') || 'Backtest', icon: <FileSpreadsheet className="w-5 h-5" />, external: false },
     { path: '/faq', label: t('nav.faq') || 'FAQ', icon: <HelpCircle className="w-5 h-5" />, external: false },
   ];
 

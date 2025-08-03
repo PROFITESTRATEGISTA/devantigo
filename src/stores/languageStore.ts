@@ -12,7 +12,7 @@ interface LanguageState {
 const translations: Record<Language, Record<string, string>> = {
   en: {
     // Navigation
-    'nav.robots': 'My Robots',
+    'nav.robots': 'Robots',
     'nav.community': 'Community',
     'nav.profile': 'Profile',
     'nav.subscription': 'Subscription',
@@ -20,6 +20,7 @@ const translations: Record<Language, Record<string, string>> = {
     'nav.signOut': 'Sign Out',
     'nav.dashboard': 'Dashboard',
     'nav.faq': 'FAQ',
+    'nav.earnTokens': 'Tokens',
     
     // Buttons
     'button.createRobot': 'Create Robot',
@@ -354,7 +355,7 @@ const translations: Record<Language, Record<string, string>> = {
   },
   pt: {
     // Navigation
-    'nav.robots': 'Meus Robôs',
+    'nav.robots': 'Robôs',
     'nav.community': 'Comunidade',
     'nav.profile': 'Perfil',
     'nav.subscription': 'Assinatura',
@@ -362,7 +363,7 @@ const translations: Record<Language, Record<string, string>> = {
     'nav.signOut': 'Sair',
     'nav.dashboard': 'Dashboard',
     'nav.faq': 'FAQ',
-    'nav.earnTokens': 'Ganhe Tokens',
+    'nav.earnTokens': 'Tokens',
     
     // Buttons
     'button.createRobot': 'Criar Robô',
