@@ -706,25 +706,6 @@ export function QuantDiaryPage() {
         </div>
         </div>
       </div>
-      
-      {/* Resumo Geral */}
-      <div className="bg-gray-700 rounded-lg p-4">
-        <h4 className="text-lg font-medium mb-4 text-center">Resumo Geral</h4>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="text-center">
-            <p className="text-3xl font-bold text-green-400">+R$ {allTimeStats.totalPnl.toFixed(2)}</p>
-            <p className="text-sm text-gray-400">P&L Total</p>
-          </div>
-          <div className="text-center">
-            <p className="text-3xl font-bold text-blue-400">{allTimeStats.diasOperados}</p>
-            <p className="text-sm text-gray-400">Dias Operados</p>
-          </div>
-          <div className="text-center">
-            <p className="text-3xl font-bold text-purple-400">R$ {allTimeStats.mediaPnlDia.toFixed(2)}</p>
-            <p className="text-sm text-gray-400">Média P&L/Dia</p>
-          </div>
-        </div>
-      </div>
     </div>
   );
 
