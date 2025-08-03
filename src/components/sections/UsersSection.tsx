@@ -100,23 +100,18 @@ export function UsersSection({ users }: UsersSectionProps) {
                 </div>
                 
                 <h3 className="text-lg font-semibold text-white mb-1">{user.name}</h3>
-                <p className="text-sm text-blue-400 mb-2">{user.specialty}</p>
                 
-                <div className="flex items-center justify-center text-xs text-gray-400 mb-3">
-                  <MapPin className="w-3 h-3 mr-1" />
-                  {user.location}
-                </div>
-                
-                <div className="flex items-center justify-center space-x-4 mb-4">
-                  <div className="flex items-center">
-                    <div className="bg-gradient-to-r from-blue-500 to-purple-500 text-white px-1.5 py-0.5 rounded text-xs font-bold mr-1 flex items-center">
-                      <span className="text-xs font-black">Q</span>
-                    </div>
+                <div className="flex items-center justify-center mb-4">
+                  <div className="bg-gradient-to-r from-blue-500 to-purple-500 text-white px-2 py-1 rounded-md flex items-center">
+                    <span className="text-sm font-black mr-1">Q</span>
                     <div className="flex flex-col items-start">
-                      <span className="text-xs text-gray-500 leading-none">QUANT</span>
-                    <span className="text-sm font-bold text-blue-400">{user.rating.toFixed(0)}</span>
+                      <span className="text-xs text-white leading-none">QUANT SCORE</span>
+                      <span className="text-lg font-bold text-white">{user.rating.toFixed(0)}</span>
                     </div>
                   </div>
+                </div>
+                
+                <div className="text-center mb-4">
                   <div className="text-sm text-gray-400">
                     {user.strategies} {t('marketplace.strategies')}
                   </div>
