@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import { useAuthStore } from './stores/authStore';
 import { useLanguageStore } from './stores/languageStore';
 import { initializeSupabase } from './lib/supabase';
+import { Navbar } from './components/Navbar';
 import { HomePage } from './pages/HomePage';
 import { EditorPage } from './pages/EditorPage';
 import { RobotsPage } from './pages/RobotsPage';
