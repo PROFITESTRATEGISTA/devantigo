@@ -45,7 +45,7 @@ export function LanguageSwitcher({ className = '' }: LanguageSwitcherProps) {
   return (
     <button
       onClick={toggleLanguage}
-      className={`flex items-center space-x-1 px-2 lg:px-3 py-1.5 bg-gray-800 hover:bg-gray-700 rounded-md text-xs lg:text-sm text-gray-300 transition-colors ${className}`}
+      className={`flex items-center justify-center space-x-2 px-4 py-3 bg-gray-800 hover:bg-gray-700 rounded-md text-base font-medium text-gray-300 transition-colors md:px-3 md:py-1.5 md:text-sm ${className}`}
       title={language === 'en' ? 'Switch to Portuguese' : 'Switch to English'}
     >
       {language === 'en' ? <USFlag /> : <BrazilFlag />}
