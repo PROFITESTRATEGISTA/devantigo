@@ -1,5 +1,5 @@
 import React from 'react';
-import { BarChart2, Calendar, TrendingUp, FileText, Trophy } from 'lucide-react';
+import { BarChart2, Calendar, TrendingUp, FileText, Trophy, Share2 } from 'lucide-react';
 import { useLanguageStore } from '../../stores/languageStore';
 
 interface Analysis {
@@ -79,6 +79,44 @@ export function AnalysesSection({ analyses, onNavigate }: AnalysesSectionProps) 
                 className="w-full py-2 bg-gray-700 hover:bg-gray-600 rounded-lg text-white transition-colors"
               >
                 {t('analyses.viewAnalysis')}
+              </button>
+              
+              <button
+                onClick={() => {
+                  // Share analysis functionality
+                  const shareText = `Confira minha análise: ${analysis.name}\n\nProfit Factor: ${analysis.profitFactor.toFixed(2)}\nWin Rate: ${analysis.winRate.toFixed(1)}%\nTotal Trades: ${analysis.totalTrades || 0}\n\nCriado com DevHub Trader`;
+                  
+                  if (navigator.share) {
+                    navigator.share({
+                      title: `Análise: ${analysis.name}`,
+                      text: shareText,
+                      url: window.location.origin
+                    }).catch(console.error);
+                  } else {
+                    // Fallback: copy to clipboard
+                    navigator.clipboard.writeText(shareText).then(() => {
+                      // Show success message
+                      const successMessage = document.createElement('div');
+                      successMessage.className = 'fixed top-4 right-4 bg-green-500 text-white px-4 py-2 rounded-md z-50 flex items-center';
+                      successMessage.innerHTML = `
+                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                        </svg>
+                        Análise copiada para área de transferência!
+                      `;
+                      document.body.appendChild(successMessage);
+                      setTimeout(() => {
+                        if (document.body.contains(successMessage)) {
+                          document.body.removeChild(successMessage);
+                        }
+                      }, 3000);
+                    }).catch(console.error);
+                  }
+                }}
+                className="w-full py-2 bg-green-600 hover:bg-green-700 rounded-lg text-white transition-colors flex items-center justify-center"
+              >
+                <Share2 className="w-4 h-4 mr-2" />
+                Compartilhar Análise
               </button>
               
               <button
