@@ -1,5 +1,5 @@
 import React from 'react';
-import { Store, Star, Download } from 'lucide-react';
+import { Store, Star } from 'lucide-react';
 
 interface MarketplaceCompany {
   id: string;
@@ -20,9 +20,6 @@ export function MarketplaceSection({ companies }: MarketplaceSectionProps) {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <h2 className="text-2xl font-bold text-white">Marketplace de Estratégias</h2>
-        <button className="px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-md text-white">
-          Vender Estratégia
-        </button>
       </div>
       
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -42,13 +39,6 @@ export function MarketplaceSection({ companies }: MarketplaceSectionProps) {
             </div>
             
             <p className="text-sm text-gray-400 mb-4">{company.description}</p>
-            
-            <div className="flex items-center justify-center mb-4">
-              <div className="flex items-center text-sm text-gray-400">
-                <Download className="w-4 h-4 mr-1" />
-                {company.strategies} estratégias
-              </div>
-            </div>
             
             <button
               onClick={() => {
