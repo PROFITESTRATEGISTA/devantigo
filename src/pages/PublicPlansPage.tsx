@@ -473,9 +473,13 @@ export function PublicPlansPage() {
       <div className="py-16 bg-gray-900">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold mb-4">Pacotes de Tokens</h2>
+            <h2 className="text-3xl font-bold mb-4">
+              {language === 'en' ? 'Token Packages' : 'Pacotes de Tokens'}
+            </h2>
             <p className="text-xl text-gray-400 max-w-3xl mx-auto">
-              Recarregue seus tokens para continuar utilizando os recursos de IA
+              {language === 'en' 
+                ? 'Reload your tokens to continue using AI features'
+                : 'Recarregue seus tokens para continuar utilizando os recursos de IA'}
             </p>
           </div>
 
@@ -489,13 +493,17 @@ export function PublicPlansPage() {
               >
                 {pkg.popular && (
                   <div className="bg-yellow-600 text-center py-2">
-                    <p className="text-sm font-medium">Melhor Custo-Benefício</p>
+                    <p className="text-sm font-medium">
+                      {language === 'en' ? 'Best Value' : 'Melhor Custo-Benefício'}
+                    </p>
                   </div>
                 )}
                 <div className="p-6 text-center">
                   <Zap className="w-12 h-12 text-yellow-500 mx-auto mb-4" />
                   <h3 className="text-2xl font-bold mb-2">{pkg.tokens}</h3>
-                  <p className="text-gray-400 mb-2">tokens</p>
+                  <p className="text-gray-400 mb-2">
+                    {language === 'en' ? 'tokens' : 'tokens'}
+                  </p>
                   <p className="text-xl font-bold mb-6">{pkg.price}</p>
                   
                   <button
@@ -506,7 +514,7 @@ export function PublicPlansPage() {
                         : 'bg-gray-700 hover:bg-gray-600'
                     }`}
                   >
-                    Comprar Tokens
+                    {language === 'en' ? 'Buy Tokens' : 'Comprar Tokens'}
                   </button>
                 </div>
               </div>
