@@ -21,7 +21,7 @@ interface RankingSectionProps {
 }
 
 export function RankingSection({ analyses, onNavigate }: RankingSectionProps) {
-  const { t } = useLanguageStore();
+  const { t, language } = useLanguageStore();
   const [filterBy, setFilterBy] = React.useState<'profitFactor' | 'winRate' | 'sharpeRatio' | 'recoveryFactor' | 'maxDrawdown' | 'totalTrades'>('profitFactor');
   const [sortOrder, setSortOrder] = React.useState<'desc' | 'asc'>('desc');
   const [timeFilter, setTimeFilter] = React.useState<'all' | 'week' | 'month' | 'year'>('all');
