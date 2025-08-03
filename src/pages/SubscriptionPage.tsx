@@ -142,8 +142,8 @@ export function SubscriptionPage() {
         break;
       case 'business':
         message = language === 'en'
-          ? `Hello, I came from DevHub Trader and want more information and help to contract the Business plan (R$ 1,999.80/month).`
-          : `Olá vim do DevHub Trader e quero mais informações e ajuda para contratar o plano Business (R$ 1.999,80/mês).`;
+          ? `Hello, I came from DevHub Trader and want more information about the Business plan with custom pricing, personalized robots and tokens for my company.`
+          : `Olá vim do DevHub Trader e quero mais informações sobre o plano Business com preços personalizados, robôs e tokens customizados para minha empresa.`;
         break;
       default:
         message = language === 'en'
@@ -373,35 +373,41 @@ export function SubscriptionPage() {
               <h3 className="text-xl font-semibold">Business</h3>
               <Building className="w-6 h-6 text-purple-500" />
             </div>
-            <p className="text-3xl font-bold mb-4">R$ 1.999,80/mês</p>
+            <p className="text-2xl font-bold mb-4 text-purple-400">
+              {language === 'en' ? 'Custom Pricing' : 'Preço Personalizado'}
+            </p>
             <p className="text-gray-400 mb-6">
-              {language === 'en' ? 'Enterprise solutions and white-label options' : 'Soluções empresariais e opções white-label'}
+              {language === 'en' ? 'Tailored solutions for your business needs' : 'Soluções sob medida para suas necessidades empresariais'}
             </p>
             
             <ul className="space-y-3 mb-6">
               <li className="flex items-center text-gray-300">
                 <Check className="w-4 h-4 text-green-500 mr-2 flex-shrink-0" />
-                <span>{language === 'en' ? 'Unlimited robots' : 'Robôs ilimitados'}</span>
+                <span>{language === 'en' ? 'Custom robots for your business' : 'Robôs personalizados para seu negócio'}</span>
               </li>
               <li className="flex items-center text-gray-300">
                 <Check className="w-4 h-4 text-green-500 mr-2 flex-shrink-0" />
-                <span>{language === 'en' ? 'AI robot generation' : 'IA para gerar robôs'}</span>
+                <span>{language === 'en' ? 'Custom token packages' : 'Pacotes de tokens personalizados'}</span>
               </li>
               <li className="flex items-center text-gray-300">
                 <Check className="w-4 h-4 text-green-500 mr-2 flex-shrink-0" />
-                <span>{language === 'en' ? '100,000 tokens/month' : '100.000 tokens/mês'}</span>
+                <span>{language === 'en' ? 'Dedicated account manager' : 'Gerente de conta dedicado'}</span>
               </li>
               <li className="flex items-center text-gray-300">
                 <Check className="w-4 h-4 text-green-500 mr-2 flex-shrink-0" />
-                <span>{language === 'en' ? 'API access' : 'Acesso à API'}</span>
+                <span>{language === 'en' ? 'Priority support 24/7' : 'Suporte prioritário 24/7'}</span>
               </li>
               <li className="flex items-center text-gray-300">
                 <Check className="w-4 h-4 text-green-500 mr-2 flex-shrink-0" />
-                <span>{language === 'en' ? 'White-label options' : 'Opções white-label'}</span>
+                <span>{language === 'en' ? 'White-label solutions' : 'Soluções white-label'}</span>
               </li>
               <li className="flex items-center text-gray-300">
                 <Check className="w-4 h-4 text-green-500 mr-2 flex-shrink-0" />
-                <span>{language === 'en' ? 'Dedicated support' : 'Suporte dedicado'}</span>
+                <span>{language === 'en' ? 'Custom integrations' : 'Integrações personalizadas'}</span>
+              </li>
+              <li className="flex items-center text-gray-300">
+                <Check className="w-4 h-4 text-green-500 mr-2 flex-shrink-0" />
+                <span>{language === 'en' ? 'Training and onboarding' : 'Treinamento e onboarding'}</span>
               </li>
             </ul>
 
@@ -410,7 +416,7 @@ export function SubscriptionPage() {
               className="w-full py-3 bg-purple-600 hover:bg-purple-700 rounded-md flex items-center justify-center text-white"
             >
               <MessageSquare className="w-4 h-4 mr-2" />
-              {language === 'en' ? 'Contact Sales' : 'Contatar Vendas'}
+              {language === 'en' ? 'Contact Our Team' : 'Entrar em Contato com Equipe'}
             </button>
           </div>
         </div>
