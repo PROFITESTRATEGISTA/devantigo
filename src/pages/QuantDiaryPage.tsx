@@ -274,7 +274,7 @@ export function QuantDiaryPage() {
                 maxDailyLoss = dayData.pnl;
                 maxDailyLossDate = dayDate.toLocaleDateString('pt-BR');
               }
-    // Calculate drawdown with user's initial capital
+              
               // Update streaks
               if (lastDayPnL !== null && lastDayPnL < 0) {
                 currentLossStreak++;
@@ -356,93 +356,7 @@ export function QuantDiaryPage() {
     };
   };
 
-  // Calculate drawdown based on user's initial capital (patrimony)
-  const calculateDrawdownMetrics = () => {
-    const daysWithTrades = Object.entries(calendarData)
-      .filter(([_, dayData]) => dayData.trades > 0)
-      .sort(([a], [b]) => new Date(a).getTime() - new Date(b).getTime());
-
-    if (daysWithTrades.length === 0) {
-      return { 
-        maxDrawdownPercent: 0, 
-        maxDrawdownAmount: 0, 
-        drawdownPeriod: null,
-        recoveryFactor: 0,
-        sharpeRatio: 0,
-    // Get all days and sort by date
-    const sortedDays = [...calendarData]
-      .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
-
-    if (sortedDays.length === 0) {
-    let maxDrawdown = 0;
-    let maxDrawdownAmount = 0;
-    let drawdownStart: string | null = null;
-    let drawdownEnd: string | null = null;
-    let dailyReturns: number[] = [];
-    let previousValue = userPatrimony;
-
-    daysWithTrades.forEach(([date, dayData]) => {
-      runningPnL += dayData.pnl; // Add daily P&L to running total
-      
-      // Calculate daily return percentage
-      const dailyReturn = previousValue > 0 ? (dayData.pnl / previousValue) : 0;
-      dailyReturns.push(dailyReturn);
-      previousValue = runningPnL;
-      
-      // Update peak if we have a new high
-      if (runningPnL > peak) {
-        peak = runningPnL;
-      }
-      
-      // Calculate current drawdown
-      const currentDrawdown = peak - runningPnL;
-      const currentDrawdownPercent = peak > 0 ? (currentDrawdown / peak) * 100 : 0;
-      
-      // Update maximum drawdown
-      if (currentDrawdown > maxDrawdownAmount) {
-        maxDrawdownAmount = currentDrawdown;
-        maxDrawdown = currentDrawdownPercent;
-        drawdownStart = date;
-        drawdownEnd = date;
-      } else if (currentDrawdown === maxDrawdownAmount && drawdownStart) {
-        drawdownEnd = date;
-      }
-    });
-
-    // Calculate Sharpe Ratio (Calmar Index)
-    const avgDailyReturn = dailyReturns.length > 0 ? 
-      dailyReturns.reduce((sum, ret) => sum + ret, 0) / dailyReturns.length : 0;
-    
-    const dailyReturnStd = dailyReturns.length > 1 ? 
-      Math.sqrt(dailyReturns.reduce((sum, ret) => sum + Math.pow(ret - avgDailyReturn, 2), 0) / (dailyReturns.length - 1)) : 0;
-    
-    // Annualized Sharpe Ratio (assuming 252 trading days per year)
-    const annualizedReturn = avgDailyReturn * 252;
-    const annualizedVolatility = dailyReturnStd * Math.sqrt(252);
-    const sharpeRatio = annualizedVolatility > 0 ? annualizedReturn / annualizedVolatility : 0;
-    
-    // Calmar Ratio (Annual Return / Max Drawdown)
-    const calmarRatio = maxDrawdown > 0 ? (annualizedReturn * 100) / maxDrawdown : 0;
-    
-    // Recovery Factor (Net Profit / Max Drawdown Amount)
-    const totalPnL = runningPnL - userPatrimony;
-    const recoveryFactor = maxDrawdownAmount > 0 ? totalPnL / maxDrawdownAmount : 0;
-    
-    return {
-      maxDrawdownPercent: maxDrawdown,
-      maxDrawdownAmount,
-      recoveryFactor,
-      sharpeRatio,
-      calmarRatio,
-      drawdownPeriod: drawdownStart && drawdownEnd ? {
-        start: drawdownStart,
-        end: drawdownEnd
-      } : null
-    };
-  };
-
   const allTimeStats = calculateAllTimeStats();
-  const drawdownMetrics = calculateDrawdownMetrics();
 
   // Função para obter o número de dias no mês
   const getDaysInMonth = (month: string, year: number) => {
@@ -509,8 +423,7 @@ export function QuantDiaryPage() {
         
         const weekMetrics = getWeeklyPnL(currentWeekDays);
         weeks.push({
-              pnl: dayData.pnl,
-              runningTotal: 0 // Will be calculated below
+          days: currentWeekDays,
           pnl: weekMetrics.pnl,
           trades: weekMetrics.trades
         });
@@ -527,7 +440,7 @@ export function QuantDiaryPage() {
     const weeklyData = calculateWeeklyMetrics();
     const weeklyPnLs = weeklyData.map(week => week.pnl).filter(pnl => pnl !== 0);
     
-    if (allDays.length === 0) {
+    if (weeklyPnLs.length === 0) {
       return {
         ganhoMedioSemanal: 0,
         perdaMediaSemanal: 0,
@@ -536,8 +449,8 @@ export function QuantDiaryPage() {
       };
     }
     
-    // Calculate running totals starting from user's initial capital
-    let runningTotal = userPatrimony;
+    const ganhosSemanais = weeklyPnLs.filter(pnl => pnl > 0);
+    const perdasSemanais = weeklyPnLs.filter(pnl => pnl < 0);
     
     return {
       ganhoMedioSemanal: ganhosSemanais.length > 0 ? ganhosSemanais.reduce((a, b) => a + b, 0) / ganhosSemanais.length : 0,
@@ -578,56 +491,51 @@ export function QuantDiaryPage() {
 
   const weeklyStats = calculateWeeklyStats();
 
-    const dailyReturns: number[] = [];
-    let previousCapital = userPatrimony;
-    
-    // Calculate running totals for each day
-    allDays.forEach((day, index) => {
-      runningTotal += day.pnl;
-      day.runningTotal = runningTotal;
-      
-      // Calculate daily return as percentage of previous day's capital
-      if (index > 0) {
-        const previousCapital = allDays[index - 1].runningTotal;
-        if (previousCapital > 0) {
-          const dailyReturn = day.pnl / previousCapital;
-          dailyReturns.push(dailyReturn);
-        }
-      } else {
-        // First day return
-        if (userPatrimony > 0) {
-          const dailyReturn = day.pnl / userPatrimony;
-          dailyReturns.push(dailyReturn);
-        }
-      }
-    });
+  const handleDayClick = (day: number) => {
     if (calendarViewMode === 'monthly') return;
-    sortedDays.forEach((day) => {
-    allDays.forEach((day) => {
-      const currentCapital = day.runningTotal;
+    
+    setSelectedDay(day);
     setShowActionModal(true);
-      // Update peak if current capital is higher
-      if (currentCapital > peak) {
-        peak = currentCapital;
+  };
+
+  const handleActionSelect = (action: 'analysis' | 'comment') => {
     setActionType(action);
     setShowActionModal(false);
     
-      // Calculate current drawdown using the formula: (peak - current) / patrimony
-      const currentDrawdownAmount = peak - currentCapital;
-      const currentDrawdownPercent = peak > 0 ? (currentDrawdownAmount / userPatrimony) * 100 : 0;
+    // Carregar dados existentes do dia
+    const existingData = calendarData[currentYear]?.[currentMonth]?.[selectedDay!] || { pnl: 0, trades: 0, comment: '' };
+    setEditingDay(existingData);
+    setShowDayModal(true);
   };
-      // Track maximum drawdown 
-      if (currentDrawdownAmount > maxDrawdownAmount) {
-        maxDrawdownAmount = currentDrawdownAmount;
+
+  const handleSaveDay = () => {
+    if (!selectedDay) return;
 
     setCalendarData(prev => ({
       ...prev,
-      if (previousCapital > 0 && day.pnl !== 0) {
-        const dailyReturn = day.pnl / previousCapital;
-        dailyReturns.push(dailyReturn);
+      [currentYear]: {
+        ...prev[currentYear],
+        [currentMonth]: {
+          ...prev[currentYear]?.[currentMonth],
+          [selectedDay]: editingDay
+        }
       }
     }));
-      previousCapital = runningCapital;
+
+    setShowDayModal(false);
+    setSelectedDay(null);
+    setActionType(null);
+  };
+
+  const handleDeleteDay = () => {
+    if (!selectedDay) return;
+
+    setCalendarData(prev => {
+      const newData = { ...prev };
+      if (newData[currentYear]?.[currentMonth]?.[selectedDay]) {
+        delete newData[currentYear][currentMonth][selectedDay];
+      }
+      return newData;
     });
 
     setShowDayModal(false);
@@ -1081,7 +989,7 @@ export function QuantDiaryPage() {
             </p>
           </div>
           
-          {/* Índice Calmar */}
+          {/* Índice de Calmar */}
           <div className="bg-gray-700 rounded-lg p-4">
             <div className="flex items-center justify-between mb-2">
               <span className="text-sm text-gray-400">Índice Calmar</span>
@@ -1104,16 +1012,11 @@ export function QuantDiaryPage() {
               <AlertTriangle className="w-4 h-4 text-orange-400" />
             </div>
             <p className="text-2xl font-bold text-orange-400">
-              {drawdownMetrics.maxDrawdownPercent.toFixed(1)}%
+              {drawdownMetrics.drawdownPercent.toFixed(1)}%
             </p>
             <p className="text-xs text-gray-400">
-              R$ {drawdownMetrics.maxDrawdownAmount.toFixed(2)}
+              R$ {drawdownMetrics.drawdownValue.toFixed(2)}
             </p>
-            {drawdownMetrics.drawdownPeriod && (
-              <p className="text-xs text-gray-500 mt-1">
-                {new Date(drawdownMetrics.drawdownPeriod.start).toLocaleDateString()} - {new Date(drawdownMetrics.drawdownPeriod.end).toLocaleDateString()}
-              </p>
-            )}
           </div>
           </div>
         </div>
@@ -1810,13 +1713,8 @@ export function QuantDiaryPage() {
                 <button
                   onClick={handleDeleteDay}
                   className="px-4 py-2 bg-red-600 hover:bg-red-700 rounded-md text-white flex items-center"
-                <p className="text-xl font-bold text-blue-400">
-                  {drawdownMetrics.sharpeRatio.toFixed(2)}
-                </p>
-                <p className="text-xs text-gray-500">
-                  {drawdownMetrics.sharpeRatio >= 1.0 ? 'Excelente' : 
-                   drawdownMetrics.sharpeRatio >= 0.5 ? 'Bom' : 'Regular'}
-                </p>
+                >
+                  <AlertTriangle className="w-4 h-4 mr-2" />
                   Excluir
                 </button>
                 
@@ -1824,13 +1722,8 @@ export function QuantDiaryPage() {
                   <button
                     onClick={() => setShowDayModal(false)}
                     className="px-4 py-2 bg-gray-700 hover:bg-gray-600 rounded-md text-white"
-                <p className="text-xl font-bold text-green-400">
-                  {drawdownMetrics.recoveryFactor.toFixed(1)}
-                </p>
-                <p className="text-xs text-gray-500">
-                  {drawdownMetrics.recoveryFactor >= 3.0 ? 'Excelente' : 
-                   drawdownMetrics.recoveryFactor >= 1.5 ? 'Bom' : 'Regular'}
-                </p>
+                  >
+                    Cancelar
                   </button>
                   <button
                     onClick={handleSaveDay}
@@ -1838,13 +1731,8 @@ export function QuantDiaryPage() {
                   >
                     <Save className="w-4 h-4 mr-2" />
                     Salvar
-                <p className="text-xl font-bold text-purple-400">
-                  {drawdownMetrics.calmarRatio.toFixed(2)}
-                </p>
-                <p className="text-xs text-gray-500">
-                  {drawdownMetrics.calmarRatio >= 1.0 ? 'Excelente' : 
-                   drawdownMetrics.calmarRatio >= 0.5 ? 'Bom' : 'Regular'}
-                </p>
+                  </button>
+                </div>
               </div>
             </div>
           </div>
