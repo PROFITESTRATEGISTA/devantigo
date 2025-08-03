@@ -199,12 +199,51 @@ export function QuantDiarySection() {
 
   const getWeekDays = () => {
     const days = [];
-    const startDate = new Date(currentWeekStart);
     
-    for (let i = 0; i < (showWeekends ? 7 : 5); i++) {
-      const day = new Date(startDate);
-      day.setDate(startDate.getDate() + i);
-      days.push(day);
+    // Get the current month and year
+    const currentMonth = currentDate.getMonth();
+    const currentYear = currentDate.getFullYear();
+    
+    // Calculate which week of the month we're viewing
+    const weekOfMonth = getWeekOfMonth(currentWeekStart);
+    
+    // Get all days of the current month
+    const firstDayOfMonth = new Date(currentYear, currentMonth, 1);
+    const lastDayOfMonth = new Date(currentYear, currentMonth + 1, 0);
+    
+    // Find the start of the week we want to show
+    let weekStartDay = 1;
+    
+    // Calculate the start day for each week of the month
+    const firstDayOfWeek = firstDayOfMonth.getDay(); // 0 = Sunday, 1 = Monday, etc.
+    const mondayOffset = firstDayOfWeek === 0 ? 1 : (2 - firstDayOfWeek); // Days to first Monday
+    
+    if (weekOfMonth === 1) {
+      // First week starts on day 1
+      weekStartDay = 1;
+    } else {
+      // Calculate start day for subsequent weeks
+      const firstMondayDay = mondayOffset > 0 ? mondayOffset : mondayOffset + 7;
+      weekStartDay = firstMondayDay + ((weekOfMonth - 2) * 7);
+    }
+    
+    // Generate days for this week, only within the current month
+    let currentDay = weekStartDay;
+    const maxDaysToShow = showWeekends ? 7 : 5;
+    
+    for (let i = 0; i < maxDaysToShow && currentDay <= lastDayOfMonth.getDate(); i++) {
+      const day = new Date(currentYear, currentMonth, currentDay);
+      
+      // Only add if it's a valid day of the month
+      if (day.getMonth() === currentMonth) {
+        // Check if we should include weekends
+        const dayOfWeek = day.getDay();
+        if (showWeekends || (dayOfWeek >= 1 && dayOfWeek <= 5)) {
+          days.push(day);
+        }
+      }
+      
+      currentDay++;
     }
     
     return days;
