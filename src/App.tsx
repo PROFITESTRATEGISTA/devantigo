@@ -18,6 +18,7 @@ import { PublicPlansPage } from './pages/PublicPlansPage';
 import { FAQPage } from './pages/FAQPage';
 import { LoggedInFAQPage } from './pages/LoggedInFAQPage';
 import { ChallengesPage } from './pages/ChallengesPage';
+import { QuantDiaryPage } from './pages/QuantDiaryPage';
 import { Footer } from './components/Footer';
 
 export default function App() {
@@ -145,6 +146,7 @@ export default function App() {
           <Route path="/strategy-analysis" element={<StrategyAnalysisPage />} />
           <Route path="/faq" element={<LoggedInFAQPage />} />
           <Route path="/challenges" element={<ChallengesPage />} />
+          <Route path="/quant-diary" element={<QuantDiaryPage />} />
           <Route path="*" element={<Navigate to="/dashboard" replace />} />
         </Routes>
       </Router>

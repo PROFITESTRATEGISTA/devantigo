@@ -45,7 +45,7 @@ export function NavigationPanel({ activeSection, onSectionChange }: NavigationPa
       id: 'quant-diary',
       name: language === 'en' ? 'Quant Diary' : 'Diário Quant',
       icon: <Users className="w-5 h-5" />,
-      description: language === 'en' ? 'Your trading journal and insights' : 'Seu diário de trading e insights'
+      description: language === 'en' ? 'Trading journal' : 'Diário de trading'
     }
   ];
 

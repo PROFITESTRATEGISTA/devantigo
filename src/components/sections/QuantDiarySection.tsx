@@ -1,1423 +1,179 @@
-import React, { useState, useEffect } from 'react';
-import { Calendar, ChevronLeft, ChevronRight, Plus, MessageSquare, BarChart2, Clock, Hash, TrendingUp, TrendingDown, Minus, Edit2 } from 'lucide-react';
+import React from 'react';
+import { Calendar, TrendingUp, BarChart2, ArrowRight, DollarSign, Hash, Percent, Clock } from 'lucide-react';
 import { useLanguageStore } from '../../stores/languageStore';
-import { useAuthStore } from '../../stores/authStore';
-
-interface DiaryEntry {
-  id: string;
-  date: string;
-  title?: string;
-  content?: string;
-  pnl?: number;
-  trades?: number;
-  mood?: 'positive' | 'negative' | 'neutral';
-  time?: string;
-  predefinedComments?: string[];
-}
 
 export function QuantDiarySection() {
   const { language } = useLanguageStore();
-  const { profile } = useAuthStore();
-  const [currentDate, setCurrentDate] = useState(new Date());
-  const [entries, setEntries] = useState<DiaryEntry[]>([]);
-  const [viewMode, setViewMode] = useState<'calendar' | 'statistics' | 'graph'>('calendar');
-  const [showModal, setShowModal] = useState(false);
-  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
-  const [modalType, setModalType] = useState<'comment' | 'analysis'>('comment');
-  const [showSelectionModal, setShowSelectionModal] = useState(false);
-  const [showDayPerformance, setShowDayPerformance] = useState(false);
-  const [newEntry, setNewEntry] = useState({
-    title: '',
-    content: '',
-    mood: 'neutral' as 'positive' | 'negative' | 'neutral',
-    predefinedComments: [] as string[]
-  });
 
-  // Comentários predefinidos organizados por categoria
-  const predefinedComments = {
-    positive: [
-      'Estratégia executada conforme planejado',
-      'Disciplina mantida nas entradas e saídas',
-      'Sinais claros e bem interpretados',
-      'Gerenciamento de risco respeitado',
-      'Análise pré-mercado eficaz',
-      'Paciência aguardando setups ideais'
-    ],
-    negative: [
-      'Overtrading - entrei em setups ruins',
-      'Não respeitei o stop loss definido',
-      'Saí muito cedo por medo/ansiedade',
-      'Entrei sem confirmação adequada',
-      'Aumentei posição em trade perdedor',
-      'Emocional influenciou decisões técnicas',
-      'Não segui o plano de trading',
-      'Forcei trades em mercado lateral',
-      'Ignorei sinais de reversão',
-      'Gerenciamento de risco inadequado'
-    ],
-    neutral: [
-      'Mercado sem setups claros',
-      'Foco em preservação de capital',
-      'Aguardando condições ideais',
-      'Revisão e ajuste de estratégias',
-      'Análise de performance semanal',
-      'Estudo de novos indicadores',
-      'Observação de padrões de mercado',
-      'Preparação para próxima sessão'
-    ]
+  // Estatísticas resumidas para o dashboard
+  const summaryStats = {
+    pnlMes: 0,
+    totalTrades: 0,
+    diasOperados: 0,
+    melhorDia: 0,
+    pnlTotal: 0,
+    taxaAcerto: 0,
+    sequenciaAtual: 0,
+    ultimaAtualizacao: 'Hoje'
   };
 
-  // Force re-render when language changes
-  useEffect(() => {
-    const handleLanguageChange = () => {
-      setCurrentDate(new Date(currentDate));
-    };
-    
-    window.addEventListener('languageChanged', handleLanguageChange);
-    window.addEventListener('storage', handleLanguageChange);
-    
-    return () => {
-      window.removeEventListener('languageChanged', handleLanguageChange);
-      window.removeEventListener('storage', handleLanguageChange);
-    };
-  }, [currentDate]);
-
-  // Mock data for demonstration
-  useEffect(() => {
-    // Initialize with empty entries - user will add their own data
-    setEntries([]);
-  }, []);
-
-
-  const navigateMonth = (direction: 'prev' | 'next') => {
-    const newDate = new Date(currentDate);
-    
-    if (direction === 'next') {
-      newDate.setMonth(currentDate.getMonth() + 1);
-    } else {
-      newDate.setMonth(currentDate.getMonth() - 1);
-    }
-    
-    // Limitar apenas a 2025
-    if (newDate.getFullYear() < 2025) {
-      return; // Não permitir navegar para antes de 2025
-    }
-    if (newDate.getFullYear() > 2025) {
-      return; // Não permitir navegar para depois de 2025
-    }
-    
-    setCurrentDate(newDate);
-  };
-
-  // Função para calcular o número da semana no ano (baseado no CSV)
-  const getWeekOfYear = (date: Date) => {
-    if (date.getFullYear() !== 2025) return 1;
-    
-    // 1º de janeiro de 2025 é quarta-feira
-    // Semana 1 = 29 dez 2024 (dom) a 4 jan 2025 (sáb)
-    // Semana 2 = 5 jan 2025 (dom) a 11 jan 2025 (sáb)
-    const jan1 = new Date(2025, 0, 1); // 1º de janeiro de 2025
-    
-    // Domingo da semana que contém 1º de janeiro (29 dez 2024)
-    const firstSundayOfYear = new Date(2025, 0, 1 - jan1.getDay()); // 29 dez 2024
-    
-    // Calcular diferença em dias desde o primeiro domingo
-    const daysDiff = Math.floor((date.getTime() - firstSundayOfYear.getTime()) / (24 * 60 * 60 * 1000));
-    return Math.floor(daysDiff / 7) + 1;
-  };
-  
-  // Função para calcular o número da semana no mês (baseado no CSV)
-  const getWeekOfMonth = (date: Date) => {
-    // Semana 1 do mês = semana que contém o dia 1, começando no domingo
-    const firstDayOfMonth = new Date(date.getFullYear(), date.getMonth(), 1);
-    
-    // Domingo da semana que contém o dia 1 do mês
-    const firstSundayOfMonth = new Date(date.getFullYear(), date.getMonth(), 1 - firstDayOfMonth.getDay());
-    
-    // Calcular diferença em dias desde o primeiro domingo do mês
-    const daysDiff = Math.floor((date.getTime() - firstSundayOfMonth.getTime()) / (24 * 60 * 60 * 1000));
-    return Math.floor(daysDiff / 7) + 1; // +1 porque a primeira semana é a semana 1
-  };
-
-
-  const getCalendarDays = () => {
-    const year = 2025; // Sempre usar 2025
-    const month = currentDate.getMonth();
-    
-    // Primeiro e último dia do mês
-    const firstDay = new Date(year, month, 1);
-    const lastDay = new Date(year, month + 1, 0);
-    
-    const days = [];
-    
-    // Adicionar apenas os dias do mês atual (sem resquícios de outros meses)
-    for (let day = 1; day <= lastDay.getDate(); day++) {
-      days.push(new Date(year, month, day));
-    }
-    
-    return days;
-  };
-  
-  // Função para obter o layout do calendário mensal (7 colunas)
-  const getCalendarLayout = () => {
-    const year = 2025;
-    const month = currentDate.getMonth();
-    const firstDay = new Date(year, month, 1);
-    const lastDay = new Date(year, month + 1, 0);
-    
-    // Calcular quantos dias vazios no início (domingo = 0, segunda = 1, etc.)
-    const dayOfWeek = firstDay.getDay();
-    const emptyDaysAtStart = dayOfWeek; // Domingo = 0 dias vazios, Segunda = 1, etc.
-    
-    const layout = [];
-    
-    // Adicionar dias vazios no início
-    for (let i = 0; i < emptyDaysAtStart; i++) {
-      layout.push(null);
-    }
-    
-    // Adicionar todos os dias do mês
-    for (let day = 1; day <= lastDay.getDate(); day++) {
-      layout.push(new Date(year, month, day));
-    }
-    
-    // Completar a última semana com dias vazios se necessário
-    while (layout.length % 7 !== 0) {
-      layout.push(null);
-    }
-    
-    return layout;
-  };
-
-  // Função para renderizar estatísticas acumuladas
-  const renderStatisticsView = () => {
-    const allTimeStats = getStats();
-    
-    // Calcular estatísticas por mês
-    const monthlyStats = [];
-    for (let month = 0; month < 12; month++) {
-      const monthStart = new Date(2025, month, 1);
-      const monthEnd = new Date(2025, month + 1, 0);
-      const monthEntries = entries.filter(entry => {
-        const entryDate = new Date(entry.date);
-        return entryDate >= monthStart && entryDate <= monthEnd;
-      });
-      
-      const monthPnL = monthEntries.reduce((sum, entry) => sum + (entry.pnl || 0), 0);
-      const monthTrades = monthEntries.reduce((sum, entry) => sum + (entry.trades || 0), 0);
-      const monthDays = monthEntries.filter(entry => (entry.trades || 0) > 0).length;
-      
-      monthlyStats.push({
-        month,
-        name: getMonthName(new Date(2025, month, 1)),
-        pnl: monthPnL,
-        trades: monthTrades,
-        days: monthDays
-      });
-    }
-    
-    return (
-      <div className="space-y-6">
-        {/* Estatísticas Gerais Acumuladas */}
-        <div className="bg-gray-800 rounded-lg p-6">
-          <h3 className="text-xl font-medium mb-6 flex items-center">
-            <BarChart2 className="w-6 h-6 text-blue-400 mr-3" />
-            {language === 'en' ? 'Cumulative Performance (All Time)' : 'Performance Acumulada (Todos os Tempos)'}
-          </h3>
-          
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-8">
-            <div className="bg-gray-700 rounded-lg p-4 text-center">
-              <div className="flex items-center justify-center mb-2">
-                <TrendingUp className="w-5 h-5 text-green-400 mr-2" />
-                <p className="text-sm text-gray-400">P&L Total</p>
-              </div>
-              <p className={`text-3xl font-bold ${allTimeStats.totalPnL >= 0 ? 'text-green-400' : 'text-red-400'}`}>
-                {allTimeStats.totalPnL >= 0 ? '+' : ''}R$ {allTimeStats.totalPnL.toFixed(2)}
-              </p>
-            </div>
-            
-            <div className="bg-gray-700 rounded-lg p-4 text-center">
-              <div className="flex items-center justify-center mb-2">
-                <Hash className="w-5 h-5 text-blue-400 mr-2" />
-                <p className="text-sm text-gray-400">Total de Trades</p>
-              </div>
-              <p className="text-3xl font-bold text-blue-400">{allTimeStats.totalTrades}</p>
-            </div>
-            
-            <div className="bg-gray-700 rounded-lg p-4 text-center">
-              <div className="flex items-center justify-center mb-2">
-                <div className={`w-5 h-5 rounded-full mr-2 ${
-                  allTimeStats.winRate >= 60 ? 'bg-green-400' : 
-                  allTimeStats.winRate >= 40 ? 'bg-yellow-400' : 'bg-red-400'
-                }`} />
-                <p className="text-sm text-gray-400">Taxa de Acerto</p>
-              </div>
-              <p className={`text-3xl font-bold ${
-                allTimeStats.winRate >= 60 ? 'text-green-400' : 
-                allTimeStats.winRate >= 40 ? 'text-yellow-400' : 'text-red-400'
-              }`}>
-                {allTimeStats.winRate.toFixed(1)}%
-              </p>
-            </div>
-            
-            <div className="bg-gray-700 rounded-lg p-4 text-center">
-              <div className="flex items-center justify-center mb-2">
-                <Calendar className="w-5 h-5 text-purple-400 mr-2" />
-                <p className="text-sm text-gray-400">Dias Operados</p>
-              </div>
-              <p className="text-3xl font-bold text-purple-400">{allTimeStats.totalDays}</p>
-            </div>
-          </div>
-          
-          {/* Métricas Avançadas */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <div className="bg-gray-700 rounded-lg p-3">
-              <p className="text-xs text-gray-400 mb-1">Profit Factor</p>
-              <p className={`text-lg font-bold ${
-                allTimeStats.profitFactor >= 1.5 ? 'text-green-400' : 
-                allTimeStats.profitFactor >= 1.0 ? 'text-yellow-400' : 'text-red-400'
-              }`}>
-                {allTimeStats.profitFactor.toFixed(2)}
-              </p>
-            </div>
-            
-            <div className="bg-gray-700 rounded-lg p-3">
-              <p className="text-xs text-gray-400 mb-1">Sharpe Ratio</p>
-              <p className={`text-lg font-bold ${
-                allTimeStats.sharpeRatio >= 1.0 ? 'text-green-400' : 
-                allTimeStats.sharpeRatio >= 0.5 ? 'text-yellow-400' : 'text-red-400'
-              }`}>
-                {allTimeStats.sharpeRatio.toFixed(2)}
-              </p>
-            </div>
-            
-            <div className="bg-gray-700 rounded-lg p-3">
-              <p className="text-xs text-gray-400 mb-1">Drawdown Máx.</p>
-              <p className={`text-lg font-bold ${
-                allTimeStats.maxDrawdown <= 500 ? 'text-green-400' : 
-                allTimeStats.maxDrawdown <= 1000 ? 'text-yellow-400' : 'text-red-400'
-              }`}>
-                R$ {allTimeStats.maxDrawdown.toFixed(2)}
-              </p>
-            </div>
-            
-            <div className="bg-gray-700 rounded-lg p-3">
-              <p className="text-xs text-gray-400 mb-1">Melhor Dia</p>
-              <p className="text-lg font-bold text-green-400">
-                R$ {allTimeStats.bestDay.toFixed(2)}
-              </p>
-            </div>
-          </div>
-        </div>
-        
-        {/* Performance Mensal */}
-        <div className="bg-gray-800 rounded-lg p-6">
-          <h3 className="text-xl font-medium mb-4 flex items-center">
-            <Calendar className="w-6 h-6 text-blue-400 mr-3" />
-            {language === 'en' ? 'Monthly Breakdown (2025)' : 'Breakdown Mensal (2025)'}
-          </h3>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {monthlyStats.map((monthStat) => (
-              <div key={monthStat.month} className="bg-gray-700 rounded-lg p-4">
-                <div className="flex items-center justify-between mb-3">
-                  <h4 className="font-medium text-white">{monthStat.name}</h4>
-                  <span className={`text-sm font-bold ${
-                    monthStat.pnl > 0 ? 'text-green-400' : 
-                    monthStat.pnl < 0 ? 'text-red-400' : 'text-gray-400'
-                  }`}>
-                    {monthStat.pnl > 0 ? '+' : ''}R$ {monthStat.pnl.toFixed(0)}
-                  </span>
-                </div>
-                
-                <div className="grid grid-cols-2 gap-3 text-sm">
-                  <div>
-                    <p className="text-xs text-gray-400">Trades</p>
-                    <p className="font-medium text-blue-400">{monthStat.trades}</p>
-                  </div>
-                  <div>
-                    <p className="text-xs text-gray-400">Dias</p>
-                    <p className="font-medium text-purple-400">{monthStat.days}</p>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-        
-        {/* Evolução Temporal */}
-        <div className="bg-gray-800 rounded-lg p-6">
-          <h3 className="text-xl font-medium mb-4 flex items-center">
-            <TrendingUp className="w-6 h-6 text-green-400 mr-3" />
-            {language === 'en' ? 'Cumulative P&L Evolution' : 'Evolução do P&L Acumulado'}
-          </h3>
-          
-          {/* Gráfico de linha simples */}
-          <div className="h-64 bg-gray-900 rounded-lg p-4 flex items-end justify-between">
-            {monthlyStats.map((monthStat, index) => {
-              const cumulativePnL = monthlyStats.slice(0, index + 1).reduce((sum, m) => sum + m.pnl, 0);
-              const maxCumulative = Math.max(...monthlyStats.map((_, i) => 
-                monthlyStats.slice(0, i + 1).reduce((sum, m) => sum + m.pnl, 0)
-              ));
-              const minCumulative = Math.min(...monthlyStats.map((_, i) => 
-                monthlyStats.slice(0, i + 1).reduce((sum, m) => sum + m.pnl, 0)
-              ));
-              
-              const range = Math.max(Math.abs(maxCumulative), Math.abs(minCumulative));
-              const height = range > 0 ? Math.abs(cumulativePnL) / range * 200 : 0;
-              const isPositive = cumulativePnL >= 0;
-              
-              return (
-                <div key={index} className="flex flex-col items-center group relative">
-                  <div
-                    className={`w-4 rounded-t ${
-                      isPositive ? 'bg-green-500' : 'bg-red-500'
-                    } transition-all duration-200 hover:opacity-80`}
-                    style={{ 
-                      height: `${height}px`,
-                      marginTop: isPositive ? 'auto' : '0',
-                      marginBottom: isPositive ? '0' : 'auto'
-                    }}
-                  />
-                  <span className="text-xs text-gray-400 mt-1">{monthStat.name.substring(0, 3)}</span>
-                  
-                  {/* Tooltip */}
-                  <div className="absolute bottom-full mb-2 hidden group-hover:block bg-gray-700 text-white text-xs rounded px-2 py-1 whitespace-nowrap z-10">
-                    <div>{monthStat.name}</div>
-                    <div>Mensal: R$ {monthStat.pnl.toFixed(2)}</div>
-                    <div>Acumulado: R$ {cumulativePnL.toFixed(2)}</div>
-                    <div>Trades: {monthStat.trades}</div>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-          
-          {/* Legenda */}
-          <div className="flex justify-center space-x-6 mt-4">
-            <div className="flex items-center">
-              <div className="w-3 h-3 bg-green-500 rounded mr-2"></div>
-              <span className="text-sm text-gray-400">P&L Positivo</span>
-            </div>
-            <div className="flex items-center">
-              <div className="w-3 h-3 bg-red-500 rounded mr-2"></div>
-              <span className="text-sm text-gray-400">P&L Negativo</span>
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  };
-
-  const formatDate = (date: Date) => {
-    return date.toISOString().split('T')[0];
-  };
-
-  const getEntryForDate = (date: Date) => {
-    const dateStr = formatDate(date);
-    return entries.find(entry => entry.date === dateStr);
-  };
-
-  const getDayName = (date: Date) => {
-    const days = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
-    return days[date.getDay()];
-  };
-
-  const getMonthName = (date: Date) => {
-    const months = [
-      'janeiro', 'fevereiro', 'março', 'abril', 'maio', 'junho',
-      'julho', 'agosto', 'setembro', 'outubro', 'novembro', 'dezembro'
-    ];
-    return months[date.getMonth()];
-  };
-
-  const openModal = (date: Date, type: 'comment' | 'analysis') => {
-    setSelectedDate(date);
-    setModalType(type);
-    setShowModal(true);
-    
-    // Pre-fill with existing entry if available
-    const existingEntry = getEntryForDate(date);
-    if (existingEntry) {
-      setNewEntry({
-        title: existingEntry.title || '',
-        content: existingEntry.content || '',
-        mood: existingEntry.mood || 'neutral',
-        predefinedComments: existingEntry.predefinedComments || []
-      });
-    } else {
-      setNewEntry({
-        title: '',
-        content: '',
-        mood: 'neutral',
-        predefinedComments: []
-      });
-    }
-  };
-
-  const openSelectionModal = (date: Date) => {
-    const entry = getEntryForDate(date);
-    
-    if (entry && (entry.pnl !== undefined || entry.trades !== undefined)) {
-      // Se tem dados, mostrar performance do dia
-      setSelectedDate(date);
-      setShowDayPerformance(true);
-    } else {
-      // Se não tem dados, mostrar seleção para adicionar
-      setSelectedDate(date);
-      setShowSelectionModal(true);
-    }
-  };
-
-  const handleSelectionChoice = (type: 'comment' | 'analysis') => {
-    setShowSelectionModal(false);
-    if (selectedDate) {
-      openModal(selectedDate, type);
-    }
-  };
-
-  const saveEntry = () => {
-    if (!selectedDate) return;
-    
-    const dateStr = formatDate(selectedDate);
-    const entry: DiaryEntry = {
-      id: Date.now().toString(),
-      date: dateStr,
-      title: newEntry.title,
-      content: newEntry.content,
-      mood: newEntry.mood,
-      predefinedComments: newEntry.predefinedComments
-    };
-    
-    setEntries(prev => {
-      const filtered = prev.filter(e => e.date !== dateStr);
-      return [...filtered, entry];
-    });
-    
-    setShowModal(false);
-    setSelectedDate(null);
-  };
-
-  const togglePredefinedComment = (comment: string) => {
-    setNewEntry(prev => ({
-      ...prev,
-      predefinedComments: prev.predefinedComments.includes(comment)
-        ? prev.predefinedComments.filter(c => c !== comment)
-        : [...prev.predefinedComments, comment]
-    }));
-  };
-
-  const getMoodEmoji = (mood: string) => {
-    switch (mood) {
-      case 'positive': return '📈';
-      case 'negative': return '📉';
-      default: return '➡️';
-    }
-  };
-
-  const getMoodColor = (mood: string) => {
-    switch (mood) {
-      case 'positive': return 'text-green-400';
-      case 'negative': return 'text-red-400';
-      default: return 'text-gray-400';
-    }
-  };
-
-  // Calcular estatísticas
-  const getStats = () => {
-    let relevantEntries = entries;
-    
-    // Para estatísticas, usar todos os dados (acumulado)
-    if (viewMode === 'statistics') {
-      relevantEntries = entries; // Todos os dados
-    } else {
-      // Para calendário e gráfico, usar apenas o mês atual
-      const monthStart = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
-      const monthEnd = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0);
-      relevantEntries = entries.filter(entry => {
-        const entryDate = new Date(entry.date);
-        return entryDate >= monthStart && entryDate <= monthEnd;
-      });
-    }
-    
-    const totalPnL = relevantEntries.reduce((sum, entry) => sum + (entry.pnl || 0), 0);
-    const totalTrades = relevantEntries.reduce((sum, entry) => sum + (entry.trades || 0), 0);
-    const profitableDays = relevantEntries.filter(entry => (entry.pnl || 0) > 0).length;
-    const totalDays = relevantEntries.filter(entry => (entry.trades || 0) > 0).length;
-    const winRate = totalDays > 0 ? (profitableDays / totalDays) * 100 : 0;
-    
-    // Métricas avançadas
-    const bestDay = entries.length > 0 ? Math.max(...entries.map(e => e.pnl || 0)) : 0;
-    const worstDay = entries.length > 0 ? Math.min(...entries.map(e => e.pnl || 0)) : 0;
-    const profitableTrades = relevantEntries.reduce((sum, entry) => {
-      return sum + (entry.pnl && entry.pnl > 0 ? entry.trades || 0 : 0);
-    }, 0);
-    const lossTrades = totalTrades - profitableTrades;
-    
-    // Calcular Profit Factor
-    const grossProfit = relevantEntries.reduce((sum, entry) => {
-      return sum + (entry.pnl && entry.pnl > 0 ? entry.pnl : 0);
-    }, 0);
-    const grossLoss = Math.abs(relevantEntries.reduce((sum, entry) => {
-      return sum + (entry.pnl && entry.pnl < 0 ? entry.pnl : 0);
-    }, 0));
-    const profitFactor = grossLoss > 0 ? grossProfit / grossLoss : 0;
-    
-    // Calcular Sharpe Ratio (simplificado)
-    const dailyReturns = relevantEntries.map(e => e.pnl || 0);
-    const avgReturn = dailyReturns.length > 0 ? totalPnL / dailyReturns.length : 0;
-    const variance = dailyReturns.length > 0 ? 
-      dailyReturns.reduce((sum, ret) => sum + Math.pow(ret - avgReturn, 2), 0) / dailyReturns.length : 0;
-    const stdDev = Math.sqrt(variance);
-    const sharpeRatio = stdDev > 0 ? (avgReturn / stdDev) * Math.sqrt(252) : 0; // Anualizado
-    
-    // Calcular Drawdown
-    let maxDrawdown = 0;
-    let peak = 0;
-    let cumulativePnL = 0;
-    
-    for (const entry of relevantEntries.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())) {
-      cumulativePnL += entry.pnl || 0;
-      if (cumulativePnL > peak) {
-        peak = cumulativePnL;
-      }
-      const drawdown = peak - cumulativePnL;
-      if (drawdown > maxDrawdown) {
-        maxDrawdown = drawdown;
-      }
-    }
-    
-    return { 
-      totalPnL, 
-      totalTrades, 
-      winRate, 
-      totalDays,
-      bestDay,
-      worstDay,
-      profitFactor,
-      sharpeRatio,
-      maxDrawdown,
-      grossProfit,
-      grossLoss
-    };
-  };
-
-  const stats = getStats();
-
-  // Função para renderizar gráfico de P&L
-  const renderGraphView = () => {
-    const monthStart = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
-    const monthEnd = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0);
-    const monthEntries = entries.filter(entry => {
-      const entryDate = new Date(entry.date);
-      return entryDate >= monthStart && entryDate <= monthEnd;
-    });
-
-    // Criar dados para o gráfico (simulado)
-    const graphData = [];
-    let cumulativePnL = 0;
-    
-    for (let day = 1; day <= monthEnd.getDate(); day++) {
-      const date = new Date(currentDate.getFullYear(), currentDate.getMonth(), day);
-      const entry = getEntryForDate(date);
-      if (entry && entry.pnl !== undefined) {
-        cumulativePnL += entry.pnl;
-      }
-      graphData.push({
-        day,
-        pnl: entry?.pnl || 0,
-        cumulativePnL,
-        trades: entry?.trades || 0
-      });
-    }
-
-    return (
-      <div className="bg-gray-800 rounded-lg p-6">
-        <h3 className="text-lg font-medium mb-4 flex items-center">
-          <BarChart2 className="w-5 h-5 text-blue-400 mr-2" />
-          {language === 'en' ? 'P&L Chart' : 'Gráfico de P&L'}
-        </h3>
-        
-        {/* Gráfico simulado */}
-        <div className="h-64 bg-gray-900 rounded-lg p-4 flex items-end justify-between">
-          {graphData.slice(0, 31).map((data, index) => {
-            const maxPnL = Math.max(...graphData.map(d => Math.abs(d.pnl)));
-            const height = maxPnL > 0 ? Math.abs(data.pnl) / maxPnL * 200 : 0;
-            
-            return (
-              <div key={index} className="flex flex-col items-center group relative">
-                <div
-                  className={`w-6 rounded-t ${
-                    data.pnl > 0 ? 'bg-green-500' : data.pnl < 0 ? 'bg-red-500' : 'bg-gray-600'
-                  } transition-all duration-200 hover:opacity-80`}
-                  style={{ height: `${height}px` }}
-                />
-                <span className="text-xs text-gray-400 mt-1">{data.day}</span>
-                
-                {/* Tooltip */}
-                <div className="absolute bottom-full mb-2 hidden group-hover:block bg-gray-700 text-white text-xs rounded px-2 py-1 whitespace-nowrap">
-                  <div>Dia {data.day}</div>
-                  <div>P&L: R$ {data.pnl.toFixed(2)}</div>
-                  <div>Trades: {data.trades}</div>
-                  <div>Acumulado: R$ {data.cumulativePnL.toFixed(2)}</div>
-                </div>
-              </div>
-            );
-          })}
-        </div>
-        
-        {/* Legenda */}
-        <div className="flex justify-center space-x-6 mt-4">
-          <div className="flex items-center">
-            <div className="w-3 h-3 bg-green-500 rounded mr-2"></div>
-            <span className="text-sm text-gray-400">
-              {language === 'en' ? 'Profit' : 'Lucro'}
-            </span>
-          </div>
-          <div className="flex items-center">
-            <div className="w-3 h-3 bg-red-500 rounded mr-2"></div>
-            <span className="text-sm text-gray-400">
-              {language === 'en' ? 'Loss' : 'Perda'}
-            </span>
-          </div>
-          <div className="flex items-center">
-            <div className="w-3 h-3 bg-gray-600 rounded mr-2"></div>
-            <span className="text-sm text-gray-400">
-              {language === 'en' ? 'No Trading' : 'Sem Operações'}
-            </span>
-          </div>
-        </div>
-      </div>
-    );
-  };
   return (
     <div className="space-y-6">
-      {/* Header */}
       <div className="flex items-center justify-between">
         <h2 className="text-2xl font-bold text-white">
           {language === 'en' ? 'Quant Diary' : 'Diário Quant'}
         </h2>
-        
-        {/* View Mode Switch */}
-        <div className="flex items-center space-x-3">
-          <span className="text-sm text-gray-400">
-            {language === 'en' ? 'View:' : 'Visualização:'}
-          </span>
-          <div className="bg-gray-800 rounded-lg p-1 flex space-x-1">
-            <button
-              onClick={() => setViewMode('calendar')}
-              className={`px-4 py-2 rounded-md text-sm font-medium transition-all duration-200 flex items-center ${
-                viewMode === 'calendar'
-                  ? 'bg-blue-600 text-white shadow-lg'
-                  : 'text-gray-400 hover:text-white hover:bg-gray-700'
-              }`}
-            >
-              <Calendar className="w-4 h-4 mr-2" />
-              {language === 'en' ? 'Calendar' : 'Calendário'}
-            </button>
-            
-            <button
-              onClick={() => setViewMode('statistics')}
-              className={`px-4 py-2 rounded-md text-sm font-medium transition-all duration-200 flex items-center ${
-                viewMode === 'statistics'
-                  ? 'bg-blue-600 text-white shadow-lg'
-                  : 'text-gray-400 hover:text-white hover:bg-gray-700'
-              }`}
-            >
-              <BarChart2 className="w-4 h-4 mr-2" />
-              {language === 'en' ? 'Statistics' : 'Estatísticas'}
-            </button>
-            
-            <button
-              onClick={() => setViewMode('graph')}
-              className={`px-4 py-2 rounded-md text-sm font-medium transition-all duration-200 flex items-center ${
-                viewMode === 'graph'
-                  ? 'bg-blue-600 text-white shadow-lg'
-                  : 'text-gray-400 hover:text-white hover:bg-gray-700'
-              }`}
-            >
-              <TrendingUp className="w-4 h-4 mr-2" />
-              {language === 'en' ? 'Graph' : 'Gráfico'}
-            </button>
-          </div>
-        </div>
+        <button
+          onClick={() => window.location.href = '/quant-diary'}
+          className="px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-md text-white flex items-center"
+        >
+          {language === 'en' ? 'Open Diary' : 'Abrir Diário'}
+          <ArrowRight className="w-4 h-4 ml-2" />
+        </button>
       </div>
 
-      {/* Enhanced Stats Panel */}
+      {/* Resumo de Performance */}
       <div className="bg-gray-800 rounded-lg p-6">
-        <div className="flex items-center justify-between mb-4">
-          <h3 className="text-lg font-medium flex items-center">
+        <div className="flex items-center justify-between mb-6">
+          <h3 className="text-lg font-semibold flex items-center">
             <TrendingUp className="w-5 h-5 text-blue-400 mr-2" />
-            {viewMode === 'statistics' 
-              ? (language === 'en' ? 'All-Time Performance' : 'Performance Geral')
-              : (language === 'en' ? 'Monthly Performance' : 'Performance Mensal')
-            }
+            {language === 'en' ? 'Performance Summary' : 'Resumo de Performance'}
           </h3>
-          {viewMode !== 'statistics' && (
-            <span className="text-sm text-gray-400">
-              {getMonthName(currentDate)} {currentDate.getFullYear()}
-            </span>
-          )}
+          <span className="text-sm text-gray-400">
+            {language === 'en' ? 'Last update: Today' : 'Última atualização: Hoje'}
+          </span>
         </div>
-        
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
+
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          {/* P&L do Mês */}
           <div className="bg-gray-700 rounded-lg p-4">
             <div className="flex items-center justify-between mb-2">
-              <p className="text-sm text-gray-400">
-                {language === 'en' ? 'Month P&L' : 'P&L do Mês'}
-              </p>
-              {stats.totalPnL >= 0 ? (
-                <TrendingUp className="w-4 h-4 text-green-400" />
-              ) : (
-                <TrendingDown className="w-4 h-4 text-red-400" />
-              )}
+              <span className="text-sm text-gray-400">
+                {language === 'en' ? 'Monthly P&L' : 'P&L do Mês'}
+              </span>
+              <DollarSign className="w-4 h-4 text-green-400" />
             </div>
-            <p className={`text-2xl font-bold ${stats.totalPnL >= 0 ? 'text-green-400' : 'text-red-400'}`}>
-              {stats.totalPnL >= 0 ? '+' : ''}R$ {stats.totalPnL.toFixed(2)}
+            <p className="text-xl font-bold text-green-400">
+              +R$ {summaryStats.pnlMes.toFixed(2)}
+            </p>
+            <p className="text-xs text-gray-500">
+              {language === 'en' ? 'August 2025' : 'Agosto 2025'}
             </p>
           </div>
-          
+
+          {/* Total de Trades */}
           <div className="bg-gray-700 rounded-lg p-4">
             <div className="flex items-center justify-between mb-2">
-              <p className="text-sm text-gray-400">
-                {language === 'en' ? 'Total Trades' : 'Total de Trades'}
-              </p>
+              <span className="text-sm text-gray-400">
+                {language === 'en' ? 'Monthly Trades' : 'Trades do Mês'}
+              </span>
               <Hash className="w-4 h-4 text-blue-400" />
             </div>
-            <p className="text-2xl font-bold text-blue-400">{stats.totalTrades}</p>
-            <p className="text-xs text-gray-500 mt-1">
-              {stats.totalDays > 0 ? `${(stats.totalTrades / stats.totalDays).toFixed(1)} por dia` : '0 por dia'}
+            <p className="text-xl font-bold text-blue-400">{summaryStats.totalTrades}</p>
+            <p className="text-xs text-gray-500">
+              {summaryStats.diasOperados} {language === 'en' ? 'trading days' : 'dias operados'}
             </p>
           </div>
-          
+
+          {/* P&L Total (All-Time) */}
           <div className="bg-gray-700 rounded-lg p-4">
             <div className="flex items-center justify-between mb-2">
-              <p className="text-sm text-gray-400">
-                {language === 'en' ? 'Win Rate' : 'Taxa de Acerto'}
-              </p>
-              <div className={`w-4 h-4 rounded-full ${
-                stats.winRate >= 60 ? 'bg-green-400' : 
-                stats.winRate >= 40 ? 'bg-yellow-400' : 'bg-red-400'
-              }`} />
-            </div>
-            <p className={`text-2xl font-bold ${
-              stats.winRate >= 60 ? 'text-green-400' : 
-              stats.winRate >= 40 ? 'text-yellow-400' : 'text-red-400'
-            }`}>
-              {stats.winRate.toFixed(1)}%
-            </p>
-            <p className="text-xs text-gray-500 mt-1">
-              {stats.totalDays} {language === 'en' ? 'trading days' : 'dias operados'}
-            </p>
-          </div>
-          
-          <div className="bg-gray-700 rounded-lg p-4">
-            <div className="flex items-center justify-between mb-2">
-              <p className="text-sm text-gray-400">
-                {language === 'en' ? 'Profit Factor' : 'Fator de Lucro'}
-              </p>
+              <span className="text-sm text-gray-400">
+                {language === 'en' ? 'Total P&L' : 'P&L Total'}
+              </span>
               <TrendingUp className="w-4 h-4 text-purple-400" />
             </div>
-            <p className={`text-2xl font-bold ${
-              stats.profitFactor >= 1.5 ? 'text-green-400' : 
-              stats.profitFactor >= 1.0 ? 'text-yellow-400' : 'text-red-400'
-            }`}>
-              {stats.profitFactor.toFixed(2)}
+            <p className="text-xl font-bold text-purple-400">
+              +R$ {summaryStats.pnlTotal.toFixed(2)}
             </p>
-            <p className="text-xs text-gray-500 mt-1">
-              {stats.profitFactor >= 1.0 ? 'Lucrativo' : 'Prejuízo'}
+            <p className="text-xs text-gray-500">
+              {language === 'en' ? 'All-time' : 'Todos os tempos'}
             </p>
           </div>
-        </div>
-        
-        {/* Additional Stats Row */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
-          <div className="bg-gray-700 rounded-lg p-3">
-            <p className="text-xs text-gray-400 mb-1">
-              {language === 'en' ? 'Sharpe Ratio' : 'Sharpe Ratio'}
+
+          {/* Taxa de Acerto */}
+          <div className="bg-gray-700 rounded-lg p-4">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-sm text-gray-400">
+                {language === 'en' ? 'Win Rate' : 'Taxa de Acerto'}
+              </span>
+              <Percent className="w-4 h-4 text-yellow-400" />
+            </div>
+            <p className="text-xl font-bold text-yellow-400">
+              {summaryStats.taxaAcerto.toFixed(1)}%
             </p>
-            <p className={`text-lg font-bold ${
-              stats.sharpeRatio >= 1.0 ? 'text-green-400' : 
-              stats.sharpeRatio >= 0.5 ? 'text-yellow-400' : 'text-red-400'
-            }`}>
-              {stats.sharpeRatio.toFixed(2)}
-            </p>
-          </div>
-          
-          <div className="bg-gray-700 rounded-lg p-3">
-            <p className="text-xs text-gray-400 mb-1">
-              {language === 'en' ? 'Max Drawdown' : 'Drawdown Máximo'}
-            </p>
-            <p className={`text-lg font-bold ${
-              stats.maxDrawdown <= 500 ? 'text-green-400' : 
-              stats.maxDrawdown <= 1000 ? 'text-yellow-400' : 'text-red-400'
-            }`}>
-              R$ {stats.maxDrawdown.toFixed(2)}
-            </p>
-          </div>
-          
-          <div className="bg-gray-700 rounded-lg p-3">
-            <p className="text-xs text-gray-400 mb-1">
-              {language === 'en' ? 'Best Day' : 'Melhor Dia'}
-            </p>
-            <p className="text-lg font-bold text-green-400">
-              R$ {stats.bestDay.toFixed(2)}
-            </p>
-          </div>
-          
-          <div className="bg-gray-700 rounded-lg p-3">
-            <p className="text-xs text-gray-400 mb-1">
-              {language === 'en' ? 'Worst Day' : 'Pior Dia'}
-            </p>
-            <p className="text-lg font-bold text-red-400">
-              R$ {stats.worstDay.toFixed(2)}
-            </p>
-          </div>
-        </div>
-        
-        {/* Third Stats Row */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <div className="bg-gray-700 rounded-lg p-3">
-            <p className="text-xs text-gray-400 mb-1">
-              {language === 'en' ? 'Avg P&L/Day' : 'P&L Médio/Dia'}
-            </p>
-            <p className={`text-lg font-bold ${
-              stats.totalDays > 0 && stats.totalPnL / stats.totalDays >= 0 ? 'text-green-400' : 'text-red-400'
-            }`}>
-              R$ {stats.totalDays > 0 ? (stats.totalPnL / stats.totalDays).toFixed(2) : '0.00'}
-            </p>
-          </div>
-          
-          <div className="bg-gray-700 rounded-lg p-3">
-            <p className="text-xs text-gray-400 mb-1">
-              {language === 'en' ? 'Profitable Days' : 'Dias Lucrativos'}
-            </p>
-            <p className="text-lg font-bold text-blue-400">
-              {entries.filter(e => (e.pnl || 0) > 0).length}
-            </p>
-          </div>
-          
-          <div className="bg-gray-700 rounded-lg p-3">
-            <p className="text-xs text-gray-400 mb-1">
-              {language === 'en' ? 'Loss Days' : 'Dias de Perda'}
-            </p>
-            <p className="text-lg font-bold text-orange-400">
-              {entries.filter(e => (e.pnl || 0) < 0).length}
-            </p>
-          </div>
-          
-          <div className="bg-gray-700 rounded-lg p-3">
-            <p className="text-xs text-gray-400 mb-1">
-              {language === 'en' ? 'Gross Profit' : 'Lucro Bruto'}
-            </p>
-            <p className="text-lg font-bold text-green-400">
-              R$ {stats.grossProfit.toFixed(2)}
+            <p className="text-xs text-gray-500">
+              {language === 'en' ? 'All-time average' : 'Média geral'}
             </p>
           </div>
         </div>
       </div>
 
-      {/* Navigation - Only show for calendar and graph modes */}
-      {viewMode !== 'statistics' && (
-        <div className="flex items-center justify-between bg-gray-800 rounded-lg p-4">
-          <button
-            onClick={() => navigateMonth('prev')}
-            className="p-2 hover:bg-gray-700 rounded-full transition-colors"
-            title="Mês anterior"
-          >
-            <ChevronLeft className="w-5 h-5" />
-          </button>
-          
-          <h3 className="text-lg font-semibold">
-            {`${getMonthName(currentDate)} de ${currentDate.getFullYear()}`}
-          </h3>
-          
-          <button
-            onClick={() => navigateMonth('next')}
-            className="p-2 hover:bg-gray-700 rounded-full transition-colors"
-            title="Próximo mês"
-          >
-            <ChevronRight className="w-5 h-5" />
-          </button>
-        </div>
-      )}
-
-      {/* Content based on view mode */}
-      {viewMode === 'statistics' ? (
-        renderStatisticsView()
-      ) : viewMode === 'calendar' ? (
-        /* Calendar View */
-        <div className="grid grid-cols-7 gap-2">
-          {/* Header dos dias da semana */}
-          {['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'].map(day => (
-            <div key={day} className="p-3 text-center text-sm font-medium text-gray-400 bg-gray-800 rounded-lg">
-              {day}
-            </div>
-          ))}
-          
-          {/* Dias do calendário */}
-          {getCalendarLayout().map((day, index) => {
-            const entry = day ? getEntryForDate(day) : null;
-            const isToday = day ? formatDate(day) === formatDate(new Date()) : false;
-            
-            return (
-              <div
-                key={index}
-                className={`min-h-32 p-3 rounded-lg border transition-all duration-300 ${
-                  !day 
-                    ? 'border-transparent bg-transparent cursor-default'
-                    : isToday 
-                      ? 'border-blue-500 bg-blue-900 bg-opacity-20 cursor-pointer hover:bg-blue-900 hover:bg-opacity-30' 
-                      : 'border-gray-700 bg-gray-800 hover:border-blue-500 cursor-pointer hover:bg-gray-700'
-                }`}
-                onClick={() => day && openSelectionModal(day)}
-              >
-                {day && (
-                  <>
-                    <div className="text-center mb-2">
-                      <span className="text-lg font-bold text-white">
-                        {day.getDate()}
-                      </span>
-                      <div className="text-xs text-gray-400">
-                        Sem {getWeekOfMonth(day)} (S{getWeekOfYear(day)})
-                      </div>
-                    </div>
-                
-                    {entry ? (
-                      <div className="space-y-2">
-                        {entry.pnl !== undefined && (
-                          <div className={`text-sm font-bold text-center ${
-                            entry.pnl > 0 ? 'text-green-400' : entry.pnl < 0 ? 'text-red-400' : 'text-gray-400'
-                          }`}>
-                            {entry.pnl > 0 ? '+' : ''}R$ {entry.pnl.toFixed(0)}
-                          </div>
-                        )}
-                        
-                        {entry.trades !== undefined && entry.trades > 0 && (
-                          <div className="text-xs text-blue-400 text-center">
-                            {entry.trades} trades
-                          </div>
-                        )}
-                        
-                        <div className="text-center">
-                          <span className="text-lg">{getMoodEmoji(entry.mood || 'neutral')}</span>
-                        </div>
-                      </div>
-                    ) : (
-                      <div className="flex-1 flex items-center justify-center">
-                        <p className="text-xs text-gray-500 text-center">
-                          Clique para adicionar dados
-                        </p>
-                      </div>
-                    )}
-                  </>
-                )}
-              </div>
-            );
-          })}
-        </div>
-      ) : (
-        /* Graph View */
-        renderGraphView()
-      )}
-
-      {/* Day Performance Modal */}
-      {showDayPerformance && selectedDate && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-          <div className="bg-gray-800 rounded-lg max-w-2xl w-full p-6 relative">
-            <button 
-              onClick={() => setShowDayPerformance(false)}
-              className="absolute top-4 right-4 text-gray-400 hover:text-white"
-            >
-              ×
-            </button>
-            
-            {(() => {
-              const entry = getEntryForDate(selectedDate);
-              return (
-                <div>
-                  <div className="text-center mb-6">
-                    <Calendar className="w-12 h-12 text-blue-500 mx-auto mb-4" />
-                    <h2 className="text-2xl font-bold text-gray-100">
-                      {language === 'en' ? 'Daily Performance' : 'Performance do Dia'}
-                    </h2>
-                    <p className="mt-2 text-gray-400">
-                      {selectedDate.toLocaleDateString('pt-BR', { 
-                        weekday: 'long', 
-                        year: 'numeric', 
-                        month: 'long', 
-                        day: 'numeric' 
-                      })}
-                    </p>
-                  </div>
-
-                  {entry ? (
-                    <div className="space-y-6">
-                      {/* Performance Summary */}
-                      <div className="bg-gray-700 rounded-lg p-4">
-                        <h3 className="text-lg font-medium mb-4 flex items-center">
-                          <BarChart2 className="w-5 h-5 text-blue-400 mr-2" />
-                          {language === 'en' ? 'Performance Summary' : 'Resumo da Performance'}
-                        </h3>
-                        
-                        <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                          <div className="text-center">
-                            <p className="text-xs text-gray-400 mb-1">P&L do Dia</p>
-                            <p className={`text-2xl font-bold ${
-                              (entry.pnl || 0) > 0 ? 'text-green-400' : 
-                              (entry.pnl || 0) < 0 ? 'text-red-400' : 'text-gray-400'
-                            }`}>
-                              {(entry.pnl || 0) > 0 ? '+' : ''}R$ {(entry.pnl || 0).toFixed(2)}
-                            </p>
-                          </div>
-                          
-                          <div className="text-center">
-                            <p className="text-xs text-gray-400 mb-1">Total de Trades</p>
-                            <p className="text-2xl font-bold text-blue-400">
-                              {entry.trades || 0}
-                            </p>
-                          </div>
-                          
-                          <div className="text-center">
-                            <p className="text-xs text-gray-400 mb-1">Humor do Dia</p>
-                            <div className="text-2xl">
-                              {getMoodEmoji(entry.mood || 'neutral')}
-                            </div>
-                            <p className={`text-sm font-medium ${getMoodColor(entry.mood || 'neutral')}`}>
-                              {entry.mood === 'positive' ? 'Positivo' : 
-                               entry.mood === 'negative' ? 'Negativo' : 'Neutro'}
-                            </p>
-                          </div>
-                        </div>
-                      </div>
-
-                      {/* Session Details */}
-                      {entry.title && (
-                        <div className="bg-gray-700 rounded-lg p-4">
-                          <h3 className="text-lg font-medium mb-2">
-                            {language === 'en' ? 'Session Title' : 'Título da Sessão'}
-                          </h3>
-                          <p className="text-gray-300">{entry.title}</p>
-                        </div>
-                      )}
-
-                      {/* Comments */}
-                      {entry.predefinedComments && entry.predefinedComments.length > 0 && (
-                        <div className="bg-gray-700 rounded-lg p-4">
-                          <h3 className="text-lg font-medium mb-3">
-                            {language === 'en' ? 'Daily Analysis' : 'Análise do Dia'}
-                          </h3>
-                          <div className="space-y-2">
-                            {entry.predefinedComments.map((comment, index) => (
-                              <div key={index} className="flex items-start">
-                                <div className="w-2 h-2 bg-blue-400 rounded-full mt-2 mr-3 flex-shrink-0"></div>
-                                <p className="text-sm text-gray-300">{comment}</p>
-                              </div>
-                            ))}
-                          </div>
-                        </div>
-                      )}
-
-                      {/* Detailed Notes */}
-                      {entry.content && (
-                        <div className="bg-gray-700 rounded-lg p-4">
-                          <h3 className="text-lg font-medium mb-3">
-                            {language === 'en' ? 'Detailed Analysis' : 'Análise Detalhada'}
-                          </h3>
-                          <p className="text-gray-300 whitespace-pre-line">{entry.content}</p>
-                        </div>
-                      )}
-
-                      {/* Action Buttons */}
-                      <div className="flex justify-between space-x-3">
-                        <button
-                          onClick={() => {
-                            setShowDayPerformance(false);
-                            openModal(selectedDate, 'comment');
-                          }}
-                          className="flex-1 py-2 px-4 bg-blue-600 hover:bg-blue-700 rounded-md text-white flex items-center justify-center"
-                        >
-                          <Edit2 className="w-4 h-4 mr-2" />
-                          {language === 'en' ? 'Edit Entry' : 'Editar Entrada'}
-                        </button>
-                        
-                        <button
-                          onClick={() => setShowDayPerformance(false)}
-                          className="px-4 py-2 bg-gray-700 hover:bg-gray-600 rounded-md text-white"
-                        >
-                          {language === 'en' ? 'Close' : 'Fechar'}
-                        </button>
-                      </div>
-                    </div>
-                  ) : (
-                    <div className="text-center py-8">
-                      <p className="text-gray-400 mb-4">
-                        {language === 'en' ? 'No data for this day' : 'Nenhum dado para este dia'}
-                      </p>
-                      <button
-                        onClick={() => {
-                          setShowDayPerformance(false);
-                          setShowSelectionModal(true);
-                        }}
-                        className="px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-md text-white"
-                      >
-                        {language === 'en' ? 'Add Data' : 'Adicionar Dados'}
-                      </button>
-                    </div>
-                  )}
-                </div>
-              );
-            })()}
+      {/* Quick Stats */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="bg-gray-800 rounded-lg p-6">
+          <div className="flex items-center justify-between mb-4">
+            <h4 className="font-medium flex items-center">
+              <Calendar className="w-4 h-4 text-green-400 mr-2" />
+              {language === 'en' ? 'Best Day' : 'Melhor Dia'}
+            </h4>
           </div>
+          <p className="text-2xl font-bold text-green-400">
+            R$ {summaryStats.melhorDia.toFixed(2)}
+          </p>
+          <p className="text-sm text-gray-400 mt-1">
+            {language === 'en' ? 'No data yet' : 'Ainda sem dados'}
+          </p>
         </div>
-      )}
 
-      {/* Selection Modal */}
-      {showSelectionModal && selectedDate && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-          <div className="bg-gray-800 rounded-lg max-w-md w-full p-6 relative">
-            <button 
-              onClick={() => setShowSelectionModal(false)}
-              className="absolute top-4 right-4 text-gray-400 hover:text-white"
-            >
-              ×
-            </button>
-            
-            <div className="text-center mb-6">
-              <Calendar className="w-12 h-12 text-blue-500 mx-auto mb-4" />
-              <h2 className="text-xl font-bold text-gray-100">
-                {language === 'en' ? 'What would you like to add?' : 'O que você gostaria de adicionar?'}
-              </h2>
-              <p className="mt-2 text-gray-400">
-                {selectedDate.toLocaleDateString('pt-BR', { 
-                  weekday: 'long', 
-                  year: 'numeric', 
-                  month: 'long', 
-                  day: 'numeric' 
-                })}
-              </p>
-            </div>
-
-            <div className="space-y-3">
-              <button
-                onClick={() => handleSelectionChoice('comment')}
-                className="w-full p-4 bg-blue-600 hover:bg-blue-700 rounded-lg text-white transition-colors flex items-center"
-              >
-                <MessageSquare className="w-5 h-5 mr-3" />
-                <div className="text-left">
-                  <div className="font-medium">
-                    {language === 'en' ? 'Add Comments' : 'Adicionar Comentários'}
-                  </div>
-                  <div className="text-sm text-blue-200">
-                    {language === 'en' ? 'Daily analysis and operational errors' : 'Análise diária e erros operacionais'}
-                  </div>
-                </div>
-              </button>
-              
-              <button
-                onClick={() => handleSelectionChoice('analysis')}
-                className="w-full p-4 bg-green-600 hover:bg-green-700 rounded-lg text-white transition-colors flex items-center"
-              >
-                <BarChart2 className="w-5 h-5 mr-3" />
-                <div className="text-left">
-                  <div className="font-medium">
-                    {language === 'en' ? 'Import Analysis' : 'Importar Análise'}
-                  </div>
-                  <div className="text-sm text-green-200">
-                    {language === 'en' ? 'Link saved backtest analysis' : 'Vincular análise de backtest salva'}
-                  </div>
-                </div>
-              </button>
-              
-              {getEntryForDate(selectedDate) && (
-                <button
-                  onClick={() => handleSelectionChoice('comment')}
-                  className="w-full p-4 bg-yellow-600 hover:bg-yellow-700 rounded-lg text-white transition-colors flex items-center"
-                >
-                  <Edit2 className="w-5 h-5 mr-3" />
-                  <div className="text-left">
-                    <div className="font-medium">
-                      {language === 'en' ? 'Edit Entry' : 'Editar Entrada'}
-                    </div>
-                    <div className="text-sm text-yellow-200">
-                      {language === 'en' ? 'Modify existing data' : 'Modificar dados existentes'}
-                    </div>
-                  </div>
-                </button>
-              )}
-            </div>
+        <div className="bg-gray-800 rounded-lg p-6">
+          <div className="flex items-center justify-between mb-4">
+            <h4 className="font-medium flex items-center">
+              <Clock className="w-4 h-4 text-blue-400 mr-2" />
+              {language === 'en' ? 'Current Streak' : 'Sequência Atual'}
+            </h4>
           </div>
+          <p className="text-2xl font-bold text-blue-400">
+            {summaryStats.sequenciaAtual} {language === 'en' ? 'days' : 'dias'}
+          </p>
+          <p className="text-sm text-gray-400 mt-1">
+            {language === 'en' ? 'Trading streak' : 'Sequência de trading'}
+          </p>
         </div>
-      )}
 
-      {/* Main Modal */}
-      {showModal && selectedDate && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-          <div className="bg-gray-800 rounded-lg max-w-2xl w-full p-6 relative max-h-[90vh] overflow-y-auto">
-            <button 
-              onClick={() => setShowModal(false)}
-              className="absolute top-4 right-4 text-gray-400 hover:text-white"
-            >
-              ×
-            </button>
-            
-            <div className="text-center mb-6">
-              <h2 className="text-2xl font-bold text-gray-100">
-                {modalType === 'comment' 
-                  ? (language === 'en' ? 'Add Comments' : 'Adicionar Comentários')
-                  : (language === 'en' ? 'Import Analysis' : 'Importar Análise')}
-              </h2>
-              <p className="mt-2 text-gray-400">
-                {selectedDate && selectedDate.toLocaleDateString('pt-BR', { 
-                  weekday: 'long', 
-                  year: 'numeric', 
-                  month: 'long', 
-                  day: 'numeric' 
-                }) + ` - Semana ${getWeekOfMonth(selectedDate)} do mês (Semana ${getWeekOfYear(selectedDate)} do ano)`}
-              </p>
-            </div>
-
-            {modalType === 'comment' ? (
-              <div className="space-y-4">
-                {/* Título da sessão */}
-                <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-1">
-                    {language === 'en' ? 'Session Title' : 'Título da Sessão'}
-                  </label>
-                  <input
-                    type="text"
-                    value={newEntry.title}
-                    onChange={(e) => setNewEntry(prev => ({ ...prev, title: e.target.value }))}
-                    placeholder="Ex: Scalping WINFUT, Swing PETR4..."
-                    className="w-full bg-gray-700 border border-gray-600 rounded-md px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  />
-                </div>
-
-                {/* Humor */}
-                <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-2">
-                    {language === 'en' ? 'Mood' : 'Humor do Dia'}
-                  </label>
-                  <div className="flex space-x-4">
-                    {[
-                      { value: 'positive', emoji: '📈', label: language === 'en' ? 'Positive' : 'Positivo' },
-                      { value: 'neutral', emoji: '➡️', label: language === 'en' ? 'Neutral' : 'Neutro' },
-                      { value: 'negative', emoji: '📉', label: language === 'en' ? 'Negative' : 'Negativo' }
-                    ].map(mood => (
-                      <button
-                        key={mood.value}
-                        onClick={() => setNewEntry(prev => ({ ...prev, mood: mood.value as any }))}
-                        className={`flex-1 p-3 rounded-lg border-2 transition-colors ${
-                          newEntry.mood === mood.value
-                            ? 'border-blue-500 bg-blue-900 bg-opacity-30'
-                            : 'border-gray-600 hover:border-gray-500'
-                        }`}
-                      >
-                        <div className="text-center">
-                          <div className="text-2xl mb-1">{mood.emoji}</div>
-                          <div className="text-sm">{mood.label}</div>
-                        </div>
-                      </button>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Comentários Predefinidos */}
-                <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-2">
-                    {language === 'en' ? 'Daily Analysis & Operational Errors' : 'Análise Diária e Erros Operacionais'}
-                  </label>
-                  
-                  <div className="space-y-3">
-                    {Object.entries(predefinedComments).map(([category, comments]) => (
-                      <div key={category}>
-                        <p className="text-xs text-gray-400 mb-2 capitalize">
-                          {category === 'positive' ? 'Pontos Positivos' : 
-                           category === 'negative' ? 'Erros e Problemas' : 'Observações Gerais'}
-                        </p>
-                        <div className="grid grid-cols-1 gap-2">
-                          {comments.map(comment => (
-                            <button
-                              key={comment}
-                              onClick={() => togglePredefinedComment(comment)}
-                              className={`p-2 rounded-md text-left text-sm transition-colors ${
-                                newEntry.predefinedComments.includes(comment)
-                                  ? category === 'positive' 
-                                    ? 'bg-green-900 bg-opacity-30 border border-green-600 text-green-300'
-                                    : category === 'negative'
-                                    ? 'bg-red-900 bg-opacity-30 border border-red-600 text-red-300'
-                                    : 'bg-blue-900 bg-opacity-30 border border-blue-600 text-blue-300'
-                                  : 'bg-gray-700 border border-gray-600 text-gray-300 hover:bg-gray-600'
-                              }`}
-                            >
-                              {comment}
-                            </button>
-                          ))}
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Notas livres */}
-                <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-1">
-                    {language === 'en' ? 'Detailed Analysis & Lessons Learned' : 'Análise Detalhada e Lições Aprendidas'}
-                  </label>
-                  <textarea
-                    value={newEntry.content}
-                    onChange={(e) => setNewEntry(prev => ({ ...prev, content: e.target.value }))}
-                    placeholder="Análise do dia: O que funcionou? Quais erros foram cometidos? Que ajustes são necessários? Lições aprendidas para próximas operações..."
-                    rows={4}
-                    className="w-full bg-gray-700 border border-gray-600 rounded-md px-3 py-2 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  />
-                </div>
-
-                {/* Botões do modal */}
-                <div className="flex justify-end space-x-3 pt-4">
-                  <button
-                    onClick={() => setShowModal(false)}
-                    className="px-4 py-2 bg-gray-700 hover:bg-gray-600 rounded-md text-white"
-                  >
-                    {language === 'en' ? 'Cancel' : 'Cancelar'}
-                  </button>
-                  <button
-                    onClick={saveEntry}
-                    className="px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-md text-white"
-                  >
-                    {language === 'en' ? 'Save' : 'Salvar'}
-                  </button>
-                </div>
-              </div>
-            ) : (
-              <div className="space-y-4">
-                <div className="text-center py-8">
-                  <BarChart2 className="w-16 h-16 text-blue-400 mx-auto mb-4" />
-                  <h3 className="text-lg font-semibold mb-2">
-                    {language === 'en' ? 'Import Saved Analysis' : 'Importar Análise Salva'}
-                  </h3>
-                  <p className="text-gray-400 mb-6">
-                    {language === 'en' 
-                      ? 'Select a saved backtest analysis to associate with this day'
-                      : 'Selecione uma análise de backtest salva para associar a este dia'}
-                  </p>
-                  
-                  <button
-                    onClick={() => {
-                      // Navegar para página de análise de backtest
-                      window.location.href = '/backtest-analysis';
-                    }}
-                    className="px-6 py-3 bg-green-600 hover:bg-green-700 rounded-md text-white flex items-center mx-auto"
-                  >
-                    <BarChart2 className="w-5 h-5 mr-2" />
-                    {language === 'en' ? 'Go to Backtest Analysis' : 'Ir para Análise de Backtest'}
-                  </button>
-                </div>
-              </div>
-            )}
+        <div className="bg-gray-800 rounded-lg p-6">
+          <div className="flex items-center justify-between mb-4">
+            <h4 className="font-medium flex items-center">
+              <BarChart2 className="w-4 h-4 text-purple-400 mr-2" />
+              {language === 'en' ? 'This Month' : 'Este Mês'}
+            </h4>
           </div>
+          <p className="text-2xl font-bold text-purple-400">
+            {summaryStats.diasOperados} {language === 'en' ? 'days' : 'dias'}
+          </p>
+          <p className="text-sm text-gray-400 mt-1">
+            {language === 'en' ? 'Trading days' : 'Dias operados'}
+          </p>
         </div>
-      )}
+      </div>
+
+      {/* Call to Action */}
+      <div className="bg-gradient-to-r from-blue-900 to-purple-900 rounded-lg p-6 text-center">
+        <h3 className="text-xl font-bold mb-2">
+          {language === 'en' ? 'Start Your Trading Journal' : 'Comece Seu Diário de Trading'}
+        </h3>
+        <p className="text-blue-100 mb-4">
+          {language === 'en' 
+            ? 'Track your daily performance, analyze patterns, and improve your trading strategies.'
+            : 'Acompanhe sua performance diária, analise padrões e melhore suas estratégias de trading.'}
+        </p>
+        <button
+          onClick={() => window.location.href = '/quant-diary'}
+          className="px-6 py-3 bg-white text-blue-900 rounded-md font-medium hover:bg-gray-100 transition-colors"
+        >
+          {language === 'en' ? 'Open Full Diary' : 'Abrir Diário Completo'}
+        </button>
+      </div>
     </div>
   );
 }
