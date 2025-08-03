@@ -656,13 +656,23 @@ export function PublicPlansPage() {
       {/* Token Challenges Section */}
       <div className="py-16 bg-gray-900">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-3xl font-bold mb-4">Ganhe Tokens com Desafios</h2>
+          <h2 className="text-3xl font-bold mb-4">
+            {language === 'en' ? 'Earn Tokens with Challenges' : 'Ganhe Tokens com Desafios'}
+          </h2>
           <p className="text-xl text-gray-400 mb-8 max-w-3xl mx-auto">
-            Complete desafios diários e semanais para ganhar tokens gratuitos e acelerar seu aprendizado
+            {language === 'en' 
+              ? 'Complete daily and weekly challenges to earn free tokens and accelerate your learning'
+              : 'Complete desafios diários e semanais para ganhar tokens gratuitos e acelerar seu aprendizado'}
           </p>
           <div className="bg-gradient-to-r from-yellow-600 to-orange-600 rounded-lg p-6 max-w-2xl mx-auto">
-            <p className="text-lg font-medium mb-2">🏆 Desafio da Semana</p>
-            <p className="text-yellow-100">Crie seu primeiro robô e ganhe 500 tokens extras!</p>
+            <p className="text-lg font-medium mb-2">
+              🏆 {language === 'en' ? 'Weekly Challenge' : 'Desafio da Semana'}
+            </p>
+            <p className="text-yellow-100">
+              {language === 'en' 
+                ? 'Create your first robot and earn 500 extra tokens!'
+                : 'Crie seu primeiro robô e ganhe 500 tokens extras!'}
+            </p>
           </div>
         </div>
       </div>
