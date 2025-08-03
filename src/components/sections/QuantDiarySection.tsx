@@ -123,20 +123,17 @@ export function QuantDiarySection() {
   }, []);
 
   const navigateWeek = (direction: 'prev' | 'next') => {
+    const newWeekStart = new Date(currentWeekStart);
+    
     if (direction === 'next') {
-      const nextWeekStart = new Date(currentWeekStart);
-      nextWeekStart.setDate(currentWeekStart.getDate() + 7);
-      
-      // Verificar se não passou de 2025
-      if (nextWeekStart.getFullYear() <= 2025 || 
-          (nextWeekStart.getFullYear() === 2026 && nextWeekStart.getMonth() === 0 && nextWeekStart.getDate() <= 4)) {
-        // Encontrar a semana 1 do novo mês (domingo que contém o dia 1)
-        const firstDayOfMonth = new Date(2025, newDate.getMonth(), 1);
-        const dayOfWeek = firstDayOfMonth.getDay();
-        const sundayOfWeek1 = new Date(firstDayOfMonth);
-        sundayOfWeek1.setDate(1 - dayOfWeek);
-        setCurrentWeekStart(sundayOfWeek1);
-      }
+      newWeekStart.setDate(currentWeekStart.getDate() + 7);
+    } else {
+      newWeekStart.setDate(currentWeekStart.getDate() - 7);
+    }
+    
+    // Verificar limites de 2025 (permitir 29 dez 2024 até final de 2025)
+    if (newWeekStart >= new Date(2024, 11, 29) && newWeekStart <= new Date(2025, 11, 31)) {
+      setCurrentWeekStart(newWeekStart);
     }
   };
 
