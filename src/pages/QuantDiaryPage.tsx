@@ -132,6 +132,23 @@ export function QuantDiaryPage() {
     let currentLossStreak = 0;
     let maxWinStreak = 0;
     let maxLossStreak = 0;
+    
+    // Drawdown calculation variables
+    let runningPnL = 0;
+    let peakPnL = 0;
+    let maxDrawdown = 0;
+    let maxDrawdownAmount = 0;
+    let drawdownStartDate = '';
+    let drawdownEndDate = '';
+    let currentDrawdownStart = '';
+    let isInDrawdown = false;
+    
+    // Array to store all daily data for chronological processing
+    const allDailyData: Array<{
+      date: string;
+      pnl: number;
+      trades: number;
+    }> = [];
     let lastDayPnL = null;
     
     Object.keys(calendarData).forEach(year => {
@@ -139,6 +156,12 @@ export function QuantDiaryPage() {
         Object.keys(calendarData[year][month]).forEach(day => {
           const dayData = calendarData[year][month][day];
           if (dayData.trades > 0) {
+            allDailyData.push({
+              date: `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`,
+              pnl: dayData.pnl,
+              trades: dayData.trades
+            });
+            
             totalPnL += dayData.pnl;
             totalTrades += dayData.trades;
             totalDaysTraded++;
@@ -190,6 +213,46 @@ export function QuantDiaryPage() {
       });
     });
     
+    // Sort daily data chronologically for drawdown calculation
+    allDailyData.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+    
+    // Calculate drawdown chronologically
+    allDailyData.forEach(dayData => {
+      runningPnL += dayData.pnl;
+      
+      // Update peak if we have a new high
+      if (runningPnL > peakPnL) {
+        peakPnL = runningPnL;
+        
+        // End any current drawdown
+        if (isInDrawdown) {
+          isInDrawdown = false;
+        }
+      }
+      
+      // Calculate current drawdown
+      const currentDrawdown = peakPnL - runningPnL;
+      
+      if (currentDrawdown > 0) {
+        // We're in a drawdown
+        if (!isInDrawdown) {
+          // Start of new drawdown
+          isInDrawdown = true;
+          currentDrawdownStart = dayData.date;
+        }
+        
+        // Check if this is the maximum drawdown
+        if (currentDrawdown > maxDrawdownAmount) {
+          maxDrawdownAmount = currentDrawdown;
+          drawdownStartDate = currentDrawdownStart;
+          drawdownEndDate = dayData.date;
+          
+          // Calculate percentage drawdown
+          maxDrawdown = peakPnL > 0 ? (currentDrawdown / peakPnL) * 100 : 0;
+        }
+      }
+    });
+    
     // Calculate averages
     const avgDailyGain = totalWinningDays > 0 ? totalWinningDaysAmount / totalWinningDays : 0;
     const avgDailyLoss = totalLosingDays > 0 ? totalLosingDaysAmount / totalLosingDays : 0;
@@ -212,7 +275,11 @@ export function QuantDiaryPage() {
       maxWinStreak,
       maxLossStreak,
       totalWinningDays,
-      totalLosingDays
+      maxLossStreak,
+      maxDrawdown,
+      maxDrawdownAmount,
+      drawdownStartDate,
+      drawdownEndDate
     };
   };
 
@@ -1491,8 +1558,12 @@ export function QuantDiaryPage() {
                   >
                     <Save className="w-4 h-4 mr-2" />
                     Salvar
-                  </button>
-                </div>
+                <p className="text-2xl font-bold text-orange-400">
+                  {allTimeStats.maxDrawdown.toFixed(1)}%
+                </p>
+                <p className="text-xs text-gray-400">
+                  R$ {allTimeStats.maxDrawdownAmount.toFixed(2)}
+                </p>
               </div>
             </div>
           </div>
