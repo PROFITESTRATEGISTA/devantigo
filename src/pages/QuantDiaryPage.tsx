@@ -135,20 +135,15 @@ export function QuantDiaryPage() {
     
     // Drawdown calculation variables
     let runningPnL = 0;
-    let peakPnL = 0;
+    let peak = 0;
     let maxDrawdown = 0;
     let maxDrawdownAmount = 0;
     let drawdownStartDate = '';
     let drawdownEndDate = '';
     let currentDrawdownStart = '';
-    let isInDrawdown = false;
     
-    // Array to store all daily data for chronological processing
-    const allDailyData: Array<{
-      date: string;
-      pnl: number;
-      trades: number;
-    }> = [];
+    // Collect all days with data for chronological processing
+    const allDaysWithData: Array<{date: Date, pnl: number}> = [];
     let lastDayPnL = null;
     
     Object.keys(calendarData).forEach(year => {
@@ -156,11 +151,8 @@ export function QuantDiaryPage() {
         Object.keys(calendarData[year][month]).forEach(day => {
           const dayData = calendarData[year][month][day];
           if (dayData.trades > 0) {
-            allDailyData.push({
-              date: `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`,
-              pnl: dayData.pnl,
-              trades: dayData.trades
-            });
+            const dayDate = new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
+            allDaysWithData.push({ date: dayDate, pnl: dayData.pnl });
             
             totalPnL += dayData.pnl;
             totalTrades += dayData.trades;
@@ -174,7 +166,7 @@ export function QuantDiaryPage() {
               // Check for max daily gain
               if (dayData.pnl > maxDailyGain) {
                 maxDailyGain = dayData.pnl;
-                maxDailyGainDate = `${day}/${month}/${year}`;
+                maxDailyGainDate = dayDate.toLocaleDateString('pt-BR');
               }
               
               // Update streaks
@@ -192,7 +184,7 @@ export function QuantDiaryPage() {
               // Check for max daily loss
               if (Math.abs(dayData.pnl) > Math.abs(maxDailyLoss)) {
                 maxDailyLoss = dayData.pnl;
-                maxDailyLossDate = `${day}/${month}/${year}`;
+                maxDailyLossDate = dayDate.toLocaleDateString('pt-BR');
               }
               
               // Update streaks
@@ -213,43 +205,36 @@ export function QuantDiaryPage() {
       });
     });
     
-    // Sort daily data chronologically for drawdown calculation
-    allDailyData.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+    // Sort days chronologically for drawdown calculation
+    allDaysWithData.sort((a, b) => a.date.getTime() - b.date.getTime());
     
     // Calculate drawdown chronologically
-    allDailyData.forEach(dayData => {
+    allDaysWithData.forEach(dayData => {
       runningPnL += dayData.pnl;
       
-      // Update peak if we have a new high
-      if (runningPnL > peakPnL) {
-        peakPnL = runningPnL;
-        
-        // End any current drawdown
-        if (isInDrawdown) {
-          isInDrawdown = false;
-        }
+      // Update peak if we reached a new high
+      if (runningPnL > peak) {
+        peak = runningPnL;
+        // Reset drawdown tracking when we reach a new peak
+        currentDrawdownStart = '';
       }
       
       // Calculate current drawdown
-      const currentDrawdown = peakPnL - runningPnL;
+      const currentDrawdown = peak - runningPnL;
       
-      if (currentDrawdown > 0) {
-        // We're in a drawdown
-        if (!isInDrawdown) {
-          // Start of new drawdown
-          isInDrawdown = true;
-          currentDrawdownStart = dayData.date;
-        }
+      // Track drawdown start
+      if (currentDrawdown > 0 && !currentDrawdownStart) {
+        currentDrawdownStart = dayData.date.toLocaleDateString('pt-BR');
+      }
+      
+      // Update maximum drawdown if current is larger
+      if (currentDrawdown > maxDrawdownAmount) {
+        maxDrawdownAmount = currentDrawdown;
+        drawdownStartDate = currentDrawdownStart;
+        drawdownEndDate = dayData.date.toLocaleDateString('pt-BR');
         
-        // Check if this is the maximum drawdown
-        if (currentDrawdown > maxDrawdownAmount) {
-          maxDrawdownAmount = currentDrawdown;
-          drawdownStartDate = currentDrawdownStart;
-          drawdownEndDate = dayData.date;
-          
-          // Calculate percentage drawdown
-          maxDrawdown = peakPnL > 0 ? (currentDrawdown / peakPnL) * 100 : 0;
-        }
+        // Calculate percentage drawdown
+        maxDrawdown = peak > 0 ? (currentDrawdown / peak) * 100 : 0;
       }
     });
     
@@ -275,12 +260,28 @@ export function QuantDiaryPage() {
       maxWinStreak,
       maxLossStreak,
       totalWinningDays,
+      maxLossStreak,
       maxDrawdown,
       maxDrawdownAmount,
       drawdownStartDate,
       drawdownEndDate
     };
   };
+  // Função para salvar o capital operacional no localStorage
+  const saveOperationalCapital = (capital: number) => {
+    setOperationalCapital(capital);
+    localStorage.setItem('operationalCapital', capital.toString());
+    setShowCapitalInput(false);
+  };
+
+  // Carregar capital operacional do localStorage
+  useEffect(() => {
+    const savedCapital = localStorage.getItem('operationalCapital');
+    if (savedCapital) {
+      setOperationalCapital(parseFloat(savedCapital));
+    }
+  }, []);
+
 
   const allTimeStats = calculateAllTimeStats();
 
@@ -909,8 +910,17 @@ export function QuantDiaryPage() {
               <span className="text-sm text-gray-400">Drawdown Máximo</span>
               <AlertTriangle className="w-4 h-4 text-orange-400" />
             </div>
-            <p className="text-2xl font-bold text-orange-400">{operationalStats.maxDrawdown.value}%</p>
-            <p className="text-xs text-gray-500">{operationalStats.maxDrawdown.label}</p>
+            <p className="text-2xl font-bold text-orange-400">
+              {allTimeStats.maxDrawdown.toFixed(1)}%
+            </p>
+            <p className="text-xs text-gray-400">
+              R$ {allTimeStats.maxDrawdownAmount.toFixed(2)}
+            </p>
+            {allTimeStats.drawdownStartDate && allTimeStats.drawdownEndDate && (
+              <p className="text-xs text-gray-500 mt-1">
+                {allTimeStats.drawdownStartDate} - {allTimeStats.drawdownEndDate}
+              </p>
+            )}
           </div>
           
           </div>
@@ -1128,6 +1138,83 @@ export function QuantDiaryPage() {
           <span className="text-sm text-gray-400">P&L Acumulado</span>
         </div>
       </div>
+
+      {/* Modal de Configuração de Capital */}
+      {showCapitalInput && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+          <div className="bg-gray-800 rounded-lg max-w-md w-full p-6 relative">
+            <button 
+              onClick={() => setShowCapitalInput(false)}
+              className="absolute top-4 right-4 text-gray-400 hover:text-white"
+            >
+              <X className="w-5 h-5" />
+            </button>
+            
+            <div className="text-center mb-6">
+              <div className="flex items-center justify-center mb-4">
+                <DollarSign className="w-12 h-12 text-green-500" />
+              </div>
+              <h2 className="text-2xl font-bold text-gray-100">
+                {language === 'en' ? 'Operational Capital' : 'Capital Operacional'}
+              </h2>
+              <p className="mt-2 text-gray-400">
+                {language === 'en' 
+                  ? 'Enter your operational capital to calculate percentages correctly'
+                  : 'Informe seu capital operacional para calcular percentuais corretamente'}
+              </p>
+            </div>
+
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-300 mb-1">
+                  {language === 'en' ? 'Capital Amount (R$)' : 'Valor do Capital (R$)'}
+                </label>
+                <input
+                  type="number"
+                  value={operationalCapital}
+                  onChange={(e) => setOperationalCapital(parseFloat(e.target.value) || 0)}
+                  className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  placeholder="50000"
+                  min="1000"
+                  step="1000"
+                />
+                <p className="text-xs text-gray-400 mt-1">
+                  {language === 'en' 
+                    ? 'This value is used to calculate drawdown percentage and other metrics'
+                    : 'Este valor é usado para calcular percentual de drawdown e outras métricas'}
+                </p>
+              </div>
+
+              <div className="bg-blue-900 bg-opacity-20 border border-blue-800 rounded-lg p-3">
+                <p className="text-sm text-blue-300">
+                  <strong>{language === 'en' ? 'Preview:' : 'Prévia:'}</strong>
+                </p>
+                <p className="text-xs text-blue-200 mt-1">
+                  {language === 'en' ? 'Drawdown:' : 'Drawdown:'} {((Math.abs(drawdownStats.maxDrawdownAmount) / operationalCapital) * 100).toFixed(2)}%
+                </p>
+                <p className="text-xs text-blue-200">
+                  {language === 'en' ? 'Return:' : 'Retorno:'} {((allTimeStats.totalPnL / operationalCapital) * 100).toFixed(2)}%
+                </p>
+              </div>
+
+              <div className="flex justify-end space-x-3 pt-4">
+                <button
+                  onClick={() => setShowCapitalInput(false)}
+                  className="px-4 py-2 bg-gray-700 hover:bg-gray-600 rounded-md text-white"
+                >
+                  {language === 'en' ? 'Cancel' : 'Cancelar'}
+                </button>
+                <button
+                  onClick={() => saveOperationalCapital(operationalCapital)}
+                  className="px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-md text-white"
+                >
+                  {language === 'en' ? 'Save Capital' : 'Salvar Capital'}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 
@@ -1349,6 +1436,18 @@ export function QuantDiaryPage() {
               <h1 className="text-2xl font-bold">Diário Quant</h1>
               <p className="text-gray-400">Seu diário de trading e insights</p>
             </div>
+            <div className="flex items-center space-x-3">
+              <div className="text-sm text-gray-400">
+                Capital: R$ {operationalCapital.toLocaleString()}
+              </div>
+              <button
+                onClick={() => setShowCapitalInput(true)}
+                className="p-1.5 hover:bg-gray-700 rounded-md text-gray-400 hover:text-white"
+                title="Configurar capital operacional"
+              >
+                <Settings className="w-4 h-4" />
+              </button>
+            </div>
           </div>
 
           {/* View Mode Switches */}
@@ -1458,8 +1557,12 @@ export function QuantDiaryPage() {
               <X className="w-5 h-5" />
             </button>
             
-            <div className="text-center mb-6">
-              <div className="flex items-center justify-center mb-4">
+                <p className="text-2xl font-bold text-orange-400">
+                  {drawdownStats.maxDrawdownPercent.toFixed(1)}%
+                </p>
+                <p className="text-sm text-gray-400">
+                  R$ {Math.abs(drawdownStats.maxDrawdownAmount).toFixed(2)}
+                </p>
                 {actionType === 'analysis' ? (
                   <FileText className="w-12 h-12 text-blue-500" />
                 ) : (
