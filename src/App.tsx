@@ -15,6 +15,7 @@ import { BacktestAnalysisPage } from './pages/BacktestAnalysisPage';
 import { StrategyAnalysisPage } from './pages/StrategyAnalysisPage';
 import { PublicPlansPage } from './pages/PublicPlansPage';
 import { FAQPage } from './pages/FAQPage';
+import { FAQPage } from './pages/FAQPage';
 
 export default function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -121,6 +122,7 @@ export default function App() {
           <Route path="/admin" element={<AdminPanel />} />
           <Route path="/backtest-analysis" element={<BacktestAnalysisPage />} />
           <Route path="/strategy-analysis" element={<StrategyAnalysisPage />} />
+          <Route path="/faq" element={<FAQPage />} />
           <Route path="*" element={<Navigate to="/dashboard" replace />} />
         </Routes>
       </Router>
