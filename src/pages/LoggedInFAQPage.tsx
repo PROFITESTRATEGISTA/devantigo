@@ -112,7 +112,6 @@ export function LoggedInFAQPage() {
           answer: t('faq.analysis.a2')
         }
       ]
-    }
     },
     {
       id: 'collaboration',
