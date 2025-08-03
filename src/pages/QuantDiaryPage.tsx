@@ -36,15 +36,6 @@ export function QuantDiaryPage() {
   const [userPatrimony, setUserPatrimony] = useState<number>(10000); // Patrimônio inicial padrão
   const [isEditingPatrimony, setIsEditingPatrimony] = useState(false);
   const [patrimonyInput, setPatrimonyInput] = useState('10000');
-  const [showCommentsModal, setShowCommentsModal] = useState(false);
-  const [selectedDate, setSelectedDate] = useState<string | null>(null);
-  const [comments, setComments] = useState('');
-  const [showCommentSuggestions, setShowCommentSuggestions] = useState(false);
-  
-  // Force re-render when language changes
-  useEffect(() => {
-    // This will force a re-render when the component mounts
-  }, []);
   
   // Função para calcular drawdown baseado no patrimônio
   const calculateDrawdownMetrics = () => {
@@ -499,76 +490,6 @@ export function QuantDiaryPage() {
   };
 
   const weeklyStats = calculateWeeklyStats();
-
-  const handleSaveComments = () => {
-    // Aqui você salvaria os comentários
-    console.log('Salvando comentários:', comments);
-    setShowCommentsModal(false);
-    setComments('');
-  };
-
-  // Comentários pré-formatados para facilitar UX
-  const commentSuggestions = [
-    {
-      category: 'Estratégia',
-      templates: [
-        'Estratégia funcionou bem em mercado de tendência alta',
-        'Sinais falsos em mercado lateral - ajustar filtros',
-        'Stop loss muito apertado - aumentar para 2% do capital',
-        'Take profit atingido rapidamente - considerar trailing stop',
-        'Entrada prematura - aguardar confirmação de volume'
-      ]
-    },
-    {
-      category: 'Mercado',
-      templates: [
-        'Mercado volátil - reduzir tamanho das posições',
-        'Baixa liquidez no horário - evitar operações após 17h',
-        'Notícias impactaram o mercado - ficar fora durante eventos',
-        'Correlação alta entre ativos - diversificar melhor',
-        'Mercado em tendência forte - aumentar exposição'
-      ]
-    },
-    {
-      category: 'Emocional',
-      templates: [
-        'Mantive disciplina e segui o plano de trading',
-        'Ansiedade me fez sair da posição cedo demais',
-        'FOMO me levou a entrar sem setup adequado',
-        'Revenge trading após perda - preciso melhorar controle',
-        'Confiança alta após sequência de ganhos - cuidado com overconfidence'
-      ]
-    },
-    {
-      category: 'Técnico',
-      templates: [
-        'RSI divergente confirmou reversão de tendência',
-        'Rompimento de suporte com volume - sinal válido',
-        'Médias móveis cruzaram - entrada no timing certo',
-        'Bollinger Bands contraídas - aguardar expansão',
-        'MACD histograma mudou de cor - sinal de entrada'
-      ]
-    },
-    {
-      category: 'Gestão de Risco',
-      templates: [
-        'Respeitei o stop loss - perda controlada',
-        'Position sizing adequado - 1% do capital por trade',
-        'Diversificação funcionou - perdas compensadas',
-        'Overexposure em um ativo - reduzir concentração',
-        'Correlação alta entre posições - ajustar portfólio'
-      ]
-    }
-  ];
-
-  const insertCommentTemplate = (template: string) => {
-    if (comments.trim()) {
-      setComments(comments + '\n\n' + template);
-    } else {
-      setComments(template);
-    }
-    setShowCommentSuggestions(false);
-  };
 
   const handleDayClick = (day: number) => {
     if (calendarViewMode === 'monthly') return;
@@ -1775,40 +1696,9 @@ export function QuantDiaryPage() {
                 </>
               ) : (
                 <div>
-                  <div className="flex items-center justify-between mb-2">
-                    <label className="block text-sm font-medium text-gray-300">
-                      Comentários e Observações
-                    </label>
-                    <button
-                      onClick={() => setShowCommentSuggestions(!showCommentSuggestions)}
-                      className="text-xs text-blue-400 hover:text-blue-300 flex items-center space-x-1"
-                    >
-                      <Plus className="w-3 h-3" />
-                      <span>Templates</span>
-                    </button>
-                  </div>
-                  
-                  {showCommentSuggestions && (
-                    <div className="mb-4 bg-gray-900 rounded-lg p-4 max-h-60 overflow-y-auto">
-                      {commentSuggestions.map((category, categoryIndex) => (
-                        <div key={categoryIndex} className="mb-4">
-                          <h4 className="text-sm font-semibold text-gray-300 mb-2">{category.category}</h4>
-                          <div className="space-y-1">
-                            {category.templates.map((template, templateIndex) => (
-                              <button
-                                key={templateIndex}
-                                onClick={() => insertCommentTemplate(template)}
-                                className="w-full text-left text-xs text-gray-400 hover:text-white hover:bg-gray-800 p-2 rounded transition-colors"
-                              >
-                                {template}
-                              </button>
-                            ))}
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                  
+                  <label className="block text-sm font-medium text-gray-300 mb-1">
+                    Comentários e Observações
+                  </label>
                   <textarea
                     value={editingDay.comment || ''}
                     onChange={(e) => setEditingDay(prev => ({ ...prev, comment: e.target.value }))}
