@@ -599,15 +599,14 @@ export function QuantDiaryPage() {
     if (calendarViewMode === 'monthly') return;
     setSelectedDay(day);
     setShowActionModal(true);
+    
+    const existingData = calendarData[currentYear]?.[currentMonth]?.[day] || { pnl: 0, trades: 0, comment: '' };
+    setEditingDay(existingData);
   };
 
   const handleActionSelect = (action: 'analysis' | 'comment') => {
     setActionType(action);
     setShowActionModal(false);
-    
-    // Carregar dados existentes do dia
-    const existingData = calendarData[currentYear]?.[currentMonth]?.[selectedDay!] || { pnl: 0, trades: 0, comment: '' };
-    setEditingDay(existingData);
     setShowDayModal(true);
   };
 
