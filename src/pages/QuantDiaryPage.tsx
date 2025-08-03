@@ -1652,7 +1652,7 @@ export function QuantDiaryPage() {
               <h2 className="text-xl font-bold text-gray-100">
                 Dia {selectedDay} de {currentMonth.charAt(0).toUpperCase() + currentMonth.slice(1)}
               </h2>
-              <p className="text-gray-400 mt-2">
+              <p className="mt-2 text-gray-400">
                 O que você gostaria de fazer?
               </p>
             </div>
