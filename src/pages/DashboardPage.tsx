@@ -9,6 +9,7 @@ import { TutorialsSection } from '../components/sections/TutorialsSection';
 import { MarketplaceSection } from '../components/sections/MarketplaceSection';
 import { UsersSection } from '../components/sections/UsersSection';
 import { RobotsSection } from '../components/sections/RobotsSection';
+import { QuantDiarySection } from '../components/sections/QuantDiarySection';
 import { useLanguageStore } from '../stores/languageStore';
 import { 
   mockAnalyses, 
@@ -75,6 +76,8 @@ export const DashboardPage = () => {
         return <MarketplaceSection companies={mockMarketplace} />;
       case 'users':
         return <UsersSection users={mockUsers} />;
+      case 'quant-diary':
+        return <QuantDiarySection />;
       default:
         return (
           <AnalysesSection 

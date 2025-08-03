@@ -42,10 +42,10 @@ export function NavigationPanel({ activeSection, onSectionChange }: NavigationPa
       description: t('dashboard.marketplaceDesc')
     },
     {
-      id: 'users',
-      name: t('dashboard.users'),
+      id: 'quant-diary',
+      name: language === 'en' ? 'Quant Diary' : 'Diário Quant',
       icon: <Users className="w-5 h-5" />,
-      description: t('dashboard.usersDesc')
+      description: language === 'en' ? 'Your trading journal and insights' : 'Seu diário de trading e insights'
     }
   ];
 
