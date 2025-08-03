@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { 
   ArrowLeft, Calendar, BarChart2, TrendingUp, DollarSign, Hash, Percent, Clock, Target,
-  Plus, Edit, Save, X, MessageSquare, AlertTriangle, FileText, PlusCircle, Eye, Edit3, TrendingDown, Check, Edit2
+  Plus, Edit, Save, X, MessageSquare, AlertTriangle, FileText, PlusCircle, Eye, Edit3, TrendingDown, Check, Edit2, Trash2, FileSpreadsheet
 } from 'lucide-react';
 import { Navbar } from '../components/Navbar';
 
@@ -37,6 +37,26 @@ export function QuantDiaryPage() {
   const [isEditingPatrimony, setIsEditingPatrimony] = useState(false);
   const [patrimonyInput, setPatrimonyInput] = useState('10000');
   const [activeTab, setActiveTab] = useState('operations');
+  const [showAddModal, setShowAddModal] = useState(false);
+  const [showCommentsModal, setShowCommentsModal] = useState(false);
+  const [showDayPanel, setShowDayPanel] = useState(false);
+  const [showQuickActions, setShowQuickActions] = useState(false);
+  const [selectedDate, setSelectedDate] = useState<string>('');
+  const [selectedDateData, setSelectedDateData] = useState<any>(null);
+  const [comments, setComments] = useState('');
+  const [pnl, setPnl] = useState(0);
+  const [totalTrades, setTotalTrades] = useState(0);
+  const [showPreformattedComments, setShowPreformattedComments] = useState(false);
+  const [checklist, setChecklist] = useState<Record<string, boolean>>({});
+  const [quickActionType, setQuickActionType] = useState<'add-trade' | 'add-comment' | 'view-day' | null>(null);
+
+  // Mock data for demonstration
+  const mockData = {
+    '2024-12-05': { pnl: 320.50, totalTrades: 6, comment: 'Fim de ano positivo' },
+    '2024-12-12': { pnl: 450.75, totalTrades: 8, comment: 'Boa performance' },
+    '2024-12-18': { pnl: -120.50, totalTrades: 3, comment: 'Mercado instável' },
+    '2024-12-23': { pnl: 280.25, totalTrades: 5, comment: 'Recuperação' }
+  };
   
   // Função para calcular drawdown baseado no patrimônio
   const calculateDrawdownMetrics = () => {
@@ -542,6 +562,41 @@ export function QuantDiaryPage() {
     setShowDayModal(false);
     setSelectedDay(null);
     setActionType(null);
+  };
+
+  const handleSaveComments = () => {
+    // Implementation for saving comments
+    setShowCommentsModal(false);
+  };
+
+  const handleQuickAction = (action: 'add-trade' | 'add-comment' | 'view-day' | 'add-analysis') => {
+    setShowQuickActions(false);
+    
+    switch (action) {
+      case 'add-trade':
+        // Open add trade modal
+        setQuickActionType('add-trade');
+        break;
+      case 'add-comment':
+        setComments('');
+        setShowCommentsModal(true);
+        break;
+      case 'view-day':
+        setShowDayPanel(true);
+        break;
+      case 'add-analysis':
+        setShowAddModal(true);
+        break;
+    }
+  };
+
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('pt-BR', {
+      day: '2-digit',
+      month: 'long',
+      year: 'numeric'
+    });
   };
 
   const renderCalendar = () => {
@@ -1617,6 +1672,325 @@ export function QuantDiaryPage() {
                   <div className="text-sm opacity-75">Registrar observações sobre o dia</div>
                 </div>
               </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Quick Actions Modal */}
+      {showQuickActions && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+          <div className="bg-gray-800 rounded-lg max-w-md w-full p-6 relative">
+            <button 
+              onClick={() => setShowQuickActions(false)}
+              className="absolute top-4 right-4 text-gray-400 hover:text-white"
+            >
+              <X className="w-5 h-5" />
+            </button>
+            
+            <div className="text-center mb-6">
+              <div className="flex items-center justify-center mb-4">
+                <Calendar className="w-12 h-12 text-blue-500" />
+              </div>
+              <h2 className="text-2xl font-bold text-gray-100">
+                {formatDate(selectedDate)}
+              </h2>
+              
+              {selectedDateData && selectedDateData.pnl !== 0 ? (
+                <div className="mt-3 p-3 bg-gray-700 rounded-lg">
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="text-gray-400">P&L do Dia:</span>
+                    <span className={`font-bold ${selectedDateData.pnl >= 0 ? 'text-green-400' : 'text-red-400'}`}>
+                      R$ {selectedDateData.pnl.toFixed(2)}
+                    </span>
+                  </div>
+                  <div className="flex items-center justify-between text-sm mt-1">
+                    <span className="text-gray-400">Trades:</span>
+                    <span className="text-blue-400">{selectedDateData.totalTrades}</span>
+                  </div>
+                </div>
+              ) : (
+                <p className="mt-2 text-gray-400">
+                  O que você gostaria de fazer?
+                </p>
+              )}
+            </div>
+
+            <div className="space-y-3 mb-6">
+              {selectedDateData && selectedDateData.pnl !== 0 ? (
+                <>
+                  {/* Day with data - show management options */}
+                  <button
+                    onClick={() => handleQuickAction('view-day')}
+                    className="w-full p-4 bg-blue-600 hover:bg-blue-700 rounded-lg text-white flex items-center"
+                  >
+                    <BarChart2 className="w-5 h-5 mr-3" />
+                    <div className="text-left">
+                      <div className="font-medium">Ver Painel do Dia</div>
+                      <div className="text-sm text-blue-200">Operações, checklist e análise completa</div>
+                    </div>
+                  </button>
+                  
+                  <button
+                    onClick={() => handleQuickAction('add-trade')}
+                    className="w-full p-4 bg-green-600 hover:bg-green-700 rounded-lg text-white flex items-center"
+                  >
+                    <Plus className="w-5 h-5 mr-3" />
+                    <div className="text-left">
+                      <div className="font-medium">Adicionar Trade</div>
+                      <div className="text-sm text-green-200">Registrar nova operação do dia</div>
+                    </div>
+                  </button>
+                  
+                  <button
+                    onClick={() => handleQuickAction('add-comment')}
+                    className="w-full p-4 bg-purple-600 hover:bg-purple-700 rounded-lg text-white flex items-center"
+                  >
+                    <MessageSquare className="w-5 h-5 mr-3" />
+                    <div className="text-left">
+                      <div className="font-medium">Adicionar Comentário</div>
+                      <div className="text-sm text-purple-200">Registrar observações sobre o dia</div>
+                    </div>
+                  </button>
+                </>
+              ) : (
+                <>
+                  {/* Day without data - show creation options */}
+                  <button
+                    onClick={() => handleQuickAction('add-analysis')}
+                    className="w-full p-4 bg-blue-600 hover:bg-blue-700 rounded-lg text-white flex items-center"
+                  >
+                    <FileSpreadsheet className="w-5 h-5 mr-3" />
+                    <div className="text-left">
+                      <div className="font-medium">Adicionar Análise Salva</div>
+                      <div className="text-sm text-blue-200">Vincular uma análise de backtest ao dia</div>
+                    </div>
+                  </button>
+                  
+                  <button
+                    onClick={() => handleQuickAction('add-comment')}
+                    className="w-full p-4 bg-green-600 hover:bg-green-700 rounded-lg text-white flex items-center"
+                  >
+                    <MessageSquare className="w-5 h-5 mr-3" />
+                    <div className="text-left">
+                      <div className="font-medium">Adicionar Comentários</div>
+                      <div className="text-sm text-green-200">Registrar observações sobre o dia</div>
+                    </div>
+                  </button>
+                </>
+              )}
+            </div>
+            
+            {/* Delete option for days with data */}
+            {selectedDateData && selectedDateData.pnl !== 0 && (
+              <div className="pt-4 border-t border-gray-700">
+                <button
+                  onClick={() => {
+                    if (window.confirm('Tem certeza que deseja excluir todos os dados deste dia?')) {
+                      // Remove day data
+                      const newMockData = { ...mockData };
+                      delete newMockData[selectedDate];
+                      
+                      setShowQuickActions(false);
+                      
+                      // Show success message
+                      const successMessage = document.createElement('div');
+                      successMessage.className = 'fixed top-4 right-4 bg-green-500 text-white px-4 py-2 rounded-md z-50 flex items-center';
+                      successMessage.innerHTML = `
+                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                        </svg>
+                        Dia excluído com sucesso!
+                      `;
+                      document.body.appendChild(successMessage);
+                      setTimeout(() => {
+                        if (document.body.contains(successMessage)) {
+                          document.body.removeChild(successMessage);
+                        }
+                      }, 3000);
+                    }
+                  }}
+                  className="w-full p-3 bg-red-600 hover:bg-red-700 rounded-lg text-white flex items-center justify-center"
+                >
+                  <Trash2 className="w-4 h-4 mr-2" />
+                  <span>Excluir Dia</span>
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* Add Analysis Modal */}
+      {showAddModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+          <div className="bg-gray-800 rounded-lg max-w-md w-full p-6 relative">
+            <button 
+              onClick={() => setShowAddModal(false)}
+              className="absolute top-4 right-4 text-gray-400 hover:text-white"
+            >
+              <X className="w-5 h-5" />
+            </button>
+            
+            <div className="text-center mb-6">
+              <div className="flex items-center justify-center mb-4">
+                <FileSpreadsheet className="w-12 h-12 text-blue-500" />
+              </div>
+              <h2 className="text-2xl font-bold text-gray-100">
+                Adicionar Análise
+              </h2>
+              <p className="mt-2 text-gray-400">
+                Vincule uma análise de backtest ao dia {formatDate(selectedDate)}
+              </p>
+            </div>
+
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-300 mb-2">
+                  Análise de Backtest
+                </label>
+                <select className="w-full bg-gray-700 border border-gray-600 rounded-md px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+                  <option value="">Selecione uma análise...</option>
+                  <option value="1">Estratégia Scalping WINFUT - PF: 1.85</option>
+                  <option value="2">Grid Trading PETR4 - PF: 1.42</option>
+                  <option value="3">Trend Following VALE3 - PF: 2.15</option>
+                </select>
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium text-gray-300 mb-2">
+                  P&L do Dia
+                </label>
+                <input
+                  type="number"
+                  step="0.01"
+                  value={pnl}
+                  onChange={(e) => setPnl(parseFloat(e.target.value) || 0)}
+                  className="w-full bg-gray-700 border border-gray-600 rounded-md px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  placeholder="0.00"
+                />
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium text-gray-300 mb-2">
+                  Total de Trades
+                </label>
+                <input
+                  type="number"
+                  value={totalTrades}
+                  onChange={(e) => setTotalTrades(parseInt(e.target.value) || 0)}
+                  className="w-full bg-gray-700 border border-gray-600 rounded-md px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  placeholder="0"
+                />
+              </div>
+            </div>
+
+            <div className="flex justify-end space-x-3 pt-6">
+              <button
+                onClick={() => setShowAddModal(false)}
+                className="px-4 py-2 bg-gray-700 hover:bg-gray-600 rounded-md text-white"
+              >
+                Cancelar
+              </button>
+              <button
+                onClick={() => {
+                  handleSaveComments();
+                  setShowAddModal(false);
+                }}
+                className="px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-md text-white"
+              >
+                Vincular Análise
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Comments Modal */}
+      {showCommentsModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+          <div className="bg-gray-800 rounded-lg max-w-md w-full p-6 relative">
+            <button 
+              onClick={() => setShowCommentsModal(false)}
+              className="absolute top-4 right-4 text-gray-400 hover:text-white"
+            >
+              <X className="w-5 h-5" />
+            </button>
+            
+            <div className="text-center mb-6">
+              <div className="flex items-center justify-center mb-4">
+                <MessageSquare className="w-12 h-12 text-green-500" />
+              </div>
+              <h2 className="text-2xl font-bold text-gray-100">
+                Adicionar Comentários
+              </h2>
+              <p className="mt-2 text-gray-400">
+                {formatDate(selectedDate)}
+              </p>
+            </div>
+
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-300 mb-1">
+                  Comentários e Observações
+                </label>
+                <textarea
+                  value={comments}
+                  onChange={(e) => setComments(e.target.value)}
+                  className="w-full bg-gray-700 border border-gray-600 rounded-md px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  rows={6}
+                  placeholder="Descreva como foi o dia, estratégias utilizadas, condições de mercado, lições aprendidas, emoções durante o trading..."
+                />
+              </div>
+
+              <div className="flex justify-end space-x-3 pt-4">
+                <button
+                  onClick={() => setShowCommentsModal(false)}
+                  className="px-4 py-2 bg-gray-700 hover:bg-gray-600 rounded-md text-white"
+                >
+                  Cancelar
+                </button>
+                <button
+                  onClick={handleSaveComments}
+                  className="px-4 py-2 bg-green-600 hover:bg-green-700 rounded-md text-white flex items-center"
+                >
+                  <Save className="w-4 h-4 mr-2" />
+                  Salvar
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Day Control Panel */}
+      {showDayPanel && selectedDateData && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+          <div className="bg-gray-800 rounded-lg max-w-6xl w-full max-h-[90vh] overflow-hidden relative">
+            <div className="flex items-center justify-between p-6 border-b border-gray-700">
+              <div className="flex items-center">
+                <Calendar className="w-6 h-6 text-blue-500 mr-3" />
+                <div>
+                  <h2 className="text-xl font-bold">Painel do Dia - {formatDate(selectedDate)}</h2>
+                  <p className="text-gray-400">Controle completo das operações e análises</p>
+                </div>
+              </div>
+              
+              <div className="flex items-center space-x-3">
+                <div className="text-right">
+                  <p className="text-sm text-gray-400">P&L do Dia</p>
+                  <p className={`text-xl font-bold ${selectedDateData.pnl >= 0 ? 'text-green-400' : 'text-red-400'}`}>
+                    R$ {selectedDateData.pnl.toFixed(2)}
+                  </p>
+                </div>
+                
+                <button
+                  onClick={() => setShowDayPanel(false)}
+                  className="p-2 hover:bg-gray-700 rounded-full"
+                >
+                  <X className="w-5 h-5 text-gray-400" />
+                </button>
+              </div>
             </div>
           </div>
         </div>
