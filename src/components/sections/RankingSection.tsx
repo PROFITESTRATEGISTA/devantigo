@@ -21,7 +21,6 @@ export function RankingSection({ analyses, onNavigate }: RankingSectionProps) {
   const [filterBy, setFilterBy] = React.useState<'profitFactor' | 'winRate' | 'sharpeRatio' | 'recoveryFactor' | 'maxDrawdown' | 'totalTrades'>('profitFactor');
   const [sortOrder, setSortOrder] = React.useState<'desc' | 'asc'>('desc');
   const [timeFilter, setTimeFilter] = React.useState<'all' | 'week' | 'month' | 'year'>('all');
-  const [categoryFilter, setCategoryFilter] = React.useState<'all' | 'scalping' | 'swing' | 'trend'>('all');
 
   const getRankIcon = (rank: number) => {
     switch (rank) {
@@ -39,14 +38,6 @@ export function RankingSection({ analyses, onNavigate }: RankingSectionProps) {
   // Filter and sort analyses
   const filteredAndSortedAnalyses = React.useMemo(() => {
     let filtered = [...analyses];
-    
-    // Apply category filter (mock implementation)
-    if (categoryFilter !== 'all') {
-      // In a real app, this would filter based on strategy category
-      filtered = filtered.filter(analysis => 
-        analysis.name.toLowerCase().includes(categoryFilter)
-      );
-    }
     
     // Sort by selected metric
     filtered.sort((a, b) => {
@@ -86,7 +77,6 @@ export function RankingSection({ analyses, onNavigate }: RankingSectionProps) {
     });
     
     return filtered;
-  }, [analyses, filterBy, sortOrder, categoryFilter]);
 
   return (
     <div className="space-y-6">
@@ -109,7 +99,7 @@ export function RankingSection({ analyses, onNavigate }: RankingSectionProps) {
           <h3 className="text-lg font-medium text-white">{t('ranking.filters')}</h3>
         </div>
         
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           {/* Metric Filter */}
           <div>
             <label className="block text-sm font-medium text-gray-300 mb-1">
@@ -169,26 +159,6 @@ export function RankingSection({ analyses, onNavigate }: RankingSectionProps) {
               <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
             </div>
           </div>
-          
-          {/* Category Filter */}
-          <div>
-            <label className="block text-sm font-medium text-gray-300 mb-1">
-              {t('ranking.category')}
-            </label>
-            <div className="relative">
-              <select
-                value={categoryFilter}
-                onChange={(e) => setCategoryFilter(e.target.value as 'all' | 'scalping' | 'swing' | 'trend')}
-                className="w-full bg-gray-700 border border-gray-600 rounded-md px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-blue-500 appearance-none"
-              >
-                <option value="all">{t('ranking.allCategories')}</option>
-                <option value="scalping">{t('ranking.scalping')}</option>
-                <option value="swing">{t('ranking.swingTrading')}</option>
-                <option value="trend">{t('ranking.trendFollowing')}</option>
-              </select>
-              <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
-            </div>
-          </div>
         </div>
         
         {/* Active Filters Display */}
@@ -206,11 +176,6 @@ export function RankingSection({ analyses, onNavigate }: RankingSectionProps) {
           {timeFilter !== 'all' && (
             <span className="px-2 py-1 bg-blue-600 text-white rounded-full text-xs">
               {t('ranking.period')}: {timeFilter === 'week' ? t('ranking.thisWeek') : timeFilter === 'month' ? t('ranking.thisMonth') : t('ranking.thisYear')}
-            </span>
-          )}
-          {categoryFilter !== 'all' && (
-            <span className="px-2 py-1 bg-blue-600 text-white rounded-full text-xs">
-              {t('ranking.category')}: {categoryFilter === 'scalping' ? t('ranking.scalping') : categoryFilter === 'swing' ? t('ranking.swingTrading') : t('ranking.trendFollowing')}
             </span>
           )}
         </div>
