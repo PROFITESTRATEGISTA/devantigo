@@ -94,15 +94,60 @@ export function QuantDiaryPage() {
   };
 
   // Função para calcular P&L semanal
-  const getWeeklyPnL = (weekStart: number, weekEnd: number) => {
+  // Função para calcular P&L semanal baseado nos dias da semana atual
+  const getWeeklyPnL = (weekDays: number[]) => {
     let weeklyPnL = 0;
-    for (let day = weekStart; day <= weekEnd; day++) {
-      const dayData = calendarData[currentMonth]?.[day];
-      if (dayData) {
-        weeklyPnL += dayData.pnl;
+    let weeklyTrades = 0;
+    
+    weekDays.forEach(day => {
+      if (day > 0) { // Apenas dias válidos
+        const dayData = calendarData[currentMonth]?.[day];
+        if (dayData) {
+          weeklyPnL += dayData.pnl;
+          weeklyTrades += dayData.trades;
+        }
+      }
+    });
+    
+    return { pnl: weeklyPnL, trades: weeklyTrades };
+  };
+
+  // Função para calcular métricas semanais automaticamente
+  const calculateWeeklyMetrics = () => {
+    const weeks = [];
+    const daysInMonth = getDaysInMonth(currentMonth, currentYear);
+    const firstDayOfWeek = getFirstDayOfMonth(currentMonth, currentYear);
+    
+    let currentWeekDays = [];
+    
+    // Adicionar dias vazios no início
+    for (let i = 0; i < firstDayOfWeek; i++) {
+      currentWeekDays.push(0); // 0 = dia vazio
+    }
+    
+    // Adicionar os dias do mês
+    for (let day = 1; day <= daysInMonth; day++) {
+      currentWeekDays.push(day);
+      
+      // Se chegou ao sábado (7 dias) ou é o último dia do mês
+      if (currentWeekDays.length === 7 || day === daysInMonth) {
+        // Completar a semana com zeros se necessário
+        while (currentWeekDays.length < 7) {
+          currentWeekDays.push(0);
+        }
+        
+        const weekMetrics = getWeeklyPnL(currentWeekDays);
+        weeks.push({
+          days: [...currentWeekDays],
+          pnl: weekMetrics.pnl,
+          trades: weekMetrics.trades
+        });
+        
+        currentWeekDays = [];
       }
     }
-    return weeklyPnL;
+    
+    return weeks;
   };
 
   const handleDayClick = (day: number) => {
@@ -160,91 +205,8 @@ export function QuantDiaryPage() {
       return renderMonthlyView();
     }
     
-    // Modo diário - mostrar dias do mês
-    const daysInMonth = getDaysInMonth(currentMonth, currentYear);
-    const firstDayOfWeek = getFirstDayOfMonth(currentMonth, currentYear);
-    
-    // Criar array com células do calendário organizadas por semanas
-    const weeks = [];
-    let currentWeek = [];
-    
-    // Adicionar células vazias para os dias antes do primeiro dia do mês
-    for (let i = 0; i < firstDayOfWeek; i++) {
-      currentWeek.push(
-        <div key={`empty-${i}`} className="aspect-square"></div>
-      );
-    }
-    
-    // Adicionar os dias do mês
-    for (let day = 1; day <= daysInMonth; day++) {
-      const dayData = calendarData[currentMonth]?.[day] || { pnl: 0, trades: 0 };
-      const hasData = dayData.trades > 0;
-      const isPositive = dayData.pnl > 0;
-      const isClickable = calendarViewMode === 'daily';
-      
-      currentWeek.push(
-        <button
-          key={day}
-          onClick={() => handleDayClick(day)}
-          disabled={!isClickable}
-          className={`aspect-square p-2 rounded-lg border text-center transition-all ${
-            isClickable ? 'hover:scale-105 cursor-pointer' : 'cursor-default'
-          } ${
-            hasData
-              ? isPositive
-                ? 'bg-green-900 border-green-700 text-green-300 hover:bg-green-800'
-                : 'bg-red-900 border-red-700 text-red-300 hover:bg-red-800'
-              : 'bg-gray-700 border-gray-600 text-gray-400 hover:bg-gray-600'
-          } ${!isClickable ? 'opacity-75' : ''}`}
-        >
-          <div className="text-sm font-medium">{day}</div>
-          {hasData && (
-            <div className="text-xs mt-1">
-              R$ {dayData.pnl.toFixed(0)}
-            </div>
-          )}
-          {dayData.comment && (
-            <div className="text-xs mt-1">
-              <MessageSquare className="w-3 h-3 mx-auto" />
-            </div>
-          )}
-        </button>
-      );
-      
-      // Se chegou ao sábado (7 dias na semana) ou é o último dia do mês
-      if (currentWeek.length === 7 || day === daysInMonth) {
-        // Completar a semana com células vazias se necessário
-        while (currentWeek.length < 7) {
-          currentWeek.push(
-            <div key={`empty-end-${currentWeek.length}`} className="aspect-square"></div>
-          );
-        }
-        
-        // Calcular P&L semanal
-        const weekStart = day - (currentWeek.length - 1 - firstDayOfWeek);
-        const weekEnd = day;
-        const weeklyPnL = getWeeklyPnL(Math.max(1, weekStart), Math.min(daysInMonth, weekEnd));
-        
-        // Adicionar a linha da semana com o total semanal
-        weeks.push(
-          <div key={`week-${weeks.length}`} className="grid grid-cols-8 gap-2 mb-2">
-            {currentWeek}
-            <div className="aspect-square flex items-center justify-center bg-gray-900 rounded-lg border border-gray-600">
-              <div className="text-center">
-                <div className="text-xs text-gray-400 mb-1">Semana</div>
-                <div className={`text-sm font-bold ${
-                  weeklyPnL > 0 ? 'text-green-400' : weeklyPnL < 0 ? 'text-red-400' : 'text-gray-400'
-                }`}>
-                  {weeklyPnL > 0 ? '+' : ''}R$ {weeklyPnL.toFixed(0)}
-                </div>
-              </div>
-            </div>
-          </div>
-        );
-        
-        currentWeek = [];
-      }
-    }
+    // Calcular semanas com métricas automáticas
+    const weeklyData = calculateWeeklyMetrics();
 
     return (
       <div className="bg-gray-800 rounded-lg p-6">
@@ -313,7 +275,67 @@ export function QuantDiaryPage() {
 
         {/* Grid do calendário com totais semanais */}
         <div className="space-y-2">
-          {weeks}
+          {weeklyData.map((week, weekIndex) => (
+            <div key={`week-${weekIndex}`} className="grid grid-cols-8 gap-2 mb-2">
+              {week.days.map((day, dayIndex) => {
+                if (day === 0) {
+                  // Célula vazia
+                  return <div key={`empty-${weekIndex}-${dayIndex}`} className="aspect-square"></div>;
+                }
+                
+                const dayData = calendarData[currentMonth]?.[day] || { pnl: 0, trades: 0 };
+                const hasData = dayData.trades > 0;
+                const isPositive = dayData.pnl > 0;
+                const isClickable = calendarViewMode === 'daily';
+                
+                return (
+                  <button
+                    key={`day-${day}`}
+                    onClick={() => handleDayClick(day)}
+                    disabled={!isClickable}
+                    className={`aspect-square p-2 rounded-lg border text-center transition-all ${
+                      isClickable ? 'hover:scale-105 cursor-pointer' : 'cursor-default'
+                    } ${
+                      hasData
+                        ? isPositive
+                          ? 'bg-green-900 border-green-700 text-green-300 hover:bg-green-800'
+                          : 'bg-red-900 border-red-700 text-red-300 hover:bg-red-800'
+                        : 'bg-gray-700 border-gray-600 text-gray-400 hover:bg-gray-600'
+                    } ${!isClickable ? 'opacity-75' : ''}`}
+                  >
+                    <div className="text-sm font-medium">{day}</div>
+                    {hasData && (
+                      <div className="text-xs mt-1">
+                        R$ {dayData.pnl.toFixed(0)}
+                      </div>
+                    )}
+                    {dayData.comment && (
+                      <div className="text-xs mt-1">
+                        <MessageSquare className="w-3 h-3 mx-auto" />
+                      </div>
+                    )}
+                  </button>
+                );
+              })}
+              
+              {/* Coluna do total semanal */}
+              <div className="aspect-square flex items-center justify-center bg-gray-900 rounded-lg border border-gray-600">
+                <div className="text-center">
+                  <div className="text-xs text-gray-400 mb-1">Semana</div>
+                  <div className={`text-sm font-bold ${
+                    week.pnl > 0 ? 'text-green-400' : week.pnl < 0 ? 'text-red-400' : 'text-gray-400'
+                  }`}>
+                    {week.pnl > 0 ? '+' : ''}R$ {week.pnl.toFixed(0)}
+                  </div>
+                  {week.trades > 0 && (
+                    <div className="text-xs text-gray-500 mt-1">
+                      {week.trades} trades
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+          ))}
         </div>
 
         <div className="mt-4 flex items-center justify-center space-x-6">
