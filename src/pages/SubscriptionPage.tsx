@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, Crown, Check, Star, Shield, Zap, MessageSquare, Building, Users } from 'lucide-react';
 import { useAuthStore } from '../stores/authStore';
