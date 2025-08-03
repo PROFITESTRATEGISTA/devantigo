@@ -71,7 +71,7 @@ export function Footer() {
           
           {/* Copyright */}
           <div className="text-sm text-gray-400">
-            {t('footer.copyright', { year: new Date().getFullYear() })}
+            {t('footer.copyright').replace('{{year}}', new Date().getFullYear().toString())}
           </div>
         </div>
       </div>
