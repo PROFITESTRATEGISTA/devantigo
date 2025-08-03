@@ -514,7 +514,12 @@ export function QuantDiaryPage() {
       </div>
 
       {/* Métricas de Performance */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+      {/* Análise Diária */}
+      <div className="mb-8">
+        <h4 className="text-lg font-semibold mb-4 text-gray-300 border-b border-gray-700 pb-2">
+          📊 Análise Diária
+        </h4>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         {/* Sharpe Ratio */}
         <div className="bg-gray-700 rounded-lg p-4">
           <div className="flex items-center justify-between mb-2">
@@ -594,10 +599,15 @@ export function QuantDiaryPage() {
           <p className="text-2xl font-bold text-green-400">R$ 1.850</p>
           <p className="text-xs text-gray-500">18 de julho</p>
         </div>
+        </div>
       </div>
       
-      {/* Segunda linha de métricas */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+      {/* Análise Operacional */}
+      <div className="mb-8">
+        <h4 className="text-lg font-semibold mb-4 text-gray-300 border-b border-gray-700 pb-2">
+          ⚙️ Análise Operacional
+        </h4>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         {/* Maior Perda Diária */}
         <div className="bg-gray-700 rounded-lg p-4">
           <div className="flex items-center justify-between mb-2">
@@ -637,10 +647,15 @@ export function QuantDiaryPage() {
           <p className="text-2xl font-bold text-green-400">7 dias</p>
           <p className="text-xs text-gray-500">Máximo</p>
         </div>
+        </div>
       </div>
       
-      {/* Métricas Semanais */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+      {/* Análise Semanal */}
+      <div className="mb-8">
+        <h4 className="text-lg font-semibold mb-4 text-gray-300 border-b border-gray-700 pb-2">
+          📅 Análise Semanal
+        </h4>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         {/* Ganho Médio Semanal */}
         <div className="bg-gray-700 rounded-lg p-4">
           <div className="flex items-center justify-between mb-2">
@@ -687,6 +702,7 @@ export function QuantDiaryPage() {
             R$ {weeklyStats.perdaMaximaSemanal.toFixed(2)}
           </p>
           <p className="text-xs text-gray-500">Pior semana</p>
+        </div>
         </div>
       </div>
       
