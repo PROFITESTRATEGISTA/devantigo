@@ -130,7 +130,7 @@ export const mockUsers = [
     id: '1',
     name: 'Carlos Silva',
     location: 'São Paulo, SP',
-    rating: 4.7,
+    rating: 87,
     strategies: 8,
     avatar: '',
     specialty: 'Scalping Expert'
@@ -139,7 +139,7 @@ export const mockUsers = [
     id: '2',
     name: 'Ana Costa',
     location: 'Rio de Janeiro, RJ',
-    rating: 4.9,
+    rating: 94,
     strategies: 12,
     avatar: '',
     specialty: 'Swing Trading'
@@ -148,7 +148,7 @@ export const mockUsers = [
     id: '3',
     name: 'Pedro Santos',
     location: 'Belo Horizonte, MG',
-    rating: 4.5,
+    rating: 76,
     strategies: 6,
     avatar: '',
     specialty: 'Grid Trading'
@@ -157,7 +157,7 @@ export const mockUsers = [
     id: '4',
     name: 'Maria Oliveira',
     location: 'Porto Alegre, RS',
-    rating: 4.8,
+    rating: 91,
     strategies: 15,
     avatar: '',
     specialty: 'Arbitragem'

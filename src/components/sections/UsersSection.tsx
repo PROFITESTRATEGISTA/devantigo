@@ -109,8 +109,10 @@ export function UsersSection({ users }: UsersSectionProps) {
                 
                 <div className="flex items-center justify-center space-x-4 mb-4">
                   <div className="flex items-center">
-                    <Star className="w-4 h-4 text-yellow-400 fill-current mr-1" />
-                    <span className="text-sm text-gray-400">{user.rating.toFixed(1)}</span>
+                    <div className="bg-gradient-to-r from-blue-500 to-purple-500 text-white px-2 py-1 rounded-md text-xs font-bold mr-1">
+                      QUANT
+                    </div>
+                    <span className="text-sm font-bold text-blue-400">{user.rating.toFixed(0)}</span>
                   </div>
                   <div className="text-sm text-gray-400">
                     {user.strategies} {t('marketplace.strategies')}
