@@ -113,11 +113,7 @@ export function Navbar() {
             {/* Earn Tokens Button */}
             <div className="hidden lg:flex">
               <button
-                onClick={() => {
-                  const message = "Olá vim do DevHub Trader e quero saber como ganhar tokens completando desafios";
-                  const encodedMessage = encodeURIComponent(message);
-                  window.open(`https://wa.me/5511975333355?text=${encodedMessage}`, '_blank');
-                }}
+                onClick={() => navigate('/challenges')}
                 className="flex items-center space-x-1 px-2 py-1 bg-green-800 hover:bg-green-700 rounded-md text-xs text-green-300 transition-colors"
                 title="Complete desafios para ganhar tokens"
               >
@@ -261,11 +257,7 @@ export function Navbar() {
               <div className="flex flex-col space-y-3 px-3">
                 <TokenDisplay />
                 <button
-                  onClick={() => {
-                    const message = "Olá vim do DevHub Trader e quero saber como ganhar tokens completando desafios";
-                    const encodedMessage = encodeURIComponent(message);
-                    window.open(`https://wa.me/5511975333355?text=${encodedMessage}`, '_blank');
-                  }}
+                  onClick={() => navigate('/challenges')}
                   className="flex items-center space-x-1 px-2 py-1 bg-green-800 hover:bg-green-700 rounded-md text-xs text-green-300 transition-colors"
                 >
                   <span className="text-xs">🏆</span>
