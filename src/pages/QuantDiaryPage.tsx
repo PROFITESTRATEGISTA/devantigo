@@ -540,16 +540,6 @@ export function QuantDiaryPage() {
           <p className="text-xs text-gray-500">Muito bom</p>
         </div>
         
-        {/* Total Trades */}
-        <div className="bg-gray-700 rounded-lg p-4">
-          <div className="flex items-center justify-between mb-2">
-            <span className="text-sm text-gray-400">Total Trades</span>
-            <Hash className="w-4 h-4 text-purple-400" />
-          </div>
-          <p className="text-2xl font-bold text-purple-400">306</p>
-          <p className="text-xs text-gray-500">151 dias operados</p>
-        </div>
-        
         {/* Fator de Recuperação */}
         <div className="bg-gray-700 rounded-lg p-4">
           <div className="flex items-center justify-between mb-2">
@@ -570,25 +560,6 @@ export function QuantDiaryPage() {
           <p className="text-xs text-gray-500">R$ 2.275</p>
         </div>
         
-        {/* Perdas Consecutivas */}
-        <div className="bg-gray-700 rounded-lg p-4">
-          <div className="flex items-center justify-between mb-2">
-            <span className="text-sm text-gray-400">Perdas Consecutivas</span>
-            <TrendingDown className="w-4 h-4 text-red-400" />
-          </div>
-          <p className="text-2xl font-bold text-red-400">3 dias</p>
-          <p className="text-xs text-gray-500">Máximo</p>
-        </div>
-        
-        {/* Ganhos Consecutivos */}
-        <div className="bg-gray-700 rounded-lg p-4">
-          <div className="flex items-center justify-between mb-2">
-            <span className="text-sm text-gray-400">Ganhos Consecutivos</span>
-            <TrendingUp className="w-4 h-4 text-green-400" />
-          </div>
-          <p className="text-2xl font-bold text-green-400">7 dias</p>
-          <p className="text-xs text-gray-500">Máximo</p>
-        </div>
         </div>
       </div>
       
@@ -598,6 +569,16 @@ export function QuantDiaryPage() {
           📊 Análise Diária
         </h4>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        {/* Total Trades */}
+        <div className="bg-gray-700 rounded-lg p-4">
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-sm text-gray-400">Total Trades</span>
+            <Hash className="w-4 h-4 text-purple-400" />
+          </div>
+          <p className="text-2xl font-bold text-purple-400">306</p>
+          <p className="text-xs text-gray-500">151 dias operados</p>
+        </div>
+        
         {/* Ganho Médio Diário */}
         <div className="bg-gray-700 rounded-lg p-4">
           <div className="flex items-center justify-between mb-2">
@@ -646,6 +627,26 @@ export function QuantDiaryPage() {
           </div>
           <p className="text-2xl font-bold text-yellow-400">1.75</p>
           <p className="text-xs text-gray-500">Ganho/Perda</p>
+        </div>
+        
+        {/* Perdas Consecutivas */}
+        <div className="bg-gray-700 rounded-lg p-4">
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-sm text-gray-400">Perdas Consecutivas</span>
+            <TrendingDown className="w-4 h-4 text-red-400" />
+          </div>
+          <p className="text-2xl font-bold text-red-400">3 dias</p>
+          <p className="text-xs text-gray-500">Máximo</p>
+        </div>
+        
+        {/* Ganhos Consecutivos */}
+        <div className="bg-gray-700 rounded-lg p-4">
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-sm text-gray-400">Ganhos Consecutivos</span>
+            <TrendingUp className="w-4 h-4 text-green-400" />
+          </div>
+          <p className="text-2xl font-bold text-green-400">7 dias</p>
+          <p className="text-xs text-gray-500">Máximo</p>
         </div>
         </div>
       </div>
