@@ -156,7 +156,11 @@ export function Navbar() {
                       </div>
                       <button
                         onClick={() => {
-                          navigate('/dashboard?section=users');
+                          navigate('/dashboard');
+                          // Set the active section to users after navigation
+                          setTimeout(() => {
+                            window.dispatchEvent(new CustomEvent('setDashboardSection', { detail: 'users' }));
+                          }, 100);
                           setShowUserMenu(false);
                         }}
                         className="text-gray-300 hover:text-white text-sm flex items-center"

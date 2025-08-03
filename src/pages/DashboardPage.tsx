@@ -40,6 +40,19 @@ export const DashboardPage = () => {
     };
   }, []);
 
+  // Listen for dashboard section changes from navbar
+  React.useEffect(() => {
+    const handleSetDashboardSection = (event: CustomEvent) => {
+      setActiveSection(event.detail);
+    };
+    
+    window.addEventListener('setDashboardSection', handleSetDashboardSection as EventListener);
+    
+    return () => {
+      window.removeEventListener('setDashboardSection', handleSetDashboardSection as EventListener);
+    };
+  }, []);
+
   useEffect(() => {
     setActiveSection('robots');
   }, []);
