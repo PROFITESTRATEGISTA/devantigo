@@ -285,8 +285,8 @@ export function QuantDiaryPage() {
         drawdownPeriod: null,
         recoveryFactor: 0,
         sharpeRatio: 0,
-        calmarRatio: 0
-      };
+    // Collect all days with P&L data and sort chronologically
+    const allDays: Array<{ date: string; pnl: number; runningTotal: number }> = [];
     }
 
     let runningPnL = userPatrimony; // Start with user's initial capital
@@ -426,7 +426,8 @@ export function QuantDiaryPage() {
         
         const weekMetrics = getWeeklyPnL(currentWeekDays);
         weeks.push({
-          days: [...currentWeekDays],
+              pnl: dayData.pnl,
+              runningTotal: 0 // Will be calculated below
           pnl: weekMetrics.pnl,
           trades: weekMetrics.trades
         });
@@ -443,7 +444,7 @@ export function QuantDiaryPage() {
     const weeklyData = calculateWeeklyMetrics();
     const weeklyPnLs = weeklyData.map(week => week.pnl).filter(pnl => pnl !== 0);
     
-    if (weeklyPnLs.length === 0) {
+    if (allDays.length === 0) {
       return {
         ganhoMedioSemanal: 0,
         perdaMediaSemanal: 0,
@@ -452,8 +453,8 @@ export function QuantDiaryPage() {
       };
     }
     
-    const ganhosSemanais = weeklyPnLs.filter(pnl => pnl > 0);
-    const perdasSemanais = weeklyPnLs.filter(pnl => pnl < 0);
+    // Calculate running totals starting from user's initial capital
+    let runningTotal = userPatrimony;
     
     return {
       ganhoMedioSemanal: ganhosSemanais.length > 0 ? ganhosSemanais.reduce((a, b) => a + b, 0) / ganhosSemanais.length : 0,
@@ -495,28 +496,50 @@ export function QuantDiaryPage() {
   const weeklyStats = calculateWeeklyStats();
 
   const handleDayClick = (day: number) => {
-    // No modo mensal, não permite interação
-    if (calendarViewMode === 'monthly') return;
+    const dailyReturns: number[] = [];
     
-    setSelectedDay(day);
+    // Calculate running totals for each day
+    allDays.forEach((day, index) => {
+      runningTotal += day.pnl;
+      day.runningTotal = runningTotal;
+      
+      // Calculate daily return as percentage of previous day's capital
+      if (index > 0) {
+        const previousCapital = allDays[index - 1].runningTotal;
+        if (previousCapital > 0) {
+          const dailyReturn = day.pnl / previousCapital;
+          dailyReturns.push(dailyReturn);
+        }
+      } else {
+        // First day return
+        if (userPatrimony > 0) {
+          const dailyReturn = day.pnl / userPatrimony;
+          dailyReturns.push(dailyReturn);
+        }
+      }
+    });
+    if (calendarViewMode === 'monthly') return;
+    // Calculate drawdown: (peak - current) / patrimony
+    allDays.forEach((day) => {
+      const currentCapital = day.runningTotal;
     setShowActionModal(true);
-  };
-
-  const handleActionSelect = (action: 'analysis' | 'comment') => {
+      // Update peak if current capital is higher
+      if (currentCapital > peak) {
+        peak = currentCapital;
     setActionType(action);
     setShowActionModal(false);
     
-    const dayData = calendarData[currentYear]?.[currentMonth]?.[selectedDay!] || { pnl: 0, trades: 0, comment: '' };
-    setEditingDay({ ...dayData });
-    setShowDayModal(true);
+      // Calculate current drawdown using the formula: (peak - current) / patrimony
+      const currentDrawdownAmount = peak - currentCapital;
+      const currentDrawdownPercent = userPatrimony > 0 ? (currentDrawdownAmount / userPatrimony) * 100 : 0;
   };
-
-  const handleSaveDay = () => {
-    if (selectedDay === null) return;
+      // Track maximum drawdown 
+      if (currentDrawdownAmount > maxDrawdownAmount) {
+        maxDrawdownAmount = currentDrawdownAmount;
 
     setCalendarData(prev => ({
       ...prev,
-      [currentYear]: {
+        // Set drawdown start if this is a new drawdown period
         ...prev[currentYear],
         [currentMonth]: {
           ...prev[currentYear]?.[currentMonth],
@@ -526,19 +549,10 @@ export function QuantDiaryPage() {
     }));
 
     setShowDayModal(false);
-    setSelectedDay(null);
-    setActionType(null);
+      // Track when a new drawdown period starts
+      if (currentDrawdownAmount > 0 && !currentDrawdownStart) {
   };
 
-  const handleDeleteDay = () => {
-    if (selectedDay === null) return;
-
-    setCalendarData(prev => {
-      const newData = { ...prev };
-      if (newData[currentYear]?.[currentMonth]) {
-        delete newData[currentYear][currentMonth][selectedDay];
-      }
-      return newData;
     });
 
     setShowDayModal(false);
