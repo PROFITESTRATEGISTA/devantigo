@@ -322,22 +322,75 @@ export function SubscriptionPage() {
             </div>
           </div>
 
-          <div className="flex flex-col md:flex-row items-center justify-between">
-            <div className="mb-4 md:mb-0">
-              <p className="text-lg mb-2">{language === 'en' ? 'Need more tokens?' : 'Precisa de mais tokens?'}</p>
-              <p className="text-gray-400">{language === 'en' ? 'Purchase additional tokens to continue using AI features' : 'Compre tokens adicionais para continuar usando recursos de IA'}</p>
-            </div>
-            <div className="flex items-center space-x-4">
-              <div className="text-center">
-                <p className="text-2xl font-bold">R$ 299,80</p>
-                <p className="text-sm text-gray-400">{language === 'en' ? 'per reload' : 'por recarga'}</p>
-              </div>
+          <div className="mb-6">
+            <p className="text-lg mb-2">{language === 'en' ? 'Need more tokens?' : 'Precisa de mais tokens?'}</p>
+            <p className="text-gray-400">{language === 'en' ? 'Purchase additional tokens to continue using AI features' : 'Compre tokens adicionais para continuar usando recursos de IA'}</p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {/* 2,500 tokens package */}
+            <div className="bg-gray-700 rounded-lg p-4 text-center">
+              <Zap className="w-8 h-8 text-yellow-500 mx-auto mb-3" />
+              <h3 className="text-xl font-bold mb-1">2.500</h3>
+              <p className="text-gray-400 mb-3 text-sm">{language === 'en' ? 'tokens' : 'tokens'}</p>
+              <p className="text-lg font-bold mb-4">R$ 70,00</p>
               <button 
-                onClick={handleBuyTokens}
-                className="px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-md flex items-center"
+                onClick={() => {
+                  const message = language === 'en'
+                    ? `Hello, I came from DevHub Trader and want to purchase the 2,500 tokens package (R$ 70.00).`
+                    : `Olá vim do DevHub Trader e quero comprar o pacote de 2.500 tokens (R$ 70,00).`;
+                  const encodedMessage = encodeURIComponent(message);
+                  window.open(`https://wa.me/5511975333355?text=${encodedMessage}`, '_blank');
+                }}
+                className="w-full py-2 bg-blue-600 hover:bg-blue-700 rounded-md flex items-center justify-center text-sm"
               >
                 <MessageSquare className="w-4 h-4 mr-2" />
-                {t('tokens.buy')}
+                {language === 'en' ? 'Buy Tokens' : 'Comprar Tokens'}
+              </button>
+            </div>
+
+            {/* 7,500 tokens package - Most Popular */}
+            <div className="bg-gray-700 rounded-lg p-4 text-center relative ring-2 ring-yellow-500">
+              <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-1 bg-yellow-600 rounded-full text-xs font-medium">
+                {language === 'en' ? 'Best Value' : 'Melhor Custo-Benefício'}
+              </div>
+              <Zap className="w-8 h-8 text-yellow-500 mx-auto mb-3" />
+              <h3 className="text-xl font-bold mb-1">7.500</h3>
+              <p className="text-gray-400 mb-3 text-sm">{language === 'en' ? 'tokens' : 'tokens'}</p>
+              <p className="text-lg font-bold mb-4">R$ 150,00</p>
+              <button 
+                onClick={() => {
+                  const message = language === 'en'
+                    ? `Hello, I came from DevHub Trader and want to purchase the 7,500 tokens package (R$ 150.00).`
+                    : `Olá vim do DevHub Trader e quero comprar o pacote de 7.500 tokens (R$ 150,00).`;
+                  const encodedMessage = encodeURIComponent(message);
+                  window.open(`https://wa.me/5511975333355?text=${encodedMessage}`, '_blank');
+                }}
+                className="w-full py-2 bg-yellow-600 hover:bg-yellow-700 rounded-md flex items-center justify-center text-sm"
+              >
+                <MessageSquare className="w-4 h-4 mr-2" />
+                {language === 'en' ? 'Buy Tokens' : 'Comprar Tokens'}
+              </button>
+            </div>
+
+            {/* 25,000 tokens package */}
+            <div className="bg-gray-700 rounded-lg p-4 text-center">
+              <Zap className="w-8 h-8 text-yellow-500 mx-auto mb-3" />
+              <h3 className="text-xl font-bold mb-1">25.000</h3>
+              <p className="text-gray-400 mb-3 text-sm">{language === 'en' ? 'tokens' : 'tokens'}</p>
+              <p className="text-lg font-bold mb-4">R$ 300,00</p>
+              <button 
+                onClick={() => {
+                  const message = language === 'en'
+                    ? `Hello, I came from DevHub Trader and want to purchase the 25,000 tokens package (R$ 300.00).`
+                    : `Olá vim do DevHub Trader e quero comprar o pacote de 25.000 tokens (R$ 300,00).`;
+                  const encodedMessage = encodeURIComponent(message);
+                  window.open(`https://wa.me/5511975333355?text=${encodedMessage}`, '_blank');
+                }}
+                className="w-full py-2 bg-blue-600 hover:bg-blue-700 rounded-md flex items-center justify-center text-sm"
+              >
+                <MessageSquare className="w-4 h-4 mr-2" />
+                {language === 'en' ? 'Buy Tokens' : 'Comprar Tokens'}
               </button>
             </div>
           </div>
