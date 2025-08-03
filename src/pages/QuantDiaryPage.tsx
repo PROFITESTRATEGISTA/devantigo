@@ -16,6 +16,7 @@ export function QuantDiaryPage() {
   const [currentMonth, setCurrentMonth] = useState(new Date());
   const [selectedDay, setSelectedDay] = useState<number | null>(null);
   const [selectedStatsMonth, setSelectedStatsMonth] = useState(new Date());
+  const [showAllTime, setShowAllTime] = useState(false);
 
   // Mock data for demonstration
   const monthlyStats = {
@@ -42,6 +43,24 @@ export function QuantDiaryPage() {
     sharpeRatio: 0,
     drawdownMax: 0,
     melhorDia: 0
+  };
+
+  // All-time stats (when showAllTime is true)
+  const allTimeStats = {
+    pnlTotal: 0,
+    totalTrades: 0,
+    taxaAcerto: 0,
+    fatorLucro: 0,
+    sharpeRatio: 0,
+    drawdownMaximo: 0,
+    melhorDia: 0,
+    piorDia: 0,
+    pnlMedioDia: 0,
+    diasLucrativos: 0,
+    diasPerda: 0,
+    lucroBruto: 0,
+    diasOperados: 0,
+    profitFactor: 0
   };
 
   const monthlyBreakdown = [
@@ -188,10 +207,191 @@ export function QuantDiaryPage() {
           <div className="flex items-center space-x-4">
             <h3 className="text-xl font-semibold flex items-center">
               <TrendingUp className="w-5 h-5 text-blue-400 mr-2" />
-              Performance Mensal
+              {showAllTime ? 'Performance Todos os Tempos' : 'Performance Mensal'}
             </h3>
+            
+            {/* Switch para alternar entre mensal e todos os tempos */}
+            <div className="flex items-center space-x-2 bg-gray-700 rounded-lg p-1">
+              <button
+                onClick={() => setShowAllTime(false)}
+                className={`px-3 py-1.5 rounded-md text-sm transition-all ${
+                  !showAllTime
+                    ? 'bg-blue-600 text-white shadow-lg'
+                    : 'text-gray-400 hover:text-white hover:bg-gray-600'
+                }`}
+              >
+                Mensal
+              </button>
+              <button
+                onClick={() => setShowAllTime(true)}
+                className={`px-3 py-1.5 rounded-md text-sm transition-all ${
+                  showAllTime
+                    ? 'bg-blue-600 text-white shadow-lg'
+                    : 'text-gray-400 hover:text-white hover:bg-gray-600'
+                }`}
+              >
+                Todos os Tempos
+              </button>
+            </div>
           </div>
-          <div className="flex items-center space-x-3">
+          
+          {/* Navegação de mês (só aparece quando não é "todos os tempos") */}
+          {!showAllTime && (
+            <div className="flex items-center space-x-3">
+              <button
+                onClick={() => navigateStatsMonth('prev')}
+                className="p-2 hover:bg-gray-700 rounded-full transition-colors"
+                title="Mês anterior"
+              >
+                <ChevronLeft className="w-4 h-4 text-gray-400" />
+              </button>
+              <div className="bg-gray-700 px-4 py-2 rounded-lg">
+                <span className="text-sm font-medium capitalize">
+                  {formatMonthShort(selectedStatsMonth)}
+                </span>
+              </div>
+              <button
+                onClick={() => navigateStatsMonth('next')}
+                className="p-2 hover:bg-gray-700 rounded-full transition-colors"
+                title="Próximo mês"
+              >
+                <ChevronRight className="w-4 h-4 text-gray-400" />
+              </button>
+            </div>
+          )}
+          
+          {/* Indicador de período quando "todos os tempos" */}
+          {showAllTime && (
+            <div className="bg-gray-700 px-4 py-2 rounded-lg">
+              <span className="text-sm font-medium">
+                Janeiro 2024 - Dezembro 2025
+              </span>
+            </div>
+          )}
+        </div>
+
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          {/* P&L */}
+          <div className="bg-gray-700 rounded-lg p-4">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-sm text-gray-400">
+                {showAllTime ? 'P&L Total' : 'P&L do Mês'}
+              </span>
+              <TrendingUp className="w-4 h-4 text-green-400" />
+            </div>
+            <p className="text-2xl font-bold text-green-400">
+              +R$ {showAllTime ? allTimeStats.pnlTotal.toFixed(2) : monthlyStats.pnlMes.toFixed(2)}
+            </p>
+            <p className="text-xs text-gray-500">
+              {showAllTime ? `${allTimeStats.diasOperados} dias operados` : '0 por dia'}
+            </p>
+          </div>
+
+          {/* Total de Trades */}
+          <div className="bg-gray-700 rounded-lg p-4">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-sm text-gray-400">Total de Trades</span>
+              <Hash className="w-4 h-4 text-blue-400" />
+            </div>
+            <p className="text-2xl font-bold text-blue-400">
+              {showAllTime ? allTimeStats.totalTrades : monthlyStats.totalTrades}
+            </p>
+            <p className="text-xs text-gray-500">
+              {showAllTime ? 'Histórico completo' : '0 por dia'}
+            </p>
+          </div>
+
+          {/* Taxa de Acerto */}
+          <div className="bg-gray-700 rounded-lg p-4">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-sm text-gray-400">Taxa de Acerto</span>
+              <div className="w-3 h-3 rounded-full bg-red-500"></div>
+            </div>
+            <p className="text-2xl font-bold text-red-400">
+              {showAllTime ? allTimeStats.taxaAcerto.toFixed(1) : monthlyStats.taxaAcerto.toFixed(1)}%
+            </p>
+            <p className="text-xs text-gray-500">
+              {showAllTime ? 'Média histórica' : '0 dias operados'}
+            </p>
+          </div>
+
+          {/* Fator de Lucro */}
+          <div className="bg-gray-700 rounded-lg p-4">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-sm text-gray-400">Fator de Lucro</span>
+              <TrendingUp className="w-4 h-4 text-gray-400" />
+            </div>
+            <p className="text-2xl font-bold text-gray-400">
+              {showAllTime ? allTimeStats.fatorLucro.toFixed(2) : monthlyStats.fatorLucro.toFixed(2)}
+            </p>
+            <p className="text-xs text-gray-500">
+              {showAllTime ? 'Histórico' : 'Prejuízo'}
+            </p>
+          </div>
+
+          {/* Sharpe Ratio */}
+          <div className="bg-gray-700 rounded-lg p-4">
+            <span className="text-sm text-gray-400">Sharpe Ratio</span>
+            <p className="text-xl font-bold text-red-400">
+              {showAllTime ? allTimeStats.sharpeRatio.toFixed(2) : monthlyStats.sharpeRatio.toFixed(2)}
+            </p>
+          </div>
+
+          {/* Drawdown Máximo */}
+          <div className="bg-gray-700 rounded-lg p-4">
+            <span className="text-sm text-gray-400">Drawdown Máximo</span>
+            <p className="text-xl font-bold text-green-400">
+              R$ {showAllTime ? allTimeStats.drawdownMaximo.toFixed(2) : monthlyStats.drawdownMaximo.toFixed(2)}
+            </p>
+          </div>
+
+          {/* Melhor Dia */}
+          <div className="bg-gray-700 rounded-lg p-4">
+            <span className="text-sm text-gray-400">Melhor Dia</span>
+            <p className="text-xl font-bold text-green-400">
+              R$ {showAllTime ? allTimeStats.melhorDia.toFixed(2) : monthlyStats.melhorDia.toFixed(2)}
+            </p>
+          </div>
+
+          {/* Pior Dia */}
+          <div className="bg-gray-700 rounded-lg p-4">
+            <span className="text-sm text-gray-400">Pior Dia</span>
+            <p className="text-xl font-bold text-red-400">
+              R$ {showAllTime ? allTimeStats.piorDia.toFixed(2) : monthlyStats.piorDia.toFixed(2)}
+            </p>
+          </div>
+
+          {/* P&L Médio/Dia */}
+          <div className="bg-gray-700 rounded-lg p-4">
+            <span className="text-sm text-gray-400">P&L Médio/Dia</span>
+            <p className="text-xl font-bold text-red-400">
+              R$ {showAllTime ? allTimeStats.pnlMedioDia.toFixed(2) : monthlyStats.pnlMedioDia.toFixed(2)}
+            </p>
+          </div>
+
+          {/* Dias Lucrativos */}
+          <div className="bg-gray-700 rounded-lg p-4">
+            <span className="text-sm text-gray-400">Dias Lucrativos</span>
+            <p className="text-xl font-bold text-blue-400">
+              {showAllTime ? allTimeStats.diasLucrativos : monthlyStats.diasLucrativos}
+            </p>
+          </div>
+
+          {/* Dias de Perda */}
+          <div className="bg-gray-700 rounded-lg p-4">
+            <span className="text-sm text-gray-400">Dias de Perda</span>
+            <p className="text-xl font-bold text-red-400">
+              {showAllTime ? allTimeStats.diasPerda : monthlyStats.diasPerda}
+            </p>
+          </div>
+
+          {/* Lucro Bruto */}
+          <div className="bg-gray-700 rounded-lg p-4">
+            <span className="text-sm text-gray-400">Lucro Bruto</span>
+            <p className="text-xl font-bold text-green-400">
+              R$ {showAllTime ? allTimeStats.lucroBruto.toFixed(2) : monthlyStats.lucroBruto.toFixed(2)}
+            </p>
+          </div>
             <button
               onClick={() => navigateStatsMonth('prev')}
               className="p-2 hover:bg-gray-700 rounded-full transition-colors"
