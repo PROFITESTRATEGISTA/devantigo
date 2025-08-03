@@ -108,7 +108,7 @@ export function RankingSection({ analyses, onNavigate }: RankingSectionProps) {
           {/* Metric Filter */}
           <div>
             <label className="block text-sm font-medium text-gray-300 mb-1">
-              {t('ranking.sortBy')}
+              {language === 'en' ? 'Rank by' : 'Classificar por'}
             </label>
             <div className="relative">
               <select
@@ -116,12 +116,12 @@ export function RankingSection({ analyses, onNavigate }: RankingSectionProps) {
                 onChange={(e) => setFilterBy(e.target.value as 'profitFactor' | 'winRate' | 'sharpeRatio' | 'recoveryFactor' | 'maxDrawdown' | 'totalTrades')}
                 className="w-full bg-gray-700 border border-gray-600 rounded-md px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-blue-500 appearance-none"
               >
-                <option value="profitFactor">{t('analyses.profitFactor')}</option>
-                <option value="winRate">{t('analyses.winRate')}</option>
-                <option value="sharpeRatio">Sharpe Ratio</option>
-                <option value="recoveryFactor">Fator de Recuperação</option>
-                <option value="maxDrawdown">Drawdown Máximo</option>
-                <option value="totalTrades">Total de Trades</option>
+                <option value="profitFactor">{language === 'en' ? 'Profitability' : 'Lucratividade'}</option>
+                <option value="winRate">{language === 'en' ? 'Success Rate' : 'Taxa de Sucesso'}</option>
+                <option value="sharpeRatio">{language === 'en' ? 'Risk-Return Ratio' : 'Relação Risco-Retorno'}</option>
+                <option value="recoveryFactor">{language === 'en' ? 'Recovery Speed' : 'Velocidade de Recuperação'}</option>
+                <option value="maxDrawdown">{language === 'en' ? 'Maximum Loss' : 'Perda Máxima'}</option>
+                <option value="totalTrades">{language === 'en' ? 'Trading Activity' : 'Atividade de Trading'}</option>
               </select>
               <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
             </div>
@@ -130,7 +130,7 @@ export function RankingSection({ analyses, onNavigate }: RankingSectionProps) {
           {/* Sort Order */}
           <div>
             <label className="block text-sm font-medium text-gray-300 mb-1">
-              {t('ranking.order')}
+              {language === 'en' ? 'Order' : 'Ordem'}
             </label>
             <div className="relative">
               <select
@@ -138,8 +138,8 @@ export function RankingSection({ analyses, onNavigate }: RankingSectionProps) {
                 onChange={(e) => setSortOrder(e.target.value as 'desc' | 'asc')}
                 className="w-full bg-gray-700 border border-gray-600 rounded-md px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-blue-500 appearance-none"
               >
-                <option value="desc">Maior para Menor</option>
-                <option value="asc">Menor para Maior</option>
+                <option value="desc">{language === 'en' ? 'Best to Worst' : 'Melhor para Pior'}</option>
+                <option value="asc">{language === 'en' ? 'Worst to Best' : 'Pior para Melhor'}</option>
               </select>
               <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
             </div>
@@ -148,7 +148,7 @@ export function RankingSection({ analyses, onNavigate }: RankingSectionProps) {
           {/* Time Filter */}
           <div>
             <label className="block text-sm font-medium text-gray-300 mb-1">
-              {t('ranking.period')}
+              {language === 'en' ? 'Time Period' : 'Período'}
             </label>
             <div className="relative">
               <select
@@ -156,10 +156,10 @@ export function RankingSection({ analyses, onNavigate }: RankingSectionProps) {
                 onChange={(e) => setTimeFilter(e.target.value as 'all' | 'week' | 'month' | 'year')}
                 className="w-full bg-gray-700 border border-gray-600 rounded-md px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-blue-500 appearance-none"
               >
-                <option value="all">Todos os Tempos</option>
-                <option value="week">Esta Semana</option>
-                <option value="month">Este Mês</option>
-                <option value="year">Este Ano</option>
+                <option value="all">{language === 'en' ? 'All Time' : 'Todos os Tempos'}</option>
+                <option value="week">{language === 'en' ? 'This Week' : 'Esta Semana'}</option>
+                <option value="month">{language === 'en' ? 'This Month' : 'Este Mês'}</option>
+                <option value="year">{language === 'en' ? 'This Year' : 'Este Ano'}</option>
               </select>
               <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
             </div>
@@ -170,23 +170,27 @@ export function RankingSection({ analyses, onNavigate }: RankingSectionProps) {
         <div className="mt-4 flex flex-wrap gap-2">
           {filterBy && filterBy !== 'profitFactor' && (
             <span className="px-2 py-1 bg-blue-600 text-white rounded-full text-xs">
-              Ordenar por: {filterBy === 'winRate' ? 'Taxa de Acerto' : 
-                          filterBy === 'sharpeRatio' ? 'Sharpe Ratio' :
-                          filterBy === 'recoveryFactor' ? 'Fator de Recuperação' :
-                          filterBy === 'maxDrawdown' ? 'Drawdown Máximo' :
-                          filterBy === 'totalTrades' ? 'Total de Trades' : filterBy}
+              {language === 'en' ? 'Ranking by: ' : 'Classificando por: '}{
+                filterBy === 'winRate' ? (language === 'en' ? 'Success Rate' : 'Taxa de Sucesso') : 
+                filterBy === 'sharpeRatio' ? (language === 'en' ? 'Risk-Return' : 'Risco-Retorno') :
+                filterBy === 'recoveryFactor' ? (language === 'en' ? 'Recovery Speed' : 'Velocidade de Recuperação') :
+                filterBy === 'maxDrawdown' ? (language === 'en' ? 'Maximum Loss' : 'Perda Máxima') :
+                filterBy === 'totalTrades' ? (language === 'en' ? 'Trading Activity' : 'Atividade de Trading') : filterBy
+              }
             </span>
           )}
           {sortOrder !== 'desc' && (
             <span className="px-2 py-1 bg-blue-600 text-white rounded-full text-xs">
-              Ordem: Menor para Maior
+              {language === 'en' ? 'Order: Worst to Best' : 'Ordem: Pior para Melhor'}
             </span>
           )}
           {timeFilter !== 'all' && (
             <span className="px-2 py-1 bg-blue-600 text-white rounded-full text-xs">
-              Período: {timeFilter === 'week' ? 'Esta Semana' : 
-                       timeFilter === 'month' ? 'Este Mês' : 
-                       timeFilter === 'year' ? 'Este Ano' : timeFilter}
+              {language === 'en' ? 'Period: ' : 'Período: '}{
+                timeFilter === 'week' ? (language === 'en' ? 'This Week' : 'Esta Semana') : 
+                timeFilter === 'month' ? (language === 'en' ? 'This Month' : 'Este Mês') : 
+                timeFilter === 'year' ? (language === 'en' ? 'This Year' : 'Este Ano') : timeFilter
+              }
             </span>
           )}
         </div>
@@ -227,7 +231,7 @@ export function RankingSection({ analyses, onNavigate }: RankingSectionProps) {
                   onClick={() => onNavigate('/backtest-analysis')}
                   className="px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-md text-white"
                 >
-                  {t('analyses.viewAnalysis')}
+                  {language === 'en' ? 'View Details' : 'Ver Detalhes'}
                 </button>
               </div>
             </div>
