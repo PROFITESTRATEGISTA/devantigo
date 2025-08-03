@@ -20,18 +20,18 @@ export function QuantDiarySection() {
   const { profile } = useAuthStore();
   const [currentDate, setCurrentDate] = useState(new Date());
   const [currentWeekStart, setCurrentWeekStart] = useState(() => {
-    // Encontrar a segunda-feira da semana atual
-    const today = new Date(2025, 0, 8); // 8 de janeiro de 2025 (uma quarta-feira)
+    // Encontrar o domingo da semana atual
+    const today = new Date(2025, 0, 5); // 5 de janeiro de 2025 (primeiro domingo)
     const dayOfWeek = today.getDay(); // 0 = domingo, 1 = segunda, ..., 6 = sábado
     
-    // Calcular quantos dias voltar para chegar na segunda-feira
-    const daysToMonday = dayOfWeek === 0 ? 6 : dayOfWeek - 1; // Se domingo, volta 6 dias
+    // Calcular quantos dias voltar para chegar no domingo
+    const daysToSunday = dayOfWeek; // Se domingo (0), não volta nenhum dia
     
-    const monday = new Date(today);
-    monday.setDate(today.getDate() - daysToMonday);
-    monday.setHours(0, 0, 0, 0);
+    const sunday = new Date(today);
+    sunday.setDate(today.getDate() - daysToSunday);
+    sunday.setHours(0, 0, 0, 0);
     
-    return monday;
+    return sunday;
   });
   const [viewType, setViewType] = useState<'calendar' | 'weekly'>('weekly');
   const [showWeekends, setShowWeekends] = useState(false);
@@ -157,31 +157,35 @@ export function QuantDiarySection() {
 
   const navigateMonth = (direction: 'prev' | 'next') => {
     const newDate = new Date(currentDate);
-    const newMonth = currentDate.getMonth() + (direction === 'next' ? 1 : -1);
-    const newYear = newMonth < 0 ? currentDate.getFullYear() - 1 : 
-                   newMonth > 11 ? currentDate.getFullYear() + 1 : 
-                   currentDate.getFullYear();
+    
+    if (direction === 'next') {
+      newDate.setMonth(currentDate.getMonth() + 1);
+    } else {
+      newDate.setMonth(currentDate.getMonth() - 1);
+    }
     
     // Limitar apenas a 2025
-    if (newYear < 2025) {
+    if (newDate.getFullYear() < 2025) {
       return; // Não permitir navegar para antes de 2025
     }
-    if (newYear > 2025) {
+    if (newDate.getFullYear() > 2025) {
       return; // Não permitir navegar para depois de 2025
     }
     
-    newDate.setFullYear(newYear);
-    newDate.setMonth(newMonth < 0 ? 11 : newMonth > 11 ? 0 : newMonth);
     setCurrentDate(newDate);
     
     if (viewType === 'weekly') {
-      // Calcular a primeira semana do novo mês
+      // Encontrar o primeiro domingo do novo mês
       const firstDayOfMonth = new Date(2025, newDate.getMonth(), 1);
-      const startOfYear = new Date(2025, 0, 1);
-      const dayOfYear = Math.floor((firstDayOfMonth.getTime() - startOfYear.getTime()) / (24 * 60 * 60 * 1000)) + 1;
-      const weekOfYear = Math.ceil(dayOfYear / 7);
+      const firstDayOfWeek = firstDayOfMonth.getDay(); // 0 = domingo
       
-      const firstWeekStart = new Date(2025, 0, ((weekOfYear - 1) * 7) + 1);
+      // Se o primeiro dia não é domingo, voltar para o domingo anterior
+      const firstSunday = new Date(firstDayOfMonth);
+      if (firstDayOfWeek !== 0) {
+        firstSunday.setDate(1 - firstDayOfWeek);
+      }
+      
+      const firstWeekStart = firstSunday;
       setCurrentWeekStart(firstWeekStart);
     }
   };
