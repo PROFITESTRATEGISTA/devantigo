@@ -349,7 +349,7 @@ export function QuantDiaryPage() {
       maxWinStreak,
       maxLossStreak,
       totalWinningDays,
-      maxLossStreak,
+      totalLosingDays,
       maxDrawdown,
       maxDrawdownAmount,
       drawdownStartDate,
@@ -1615,7 +1615,7 @@ export function QuantDiaryPage() {
                 <div className="text-left">
                   <div className="font-medium">Adicionar Comentários</div>
                   <div className="text-sm opacity-75">Registrar observações sobre o dia</div>
-                {selectedDayData ? 'Alterar' : 'Salvar'}
+                </div>
               </button>
             </div>
           </div>
