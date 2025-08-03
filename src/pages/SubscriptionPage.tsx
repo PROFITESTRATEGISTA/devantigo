@@ -18,6 +18,7 @@ export function SubscriptionPage() {
   const navigate = useNavigate();
   const { profile } = useAuthStore();
   const { t, language } = useLanguageStore();
+  const [selectedProLevel, setSelectedProLevel] = useState<'pro1' | 'pro2' | 'pro3'>('pro1');
 
   // Get subscription data from profile
   const currentPlan = {
@@ -116,6 +117,42 @@ export function SubscriptionPage() {
 
   const handleBuyTokens = () => {
     window.open('https://buy.stripe.com/fZe5nX2320AB4EgfZC', '_blank');
+  };
+  // Pro plan levels with details
+  const proLevels = {
+    pro1: {
+      name: 'Pro 1',
+      price: 'R$ 259,80/mês',
+      robots: 25,
+      tokens: 20000,
+      features: [
+        language === 'en' ? 'Up to 25 robots' : 'Até 25 robôs',
+        language === 'en' ? '20,000 tokens' : '20.000 tokens',
+        language === 'en' ? 'AI robot generation' : 'IA para gerar robôs'
+      ]
+    },
+    pro2: {
+      name: 'Pro 2',
+      price: 'R$ 499,80/mês',
+      robots: 100,
+      tokens: 50000,
+      features: [
+        language === 'en' ? 'Up to 100 robots' : 'Até 100 robôs',
+        language === 'en' ? '50,000 tokens' : '50.000 tokens',
+        language === 'en' ? 'Dedicated support' : 'Suporte dedicado'
+      ]
+    },
+    pro3: {
+      name: 'Pro 3',
+      price: 'R$ 999,80/mês',
+      robots: 500,
+      tokens: 100000,
+      features: [
+        language === 'en' ? 'Up to 500 robots' : 'Até 500 robôs',
+        language === 'en' ? '100,000 tokens' : '100.000 tokens',
+        language === 'en' ? 'All premium features' : 'Todos os recursos premium'
+      ]
+    }
   };
 
   const handleUpgradeClick = (planId: string) => {
@@ -307,23 +344,34 @@ export function SubscriptionPage() {
               <Star className="w-6 h-6 text-blue-500" />
             </div>
             
+            {/* Dynamic Price Display */}
+            <p className="text-3xl font-bold mb-4">{proLevels[selectedProLevel].price}</p>
+            
+            {/* Pro Level Selector */}
             <div className="mb-4">
               <p className="text-sm text-gray-400 mb-2">
                 {language === 'en' ? 'Choose your level:' : 'Escolha seu nível:'}
               </p>
               <div className="space-y-2">
-                <div className="flex items-center justify-between p-2 bg-gray-700 rounded">
-                  <span className="text-sm">Pro 1</span>
-                  <span className="text-lg font-bold">R$ 259,80/mês</span>
-                </div>
-                <div className="flex items-center justify-between p-2 bg-gray-700 rounded">
-                  <span className="text-sm">Pro 2</span>
-                  <span className="text-lg font-bold">R$ 499,80/mês</span>
-                </div>
-                <div className="flex items-center justify-between p-2 bg-gray-700 rounded">
-                  <span className="text-sm">Pro 3</span>
-                  <span className="text-lg font-bold">R$ 999,80/mês</span>
-                </div>
+                {Object.entries(proLevels).map(([key, level]) => (
+                  <button
+                    key={key}
+                    onClick={() => setSelectedProLevel(key as 'pro1' | 'pro2' | 'pro3')}
+                    className={`w-full flex items-center justify-between p-3 rounded-lg transition-all ${
+                      selectedProLevel === key
+                        ? 'bg-blue-600 text-white ring-2 ring-blue-400'
+                        : 'bg-gray-700 hover:bg-gray-600 text-gray-300'
+                    }`}
+                  >
+                    <div className="text-left">
+                      <span className="font-medium">{level.name}</span>
+                      <p className="text-xs opacity-75">
+                        {level.robots} {language === 'en' ? 'robots' : 'robôs'} • {level.tokens.toLocaleString()} tokens
+                      </p>
+                    </div>
+                    <span className="text-lg font-bold">{level.price}</span>
+                  </button>
+                ))}
               </div>
             </div>
             
@@ -332,10 +380,12 @@ export function SubscriptionPage() {
             </p>
             
             <ul className="space-y-3 mb-6">
-              <li className="flex items-center text-gray-300">
-                <Check className="w-4 h-4 text-green-500 mr-2 flex-shrink-0" />
-                <span>{language === 'en' ? 'AI robot generation' : 'IA para gerar robôs'}</span>
-              </li>
+              {proLevels[selectedProLevel].features.map((feature, index) => (
+                <li key={index} className="flex items-center text-gray-300">
+                  <Check className="w-4 h-4 text-green-500 mr-2 flex-shrink-0" />
+                  <span>{feature}</span>
+                </li>
+              ))}
               <li className="flex items-center text-gray-300">
                 <Check className="w-4 h-4 text-green-500 mr-2 flex-shrink-0" />
                 <span>{language === 'en' ? 'Advanced backtest analysis' : 'Análise avançada de backtest'}</span>
@@ -344,22 +394,14 @@ export function SubscriptionPage() {
                 <Check className="w-4 h-4 text-green-500 mr-2 flex-shrink-0" />
                 <span>{language === 'en' ? 'Portfolio automation' : 'Automação de portfólios'}</span>
               </li>
-              <li className="flex items-center text-gray-300">
-                <Check className="w-4 h-4 text-green-500 mr-2 flex-shrink-0" />
-                <span>{language === 'en' ? 'Up to 25-500 robots' : 'Até 25-500 robôs'}</span>
-              </li>
-              <li className="flex items-center text-gray-300">
-                <Check className="w-4 h-4 text-green-500 mr-2 flex-shrink-0" />
-                <span>{language === 'en' ? '20,000-100,000 tokens' : '20.000-100.000 tokens'}</span>
-              </li>
             </ul>
 
             <button 
-              onClick={() => handleUpgradeClick('pro')}
+              onClick={() => handleUpgradeClick(selectedProLevel)}
               className="w-full py-3 bg-blue-600 hover:bg-blue-700 rounded-md flex items-center justify-center text-white"
             >
               <MessageSquare className="w-4 h-4 mr-2" />
-              {language === 'en' ? 'Choose Pro Level' : 'Escolher Nível Pro'}
+              {language === 'en' ? `Choose ${proLevels[selectedProLevel].name}` : `Escolher ${proLevels[selectedProLevel].name}`}
             </button>
           </div>
 
