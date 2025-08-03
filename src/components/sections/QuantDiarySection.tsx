@@ -59,13 +59,8 @@ export function QuantDiarySection() {
   const { language } = useLanguageStore();
   const { profile } = useAuthStore();
   const [selectedDate, setSelectedDate] = useState(new Date());
-  const [currentWeek, setCurrentWeek] = useState(() => {
-    const today = new Date();
-    const startOfWeek = new Date(today);
-    startOfWeek.setDate(today.getDate() - today.getDay() + 1); // Monday
-    return startOfWeek;
-  });
-  const [currentMonth, setCurrentMonth] = useState(() => new Date());
+  const [currentWeek, setCurrentWeek] = useState(new Date());
+  const [currentMonth, setCurrentMonth] = useState(new Date());
   const [diaryEntries, setDiaryEntries] = useState<DiaryEntry[]>([]);
   const [selectedEntry, setSelectedEntry] = useState<DiaryEntry | null>(null);
   const [showNewEntryModal, setShowNewEntryModal] = useState(false);
@@ -487,6 +482,18 @@ ${entry.predefinedComments.length > 0
 
   const weekSummary = getWeekSummary();
 
+  const handleAddAnalysis = (date: Date) => {
+    // Navigate to backtest analysis page with date context
+    navigate('/backtest-analysis', { 
+      state: { 
+        diaryDate: date.toISOString(),
+        returnTo: '/dashboard?section=quant-diary'
+      }
+    });
+  };
+
+  const handleSaveEntry = async () => {
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -764,17 +771,27 @@ ${entry.predefinedComments.length > 0
                     )}
                     
                     {!entry && !isPast && (
-                      <div className="flex-1 flex items-center justify-center">
+                      <div className="flex-1 flex flex-col justify-center space-y-2">
                         <button
                           onClick={(e) => {
                             e.stopPropagation();
                             setSelectedDate(date);
                             setShowNewEntryModal(true);
                           }}
-                          className="w-full py-3 bg-blue-600 hover:bg-blue-700 rounded-lg text-sm font-medium flex items-center justify-center"
+                          className="w-full py-2 bg-blue-600 hover:bg-blue-700 rounded-lg text-white flex items-center justify-center text-sm"
                         >
-                          <Plus className="w-4 h-4 mr-2" />
-                          {language === 'en' ? 'Add Entry' : 'Adicionar'}
+                          <Plus className="w-4 h-4 mr-1" />
+                          Add Comentários
+                        </button>
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleAddAnalysis(date);
+                          }}
+                          className="w-full py-2 bg-green-600 hover:bg-green-700 rounded-lg text-white flex items-center justify-center text-sm"
+                        >
+                          <BarChart2 className="w-4 h-4 mr-1" />
+                          Add Análise Salva
                         </button>
                       </div>
                     )}
@@ -869,7 +886,24 @@ ${entry.predefinedComments.length > 0
                 >
                   <div className="text-sm font-medium">{date.getDate()}</div>
                   
-                  {entry && (
+                  {entry ? (
+                    <div className="space-y-1">
+                      <button
+                        onClick={() => handleAddEntry(date)}
+                        className="w-full py-1.5 bg-blue-600 hover:bg-blue-700 rounded text-white text-xs flex items-center justify-center"
+                      >
+                        <Plus className="w-3 h-3 mr-1" />
+                        Comentários
+                      </button>
+                      <button
+                        onClick={() => handleAddAnalysis(date)}
+                        className="w-full py-1.5 bg-green-600 hover:bg-green-700 rounded text-white text-xs flex items-center justify-center"
+                      >
+                        <BarChart2 className="w-3 h-3 mr-1" />
+                        Análise
+                      </button>
+                    </div>
+                  ) : (
                     <div className="absolute bottom-1 left-1 right-1">
                       <div className={`w-full h-1 rounded ${getMoodColor(entry.mood)}`}></div>
                       <div className="text-xs mt-1">
