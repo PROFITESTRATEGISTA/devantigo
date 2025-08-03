@@ -660,7 +660,7 @@ ${entry.predefinedComments.length > 0
           </div>
 
           {/* Week Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-7 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6">
             {getWeekDays().map((date, index) => {
               const entry = getEntryForDate(date);
               const isSelected = selectedDate.toDateString() === date.toDateString();
@@ -670,7 +670,7 @@ ${entry.predefinedComments.length > 0
               return (
                 <div
                   key={index}
-                  className={`p-4 rounded-lg border-2 transition-all cursor-pointer ${
+                  className={`p-6 rounded-lg border-2 transition-all cursor-pointer min-h-[280px] ${
                     isSelected 
                       ? 'border-blue-500 bg-blue-900 bg-opacity-50' 
                       : 'border-transparent hover:border-gray-600'
@@ -688,51 +688,98 @@ ${entry.predefinedComments.length > 0
                     }
                   }}
                 >
-                  <div className="text-center">
-                    <div className="text-sm font-medium text-gray-400">
+                  <div className="h-full flex flex-col">
+                    <div className="text-center mb-4">
+                      <div className="text-sm font-medium text-gray-400 mb-1">
                       {date.toLocaleDateString(language === 'en' ? 'en-US' : 'pt-BR', { weekday: 'short' })}
                     </div>
-                    <div className="text-2xl font-bold mb-2">{date.getDate()}</div>
+                      <div className="text-3xl font-bold">{date.getDate()}</div>
+                    </div>
                     
                     {entry && (
-                      <div className="space-y-2">
-                        <div className={`w-full h-2 rounded ${getMoodColor(entry.mood)}`}></div>
-                        <div className="text-sm">
-                          <span className={entry.pnl >= 0 ? 'text-green-400' : 'text-red-400'}>
-                            {entry.pnl >= 0 ? '+' : ''}R$ {entry.pnl.toFixed(0)}
-                          </span>
+                      <div className="flex-1 space-y-3">
+                        <div className={`w-full h-3 rounded ${getMoodColor(entry.mood)}`}></div>
+                        
+                        <div className="bg-gray-800 bg-opacity-50 rounded-lg p-3">
+                          <div className="text-lg font-bold mb-1">
+                            <span className={entry.pnl >= 0 ? 'text-green-400' : 'text-red-400'}>
+                              {entry.pnl >= 0 ? '+' : ''}R$ {entry.pnl.toFixed(0)}
+                            </span>
+                          </div>
+                          <div className="text-sm text-gray-400">
+                            {entry.trades} trades
+                          </div>
                         </div>
-                        <div className="text-xs text-gray-400">
-                          {entry.trades} trades
-                        </div>
-                        {entry.predefinedComments.length > 0 && (
-                          <div className="flex flex-wrap gap-1">
-                            {entry.predefinedComments.slice(0, 2).map((comment, idx) => (
-                              <span key={idx} className="px-1 py-0.5 bg-blue-900 bg-opacity-50 text-blue-300 rounded text-xs">
-                                {comment.length > 8 ? comment.substring(0, 8) + '...' : comment}
-                              </span>
-                            ))}
-                            {entry.predefinedComments.length > 2 && (
-                              <span className="px-1 py-0.5 bg-gray-600 text-gray-300 rounded text-xs">
-                                +{entry.predefinedComments.length - 2}
-                              </span>
-                            )}
+                        
+                        {entry.title && (
+                          <div className="bg-gray-800 bg-opacity-30 rounded p-2">
+                            <p className="text-xs font-medium text-gray-300 truncate" title={entry.title}>
+                              {entry.title}
+                            </p>
                           </div>
                         )}
+                        
+                        {entry.content && (
+                          <div className="bg-gray-800 bg-opacity-30 rounded p-2">
+                            <p className="text-xs text-gray-400 line-clamp-3" title={entry.content}>
+                              {entry.content.length > 60 ? entry.content.substring(0, 60) + '...' : entry.content}
+                            </p>
+                          </div>
+                        )}
+                        
+                        {entry.predefinedComments.length > 0 && (
+                          <div className="space-y-1">
+                            <p className="text-xs text-gray-400">Comentários:</p>
+                            <div className="flex flex-wrap gap-1">
+                              {entry.predefinedComments.slice(0, 2).map((comment, idx) => (
+                                <span key={idx} className="px-2 py-1 bg-orange-900 bg-opacity-50 text-orange-300 rounded text-xs">
+                                  {comment.length > 8 ? comment.substring(0, 8) + '...' : comment}
+                                </span>
+                              ))}
+                              {entry.predefinedComments.length > 2 && (
+                                <span className="px-2 py-1 bg-gray-600 text-gray-300 rounded text-xs">
+                                  +{entry.predefinedComments.length - 2}
+                                </span>
+                              )}
+                            </div>
+                          </div>
+                        )}
+                        
+                        <div className="mt-auto pt-2">
+                          <div className="flex items-center justify-between text-xs text-gray-500">
+                          <span className={entry.pnl >= 0 ? 'text-green-400' : 'text-red-400'}>
+                              {entry.mood === 'bullish' ? '📈' : entry.mood === 'bearish' ? '📉' : '➡️'}
+                          </span>
+                          <span>
+                            {new Date(entry.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                          </span>
+                          </div>
+                        </div>
                       </div>
                     )}
                     
                     {!entry && !isPast && (
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setSelectedDate(date);
-                          setShowNewEntryModal(true);
-                        }}
-                        className="w-full py-1 bg-blue-600 hover:bg-blue-700 rounded text-xs"
-                      >
-                        <Plus className="w-3 h-3 mx-auto" />
-                      </button>
+                      <div className="flex-1 flex items-center justify-center">
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setSelectedDate(date);
+                            setShowNewEntryModal(true);
+                          }}
+                          className="w-full py-3 bg-blue-600 hover:bg-blue-700 rounded-lg text-sm font-medium flex items-center justify-center"
+                        >
+                          <Plus className="w-4 h-4 mr-2" />
+                          {language === 'en' ? 'Add Entry' : 'Adicionar'}
+                        </button>
+                      </div>
+                    )}
+                    
+                    {!entry && isPast && (
+                      <div className="flex-1 flex items-center justify-center">
+                        <p className="text-gray-500 text-sm">
+                          {language === 'en' ? 'No entry' : 'Sem entrada'}
+                        </p>
+                      </div>
                     )}
                   </div>
                 </div>
