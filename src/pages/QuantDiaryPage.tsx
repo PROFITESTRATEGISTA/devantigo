@@ -515,8 +515,18 @@ export function QuantDiaryPage() {
   const handleDayClick = (day: number) => {
     if (calendarViewMode === 'monthly') return;
     
+    const dayData = calendarData[currentYear]?.[currentMonth]?.[day];
+    
     setSelectedDay(day);
-    setShowActionModal(true);
+    
+    // Se o dia tem dados (P&L diferente de 0 ou comentários), abre painel do dia
+    if (dayData && (dayData.pnl !== 0 || dayData.trades > 0 || dayData.comment)) {
+      setSelectedDateData(dayData);
+      setShowDayPanel(true);
+    } else {
+      // Se não tem dados, abre modal de opções
+      setShowActionModal(true);
+    }
   };
 
   const handleActionSelect = (action: 'analysis' | 'comment') => {
