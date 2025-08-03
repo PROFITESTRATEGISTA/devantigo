@@ -111,12 +111,6 @@ export function UsersSection({ users }: UsersSectionProps) {
                   </div>
                 </div>
                 
-                <div className="text-center mb-4">
-                  <div className="text-sm text-gray-400">
-                    {user.strategies} {t('marketplace.strategies')}
-                  </div>
-                </div>
-                
                 <div className="space-y-2">
                   <button className="w-full py-2 bg-blue-600 hover:bg-blue-700 rounded-lg text-white transition-colors flex items-center justify-center">
                     <MessageSquare className="w-4 h-4 mr-2" />
