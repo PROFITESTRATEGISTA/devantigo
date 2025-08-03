@@ -18,7 +18,7 @@ interface RankingSectionProps {
 
 export function RankingSection({ analyses, onNavigate }: RankingSectionProps) {
   const { t } = useLanguageStore();
-  const [filterBy, setFilterBy] = React.useState<'profitFactor' | 'winRate' | 'all'>('profitFactor');
+  const [filterBy, setFilterBy] = React.useState<'profitFactor' | 'winRate' | 'sharpeRatio' | 'recoveryFactor' | 'maxDrawdown' | 'totalTrades'>('profitFactor');
   const [sortOrder, setSortOrder] = React.useState<'desc' | 'asc'>('desc');
   const [timeFilter, setTimeFilter] = React.useState<'all' | 'week' | 'month' | 'year'>('all');
   const [categoryFilter, setCategoryFilter] = React.useState<'all' | 'scalping' | 'swing' | 'trend'>('all');
@@ -50,8 +50,37 @@ export function RankingSection({ analyses, onNavigate }: RankingSectionProps) {
     
     // Sort by selected metric
     filtered.sort((a, b) => {
-      const aValue = filterBy === 'profitFactor' ? a.profitFactor : a.winRate;
-      const bValue = filterBy === 'profitFactor' ? b.profitFactor : b.winRate;
+      let aValue: number, bValue: number;
+      
+      switch (filterBy) {
+        case 'profitFactor':
+          aValue = a.profitFactor;
+          bValue = b.profitFactor;
+          break;
+        case 'winRate':
+          aValue = a.winRate;
+          bValue = b.winRate;
+          break;
+        case 'sharpeRatio':
+          aValue = a.sharpeRatio || 0;
+          bValue = b.sharpeRatio || 0;
+          break;
+        case 'recoveryFactor':
+          aValue = a.recoveryFactor || 0;
+          bValue = b.recoveryFactor || 0;
+          break;
+        case 'maxDrawdown':
+          aValue = a.maxDrawdown || 0;
+          bValue = b.maxDrawdown || 0;
+          break;
+        case 'totalTrades':
+          aValue = a.totalTrades || 0;
+          bValue = b.totalTrades || 0;
+          break;
+        default:
+          aValue = a.profitFactor;
+          bValue = b.profitFactor;
+      }
       
       return sortOrder === 'desc' ? bValue - aValue : aValue - bValue;
     });
@@ -89,11 +118,15 @@ export function RankingSection({ analyses, onNavigate }: RankingSectionProps) {
             <div className="relative">
               <select
                 value={filterBy}
-                onChange={(e) => setFilterBy(e.target.value as 'profitFactor' | 'winRate' | 'all')}
+                onChange={(e) => setFilterBy(e.target.value as 'profitFactor' | 'winRate' | 'sharpeRatio' | 'recoveryFactor' | 'maxDrawdown' | 'totalTrades')}
                 className="w-full bg-gray-700 border border-gray-600 rounded-md px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-blue-500 appearance-none"
               >
                 <option value="profitFactor">{t('analyses.profitFactor')}</option>
                 <option value="winRate">{t('analyses.winRate')}</option>
+                <option value="sharpeRatio">{t('analyses.sharpeRatio')}</option>
+                <option value="recoveryFactor">{t('analyses.recoveryFactor')}</option>
+                <option value="maxDrawdown">{t('analyses.maxDrawdown')}</option>
+                <option value="totalTrades">{t('analyses.totalTrades')}</option>
               </select>
               <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
             </div>
@@ -160,9 +193,9 @@ export function RankingSection({ analyses, onNavigate }: RankingSectionProps) {
         
         {/* Active Filters Display */}
         <div className="mt-4 flex flex-wrap gap-2">
-          {filterBy !== 'profitFactor' && (
+          {filterBy && filterBy !== 'profitFactor' && (
             <span className="px-2 py-1 bg-blue-600 text-white rounded-full text-xs">
-              {t('ranking.sortBy')}: {filterBy === 'winRate' ? t('analyses.winRate') : t('analyses.profitFactor')}
+              {t('ranking.sortBy')}: {t(`analyses.${filterBy}`)}
             </span>
           )}
           {sortOrder !== 'desc' && (

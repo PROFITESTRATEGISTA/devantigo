@@ -167,6 +167,10 @@ const translations: Record<Language, Record<string, string>> = {
     'analyses.profitFactor': 'Profit Factor',
     'analyses.winRate': 'Win Rate',
     'analyses.addToRanking': 'Add to Ranking',
+    'analyses.sharpeRatio': 'Sharpe Ratio',
+    'analyses.recoveryFactor': 'Recovery Factor',
+    'analyses.maxDrawdown': 'Max Drawdown',
+    'analyses.totalTrades': 'Total Trades',
     
     // Ranking Section
     'ranking.title': 'Performance Ranking',
@@ -390,6 +394,10 @@ const translations: Record<Language, Record<string, string>> = {
     'analyses.profitFactor': 'Fator de Lucro',
     'analyses.winRate': 'Taxa de Acerto',
     'analyses.addToRanking': 'Adicionar ao Ranking',
+    'analyses.sharpeRatio': 'Sharpe Ratio',
+    'analyses.recoveryFactor': 'Fator de Recuperação',
+    'analyses.maxDrawdown': 'Drawdown Máximo',
+    'analyses.totalTrades': 'Total de Trades',
     
     // Ranking Section
     'ranking.title': 'Ranking de Performance',
