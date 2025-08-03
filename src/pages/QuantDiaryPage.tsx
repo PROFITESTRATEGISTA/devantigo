@@ -93,11 +93,17 @@ export function QuantDiaryPage() {
       const totalTrades = days.reduce((sum, day) => sum + day.trades, 0);
       const diasOperados = days.filter(day => day.trades > 0).length;
       
+      // Calcular lucro bruto e prejuízo bruto
+      const lucroBruto = days.filter(day => day.pnl > 0).reduce((sum, day) => sum + day.pnl, 0);
+      const prejuizoBruto = Math.abs(days.filter(day => day.pnl < 0).reduce((sum, day) => sum + day.pnl, 0));
+      
       return {
         month,
         trades: totalTrades,
         dias: diasOperados,
-        pnl: totalPnl
+        pnl: totalPnl,
+        lucroBruto,
+        prejuizoBruto
       };
     });
   };
@@ -110,23 +116,27 @@ export function QuantDiaryPage() {
   const calculateAllTimeStats = () => {
     const allYears = Object.keys(calendarData).map(Number);
     let totalPnl = 0;
-    let totalTrades = 0;
+    let totalDiasOperados = 0;
     let diasOperados = 0;
     let melhorMesPnl = -Infinity;
     let piorMesPnl = Infinity;
     let melhorMes = '';
     let piorMes = '';
+    let totalLucroBruto = 0;
+    let totalPrejuizoBruto = 0;
     
     allYears.forEach(year => {
       const yearData = calendarData[year];
       Object.entries(yearData).forEach(([month, monthData]) => {
         const days = Object.values(monthData);
         const monthPnl = days.reduce((sum, day) => sum + day.pnl, 0);
-        const monthTrades = days.reduce((sum, day) => sum + day.trades, 0);
         const monthDias = days.filter(day => day.trades > 0).length;
+        const monthLucroBruto = days.filter(day => day.pnl > 0).reduce((sum, day) => sum + day.pnl, 0);
+        const monthPrejuizoBruto = Math.abs(days.filter(day => day.pnl < 0).reduce((sum, day) => sum + day.pnl, 0));
         
         totalPnl += monthPnl;
-        totalTrades += monthTrades;
+        totalLucroBruto += monthLucroBruto;
+        totalPrejuizoBruto += monthPrejuizoBruto;
         diasOperados += monthDias;
         
         if (monthPnl > melhorMesPnl) {
@@ -134,22 +144,26 @@ export function QuantDiaryPage() {
           melhorMes = `${month} ${year}`;
         }
         
-        if (monthPnl < piorMesPnl && monthTrades > 0) {
+        if (monthPnl < piorMesPnl && monthDias > 0) {
           piorMesPnl = monthPnl;
           piorMes = `${month} ${year}`;
         }
       });
     });
     
+    // Calcular fator de lucro
+    const fatorLucro = totalPrejuizoBruto > 0 ? totalLucroBruto / totalPrejuizoBruto : 0;
+    
     return {
       totalPnl,
-      totalTrades,
+      totalLucroBruto,
+      totalPrejuizoBruto,
+      fatorLucro,
       diasOperados,
       melhorMes,
       melhorMesPnl,
       piorMes,
       piorMesPnl,
-      mediaTradesDia: diasOperados > 0 ? totalTrades / diasOperados : 0,
       mediaPnlDia: diasOperados > 0 ? totalPnl / diasOperados : 0
     };
   };
@@ -255,6 +269,35 @@ export function QuantDiaryPage() {
       perdaMediaSemanal: perdasSemanais.length > 0 ? perdasSemanais.reduce((a, b) => a + b, 0) / perdasSemanais.length : 0,
       ganhoMaximoSemanal: ganhosSemanais.length > 0 ? Math.max(...ganhosSemanais) : 0,
       perdaMaximaSemanal: perdasSemanais.length > 0 ? Math.min(...perdasSemanais) : 0
+    };
+  };
+
+  // Função para calcular estatísticas específicas do ano
+  const calculateYearlyStats = (year: number) => {
+    const yearData = calendarData[year] || {};
+    let totalPnl = 0;
+    let diasOperados = 0;
+    let totalLucroBruto = 0;
+    let totalPrejuizoBruto = 0;
+    
+    Object.values(yearData).forEach(monthData => {
+      const days = Object.values(monthData);
+      totalPnl += days.reduce((sum, day) => sum + day.pnl, 0);
+      diasOperados += days.filter(day => day.trades > 0).length;
+      totalLucroBruto += days.filter(day => day.pnl > 0).reduce((sum, day) => sum + day.pnl, 0);
+      totalPrejuizoBruto += Math.abs(days.filter(day => day.pnl < 0).reduce((sum, day) => sum + day.pnl, 0));
+    });
+    
+    const fatorLucro = totalPrejuizoBruto > 0 ? totalLucroBruto / totalPrejuizoBruto : 0;
+    const mediaPnlDia = diasOperados > 0 ? totalPnl / diasOperados : 0;
+    
+    return {
+      totalPnl,
+      diasOperados,
+      totalLucroBruto,
+      totalPrejuizoBruto,
+      fatorLucro,
+      mediaPnlDia
     };
   };
 
@@ -579,22 +622,22 @@ export function QuantDiaryPage() {
             <div className="text-center">
               <p className="text-sm text-gray-400">P&L Total</p>
               <p className={`text-xl font-bold ${
-                allTimeStats.totalPnl >= 0 ? 'text-green-400' : 'text-red-400'
+                calculateYearlyStats(currentYear).totalPnl >= 0 ? 'text-green-400' : 'text-red-400'
               }`}>
-                {allTimeStats.totalPnl >= 0 ? '+' : ''}R$ {allTimeStats.totalPnl.toFixed(2)}
+                {calculateYearlyStats(currentYear).totalPnl >= 0 ? '+' : ''}R$ {calculateYearlyStats(currentYear).totalPnl.toFixed(2)}
               </p>
             </div>
             <div className="text-center">
-              <p className="text-sm text-gray-400">Total Trades</p>
-              <p className="text-xl font-bold text-blue-400">{allTimeStats.totalTrades}</p>
+              <p className="text-sm text-gray-400">Dias Operados</p>
+              <p className="text-xl font-bold text-blue-400">{calculateYearlyStats(currentYear).diasOperados}</p>
             </div>
             <div className="text-center">
-              <p className="text-sm text-gray-400">Dias Operados</p>
-              <p className="text-xl font-bold text-purple-400">{allTimeStats.diasOperados}</p>
+              <p className="text-sm text-gray-400">Fator de Lucro</p>
+              <p className="text-xl font-bold text-purple-400">{calculateYearlyStats(currentYear).fatorLucro.toFixed(2)}</p>
             </div>
             <div className="text-center">
               <p className="text-sm text-gray-400">Média P&L/Dia</p>
-              <p className="text-xl font-bold text-yellow-400">R$ {allTimeStats.mediaPnlDia.toFixed(2)}</p>
+              <p className="text-xl font-bold text-yellow-400">R$ {calculateYearlyStats(currentYear).mediaPnlDia.toFixed(2)}</p>
             </div>
           </div>
         </div>
@@ -647,28 +690,28 @@ export function QuantDiaryPage() {
           <p className="text-xs text-gray-500">Todos os tempos</p>
         </div>
         
-        {/* P&L Mensal */}
+        {/* Lucro Bruto */}
         <div className="bg-gray-700 rounded-lg p-4">
           <div className="flex items-center justify-between mb-2">
-            <span className="text-sm text-gray-400">P&L Mensal</span>
+            <span className="text-sm text-gray-400">Lucro Bruto</span>
             <DollarSign className="w-4 h-4 text-green-400" />
           </div>
-          <p className={`text-2xl font-bold ${
-            monthlyBreakdown.find(m => m.month === currentMonth)?.pnl >= 0 ? 'text-green-400' : 'text-red-400'
-          }`}>
-            {monthlyBreakdown.find(m => m.month === currentMonth)?.pnl >= 0 ? '+' : ''}R$ {(monthlyBreakdown.find(m => m.month === currentMonth)?.pnl || 0).toFixed(2)}
+          <p className="text-2xl font-bold text-green-400">
+            +R$ {allTimeStats.totalLucroBruto.toFixed(2)}
           </p>
-          <p className="text-xs text-gray-500">{currentMonth.charAt(0).toUpperCase() + currentMonth.slice(1)} {currentYear}</p>
+          <p className="text-xs text-gray-500">Todos os ganhos</p>
         </div>
         
-        {/* Média P&L/Dia */}
+        {/* Prejuízo Bruto */}
         <div className="bg-gray-700 rounded-lg p-4">
           <div className="flex items-center justify-between mb-2">
-            <span className="text-sm text-gray-400">Média P&L/Dia</span>
-            <DollarSign className="w-4 h-4 text-purple-400" />
+            <span className="text-sm text-gray-400">Prejuízo Bruto</span>
+            <DollarSign className="w-4 h-4 text-red-400" />
           </div>
-          <p className="text-2xl font-bold text-purple-400">R$ {allTimeStats.mediaPnlDia.toFixed(2)}</p>
-          <p className="text-xs text-gray-500">Por dia operado</p>
+          <p className="text-2xl font-bold text-red-400">
+            -R$ {allTimeStats.totalPrejuizoBruto.toFixed(2)}
+          </p>
+          <p className="text-xs text-gray-500">Todas as perdas</p>
         </div>
         
         {/* Melhor Mês */}
@@ -705,7 +748,7 @@ export function QuantDiaryPage() {
             <span className="text-sm text-gray-400">Fator de Lucro</span>
             <TrendingUp className="w-4 h-4 text-green-400" />
           </div>
-          <p className="text-2xl font-bold text-green-400">2.45</p>
+          <p className="text-2xl font-bold text-green-400">{allTimeStats.fatorLucro.toFixed(2)}</p>
           <p className="text-xs text-gray-500">Muito bom</p>
         </div>
         
@@ -738,14 +781,14 @@ export function QuantDiaryPage() {
           📊 Análise Diária
         </h4>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        {/* Total Trades */}
+        {/* Total Dias Operados */}
         <div className="bg-gray-700 rounded-lg p-4">
           <div className="flex items-center justify-between mb-2">
-            <span className="text-sm text-gray-400">Total Trades</span>
-            <Hash className="w-4 h-4 text-purple-400" />
+            <span className="text-sm text-gray-400">Total Dias Operados</span>
+            <Calendar className="w-4 h-4 text-purple-400" />
           </div>
-          <p className="text-2xl font-bold text-purple-400">306</p>
-          <p className="text-xs text-gray-500">151 dias operados</p>
+          <p className="text-2xl font-bold text-purple-400">{allTimeStats.diasOperados}</p>
+          <p className="text-xs text-gray-500">Todos os tempos</p>
         </div>
         
         {/* Ganho Médio Diário */}
