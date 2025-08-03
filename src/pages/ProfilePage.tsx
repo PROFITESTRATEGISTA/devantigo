@@ -1,20 +1,39 @@
 import React, { useState, useEffect } from 'react';
 import { User, Mail, Camera, X, ArrowLeft, Bell, Crown, Zap, Phone, Users, Plus } from 'lucide-react';
 import { useAuthStore } from '../stores/authStore';
+import { useLanguageStore } from '../stores/languageStore';
 import { supabase } from '../lib/supabase';
 import { useNavigate } from 'react-router-dom';
 import { InvitesList } from '../components/InvitesList';
 import { TokenDisplay } from '../components/TokenDisplay';
+import { Navbar } from '../components/Navbar';
 
 export function ProfilePage() {
   const navigate = useNavigate();
   const { profile, updateProfile } = useAuthStore();
+  const { t, language } = useLanguageStore();
   const [name, setName] = useState(profile?.name || '');
   const [phone, setPhone] = useState(profile?.phone || '');
   const [avatarUrl, setAvatarUrl] = useState(profile?.avatar_url || '');
   const [isUploading, setIsUploading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
+
+  // Force re-render when language changes
+  useEffect(() => {
+    const handleLanguageChange = () => {
+      // Force component re-render
+      setName(prev => prev);
+    };
+    
+    window.addEventListener('languageChanged', handleLanguageChange);
+    window.addEventListener('storage', handleLanguageChange);
+    
+    return () => {
+      window.removeEventListener('languageChanged', handleLanguageChange);
+      window.removeEventListener('storage', handleLanguageChange);
+    };
+  }, []);
 
   useEffect(() => {
     if (profile) {
@@ -64,10 +83,10 @@ export function ProfilePage() {
       });
 
       setAvatarUrl(publicUrl);
-      setSuccess('Profile photo updated successfully');
+      setSuccess(language === 'en' ? 'Profile photo updated successfully' : 'Foto de perfil atualizada com sucesso');
     } catch (error) {
       console.error('Error uploading avatar:', error);
-      setError(error instanceof Error ? error.message : 'Error uploading image');
+      setError(error instanceof Error ? error.message : (language === 'en' ? 'Error uploading image' : 'Erro ao fazer upload da imagem'));
     } finally {
       setIsUploading(false);
     }
@@ -83,10 +102,10 @@ export function ProfilePage() {
         name: name.trim(),
         phone: phone.trim() || null
       });
-      setSuccess('Profile updated successfully');
+      setSuccess(language === 'en' ? 'Profile updated successfully' : 'Perfil atualizado com sucesso');
     } catch (error) {
       console.error('Error updating profile:', error);
-      setError(error instanceof Error ? error.message : 'Error updating profile');
+      setError(error instanceof Error ? error.message : (language === 'en' ? 'Error updating profile' : 'Erro ao atualizar perfil'));
     }
   };
 
@@ -100,10 +119,10 @@ export function ProfilePage() {
       });
 
       setAvatarUrl('');
-      setSuccess('Profile photo removed successfully');
+      setSuccess(language === 'en' ? 'Profile photo removed successfully' : 'Foto de perfil removida com sucesso');
     } catch (error) {
       console.error('Error removing avatar:', error);
-      setError(error instanceof Error ? error.message : 'Error removing photo');
+      setError(error instanceof Error ? error.message : (language === 'en' ? 'Error removing photo' : 'Erro ao remover foto'));
     }
   };
 
@@ -111,6 +130,7 @@ export function ProfilePage() {
 
   return (
     <div className="min-h-screen bg-[#1E1E1E] text-white">
+      <Navbar />
       <div className="max-w-4xl mx-auto px-4 py-12">
         <div className="bg-gray-800 rounded-lg shadow-lg overflow-hidden">
           {/* Header */}
@@ -119,13 +139,13 @@ export function ProfilePage() {
               <button
                 onClick={() => navigate(-1)}
                 className="mr-4 p-2 hover:bg-gray-800 rounded-full transition-colors"
-                title="Back"
+                title={language === 'en' ? 'Back' : 'Voltar'}
               >
                 <ArrowLeft className="w-5 h-5" />
               </button>
               <h1 className="text-xl font-semibold flex items-center">
                 <User className="w-5 h-5 mr-2" />
-                Profile Settings
+                {t('profile.title')}
               </h1>
             </div>
 
@@ -135,7 +155,7 @@ export function ProfilePage() {
                 className="px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-md flex items-center space-x-2"
               >
                 <Crown className="w-4 h-4" />
-                <span>Subscription</span>
+                <span>{t('nav.subscription')}</span>
               </button>
             </div>
           </div>
@@ -167,14 +187,14 @@ export function ProfilePage() {
               </div>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div>
-                  <p className="text-sm text-gray-400">Next Billing</p>
+                  <p className="text-sm text-gray-400">{language === 'en' ? 'Next Billing' : 'Próximo Faturamento'}</p>
                   <p className="font-medium">{profile.plan_renewal_date ? new Date(profile.plan_renewal_date).toLocaleDateString() : 'N/A'}</p>
                 </div>
                 <div>
-                  <p className="text-sm text-gray-400">Token Balance</p>
+                  <p className="text-sm text-gray-400">{t('subscription.tokenBalance')}</p>
                   <div className="flex items-center">
                     <Zap className="w-4 h-4 text-yellow-500 mr-1" />
-                    <p className="font-medium">{profile.token_balance?.toLocaleString() || 0} tokens</p>
+                    <p className="font-medium">{profile.token_balance?.toLocaleString() || 0} {t('tokens.balance')}</p>
                   </div>
                 </div>
                 <div>
@@ -182,7 +202,7 @@ export function ProfilePage() {
                     onClick={() => navigate('/subscription')}
                     className="text-blue-400 hover:text-blue-300 text-sm"
                   >
-                    View Details →
+                    {language === 'en' ? 'View Details →' : 'Ver Detalhes →'}
                   </button>
                 </div>
               </div>
@@ -192,7 +212,7 @@ export function ProfilePage() {
             <div className="mb-8">
               <div className="flex items-center mb-4">
                 <Bell className="w-5 h-5 text-blue-400 mr-2" />
-                <h2 className="text-lg font-medium">Pending Invites</h2>
+                <h2 className="text-lg font-medium">{language === 'en' ? 'Pending Invites' : 'Convites Pendentes'}</h2>
               </div>
               <InvitesList />
             </div>
@@ -202,13 +222,13 @@ export function ProfilePage() {
               <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center">
                   <Users className="w-5 h-5 text-green-400 mr-2" />
-                  <h2 className="text-lg font-medium">Amigos Conectados</h2>
+                  <h2 className="text-lg font-medium">{language === 'en' ? 'Connected Friends' : 'Amigos Conectados'}</h2>
                 </div>
                 <button
                   onClick={() => navigate('/dashboard?section=users')}
                   className="text-blue-400 hover:text-blue-300 text-sm"
                 >
-                  Ver Todos →
+                  {language === 'en' ? 'View All →' : 'Ver Todos →'}
                 </button>
               </div>
               
@@ -248,12 +268,12 @@ export function ProfilePage() {
                 {/* Empty state if no friends */}
                 <div className="hidden text-center py-8">
                   <Users className="w-12 h-12 text-gray-600 mx-auto mb-3" />
-                  <p className="text-gray-400 mb-2">Nenhum amigo conectado ainda</p>
+                  <p className="text-gray-400 mb-2">{language === 'en' ? 'No friends connected yet' : 'Nenhum amigo conectado ainda'}</p>
                   <button
                     onClick={() => navigate('/dashboard?section=users')}
                     className="text-blue-400 hover:text-blue-300 text-sm"
                   >
-                    Encontrar usuários para conectar
+                    {language === 'en' ? 'Find users to connect' : 'Encontrar usuários para conectar'}
                   </button>
                 </div>
               </div>
@@ -289,11 +309,11 @@ export function ProfilePage() {
                 <div className="flex-1">
                   <h3 className="text-lg font-medium">Profile Photo</h3>
                   <p className="text-sm text-gray-400 mt-1">
-                    Upload a photo to make your profile more personal
+                    {language === 'en' ? 'Upload a photo to make your profile more personal' : 'Faça upload de uma foto para personalizar seu perfil'}
                   </p>
                   <div className="mt-3 flex space-x-3">
                     <label className="px-4 py-2 bg-blue-600 text-white rounded-md cursor-pointer hover:bg-blue-700">
-                      Upload New
+                      {language === 'en' ? 'Upload New' : 'Fazer Upload'}
                       <input
                         type="file"
                         accept="image/*"
@@ -308,7 +328,7 @@ export function ProfilePage() {
                         onClick={handleRemovePhoto}
                         className="px-4 py-2 bg-gray-700 text-white rounded-md hover:bg-gray-600"
                       >
-                        Remove
+                        {language === 'en' ? 'Remove' : 'Remover'}
                       </button>
                     )}
                   </div>
@@ -318,7 +338,7 @@ export function ProfilePage() {
               {/* Email Display */}
               <div>
                 <label className="block text-sm font-medium text-gray-300">
-                  Email Address
+                  {t('profile.email')}
                 </label>
                 <div className="mt-1 flex items-center space-x-2 px-3 py-2 bg-gray-900 rounded-md">
                   <Mail className="w-5 h-5 text-gray-400" />
@@ -329,7 +349,7 @@ export function ProfilePage() {
               {/* Phone Input */}
               <div>
                 <label htmlFor="phone" className="block text-sm font-medium text-gray-300">
-                  Phone Number
+                  {t('profile.phone')}
                 </label>
                 <div className="mt-1 relative">
                   <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
@@ -347,7 +367,7 @@ export function ProfilePage() {
               {/* Name Input */}
               <div>
                 <label htmlFor="name" className="block text-sm font-medium text-gray-300">
-                  Display Name
+                  {t('profile.name')}
                 </label>
                 <input
                   type="text"
@@ -355,7 +375,7 @@ export function ProfilePage() {
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   className="mt-1 block w-full px-3 py-2 bg-gray-900 border border-gray-700 rounded-md text-white shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  placeholder="Enter your name"
+                  placeholder={language === 'en' ? 'Enter your name' : 'Digite seu nome'}
                 />
               </div>
 
@@ -366,13 +386,13 @@ export function ProfilePage() {
                   onClick={() => navigate(-1)}
                   className="px-4 py-2 bg-gray-700 text-white rounded-md hover:bg-gray-600"
                 >
-                  Cancel
+                  {t('button.cancel')}
                 </button>
                 <button
                   type="submit"
                   className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
                 >
-                  Save Changes
+                  {t('profile.save')}
                 </button>
               </div>
             </form>
