@@ -294,7 +294,7 @@ export function PublicPlansPage() {
             {/* Pro Plan */}
             <div className="bg-gray-800 rounded-lg p-6 relative ring-2 ring-blue-500">
               <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-1 bg-blue-600 rounded-full text-sm font-medium">
-                Mais Popular
+                {language === 'en' ? 'Most Popular' : 'Mais Popular'}
               </div>
               
               <div className="flex items-center justify-between mb-4">
@@ -365,7 +365,7 @@ export function PublicPlansPage() {
             {/* Business Plan */}
             <div className="bg-gray-800 rounded-lg p-6 relative ring-2 ring-purple-500">
               <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-1 bg-purple-600 rounded-full text-sm font-medium">
-                Para Empresas
+                {language === 'en' ? 'For Companies' : 'Para Empresas'}
               </div>
               
               <div className="flex items-center justify-between mb-4">
