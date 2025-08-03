@@ -118,7 +118,7 @@ export function Navbar() {
                 title="Complete desafios para ganhar tokens"
               >
                 <span className="text-xs">🏆</span>
-                <span>Ganhe Tokens</span>
+                <span>{t('nav.earnTokens')}</span>
               </button>
             </div>
             
