@@ -218,23 +218,25 @@ export function PublicPlansPage() {
       <div className="bg-gradient-to-r from-blue-900 to-indigo-900 py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h1 className="text-4xl font-bold mb-4">
-            Planos para Todos os Perfis de Trader
+            {language === 'en' ? 'Plans for All Types of Traders' : 'Planos para Todos os Perfis de Trader'}
           </h1>
           <p className="text-xl text-blue-100 mb-8 max-w-3xl mx-auto">
-            Escolha o plano ideal para suas necessidades de trading automatizado e comece a criar robôs com assistência de IA hoje mesmo.
+            {language === 'en' 
+              ? 'Choose the ideal plan for your automated trading needs and start creating robots with AI assistance today.'
+              : 'Escolha o plano ideal para suas necessidades de trading automatizado e comece a criar robôs com assistência de IA hoje mesmo.'}
           </p>
           <div className="flex flex-wrap justify-center gap-4">
             <button
               onClick={handleSignUp}
               className="px-6 py-3 bg-blue-600 hover:bg-blue-700 rounded-md font-medium text-lg"
             >
-              Começar Gratuitamente
+              {language === 'en' ? 'Start for Free' : 'Começar Gratuitamente'}
             </button>
             <button
               onClick={handleContactSupport}
               className="px-6 py-3 bg-white text-blue-900 hover:bg-gray-100 rounded-md font-medium text-lg"
             >
-              Falar com Especialista
+              {language === 'en' ? 'Talk to Specialist' : 'Falar com Especialista'}
             </button>
           </div>
         </div>
