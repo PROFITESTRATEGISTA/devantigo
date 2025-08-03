@@ -114,7 +114,7 @@ export function Navbar() {
             <div className="hidden md:flex">
               <button
                 onClick={() => navigate('/challenges')}
-                className="flex items-center space-x-1 px-3 py-2 bg-green-800 hover:bg-green-700 rounded-md text-sm text-green-300 transition-colors"
+                className="flex items-center space-x-1 px-3 py-2 bg-green-600 hover:bg-green-700 rounded-md text-sm text-white transition-colors"
                 title="Complete desafios para ganhar tokens"
               >
                 <span className="text-xs">🏆</span>
@@ -247,7 +247,7 @@ export function Navbar() {
                 <TokenDisplay />
                 <button
                   onClick={() => navigate('/challenges')}
-                  className="flex items-center justify-center space-x-2 px-4 py-3 bg-green-800 hover:bg-green-700 rounded-md text-base font-medium text-green-300 transition-colors"
+                  className="flex items-center justify-center space-x-2 px-4 py-3 bg-green-600 hover:bg-green-700 rounded-md text-base font-medium text-white transition-colors"
                 >
                   <span className="text-base">🏆</span>
                   <span>Ganhe Tokens</span>
