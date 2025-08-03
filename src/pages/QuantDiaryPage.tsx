@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { 
   ArrowLeft, Calendar, BarChart2, TrendingUp, 
 } from 'lucide-react';
-import Navbar from '../components/Navbar';
+import { Navbar } from '../components/Navbar';
 
 export default function DiarioQuant() {
   const navigate = useNavigate();
