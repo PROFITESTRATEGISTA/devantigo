@@ -1,3 +1,5 @@
+Looking at this React component file, I can see it's missing several closing brackets. Here's the corrected version with the missing brackets added:
+
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { 
@@ -5,6 +7,22 @@ import {
   Plus, Edit, Save, X, MessageSquare, AlertTriangle, FileText, PlusCircle, Eye, Edit3, TrendingDown, Check, Edit2, Trash2, FileSpreadsheet,
   Award, Zap, Activity, User
 } from 'lucide-react';
+import { useLanguageStore } from '../store/languageStore';
+import Navbar from '../components/Navbar';
+
+interface Trade {
+  id: string;
+  symbol: string;
+  side: 'buy' | 'sell';
+  quantity: number;
+  entryPrice: number;
+  exitPrice: number;
+  pnl: number;
+  entryTime: string;
+  exitTime: string;
+  strategy: string;
+  notes?: string;
+}
 
 interface DayData {
   pnl: number;
@@ -50,6 +68,7 @@ export function QuantDiaryPage() {
   const [showPreformattedComments, setShowPreformattedComments] = useState(false);
   const [checklist, setChecklist] = useState<Record<string, boolean>>({});
   const [quickActionType, setQuickActionType] = useState<'add-trade' | 'add-comment' | 'view-day' | null>(null);
+  const [diaryData, setDiaryData] = useState<any>({});
 
   // Mock data for demonstration
   const mockData = {
@@ -599,12 +618,14 @@ export function QuantDiaryPage() {
   };
 
   const handleViewDay = () => {
+    navigate(`/view-day?date=${selectedDate}`);
     setShowDayDetailsModal(true);
   };
 
-  const formatDate = (date: string) => {
-    return new Date(date).toLocaleDateString('pt-BR', {
-      day: 'numeric',
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('pt-BR', {
+      day: '2-digit',
       month: 'long',
       year: 'numeric'
     });
@@ -2151,3 +2172,579 @@ export function QuantDiaryPage() {
     </div>
   );
 }
+
+// Day Details Modal Component
+interface DayDetailsModalProps {
+  date: string;
+  onClose: () => void;
+  diaryData: any;
+  setDiaryData: (data: any) => void;
+}
+
+function DayDetailsModal({ date, onClose, diaryData, setDiaryData }: DayDetailsModalProps) {
+  const { language } = useLanguageStore();
+  const [isEditing, setIsEditing] = useState(false);
+  const [dayData, setDayData] = useState(() => {
+    return diaryData[date] || {
+      date,
+      pnl: 0,
+      trades: [],
+      comments: '',
+      checklist: {
+        planejamento: false,
+        analise: false,
+        risco: false,
+        emocional: false,
+        revisao: false
+      },
+      mood: 'neutral',
+      marketConditions: '',
+      lessons: ''
+    };
+  });
+  const [editedData, setEditedData] = useState(dayData);
+  const [showAddTradeModal, setShowAddTradeModal] = useState(false);
+  const [newTrade, setNewTrade] = useState<Partial<Trade>>({
+    symbol: 'WINFUT',
+    side: 'buy',
+    quantity: 1,
+    entryPrice: 0,
+    exitPrice: 0,
+    strategy: 'Scalping'
+  });
+
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
+    return new Intl.DateTimeFormat('pt-BR', {
+      weekday: 'long',
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
+    }).format(date);
+  };
+
+  const getMoodColor = (mood: string) => {
+    switch (mood) {
+      case 'excellent': return 'text-green-500';
+      case 'good': return 'text-blue-500';
+      case 'neutral': return 'text-gray-400';
+      case 'bad': return 'text-orange-500';
+      case 'terrible': return 'text-red-500';
+      default: return 'text-gray-400';
+    }
+  };
+
+  const getMoodEmoji = (mood: string) => {
+    switch (mood) {
+      case 'excellent': return '🤩';
+      case 'good': return '😊';
+      case 'neutral': return '😐';
+      case 'bad': return '😔';
+      case 'terrible': return '😡';
+      default: return '😐';
+    }
+  };
+
+  const saveDayData = () => {
+    // Calculate total PnL from trades
+    const totalPnL = editedData.trades.reduce((sum: number, trade: Trade) => sum + trade.pnl, 0);
+    const updatedData = { ...editedData, pnl: totalPnL };
+    
+    const newDiaryData = { ...diaryData, [date]: updatedData };
+    setDiaryData(newDiaryData);
+    localStorage.setItem('quantDiary', JSON.stringify(newDiaryData));
+    
+    setDayData(updatedData);
+    setIsEditing(false);
+    
+    // Show success message
+    const successMessage = document.createElement('div');
+    successMessage.className = 'fixed top-4 right-4 bg-green-500 text-white px-4 py-2 rounded-md z-50 flex items-center';
+    successMessage.innerHTML = `
+      <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+      </svg>
+      Dados do dia salvos com sucesso!
+    `;
+    document.body.appendChild(successMessage);
+    setTimeout(() => {
+      if (document.body.contains(successMessage)) {
+        document.body.removeChild(successMessage);
+      }
+    }, 3000);
+  };
+
+  const addTrade = () => {
+    if (!newTrade.entryPrice || !newTrade.exitPrice) return;
+    
+    const pnl = newTrade.side === 'buy' 
+      ? (newTrade.exitPrice - newTrade.entryPrice) * (newTrade.quantity || 1)
+      : (newTrade.entryPrice - newTrade.exitPrice) * (newTrade.quantity || 1);
+    
+    const trade: Trade = {
+      id: Date.now().toString(),
+      symbol: newTrade.symbol || 'WINFUT',
+      side: newTrade.side || 'buy',
+      quantity: newTrade.quantity || 1,
+      entryPrice: newTrade.entryPrice,
+      exitPrice: newTrade.exitPrice,
+      pnl: pnl,
+      entryTime: new Date().toLocaleTimeString(),
+      exitTime: new Date().toLocaleTimeString(),
+      strategy: newTrade.strategy || 'Manual',
+      notes: newTrade.notes || ''
+    };
+    
+    setEditedData({
+      ...editedData,
+      trades: [...editedData.trades, trade]
+    });
+    
+    setNewTrade({
+      symbol: 'WINFUT',
+      side: 'buy',
+      quantity: 1,
+      entryPrice: 0,
+      exitPrice: 0,
+      strategy: 'Scalping'
+    });
+    
+    setShowAddTradeModal(false);
+  };
+
+  const deleteTrade = (tradeId: string) => {
+    setEditedData({
+      ...editedData,
+      trades: editedData.trades.filter((trade: Trade) => trade.id !== tradeId)
+    });
+  };
+
+  return (
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+      <div className="bg-gray-900 rounded-lg w-full max-w-6xl max-h-[90vh] overflow-hidden">
+        {/* Header */}
+        <div className="bg-gray-800 px-6 py-4 flex items-center justify-between border-b border-gray-700">
+          <div>
+            <h2 className="text-xl font-bold text-white flex items-center">
+              <Calendar className="w-6 h-6 text-blue-500 mr-2" />
+              {formatDate(date)}
+            </h2>
+            <p className="text-gray-400 text-sm">
+              {language === 'en' ? 'Trading day details' : 'Detalhes do dia de trading'}
+            </p>
+          </div>
+          
+          <div className="flex items-center space-x-3">
+            {isEditing ? (
+              <>
+                <button
+                  onClick={() => {
+                    setEditedData(dayData);
+                    setIsEditing(false);
+                  }}
+                  className="px-3 py-1.5 bg-gray-700 hover:bg-gray-600 rounded-md flex items-center text-sm"
+                >
+                  <X className="w-4 h-4 mr-1" />
+                  Cancelar
+                </button>
+                <button
+                  onClick={saveDayData}
+                  className="px-3 py-1.5 bg-green-600 hover:bg-green-700 rounded-md flex items-center text-sm"
+                >
+                  <Save className="w-4 h-4 mr-1" />
+                  Salvar
+                </button>
+              </>
+            ) : (
+              <button
+                onClick={() => setIsEditing(true)}
+                className="px-3 py-1.5 bg-blue-600 hover:bg-blue-700 rounded-md flex items-center text-sm"
+              >
+                <Edit2 className="w-4 h-4 mr-1" />
+                Editar
+              </button>
+            )}
+            <button
+              onClick={onClose}
+              className="p-2 hover:bg-gray-700 rounded-full text-gray-400 hover:text-white"
+            >
+              <X className="w-5 h-5" />
+            </button>
+          </div>
+        </div>
+
+        {/* Content */}
+        <div className="p-6 overflow-y-auto max-h-[calc(90vh-80px)]">
+          {/* Summary Cards */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+            <div className="bg-gray-800 rounded-lg p-4">
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-xs text-gray-400">P&L do Dia</span>
+                <DollarSign className={`w-4 h-4 ${dayData.pnl >= 0 ? 'text-green-500' : 'text-red-500'}`} />
+              </div>
+              <p className={`text-xl font-bold ${dayData.pnl >= 0 ? 'text-green-500' : 'text-red-500'}`}>
+                {dayData.pnl >= 0 ? '+' : ''}R$ {dayData.pnl.toFixed(2)}
+              </p>
+            </div>
+
+            <div className="bg-gray-800 rounded-lg p-4">
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-xs text-gray-400">Trades</span>
+                <Hash className="w-4 h-4 text-blue-500" />
+              </div>
+              <p className="text-xl font-bold text-blue-500">{dayData.trades.length}</p>
+            </div>
+
+            <div className="bg-gray-800 rounded-lg p-4">
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-xs text-gray-400">Taxa Acerto</span>
+                <Percent className="w-4 h-4 text-yellow-500" />
+              </div>
+              <p className="text-xl font-bold text-yellow-500">
+                {dayData.trades.length > 0 
+                  ? ((dayData.trades.filter((t: Trade) => t.pnl > 0).length / dayData.trades.length) * 100).toFixed(1)
+                  : '0.0'}%
+              </p>
+            </div>
+
+            <div className="bg-gray-800 rounded-lg p-4">
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-xs text-gray-400">Humor</span>
+                <span className="text-lg">{getMoodEmoji(dayData.mood)}</span>
+              </div>
+              <p className={`text-sm font-bold ${getMoodColor(dayData.mood)}`}>
+                {dayData.mood === 'excellent' ? 'Excelente' :
+                 dayData.mood === 'good' ? 'Bom' :
+                 dayData.mood === 'neutral' ? 'Neutro' :
+                 dayData.mood === 'bad' ? 'Ruim' : 'Péssimo'}
+              </p>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            {/* Left Column - Trades */}
+            <div className="lg:col-span-2 space-y-6">
+              {/* Trades Section */}
+              <div className="bg-gray-800 rounded-lg p-4">
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="text-lg font-semibold flex items-center">
+                    <BarChart2 className="w-5 h-5 text-blue-500 mr-2" />
+                    Operações
+                  </h3>
+                  {isEditing && (
+                    <button
+                      onClick={() => setShowAddTradeModal(true)}
+                      className="px-3 py-1.5 bg-blue-600 hover:bg-blue-700 rounded-md flex items-center text-sm"
+                    >
+                      <Plus className="w-4 h-4 mr-1" />
+                      Adicionar
+                    </button>
+                  )}
+                </div>
+
+                {dayData.trades.length === 0 ? (
+                  <div className="text-center py-6">
+                    <BarChart2 className="w-8 h-8 text-gray-600 mx-auto mb-2" />
+                    <p className="text-gray-400 text-sm">Nenhuma operação registrada</p>
+                    {isEditing && (
+                      <button
+                        onClick={() => setShowAddTradeModal(true)}
+                        className="mt-3 px-3 py-1.5 bg-blue-600 hover:bg-blue-700 rounded-md text-sm"
+                      >
+                        Adicionar Primeira Operação
+                      </button>
+                    )}
+                  </div>
+                ) : (
+                  <div className="space-y-3 max-h-64 overflow-y-auto">
+                    {(isEditing ? editedData.trades : dayData.trades).map((trade: Trade) => (
+                      <div key={trade.id} className="bg-gray-700 rounded-lg p-3">
+                        <div className="flex items-center justify-between mb-2">
+                          <div className="flex items-center space-x-2">
+                            <span className="font-bold text-sm">{trade.symbol}</span>
+                            <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${
+                              trade.side === 'buy' ? 'bg-green-600 text-white' : 'bg-red-600 text-white'
+                            }`}>
+                              {trade.side === 'buy' ? 'C' : 'V'}
+                            </span>
+                          </div>
+                          
+                          <div className="flex items-center space-x-2">
+                            <span className={`text-sm font-bold ${trade.pnl >= 0 ? 'text-green-500' : 'text-red-500'}`}>
+                              {trade.pnl >= 0 ? '+' : ''}R$ {trade.pnl.toFixed(2)}
+                            </span>
+                            {isEditing && (
+                              <button
+                                onClick={() => deleteTrade(trade.id)}
+                                className="p-1 hover:bg-gray-600 rounded text-red-400"
+                              >
+                                <Trash2 className="w-3 h-3" />
+                              </button>
+                            )}
+                          </div>
+                        </div>
+                        
+                        <div className="grid grid-cols-3 gap-2 text-xs text-gray-400">
+                          <div>Qtd: {trade.quantity}</div>
+                          <div>Entrada: R$ {trade.entryPrice.toFixed(2)}</div>
+                          <div>Saída: R$ {trade.exitPrice.toFixed(2)}</div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              {/* Comments */}
+              <div className="bg-gray-800 rounded-lg p-4">
+                <h3 className="text-lg font-semibold mb-3 flex items-center">
+                  <MessageSquare className="w-5 h-5 text-blue-500 mr-2" />
+                  Comentários
+                </h3>
+                
+                {isEditing ? (
+                  <textarea
+                    value={editedData.comments}
+                    onChange={(e) => setEditedData({...editedData, comments: e.target.value})}
+                    placeholder="Registre suas observações sobre o dia..."
+                    className="w-full h-24 bg-gray-700 border border-gray-600 rounded-lg p-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+                  />
+                ) : (
+                  <div className="bg-gray-700 rounded-lg p-3 min-h-[60px]">
+                    {dayData.comments ? (
+                      <p className="text-gray-300 text-sm whitespace-pre-line">{dayData.comments}</p>
+                    ) : (
+                      <p className="text-gray-500 italic text-sm">Nenhum comentário registrado</p>
+                    )}
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Right Column - Controls */}
+            <div className="space-y-6">
+              {/* Checklist */}
+              <div className="bg-gray-800 rounded-lg p-4">
+                <h3 className="text-lg font-semibold mb-3 flex items-center">
+                  <Target className="w-5 h-5 text-green-500 mr-2" />
+                  Checklist
+                </h3>
+                
+                <div className="space-y-2">
+                  {Object.entries(editedData.checklist).map(([key, checked]) => (
+                    <label key={key} className="flex items-center space-x-2 cursor-pointer text-sm">
+                      <input
+                        type="checkbox"
+                        checked={checked}
+                        onChange={(e) => {
+                          if (isEditing) {
+                            setEditedData({
+                              ...editedData,
+                              checklist: {
+                                ...editedData.checklist,
+                                [key]: e.target.checked
+                              }
+                            });
+                          }
+                        }}
+                        disabled={!isEditing}
+                        className="w-3 h-3 text-blue-600 bg-gray-700 border-gray-600 rounded focus:ring-blue-500"
+                      />
+                      <span className={checked ? 'text-green-400' : 'text-gray-400'}>
+                        {key === 'planejamento' ? 'Planejamento' :
+                         key === 'analise' ? 'Análise pré-mercado' :
+                         key === 'risco' ? 'Gestão de risco' :
+                         key === 'emocional' ? 'Controle emocional' :
+                         'Revisão pós-mercado'}
+                      </span>
+                    </label>
+                  ))}
+                </div>
+              </div>
+
+              {/* Mood Selector */}
+              <div className="bg-gray-800 rounded-lg p-4">
+                <h3 className="text-lg font-semibold mb-3 flex items-center">
+                  <Award className="w-5 h-5 text-yellow-500 mr-2" />
+                  Humor
+                </h3>
+                
+                {isEditing ? (
+                  <div className="space-y-2">
+                    {['excellent', 'good', 'neutral', 'bad', 'terrible'].map((mood) => (
+                      <label key={mood} className="flex items-center space-x-2 cursor-pointer text-sm">
+                        <input
+                          type="radio"
+                          name="mood"
+                          value={mood}
+                          checked={editedData.mood === mood}
+                          onChange={(e) => setEditedData({...editedData, mood: e.target.value as any})}
+                          className="w-3 h-3 text-blue-600"
+                        />
+                        <span className={`flex items-center space-x-1 ${getMoodColor(mood)}`}>
+                          <span>{getMoodEmoji(mood)}</span>
+                          <span>
+                            {mood === 'excellent' ? 'Excelente' :
+                             mood === 'good' ? 'Bom' :
+                             mood === 'neutral' ? 'Neutro' :
+                             mood === 'bad' ? 'Ruim' : 'Péssimo'}
+                          </span>
+                        </span>
+                      </label>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="flex items-center space-x-2">
+                    <span className="text-xl">{getMoodEmoji(dayData.mood)}</span>
+                    <span className={`text-sm font-medium ${getMoodColor(dayData.mood)}`}>
+                      {dayData.mood === 'excellent' ? 'Excelente' :
+                       dayData.mood === 'good' ? 'Bom' :
+                       dayData.mood === 'neutral' ? 'Neutro' :
+                       dayData.mood === 'bad' ? 'Ruim' : 'Péssimo'}
+                    </span>
+                  </div>
+                )}
+              </div>
+
+              {/* Lessons */}
+              <div className="bg-gray-800 rounded-lg p-4">
+                <h3 className="text-lg font-semibold mb-3 flex items-center">
+                  <Zap className="w-5 h-5 text-yellow-500 mr-2" />
+                  Lições
+                </h3>
+                
+                {isEditing ? (
+                  <textarea
+                    value={editedData.lessons}
+                    onChange={(e) => setEditedData({...editedData, lessons: e.target.value})}
+                    placeholder="Lições aprendidas hoje..."
+                    className="w-full h-20 bg-gray-700 border border-gray-600 rounded-lg p-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+                  />
+                ) : (
+                  <div className="bg-gray-700 rounded-lg p-3 min-h-[50px]">
+                    {dayData.lessons ? (
+                      <p className="text-gray-300 text-sm whitespace-pre-line">{dayData.lessons}</p>
+                    ) : (
+                      <p className="text-gray-500 italic text-sm">Nenhuma lição registrada</p>
+                    )}
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Add Trade Modal */}
+        {showAddTradeModal && (
+          <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4">
+            <div className="bg-gray-800 rounded-lg max-w-md w-full p-6 relative">
+              <button 
+                onClick={() => setShowAddTradeModal(false)}
+                className="absolute top-4 right-4 text-gray-400 hover:text-white"
+              >
+                <X className="w-5 h-5" />
+              </button>
+              
+              <h3 className="text-xl font-bold mb-4">Adicionar Trade</h3>
+              
+              <div className="space-y-4">
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-300 mb-1">Ativo</label>
+                    <select
+                      value={newTrade.symbol}
+                      onChange={(e) => setNewTrade({...newTrade, symbol: e.target.value})}
+                      className="w-full bg-gray-700 border border-gray-600 rounded-md px-3 py-2 text-white text-sm"
+                    >
+                      <option value="WINFUT">WINFUT</option>
+                      <option value="WDOFUT">WDOFUT</option>
+                      <option value="PETR4">PETR4</option>
+                      <option value="VALE3">VALE3</option>
+                    </select>
+                  </div>
+                  
+                  <div>
+                    <label className="block text-sm font-medium text-gray-300 mb-1">Direção</label>
+                    <select
+                      value={newTrade.side}
+                      onChange={(e) => setNewTrade({...newTrade, side: e.target.value as 'buy' | 'sell'})}
+                      className="w-full bg-gray-700 border border-gray-600 rounded-md px-3 py-2 text-white text-sm"
+                    >
+                      <option value="buy">Compra</option>
+                      <option value="sell">Venda</option>
+                    </select>
+                  </div>
+                </div>
+                
+                <div className="grid grid-cols-3 gap-3">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-300 mb-1">Qtd</label>
+                    <input
+                      type="number"
+                      value={newTrade.quantity}
+                      onChange={(e) => setNewTrade({...newTrade, quantity: parseInt(e.target.value)})}
+                      className="w-full bg-gray-700 border border-gray-600 rounded-md px-3 py-2 text-white text-sm"
+                    />
+                  </div>
+                  
+                  <div>
+                    <label className="block text-sm font-medium text-gray-300 mb-1">Entrada</label>
+                    <input
+                      type="number"
+                      step="0.01"
+                      value={newTrade.entryPrice}
+                      onChange={(e) => setNewTrade({...newTrade, entryPrice: parseFloat(e.target.value)})}
+                      className="w-full bg-gray-700 border border-gray-600 rounded-md px-3 py-2 text-white text-sm"
+                    />
+                  </div>
+                  
+                  <div>
+                    <label className="block text-sm font-medium text-gray-300 mb-1">Saída</label>
+                    <input
+                      type="number"
+                      step="0.01"
+                      value={newTrade.exitPrice}
+                      onChange={(e) => setNewTrade({...newTrade, exitPrice: parseFloat(e.target.value)})}
+                      className="w-full bg-gray-700 border border-gray-600 rounded-md px-3 py-2 text-white text-sm"
+                    />
+                  </div>
+                </div>
+                
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-1">Estratégia</label>
+                  <select
+                    value={newTrade.strategy}
+                    onChange={(e) => setNewTrade({...newTrade, strategy: e.target.value})}
+                    className="w-full bg-gray-700 border border-gray-600 rounded-md px-3 py-2 text-white text-sm"
+                  >
+                    <option value="Scalping">Scalping</option>
+                    <option value="Swing">Swing</option>
+                    <option value="Day Trade">Day Trade</option>
+                    <option value="Position">Position</option>
+                  </select>
+                </div>
+                
+                <div className="flex justify-end space-x-3 pt-2">
+                  <button
+                    onClick={() => setShowAddTradeModal(false)}
+                    className="px-3 py-1.5 bg-gray-700 hover:bg-gray-600 rounded-md text-sm"
+                  >
+                    Cancelar
+                  </button>
+                  <button
+                    onClick={addTrade}
+                    className="px-3 py-1.5 bg-blue-600 hover:bg-blue-700 rounded-md text-sm"
+                  >
+                    Adicionar
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+export default QuantDiaryPage;
