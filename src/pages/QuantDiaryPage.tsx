@@ -598,11 +598,7 @@ export function QuantDiaryPage() {
   };
 
   const handleViewDay = () => {
-    console.log('Ver Dia clicked for:', selectedDate);
-    setShowDayModal(false);
-    setTimeout(() => {
-      setShowDayPanel(true);
-    }, 100);
+    navigate(`/view-day?date=${date}`);
   };
 
   const formatDate = (dateString: string) => {

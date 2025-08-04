@@ -20,6 +20,7 @@ import { FAQPage } from './pages/FAQPage';
 import { LoggedInFAQPage } from './pages/LoggedInFAQPage';
 import { ChallengesPage } from './pages/ChallengesPage';
 import { QuantDiaryPage } from './pages/QuantDiaryPage';
+import { ViewDayPage } from './pages/ViewDayPage';
 import { Footer } from './components/Footer';
 
 export default function App() {
@@ -148,6 +149,7 @@ export default function App() {
           <Route path="/faq" element={<LoggedInFAQPage />} />
           <Route path="/challenges" element={<ChallengesPage />} />
           <Route path="/quant-diary" element={<QuantDiaryPage />} />
+          <Route path="/view-day" element={<ViewDayPage />} />
           <Route path="*" element={<Navigate to="/dashboard" replace />} />
         </Routes>
       </Router>
