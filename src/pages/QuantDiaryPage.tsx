@@ -7,7 +7,7 @@ import {
   Edit, Save, X, MessageSquare, AlertTriangle, FileText, PlusCircle, Eye, Edit3, TrendingDown, Check, Edit2, Trash2, FileSpreadsheet,
   Zap, Activity, User
 } from 'lucide-react';
-
+import { useLanguageStore } from '../stores/languageStore';
 import { Navbar } from '../components/Navbar';
   pnl: number;
   trades: number;
