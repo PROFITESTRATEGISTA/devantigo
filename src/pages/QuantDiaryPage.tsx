@@ -8,7 +8,7 @@ import {
   Zap, Activity, User
 } from 'lucide-react';
 
-interface DayData {
+import { Navbar } from '../components/Navbar';
   pnl: number;
   trades: number;
   comment?: string;
