@@ -4,7 +4,8 @@ import {
   ArrowLeft, Calendar, BarChart2, TrendingUp, DollarSign, Hash, Percent, Clock, Target,
   Plus, Edit, Save, X, MessageSquare, AlertTriangle, FileText, PlusCircle, Eye, Edit3, TrendingDown, Check, Edit2, Trash2, FileSpreadsheet
 } from 'lucide-react';
-import { Navbar } from '../components/Navbar';
+  Award, Zap, Edit2, Save, X, Trash2, Activity, User,
+  Check, AlertTriangle
 
 interface DayData {
   pnl: number;
@@ -30,6 +31,7 @@ export function QuantDiaryPage() {
   const [showDayModal, setShowDayModal] = useState(false);
   const [showActionModal, setShowActionModal] = useState(false);
   const [selectedDay, setSelectedDay] = useState<number | null>(null);
+  const [showDayDetailsModal, setShowDayDetailsModal] = useState(false);
   const [editingDay, setEditingDay] = useState<DayData>({ pnl: 0, trades: 0, comment: '' });
   const [actionType, setActionType] = useState<'analysis' | 'comment' | null>(null);
   const [chartType, setChartType] = useState<'daily' | 'monthly'>('daily');
@@ -600,9 +602,7 @@ export function QuantDiaryPage() {
   const handleViewDay = () => {
     navigate(`/view-day?date=${date}`);
   };
-
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
+    setShowDayDetailsModal(true);
     return date.toLocaleDateString('pt-BR', {
       day: '2-digit',
       month: 'long',
@@ -1637,6 +1637,16 @@ export function QuantDiaryPage() {
           {viewMode === 'chart' && renderChart()}
         </div>
       </div>
+
+      {/* Day Details Modal */}
+      {showDayDetailsModal && selectedDate && (
+        <DayDetailsModal 
+          date={selectedDate}
+          onClose={() => setShowDayDetailsModal(false)}
+          diaryData={diaryData}
+          setDiaryData={setDiaryData}
+        />
+      )}
 
       {/* Modal de seleção de ação */}
       {showActionModal && selectedDay && (
