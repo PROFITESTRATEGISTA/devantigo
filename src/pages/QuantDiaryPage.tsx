@@ -42,6 +42,7 @@ export function QuantDiaryPage() {
   const [showAddModal, setShowAddModal] = useState(false);
   const [showCommentsModal, setShowCommentsModal] = useState(false);
   const [showDayPanel, setShowDayPanel] = useState(false);
+  const [showDayDetailsModal, setShowDayDetailsModal] = useState(false);
   const [showQuickActions, setShowQuickActions] = useState(false);
   const [selectedDate, setSelectedDate] = useState<string>('');
   const [selectedDateData, setSelectedDateData] = useState<any>(null);
@@ -603,8 +604,6 @@ export function QuantDiaryPage() {
     navigate(`/view-day?date=${date}`);
   };
     setShowDayDetailsModal(true);
-    return date.toLocaleDateString('pt-BR', {
-      day: '2-digit',
       month: 'long',
       year: 'numeric'
     });
