@@ -597,6 +597,14 @@ export function QuantDiaryPage() {
     }
   };
 
+  const handleViewDay = () => {
+    console.log('Ver Dia clicked for:', selectedDate);
+    setShowDayModal(false);
+    setTimeout(() => {
+      setShowDayPanel(true);
+    }, 100);
+  };
+
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
     return date.toLocaleDateString('pt-BR', {
