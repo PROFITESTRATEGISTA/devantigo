@@ -571,26 +571,13 @@ export function QuantDiaryPage() {
           </div>
         </div>
 
-        {/* Main Content */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Calendar */}
-          <div className="lg:col-span-2">
-            <CalendarGrid
-              currentDate={currentDate}
-              calendarDays={calendarDays}
-              selectedDate={selectedDate}
-              onDayClick={handleDayClick}
-            />
-          </div>
-          
-          {/* Monthly Stats */}
-          <div>
-            <MonthlyStats
-              currentDate={currentDate}
-              monthlyData={monthlyStats}
-            />
-          </div>
-        </div>
+        {/* Calendar */}
+        <CalendarGrid
+          currentDate={currentDate}
+          calendarDays={calendarDays}
+          selectedDate={selectedDate}
+          onDayClick={handleDayClick}
+        />
       </div>
 
       {/* Modals */}
